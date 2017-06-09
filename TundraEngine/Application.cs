@@ -5,22 +5,22 @@ namespace TundraEngine
 {
     public static class Application
     {
-        private static List<World> _worlds = new List<World> (DefaultWorldCapacity);
+        private static List<World> _worlds = new List<World>(DefaultWorldCapacity);
 
         private const int DefaultWorldCapacity = 8;
 
-        static void Main (string[] args)
+        static void Main(string[] args)
         {
-            Console.WriteLine ("Tundra Engine");
-            Console.ReadKey ();
+            Console.WriteLine("Tundra Engine");
+            Console.ReadKey();
         }
 
-        public World GetWorld<T> ()
+        public static World GetWorld<T>()
         {
-
+            return new World();
         }
 
-        public static void Quit ()
+        public static void Quit()
         {
 
         }
