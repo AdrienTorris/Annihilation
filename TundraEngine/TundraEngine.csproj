@@ -32,4 +32,53 @@
     <PackageReference Include="SharpVk" Version="0.3.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="MessagePack\Formatters\PrimitiveFormatter.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PrimitiveFormatter.tt</DependentUpon>
+    </Compile>
+    <Compile Update="MessagePack\Formatters\TupleFormatter.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TupleFormatter.tt</DependentUpon>
+    </Compile>
+    <Compile Update="MessagePack\Formatters\ValueTupleFormatter.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ValueTupleFormatter.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="MessagePack\Formatters\PrimitiveFormatter.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>PrimitiveFormatter.cs</LastGenOutput>
+    </None>
+    <None Update="MessagePack\Formatters\TupleFormatter.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TupleFormatter.cs</LastGenOutput>
+    </None>
+    <None Update="MessagePack\Formatters\ValueTupleFormatter.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ValueTupleFormatter.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
 </Project>

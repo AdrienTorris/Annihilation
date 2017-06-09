@@ -4,18 +4,33 @@ namespace TundraEngine
 {
     public class World
     {
-        private List<Entity> _entities = new List<Entity> (DefaultEntityCapacity);
+        public List<Entity> Entities { get; private set; }
 
         private const int DefaultEntityCapacity = 1024;
 
+        public World ()
+        {
+            Entities = new List<Entity>(DefaultEntityCapacity);
+        }
+
+        public World (int entityCapacity)
+        {
+            Entities = new List<Entity>(entityCapacity);
+        }
+
         public void AddEntity (Entity entity)
         {
-            _entities.Add (entity);
+            Entities.Add (entity);
+        }
+
+        public void Update (float deltaTime)
+        {
+
         }
 
         public void Destroy ()
         {
-            foreach (Entity entity in _entities)
+            foreach (Entity entity in Entities)
             {
                 entity.Destroy ();
             }

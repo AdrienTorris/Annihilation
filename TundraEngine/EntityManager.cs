@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using TundraEngine.Mathematics;
 
 namespace TundraEngine
 {
@@ -10,7 +10,7 @@ namespace TundraEngine
         
         private const int MinFreeIndices = 1024;
         
-        public static Entity CreateEntity (World world = null)
+        public static Entity Create (World world)
         {
             Entity entity;
 
@@ -34,7 +34,26 @@ namespace TundraEngine
             return entity;
         }
 
-        public static void DestroyEntity (Entity entity)
+        public static Entity Spawn (EntityAsset entityAsset, World world)
+        {
+            Entity entity = Create(world);
+
+            foreach (Component component in entityAsset.Components)
+            {
+
+            }
+
+            return entity;
+        }
+
+        public static Entity Spawn (EntityAsset entityAsset, World world, Vector3 position, Quaternion orientation)
+        {
+            Entity entity = Spawn(entityAsset, world);
+
+            return entity;
+        }
+
+        public static void Destroy (Entity entity)
         {
             if (!IsAlive (entity)) return;
 

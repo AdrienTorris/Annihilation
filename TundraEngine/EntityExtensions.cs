@@ -9,7 +9,7 @@
         
         public static void Destroy (this Entity entity)
         {
-            EntityManager.DestroyEntity (entity);
+            EntityManager.Destroy (entity);
         }
 
         public static string Name (this Entity entity)
