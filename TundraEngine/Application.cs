@@ -8,7 +8,7 @@ namespace TundraEngine
         private static List<World> _worlds = new List<World>(DefaultWorldCapacity);
 
         private const int DefaultWorldCapacity = 8;
-
+        
         static void Main(string[] args)
         {
             Console.WriteLine("Tundra Engine");
