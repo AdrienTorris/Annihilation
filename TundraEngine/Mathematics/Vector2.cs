@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
-using TundraEngine.MessagePack;
+using MessagePack;
 
 namespace TundraEngine.Mathematics
 {

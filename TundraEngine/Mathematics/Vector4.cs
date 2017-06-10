@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using TundraEngine.MessagePack;
+using MessagePack;
 
 namespace TundraEngine.Mathematics
 {
@@ -27,6 +27,14 @@ namespace TundraEngine.Mathematics
         public Vector4(float value)
         {
             X = Y = Z = W = value;
+        }
+
+        public Vector4(Vector2 v, float z, float w)
+        {
+            X = v.X;
+            Y = v.Y;
+            Z = z;
+            W = w;
         }
     }
 }

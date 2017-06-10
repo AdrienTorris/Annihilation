@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SDL2;
 
 namespace TundraEngine
 {
@@ -11,10 +12,14 @@ namespace TundraEngine
 
         private const int DefaultWorldCapacity = 8;
         
-        static void Main(string[] args)
+        static unsafe void Main(string[] args)
         {
             Console.WriteLine("Tundra Engine");
-            Console.ReadKey();
+
+            if (SDL.SDL_Init (SDL.SDL_INIT_VIDEO) != 0)
+            {
+                Console.WriteLine("Unable to initialize SDL: ", SDL.SDL_GetError());
+            }
         }
 
         public static World GetWorld<T>()

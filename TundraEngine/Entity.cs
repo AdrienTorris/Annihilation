@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using MessagePack;
 
 namespace TundraEngine
 {
+    [MessagePackObject]
     [StructLayout (LayoutKind.Sequential, Pack = 1)]
     public struct Entity : IEquatable<Entity>
     {
-        public readonly int Index;
-        public readonly byte Generation;
+        [Key(0)] public readonly int Index;
+        [Key(1)] public readonly byte Generation;
 
         public static readonly Entity Invalid;
 

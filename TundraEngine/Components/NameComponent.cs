@@ -1,4 +1,4 @@
-﻿using TundraEngine.MessagePack;
+﻿using MessagePack;
 
 namespace TundraEngine.Components
 {

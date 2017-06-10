@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Globalization;
-using TundraEngine.MessagePack;
+using MessagePack;
 
 namespace TundraEngine.Mathematics
 {
