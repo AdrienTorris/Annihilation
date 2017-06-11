@@ -5,8 +5,6 @@ VisualStudioVersion = 15.0.26606.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TundraEngine", "TundraEngine\TundraEngine.csproj", "{AA44B57B-B68E-4F83-ACED-16EEA2E8983F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SDLCore", "SDL-Core\SDLCore.csproj", "{3D3BD5F7-CB8C-47F5-B2C2-2C287BF14E3E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,14 +21,6 @@ Global
 		{AA44B57B-B68E-4F83-ACED-16EEA2E8983F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AA44B57B-B68E-4F83-ACED-16EEA2E8983F}.Release|x64.ActiveCfg = Release|x64
 		{AA44B57B-B68E-4F83-ACED-16EEA2E8983F}.Release|x64.Build.0 = Release|x64
-		{3D3BD5F7-CB8C-47F5-B2C2-2C287BF14E3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3D3BD5F7-CB8C-47F5-B2C2-2C287BF14E3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3D3BD5F7-CB8C-47F5-B2C2-2C287BF14E3E}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{3D3BD5F7-CB8C-47F5-B2C2-2C287BF14E3E}.Debug|x64.Build.0 = Debug|Any CPU
-		{3D3BD5F7-CB8C-47F5-B2C2-2C287BF14E3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3D3BD5F7-CB8C-47F5-B2C2-2C287BF14E3E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3D3BD5F7-CB8C-47F5-B2C2-2C287BF14E3E}.Release|x64.ActiveCfg = Release|Any CPU
-		{3D3BD5F7-CB8C-47F5-B2C2-2C287BF14E3E}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
