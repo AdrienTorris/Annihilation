@@ -3,18 +3,12 @@ using System.Runtime.InteropServices;
 
 namespace SDL2
 {
-    unsafe public static partial class SDL
+    public static partial class SDL
     {
         private const string LibName = "SDL2.dll";
-
-        public enum SDLBool
-        {
-            False = 0,
-            True = 1,
-        }
-
+        
         [Flags]
-        public enum SDL_InitFlags : uint
+        public enum InitFlags : uint
         {
             Timer = 0x00000001u,
             Audio = 0x00000010u,
@@ -31,7 +25,7 @@ namespace SDL2
         /// This function initializes  the subsystems specified by <paramref name="flags"/>
         /// </summary>
         [DllImport (LibName, EntryPoint = "SDL_Init", CallingConvention = CallingConvention.Cdecl)]
-        extern public static int Init (SDL_InitFlags flags);
+        public extern static int Init (InitFlags flags);
 
         /// <summary>
         /// This function initializes specific SDL subsystems
@@ -39,25 +33,25 @@ namespace SDL2
         /// <para /> If a subsystem is already loaded then this call will increase the ref-count and return.
         /// </summary>
         [DllImport (LibName, EntryPoint = "SDL_InitSubSystem", CallingConvention = CallingConvention.Cdecl)]
-        extern public static int InitSubSystem (SDL_InitFlags flags);
+        public extern static int InitSubSystem (InitFlags flags);
 
         /// <summary>
         /// This function cleans up specific SDL subsystems
         /// </summary>
         [DllImport (LibName, EntryPoint = "SDL_QuitSubSystem", CallingConvention = CallingConvention.Cdecl)]
-        extern public static void QuitSubSystem (SDL_InitFlags flags);
+        public extern static void QuitSubSystem (InitFlags flags);
 
         /// <summary>
         /// This function returns a mask of the specified subsystems which have previously been initialized.
         /// <para /> If <paramref name="flags"/> is 0, it returns a mask of all initialized subsystems.
         /// </summary>
         [DllImport (LibName, EntryPoint = "SDL_WasInit", CallingConvention = CallingConvention.Cdecl)]
-        extern public static uint WasInit (SDL_InitFlags flags);
+        public extern static InitFlags WasInit (InitFlags flags);
 
         /// <summary>
         /// This function cleans up all initialized subsystems. You should call it upon all exit conditions.
         /// </summary>
         [DllImport (LibName, EntryPoint = "SDL_Quit", CallingConvention = CallingConvention.Cdecl)]
-        extern public static void Quit ();
+        public extern static void Quit ();
     }
 }
