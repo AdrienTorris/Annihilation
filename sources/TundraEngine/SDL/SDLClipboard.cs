@@ -6,7 +6,7 @@ namespace SDL2
     public static partial class SDL
     {
         [DllImport (LibName, EntryPoint = "SDL_SetClipboardText", CallingConvention = CallingConvention.Cdecl)]
-        extern private static int SetClipboardTextInternal (IntPtr text);
+        private extern static int SetClipboardTextInternal (IntPtr text);
 
         /// <summary>
         /// Put UTF-8 text into the clipboard
@@ -14,11 +14,11 @@ namespace SDL2
         /// <seealso cref="GetClipboardText"/>
         public static int SetClipboardText (string text)
         {
-            return SetClipboardTextInternal (MarshalUtility.StringToUTF8 (text));
+            return SetClipboardTextInternal (text.ToIntPtr ());
         }
 
         [DllImport (LibName, EntryPoint = "SDL_GetClipboardText", CallingConvention = CallingConvention.Cdecl)]
-        extern private static IntPtr GetClipboardTextInternal ();
+        private extern static IntPtr GetClipboardTextInternal ();
 
         /// <summary>
         /// Get UTF-8 text from the clipboard, which must be freed with SDL_free()
@@ -26,7 +26,7 @@ namespace SDL2
         /// <seealso cref="SetClipboardText"/>
         public static string GetClipboardText ()
         {
-            return MarshalUtility.UTF8ToString (GetClipboardTextInternal ());
+            return GetClipboardTextInternal ().ToStr ();
         }
 
         /// <summary>
@@ -34,6 +34,6 @@ namespace SDL2
         /// </summary>
         /// <seealso cref="GetClipboardText"/>
         [DllImport (LibName, EntryPoint = "SDL_HasClipboardText", CallingConvention = CallingConvention.Cdecl)]
-        extern public static bool HasClipboardText ();
+        public extern static bool HasClipboardText ();
     }
 }

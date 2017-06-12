@@ -1,5 +1,10 @@
 ﻿namespace SDL2
 {
+    /// <summary>
+    /// The SDL keyboard scancode representation.
+    /// <para /> Values of this type are used to represent keyboard keys, among other places in the <see cref="KeySym.ScanCode"/> field of the <see cref="Event"/> structure.
+    /// <para /> The values in this enumeration are based on the USB usage page standard: http://www.usb.org/developers/devclass_docs/Hut1_12v2.pdf
+    /// </summary>
     public enum ScanCode
     {
         Unknown = 0,
@@ -373,7 +378,7 @@
         /* Add any other keys here. */
 
         /// <summary>
-        /// not a key, just marks the number of scancodes for array bounds
+        /// Not a key, just marks the number of scancodes for array bounds
         /// </summary>
         NumScancodes = 512
     }

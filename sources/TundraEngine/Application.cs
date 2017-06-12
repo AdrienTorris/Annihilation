@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using SDL2;
 
 namespace TundraEngine
@@ -13,57 +12,49 @@ namespace TundraEngine
 
         private const int DefaultWorldCapacity = 8;
 
-        static unsafe void Main (string[] args)
+        static void Main (string[] args)
         {
-            SDL.Init (SDL.InitFlags.Video);
+            SDL.SetHint (SDL.HintFrameBufferAcceleration, "1");
 
-            SDL.SetClipboardText ("MDNIDFN dfijdnsf in sf nds iufjndsun");
+            if (SDL.Init (SDL.InitFlags.Video) != 0)
+            {
+                SDL.LogError (SDL.LogCategory.Error, SDL.GetError ());
+                return;
+            }
 
-            string str = SDL.GetClipboardText ();
-            Console.WriteLine (str);
-            Console.ReadKey ();
-            
+            IntPtr windowPtr = SDL.CreateWindow (
+                "Tundra Engine",
+                SDL.SDL_WINDOWPOS_UNDEFINED,
+                SDL.SDL_WINDOWPOS_UNDEFINED,
+                1280,
+                768,
+                SDL.SDL_WindowFlags.SDL_WINDOW_SHOWN);
+
+            if (windowPtr == null)
+            {
+                SDL.LogError (SDL.LogCategory.Error, SDL.GetError ());
+                return;
+            }
+
+            Console.WriteLine ("Tundra Engine Initialized");
+
+            Event sdlEvent;
+            bool quit = false;
+            while (!quit)
+            {
+                while (SDL.PollEvent (out sdlEvent) == 1)
+                {
+                    if (sdlEvent.Type == EventType.Quit ||
+                        sdlEvent.Type == EventType.KeyDown ||
+                        sdlEvent.Type == EventType.MouseButtonDown)
+                    {
+                        quit = true;
+                    }
+                }
+            }
+
+            SDL.DestroyWindow (windowPtr);
             SDL.Quit ();
-
-            //if (SDL.Init (SDL.InitFlags.Video) != 0)
-            //{
-            //    Console.WriteLine ("Unable to initialize SDL: ", SDL.SDL_GetError ());
-            //    Console.ReadKey ();
-            //}
-
-            //IntPtr windowPtr = SDL.SDL_CreateWindow (
-            //    "Tundra Engine",
-            //    SDL.SDL_WINDOWPOS_UNDEFINED,
-            //    SDL.SDL_WINDOWPOS_UNDEFINED,
-            //    1280,
-            //    768,
-            //    SDL.SDL_WindowFlags.SDL_WINDOW_SHOWN);
-
-            //if (windowPtr == null)
-            //{
-            //    Console.WriteLine ("Unable to create window: ", SDL.SDL_GetError ());
-            //    Console.ReadKey ();
-            //}
-
-            //Console.WriteLine ("Tundra Engine Initialized");
-
-            //Event sdlEvent;
-            //bool quit = false;
-            //while (!quit)
-            //{
-            //    while (SDL.PollEvent (out sdlEvent) == 1)
-            //    {
-            //        if (sdlEvent.Type == EventType.Quit ||
-            //            sdlEvent.Type == EventType.KeyDown ||
-            //            sdlEvent.Type == EventType.MouseButtonDown)
-            //        {
-            //            quit = true;
-            //        }
-            //    }
-            //}
-            
-            //SDL.SDL_DestroyWindow (windowPtr);
-            //SDL.Quit ();
         }
 
         public static World GetWorld<T> ()

@@ -17,9 +17,9 @@ namespace SDL2
         /// <remarks> Calling this function will replace any previous error message that was set. </remarks>
         public static int SetError (string fmt, params object[] objects)
         {
-            return SetErrorInternal (MarshalUtility.StringToUTF8 (fmt), __arglist(objects));
+            return SetErrorInternal (fmt.ToIntPtr (), __arglist (objects));
         }
-        
+
         [DllImport (LibName, EntryPoint = "SDL_GetError", CallingConvention = CallingConvention.Cdecl)]
         private extern static IntPtr GetErrorInternal ();
 
@@ -33,7 +33,7 @@ namespace SDL2
         /// </remarks>
         public static string GetError ()
         {
-            return MarshalUtility.UTF8ToString (GetErrorInternal ());
+            return GetErrorInternal ().ToStr ();
         }
 
         /// <summary>

@@ -74,33 +74,83 @@ namespace SDL2
         public extern static void LogResetPriorities ();
 
         [DllImport (LibName, EntryPoint = "SDL_Log", CallingConvention = CallingConvention.Cdecl)]
-        private extern static void Log (IntPtr fmt, params object[] objects);
+        private extern static void LogInternal (IntPtr fmt, params object[] objects);
+
+        public static void Log (string fmt)
+        {
+            LogInternal (fmt.ToIntPtr ());
+        }
 
         [DllImport (LibName, EntryPoint = "SDL_LogVerbose", CallingConvention = CallingConvention.Cdecl)]
-        private extern static void LogVerbose (LogCategory category, IntPtr fmt, params object[] objects);
+        private extern static void LogVerboseInternal (LogCategory category, IntPtr fmt, params object[] objects);
+
+        public static void LogVerbose (LogCategory category, string fmt)
+        {
+            LogVerboseInternal (category, fmt.ToIntPtr ());
+        }
 
         [DllImport (LibName, EntryPoint = "SDL_LogDebug", CallingConvention = CallingConvention.Cdecl)]
-        private extern static void LogDebug (LogCategory category, IntPtr fmt, params object[] objects);
+        private extern static void LogDebugInternal (LogCategory category, IntPtr fmt, params object[] objects);
+
+        public static void LogDebug (LogCategory category, string fmt)
+        {
+            LogDebugInternal (category, fmt.ToIntPtr ());
+        }
 
         [DllImport (LibName, EntryPoint = "SDL_LogInfo", CallingConvention = CallingConvention.Cdecl)]
-        private extern static void LogInfo (LogCategory category, IntPtr fmt, params object[] objects);
+        private extern static void LogInfoInternal (LogCategory category, IntPtr fmt, params object[] objects);
+
+        public static void LogInfo (LogCategory category, string fmt)
+        {
+            LogInfoInternal (category, fmt.ToIntPtr ());
+        }
 
         [DllImport (LibName, EntryPoint = "SDL_LogWarn", CallingConvention = CallingConvention.Cdecl)]
-        private extern static void LogWarn (LogCategory category, IntPtr fmt, params object[] objects);
+        private extern static void LogWarnInternal (LogCategory category, IntPtr fmt, params object[] objects);
+
+        public static void LogWarn (LogCategory category, string fmt)
+        {
+            LogWarnInternal (category, fmt.ToIntPtr ());
+        }
 
         [DllImport (LibName, EntryPoint = "SDL_LogError", CallingConvention = CallingConvention.Cdecl)]
-        private extern static void LogError (LogCategory category, IntPtr fmt, params object[] objects);
+        private extern static void LogErrorInternal (LogCategory category, IntPtr fmt, params object[] objects);
+
+        public static void LogError (LogCategory category, string fmt)
+        {
+            LogErrorInternal (category, fmt.ToIntPtr ());
+        }
 
         [DllImport (LibName, EntryPoint = "SDL_LogCritical", CallingConvention = CallingConvention.Cdecl)]
-        private extern static void LogCritical (LogCategory category, IntPtr fmt, params object[] objects);
+        private extern static void LogCriticalInternal (LogCategory category, IntPtr fmt, params object[] objects);
+
+        public static void LogCritical (LogCategory category, string fmt)
+        {
+            LogCriticalInternal (category, fmt.ToIntPtr ());
+        }
 
         [DllImport (LibName, EntryPoint = "SDL_LogMessage", CallingConvention = CallingConvention.Cdecl)]
-        private extern static void LogMessage (LogCategory category, LogPriority priority, IntPtr fmt, params object[] objects);
+        private extern static void LogMessageInternal (LogCategory category, LogPriority priority, IntPtr fmt, params object[] objects);
+
+        public static void LogMessage (LogCategory category, LogPriority priority, string fmt)
+        {
+            LogMessageInternal (category, priority, fmt.ToIntPtr ());
+        }
 
         [DllImport (LibName, EntryPoint = "SDL_LogGetOutputFunction", CallingConvention = CallingConvention.Cdecl)]
-        private extern static void LogGetOutputFunction (LogOutputFunction callback, IntPtr userData);
+        private extern static void LogGetOutputFunctionInternal (LogOutputFunction callback, IntPtr userData);
+
+        public static void LogGetOutputFunction (LogOutputFunction callback, IntPtr userData)
+        {
+            LogGetOutputFunctionInternal (callback, userData);
+        }
 
         [DllImport (LibName, EntryPoint = "SDL_LogSetOutputFunction", CallingConvention = CallingConvention.Cdecl)]
-        private extern static void LogSetOutputFunction (LogOutputFunction callback, IntPtr userData);
+        private extern static void LogSetOutputFunctionInternal (LogOutputFunction callback, IntPtr userData);
+
+        public static void LogSetOutputFunction (LogOutputFunction callback, IntPtr userData)
+        {
+            LogGetOutputFunctionInternal (callback, userData);
+        }
     }
 }

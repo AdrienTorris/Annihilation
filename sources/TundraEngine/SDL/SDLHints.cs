@@ -5,9 +5,36 @@ namespace SDL2
 {
     public static partial class SDL
     {
+        /// <summary>
+        /// A variable controlling how 3D acceleration is used to accelerate the SDL screen surface.
+        /// <para /> SDL can try to accelerate the SDL screen surface by using streaming textures with a 3D rendering engine.This variable controls whether and how this is done.
+        /// <para /> This variable can be set to the following values:
+        /// "0"       - Disable 3D acceleration
+        /// "1"       - Enable 3D acceleration, using the default renderer.
+        /// "X"       - Enable 3D acceleration, using X where X is one of the valid rendering drivers.  (e.g. "direct3d", "opengl", etc.)
+        /// <para /> By default SDL tries to make a best guess for each platform whether to use acceleration or not.
+        /// </summary>
+        public const string HintFrameBufferAcceleration = "SDL_FRAMEBUFFER_ACCELERATION";
+        /// <summary>
+        /// A variable controlling the scaling policy for <see cref="RenderSetLogicalSize"/>.
+        /// <para /> This variable can be set to the following values:
+        /// "0" or "letterbox" - Uses letterbox/sidebars to fit the entire rendering on screen
+        /// "1" or "overscan"  - Will zoom the rendering so it fills the entire screen, allowing edges to be drawn offscreen
+        /// <para /> By default letterbox is used
+        /// </summary>
+        public const string HintRenderLogicalSizeMode = "SDL_HINT_RENDER_LOGICAL_SIZE_MODE";
+
+        // TODO: Add all other non-renderer specific hints
+
+        /// <summary>
+        /// Type definition of the hint callback function.
+        /// </summary>
         [UnmanagedFunctionPointer (CallingConvention.Cdecl)]
         public delegate void HintCallback (IntPtr userData, IntPtr name, IntPtr oldValue, IntPtr newValue);
 
+        /// <summary>
+        /// An enumeration of hint priorities
+        /// </summary>
         public enum HintPriority
         {
             Default,
@@ -25,7 +52,7 @@ namespace SDL2
         /// <returns> True if the hint was set, false otherwise </returns>
         public static bool SetHintWithPriority (string name, string value, HintPriority priority)
         {
-            return SetHintWithPriorityInternal (name.ToIntPtr (), value.ToIntPtr(), priority);
+            return SetHintWithPriorityInternal (name.ToIntPtr (), value.ToIntPtr (), priority);
         }
 
         [DllImport (LibName, EntryPoint = "SDL_SetHint", CallingConvention = CallingConvention.Cdecl)]

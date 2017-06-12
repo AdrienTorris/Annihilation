@@ -307,7 +307,7 @@ namespace SDL2
         /// <summary>
         /// The key that was pressed or released
         /// </summary>
-//        public readonly KeySym KeySym;
+        public readonly KeySym KeySym;
     }
 
     /// <summary>

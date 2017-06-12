@@ -21,7 +21,7 @@ namespace SDL2
         /// </remarks>
         public static string GetBasePath ()
         {
-            return MarshalUtility.UTF8ToString (GetBasePathInternal ());
+            return GetBasePathInternal ().ToStr ();
         }
 
         [DllImport (LibName, EntryPoint = "SDL_GetPrefPath", CallingConvention = CallingConvention.Cdecl)]
@@ -40,7 +40,7 @@ namespace SDL2
         /// </remarks>
         public static string GetPrefPath (string org, string app)
         {
-            return MarshalUtility.UTF8ToString (GetPrefPathInternal (MarshalUtility.StringToUTF8 (org), MarshalUtility.StringToUTF8 (app)));
+            return GetPrefPathInternal (org.ToIntPtr (), app.ToIntPtr ()).ToStr ();
         }
     }
 }
