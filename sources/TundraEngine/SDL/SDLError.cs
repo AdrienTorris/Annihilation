@@ -6,7 +6,7 @@ namespace SDL2
     public static partial class SDL
     {
         [DllImport (LibName, EntryPoint = "SDL_SetError", CallingConvention = CallingConvention.Cdecl)]
-        extern private static int SetErrorInternal (IntPtr fmt, __arglist);
+        private extern static int SetErrorInternal (IntPtr fmt, __arglist);
 
         /// <summary>
         /// Use this function to set the SDL error message.
