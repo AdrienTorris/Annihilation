@@ -2,7 +2,7 @@
 
 namespace SDL2
 {
-    unsafe public static partial class SDL
+    public static partial class SDL
     {
         /// <summary>
         /// This function returns the number of CPU cores available.
