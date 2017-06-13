@@ -21,7 +21,7 @@ namespace TundraEngine
                 SDL.LogError (SDL.LogCategory.Error, SDL.GetError ());
                 return;
             }
-
+            
             IntPtr windowPtr = SDL.CreateWindow (
                 "Tundra Engine",
                 SDL.SDL_WINDOWPOS_UNDEFINED,
