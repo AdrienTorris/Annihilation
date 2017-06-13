@@ -3,6 +3,22 @@ using System.Runtime.InteropServices;
 
 namespace SDL2
 {
+    /// <summary>
+    /// Type definition of the hint callback function.
+    /// </summary>
+    [UnmanagedFunctionPointer (CallingConvention.Cdecl)]
+    public delegate void HintCallback (IntPtr userData, IntPtr name, IntPtr oldValue, IntPtr newValue);
+
+    /// <summary>
+    /// An enumeration of hint priorities
+    /// </summary>
+    public enum HintPriority
+    {
+        Default,
+        Normal,
+        Override
+    }
+
     public static partial class SDL
     {
         /// <summary>
@@ -25,22 +41,6 @@ namespace SDL2
         public const string HintRenderLogicalSizeMode = "SDL_HINT_RENDER_LOGICAL_SIZE_MODE";
 
         // TODO: Add all other non-renderer specific hints
-
-        /// <summary>
-        /// Type definition of the hint callback function.
-        /// </summary>
-        [UnmanagedFunctionPointer (CallingConvention.Cdecl)]
-        public delegate void HintCallback (IntPtr userData, IntPtr name, IntPtr oldValue, IntPtr newValue);
-
-        /// <summary>
-        /// An enumeration of hint priorities
-        /// </summary>
-        public enum HintPriority
-        {
-            Default,
-            Normal,
-            Override
-        }
 
         [DllImport (LibName, EntryPoint = "SDL_SetHintWithPriority", CallingConvention = CallingConvention.Cdecl)]
         private extern static bool SetHintWithPriorityInternal (IntPtr name, IntPtr value, HintPriority priority);
