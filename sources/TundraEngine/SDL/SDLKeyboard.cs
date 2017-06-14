@@ -166,7 +166,7 @@ namespace SDL2
         /// </summary>
         /// <seealso cref="StartTextInput"/>
         [DllImport (LibName, EntryPoint = "SDL_SetTextInputRect", CallingConvention = CallingConvention.Cdecl)]
-        public extern static void SetTextInputRect (out Rect rect);
+        public extern static void SetTextInputRect (out Rectangle rectangle);
 
         /// <summary>
         /// Returns whether the platform has some screen keyboard support.

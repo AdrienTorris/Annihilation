@@ -1,4 +1,5 @@
 ﻿using System;
+using SDL2;
 using SharpVk;
 
 namespace TundraEngine
@@ -11,6 +12,13 @@ namespace TundraEngine
 
         public Window ()
         {
+            // Extensions and layers
+            LayerProperties[] layers = Instance.EnumerateLayerProperties ();
+            foreach (var layer in layers)
+            {
+                SDL.Log (layer.LayerName);
+            }
+
             // Instance
             InstanceCreateInfo instanceInfo = new InstanceCreateInfo
             {
@@ -30,6 +38,23 @@ namespace TundraEngine
                 }
             };
             _instance = Instance.Create (instanceInfo);
+
+            // SDL Window
+            IntPtr windowPtr = SDL.CreateWindow (
+                "Tundra Engine",
+                SDL.WindowPositionUndefined,
+                SDL.WindowPositionUndefined,
+                1280,
+                768,
+                SDL.WindowFlags.Shown | SDL.WindowFlags.Vulkan);
+
+            if (windowPtr == IntPtr.Zero)
+            {
+                SDL.LogError (SDL.LogCategory.Error, SDL.GetError ());
+                return;
+            }
+
+            SDL.CreateVulkanSurface (windowPtr, _instance, out Surface surface);
 
             // Device
             PhysicalDevice[] physicalDevices = _instance.EnumeratePhysicalDevices ();

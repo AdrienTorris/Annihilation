@@ -1,0 +1,2662 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TundraEngine</name>
+    </assembly>
+    <members>
+        <member name="T:TundraEngine.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:TundraEngine.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:TundraEngine.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="T:SDL2.Rectangle">
+            <summary>
+            A rectangle, with the origin at the upper left.
+            </summary>
+        </member>
+        <member name="M:SDL2.Rectangle.IsEmpty">
+            <summary>
+            Returns true if the rectangle has no area.
+            </summary>
+        </member>
+        <member name="M:SDL2.Rectangle.HasIntersection(SDL2.Rectangle)">
+            <summary>
+            Determine whether two rectangles intersect.
+            </summary>
+            <returns> True if there is an intersection, false otherwise. </returns>
+        </member>
+        <member name="M:SDL2.Rectangle.Intersect(SDL2.Rectangle,SDL2.Rectangle@)">
+            <summary>
+            Calculate the intersection of two rectangles.
+            </summary>
+            <returns> True if there is an intersection, false otherwise. </returns>
+        </member>
+        <member name="M:SDL2.Rectangle.Union(SDL2.Rectangle,SDL2.Rectangle@)">
+            <summary>
+            Calculate the union of two rectangles.
+            </summary>
+        </member>
+        <member name="M:SDL2.Rectangle.EnclosePoints(SDL2.Point[],System.Int32,SDL2.Rectangle@)">
+            <summary>
+            Calculate a minimal rectangle enclosing a set of points.
+            </summary>
+            <returns/> True if any points were within the clipping rect.
+        </member>
+        <member name="M:SDL2.Rectangle.EnclosePoints(SDL2.Point[],System.Int32,SDL2.Rectangle,SDL2.Rectangle@)">
+            <summary>
+            Calculate a minimal rectangle enclosing a set of points.
+            </summary>
+            <returns/> True if any points were within the clipping rect.
+        </member>
+        <member name="M:SDL2.Rectangle.IntersectRectangleAndLine(System.Int32@,System.Int32@,System.Int32@,System.Int32@)">
+            <summary>
+            Calculate the intersection of a rectangle and line segment.
+            </summary>
+            <returns> True if there is an intersection, false otherwise. </returns>
+        </member>
+        <member name="T:SDL2.SDL.InitFlags">
+            <summary>
+            These are the flags which may be passed to SDL_Init(). You should specify the subsystems which you will be using in your application.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.Init(SDL2.SDL.InitFlags)">
+            <summary>
+            This function initializes  the subsystems specified by <paramref name="flags"/>
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.InitSubSystem(SDL2.SDL.InitFlags)">
+            <summary>
+            This function initializes specific SDL subsystems
+            <para /> Subsystem initialization is ref-counted, you must call SDL_QuitSubSystem () for each SDL_InitSubSystem () to correctly shutdown a subsystem manually (or call SDL_Quit() to force shutdown).
+            <para /> If a subsystem is already loaded then this call will increase the ref-count and return.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.QuitSubSystem(SDL2.SDL.InitFlags)">
+            <summary>
+            This function cleans up specific SDL subsystems
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.WasInit(SDL2.SDL.InitFlags)">
+            <summary>
+            This function returns a mask of the specified subsystems which have previously been initialized.
+            <para /> If <paramref name="flags"/> is 0, it returns a mask of all initialized subsystems.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.Quit">
+            <summary>
+            This function cleans up all initialized subsystems. You should call it upon all exit conditions.
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.AssertState.Retry">
+            <summary>
+            Retry the assert immediately.
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.AssertState.Break">
+            <summary>
+            Make the debugger trigger a breakpoint.
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.AssertState.Abort">
+            <summary>
+            Terminate the program.
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.AssertState.Ignore">
+            <summary>
+            Ignore the assert.
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.AssertState.AlwaysIgnore">
+            <summary>
+            Ignore the assert from now on.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.SetClipboardText(System.String)">
+            <summary>
+            Put UTF-8 text into the clipboard
+            </summary>
+            <seealso cref="M:SDL2.SDL.GetClipboardText"/>
+        </member>
+        <member name="M:SDL2.SDL.GetClipboardText">
+            <summary>
+            Get UTF-8 text from the clipboard, which must be freed with SDL_free()
+            </summary>
+            <seealso cref="M:SDL2.SDL.SetClipboardText(System.String)"/>
+        </member>
+        <member name="M:SDL2.SDL.HasClipboardText">
+            <summary>
+            Returns a flag indicating whether the clipboard exists and contains a text string that is non-empty
+            </summary>
+            <seealso cref="M:SDL2.SDL.GetClipboardText"/>
+        </member>
+        <member name="M:SDL2.SDL.GetCPUCount">
+            <summary>
+            This function returns the number of CPU cores available.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.GetCPUCacheLineSize">
+            <summary>
+            This function returns the L1 cache line size of the CPU
+            <para /> This is useful for determining multi-threaded structure padding or SIMD prefetch sizes.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.HasRDTSC">
+            <summary>
+            This function returns true if the CPU has the RDTSC instruction.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.HasAltiVec">
+            <summary>
+            This function returns true if the CPU has AltiVec features.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.HasMMX">
+            <summary>
+            This function returns true if the CPU has MMX features.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.Has3DNow">
+            <summary>
+            This function returns true if the CPU has 3DNow! features.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.HasSSE">
+            <summary>
+            This function returns true if the CPU has SSE features.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.HasSSE2">
+            <summary>
+            This function returns true if the CPU has SSE2 features.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.HasSSE3">
+            <summary>
+            This function returns true if the CPU has SSE3 features.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.HasSSE41">
+            <summary>
+            This function returns true if the CPU has SSE4.1 features.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.HasSSE42">
+            <summary>
+            This function returns true if the CPU has SSE4.2 features.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.HasAVX">
+            <summary>
+            This function returns true if the CPU has AVX features.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.HasAVX2">
+            <summary>
+            This function returns true if the CPU has AVX2 features.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.HasNEON">
+            <summary>
+            This function returns true if the CPU has NEON (ARM SIMD) features.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.GetSystemRAM">
+            <summary>
+            This function returns the amount of RAM configured in the system, in MB.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.SetError(System.String,System.Object[])">
+            <summary>
+            Use this function to set the SDL error message.
+            </summary>
+            <returns> Returns always -1. </returns>
+            <param name="fmt"> A printf() style message format string </param>
+            <param name="objects"> Additional parameters matching % tokens in the fmt string, if any </param>
+            <remarks> Calling this function will replace any previous error message that was set. </remarks>
+        </member>
+        <member name="M:SDL2.SDL.GetError">
+            <summary>
+            Use this function to retrieve a message about the last error that occurred.
+            </summary>
+            <returns> Returns a message with information about the specific error that occurred, or an empty string if there hasn't been an error message set since the last call to <see cref="M:SDL2.SDL.ClearError"/>. The message is only applicable when an SDL function has signaled an error. You must check the return values of SDL function calls to determine when to appropriately call <see cref="M:SDL2.SDL.GetError"/>. </returns>
+            <remarks> 
+            It is possible for multiple errors to occur before calling <see cref="M:SDL2.SDL.GetError"/>. Only the last error is returned. 
+            <para /> The returned string is statically allocated and must not be freed by the application.
+            </remarks>
+        </member>
+        <member name="M:SDL2.SDL.ClearError">
+            <summary>
+            Use this function to clear any previous error message.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.PumpEvents">
+            <summary>
+            Pumps the event loop, gathering events from the input devices.
+            <para> This function updates the event queue and internal input device state. </para>
+            <para> This should only be run in the thread that sets the video mode. </para>
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.PeepEvents(SDL2.Event[],System.Int32,SDL2.EventAction,SDL2.EventType,SDL2.EventType)">
+            <summary>
+            Checks the event queue for messages and optionally returns them.
+            <para> If <paramref name="action"/> is AddEvent, up to <paramref name="numevents"/> events will be added to the back of the event queue. </para>
+            <para> If <paramref name="action"/> is PeekEvent, up to <paramref name="numevents"/> events at the front of the event queue, within the specified minimum and maximum type, will be returned and will not be removed from the queue. </para>
+            <para> If <paramref name="action"/> is GetEvent, up to <paramref name="numevents"/> events at the front of the event queue, within the specified minimum and maximum type, will be returned and will be removed from the queue. </para>
+            <para> This funcion is thread-safe. </para>
+            </summary>
+            <returns>
+            The number of events actually stored, or -1 if there was an error.
+            </returns>
+        </member>
+        <member name="M:SDL2.SDL.HasEvent(SDL2.EventType)">
+            <summary>
+            Checks to see if certain event types are in the event queue.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.HasEvents(SDL2.EventType,SDL2.EventType)">
+            <summary>
+            Checks to see if certain event types are in the event queue.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.FlushEvent(SDL2.EventType)">
+            <summary>
+            This function clears events from the event queue.
+            <para> This function only affects currently queued events. If you want to make sure that all pending OS events are flushed, you can call PumpEvents() on the main thread immediately before the flush call. </para>
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.FlushEvents(SDL2.EventType,SDL2.EventType)">
+            <summary>
+            This function clears events from the event queue.
+            <para> This function only affects currently queued events. If you want to make sure that all pending OS events are flushed, you can call PumpEvents() on the main thread immediately before the flush call. </para>
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.PollEvent(SDL2.Event@)">
+            <summary>
+            Polls for currently pending events.
+            </summary>
+            <returns> 1 if there are any pending events, or 0 if there are none available. </returns>
+            <param name="sdlEvent"> If not NULL, the next event is removed from the queue and stored in that area. </param>
+        </member>
+        <member name="M:SDL2.SDL.WaitEvent(SDL2.Event@)">
+            <summary>
+            Waits indefinitely for the next available event.
+            </summary>
+            <returns> 1, or 0 if there was an error while waiting for events. </returns>
+            <param name="sdlEvent"> If not NULL, the next event is removed from the queue and stored in that area. </param>
+        </member>
+        <member name="M:SDL2.SDL.WaitEventTimeout(SDL2.Event@,System.Int32)">
+            <summary>
+            Waits until the specified timeout (in milliseconds) for the next available event.
+            </summary>
+            <returns> 1, or 0 if there was an error while waiting for events. </returns>
+            <param name="sdlEvent"> If not NULL, the next event is removed from the queue and stored in that area. </param>
+            <param name="timeout"> The timeout (in milliseconds) to wait for next event. </param>
+        </member>
+        <member name="M:SDL2.SDL.PushEvent(SDL2.Event@)">
+            <summary>
+            Add an event to the event queue.
+            </summary>
+            <returns> 1 on success, 0 if the event was filtered, or -1 if the event queue was full or there was some other error. </returns>
+        </member>
+        <member name="M:SDL2.SDL.SetEventFilter(SDL2.EventFilter,System.IntPtr)">
+            <summary>
+            Sets up a filter to process all events before they change internal state and are posted to the internal event queue.
+            <para> The filter is prototyped as: 
+            <c> int EventFilter (void* userData, ref Event sdlEvent); </c> </para>
+            If the filter returns 1, then the event will be added to the internal queue. 
+            If it returns 0, then the event will be dropped from the queue, but the internal state will still be updated.This allows selective filtering of dynamically arriving events.
+            <para> Be very careful of what you do in the event filter function, as it may run in a different thread! </para>
+            <para> There is one caveat when dealing with the ::QuitEvent event type.  The event filter is only called when the window manager desires to close the application window.  If the event filter returns 1, then the window will be closed, otherwise the window will remain open if possible. </para>
+            <para> If the quit event is generated by an interrupt signal, it will bypass the internal queue and be delivered to the application at the next event poll. </para>
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.GetEventFilter(SDL2.EventFilter@,System.IntPtr)">
+            <summary>
+            Return the current event filter - can be used to "chain" filters.
+            If there is no event filter set, this function returns FALSE.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.AddEventWatch(SDL2.EventFilter,System.IntPtr)">
+            <summary>
+            Add a function which is called when an event is added to the queue.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.DelEventWatch(SDL2.EventFilter,System.IntPtr)">
+            <summary>
+            Remove an event watch function added with AddEventWatch().
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.FilterEvents(SDL2.EventFilter,System.IntPtr)">
+            <summary>
+            Run the filter function on the current event queue, removing any events for which the filter returns 0.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.GetEventState(SDL2.EventType,SDL2.EventState)">
+            <summary>
+            This function allows you to set the state of processing certain events.
+            - If <paramref name="state"/> is set to EventState.Ignore, that event will be automatically dropped from the event queue and will not be filtered.
+            - If <paramref name="state"/> is set to EventState.Enable, that event will be processed normally.
+            - If <paramref name="state"/> is set to EventState.Query, EventState() will return the current processing state of the specified event.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.RegisterEvents(System.Int32)">
+            <summary>
+            This function allocates a set of user-defined events, and returns the beginning event number for that set of events.
+            <para> If there aren't enough user-defined events left, this function returns (uint)-1 </para>
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.GetBasePath">
+            <summary>
+            Use this function to get the directory where the application was run from. This is where the application data directory is.
+            </summary>
+            <returns>
+            Returns an absolute path in UTF-8 encoding to the application data directory. NULL will be returned on error or when the platform doesn't implement this functionality, call <see cref="M:SDL2.SDL.GetError"/> for more information.
+            <para /> The return path will be guaranteed to end with a path separator ('\' on Windows, '/' on most other platforms)
+            <para /> The pointer returned is owned by you. Please call SDL_free() on the pointer when you are done with it.
+            </returns>
+            <remarks>
+            This is not necessarily a fast call, though, so you should call this once near startup and save the string if you need it.
+            </remarks>
+        </member>
+        <member name="M:SDL2.SDL.GetPrefPath(System.String,System.String)">
+            <summary>
+            Use this function to get the "pref dir". This is meant to be where the application can write personal files (Preferences and save games, etc.) that are specific to the application. This directory is unique per user and per application.
+            </summary>
+            <returns>
+            Returns a UTF-8 string of the user directory in platform-dependent notation. NULL if there's a problem (creating directory failed, etc.).
+            <para /> The return path will be guaranteed to end with a path separator ('\' on Windows, '/' on most other platforms)
+            <para /> The pointer returned is owned by you. Please call SDL_free() on the pointer when you are done with it.
+            </returns>
+            <remarks>
+            You should assume the path returned by this function is the only safe place to write files (and that <see cref="M:SDL2.SDL.GetBasePath"/>, while it might be writable, or even the parent of the returned path, aren't where you should be writing things).
+            </remarks>
+        </member>
+        <member name="M:SDL2.SDL.GameControllerAddMappingFromRW(System.IntPtr,System.Int32)">
+            <summary>
+            Load a set of mappings from a seekable SDL data stream (memory or file), filtered by the current SDL_GetPlatform().
+            <para /> A community sourced database of controllers is available at https://raw.github.com/gabomdq/SDL_GameControllerDB/master/gamecontrollerdb.txt
+            <para/> If <paramref name="freeRW"/> is non-zero, the stream will be closed after being read.
+            </summary>
+            <returns> Number of mappings added, -1 on error </returns>
+        </member>
+        <member name="M:SDL2.SDL.GameControllerAddMapping(System.String)">
+            <summary>
+            Add or update an existing mapping configuration
+            </summary>
+            <returns> 1 if mapping is added, 0 if updated, -1 on error </returns>
+        </member>
+        <member name="M:SDL2.SDL.GameControllerNumMappings">
+            <summary>
+            Get the number of mappings installed
+            </summary>
+            <returns> the number of mappings </returns>
+        </member>
+        <member name="M:SDL2.SDL.GameControllerMappingForIndex(System.Int32)">
+            <summary>
+            Get the mapping at a particular index.
+            </summary>
+            <returns> the mapping string.  Must be freed with SDL_free().  Returns NULL if the index is out of range. </returns>
+        </member>
+        <member name="F:SDL2.SDL.HintFrameBufferAcceleration">
+            <summary>
+            A variable controlling how 3D acceleration is used to accelerate the SDL screen surface.
+            <para /> SDL can try to accelerate the SDL screen surface by using streaming textures with a 3D rendering engine.This variable controls whether and how this is done.
+            <para /> This variable can be set to the following values:
+            "0"       - Disable 3D acceleration
+            "1"       - Enable 3D acceleration, using the default renderer.
+            "X"       - Enable 3D acceleration, using X where X is one of the valid rendering drivers.  (e.g. "direct3d", "opengl", etc.)
+            <para /> By default SDL tries to make a best guess for each platform whether to use acceleration or not.
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.HintRenderLogicalSizeMode">
+            <summary>
+            A variable controlling the scaling policy for <see cref="!:RenderSetLogicalSize"/>.
+            <para /> This variable can be set to the following values:
+            "0" or "letterbox" - Uses letterbox/sidebars to fit the entire rendering on screen
+            "1" or "overscan"  - Will zoom the rendering so it fills the entire screen, allowing edges to be drawn offscreen
+            <para /> By default letterbox is used
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.SetHintWithPriority(System.String,System.String,SDL2.HintPriority)">
+            <summary>
+            Set a hint with a specific priority
+            <para /> The priority controls the behavior when setting a hint that already has a value.Hints will replace existing hints of their priority and lower.Environment variables are considered to have override priority.
+            </summary>
+            <returns> True if the hint was set, false otherwise </returns>
+        </member>
+        <member name="M:SDL2.SDL.SetHint(System.String,System.String)">
+            <summary>
+            Set a hint with normal priority.
+            </summary>
+            <returns> True if the hint was set, false otherwise </returns>
+        </member>
+        <member name="M:SDL2.SDL.GetHint(System.String)">
+            <summary>
+            Get a hint.
+            </summary>
+            <returns> The string value of a hint variable. </returns>
+        </member>
+        <member name="M:SDL2.SDL.GetHintBoolean(System.String,System.Boolean)">
+            <summary>
+            Get a hint.
+            </summary>
+            <returns> The boolean value of a hint variable. </returns>
+        </member>
+        <member name="M:SDL2.SDL.AddHintCallback(System.String,SDL2.HintCallback,System.IntPtr)">
+            <summary>
+            Add a function to watch a particular hint.
+            </summary>
+            <param name="name"> The hint to watch </param>
+            <param name="callback"> The function to call when the hint value changes </param>
+            <param name="userData"> A pointer to pass to the callback function </param>
+        </member>
+        <member name="M:SDL2.SDL.DelHintCallback(System.String,SDL2.HintCallback,System.IntPtr)">
+            <summary>
+            Remove a function watching a particular hint.
+            </summary>
+            <param name="name"> The hint to watch </param>
+            <param name="callback"> The function to call when the hint value changes </param>
+            <param name="userData"> A pointer to pass to the callback function </param>
+        </member>
+        <member name="M:SDL2.SDL.ClearHints">
+            <summary>
+            Clear all hints.
+            <para /> This function is called during <see cref="M:SDL2.SDL.Quit"/> to free stored hints.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.GetKeyboardFocus">
+            <summary>
+            Get the window which currently has keyboard focus.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.GetKeyboardState(System.Byte[]@,System.Int32@)">
+            <summary>
+            Get a snapshot of the current state of the keyboard.
+            </summary>
+            <paramref name="numkeys"/> Receives the length of the returned array.
+            <returns/> An array of key states. Indexes into this array are obtained by using <see cref="T:SDL2.ScanCode"/> values.
+        </member>
+        <member name="M:SDL2.SDL.GetModState">
+            <summary>
+            Get the current key modifier state for the keyboard.
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.SetModState(SDL2.KeyMod)">
+            <summary>
+            Set the current key modifier state for the keyboard.
+            </summary>
+            <remarks> This does not change the keyboard state, only the key modifier flags. </remarks>
+        </member>
+        <member name="M:SDL2.SDL.GetKeyFromScanCode(SDL2.ScanCode)">
+            <summary>
+            Get the key code corresponding to the given scancode according to the current keyboard layout. See <see cref="T:SDL2.KeyCode"/> for details.
+            </summary>
+            <seealso cref="M:SDL2.SDL.GetKeyName(SDL2.KeyCode)"/>
+        </member>
+        <member name="M:SDL2.SDL.GetScanCodeFromKey(SDL2.KeyCode)">
+            <summary>
+            Get the scancode corresponding to the given key code according to the current keyboard layout. See <see cref="T:SDL2.ScanCode"/> for details.
+            </summary>
+            <seealso cref="!:GetScancodeName(ScanCode)"/>
+        </member>
+        <member name="M:SDL2.SDL.GetScanCodeName(SDL2.ScanCode)">
+            <summary>
+            Get a human-readable name for a scancode.
+            </summary>
+            <seealso cref="T:SDL2.ScanCode"/>
+            <returns> A pointer to the name for the scancode. If the scancode doesn't have a name, this function returns an empty string (""). </returns>
+        </member>
+        <member name="M:SDL2.SDL.GetScanCodeFromName(System.String)">
+            <summary>
+            Get a scancode from a human-readable name.
+            </summary>
+            <returns> ScanCsode, or <see cref="F:SDL2.ScanCode.Unknown"/> if the name wasn't recognized </returns>
+            <seealso cref="T:SDL2.ScanCode"/>
+        </member>
+        <member name="M:SDL2.SDL.GetKeyName(SDL2.KeyCode)">
+            <summary>
+            Get a human-readable name for a key.
+            </summary>
+            <returns> A pointer to a UTF-8 string that stays valid at least until the next
+                    call to this function. If you need it around any longer, you must
+                    copy it.  If the key doesn't have a name, this function returns an
+                    empty string (""). </returns>
+            <seealso cref="T:SDL2.KeyCode"/>
+        </member>
+        <member name="M:SDL2.SDL.GetKeyFromName(System.String)">
+            <summary>
+            Get a key code from a human-readable name
+            </summary>
+            <returns/> key code, or <see cref="F:SDL2.KeyCode.Unknown"/> if the name wasn't recognized
+            <seealso cref="T:SDL2.KeyCode"/>
+        </member>
+        <member name="M:SDL2.SDL.StartTextInput">
+            <summary>
+            Start accepting Unicode text input events. This function will show the on-screen keyboard if supported.
+            </summary>
+            <seealso cref="M:SDL2.SDL.StopTextInput"/>
+            <seealso cref="!:SetTextInputRect(out Rect)"/>
+            <seealso cref="M:SDL2.SDL.HasScreenKeyboardSupport"/>
+        </member>
+        <member name="M:SDL2.SDL.IsTextInputActive">
+            <summary>
+            Return whether or not Unicode text input events are enabled.
+            </summary>
+            <seealso cref="M:SDL2.SDL.StartTextInput"/>
+            <seealso cref="M:SDL2.SDL.StopTextInput"/> 
+        </member>
+        <member name="M:SDL2.SDL.StopTextInput">
+            <summary>
+            Stop receiving any text input events. This function will hide the on-screen keyboard if supported.
+            </summary>
+            <seealso cref="M:SDL2.SDL.StartTextInput"/>
+            <seealso cref="M:SDL2.SDL.HasScreenKeyboardSupport"/>
+        </member>
+        <member name="M:SDL2.SDL.SetTextInputRect(SDL2.Rectangle@)">
+            <summary>
+            Set the rectangle used to type Unicode text inputs. This is used as a hint for IME and on-screen keyboard placement.
+            </summary>
+            <seealso cref="M:SDL2.SDL.StartTextInput"/>
+        </member>
+        <member name="M:SDL2.SDL.HasScreenKeyboardSupport">
+            <summary>
+            Returns whether the platform has some screen keyboard support.
+            </summary>
+            <returns/> True if some keyboard support is available else false.
+            <remarks/> Not all screen keyboard functions are supported on all platforms.
+            <seealso cref="!:IsScreenKeyboardShown(IntPtr)"/>
+        </member>
+        <member name="M:SDL2.SDL.IsScreenKeyboardShownInternal(System.IntPtr)">
+            <summary>
+            Returns whether the screen keyboard is shown for given window.
+            </summary>
+            <param name="window"/> window The window for which screen keyboard should be queried.
+            <returns/> True if screen keyboard is shown else false.
+            <seealso cref="M:SDL2.SDL.HasScreenKeyboardSupport"/> 
+        </member>
+        <member name="T:SDL2.SDL.LogCategory">
+            <summary>
+            The predefined log categories
+            <para /> By default the application category is enabled at the INFO level, the assert category is enabled at the WARN level, test is enabled at the VERBOSE level and all other categories are enabled at the CRITICAL level.
+            </summary>
+        </member>
+        <member name="T:SDL2.SDL.LogPriority">
+            <summary>
+            The predefined log priorities
+            </summary>
+        </member>
+        <member name="T:SDL2.SDL.SysWMType">
+            <summary>
+            These are the various supported windowing subsystems.
+            </summary>
+        </member>
+        <member name="T:SDL2.SDL.SysWMInfo">
+            <summary>
+            The custom window manager information structure.
+            <para /> When this structure is returned, it holds information about which low level system it is using, and will be one of <see cref="T:SDL2.SDL.SysWMType"/>.
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.SysWMInfo.InfoUnion.WindowsInfo.Window">
+            <summary>
+            The window handle
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.SysWMInfo.InfoUnion.WindowsInfo.Hdc">
+            <summary>
+            The window device context
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.SysWMInfo.InfoUnion.WindowsInfo.HInstance">
+            <summary>
+            The instance handle
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.SysWMInfo.InfoUnion.WinRTInfo.Window">
+            <summary>
+            The WinRT CoreWindow
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.SysWMInfo.InfoUnion.X11Info.Display">
+            <summary>
+            The X11 display
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.SysWMInfo.InfoUnion.X11Info.Window">
+            <summary>
+            The X11 window
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.SysWMInfo.InfoUnion.DirectFBInfo.DirectFB">
+            <summary>
+            The direcrfb main interface
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.SysWMInfo.InfoUnion.DirectFBInfo.Window">
+            <summary>
+            The directfb window handle
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.SysWMInfo.InfoUnion.DirectFBInfo.Surface">
+            <summary>
+            The directfb client surface
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.SysWMInfo.InfoUnion.CocoaInfo.Window">
+            <summary>
+            The Cocoa window
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.SysWMInfo.InfoUnion.UIKitInfo.Window">
+            <summary>
+            The UIKit window
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.SysWMInfo.InfoUnion.UIKitInfo.FrameBuffer">
+            <summary>
+            The GL view's Framebuffer Object. It must be bound when rendering to the screen using GL.
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.SysWMInfo.InfoUnion.UIKitInfo.ColorBuffer">
+            <summary>
+            The GL view's color Renderbuffer Object. It must be bound when SDL_GL_SwapWindow is called.
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.SysWMInfo.InfoUnion.UIKitInfo.ResolveFrameBuffer">
+            <summary>
+            The Framebuffer Object which holds the resolve color Renderbuffer, when MSAA is used.
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.SysWMInfo.InfoUnion.WaylandInfo.Display">
+            <summary>
+            Wayland display
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.SysWMInfo.InfoUnion.WaylandInfo.Surface">
+            <summary>
+            Wayland surface
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.SysWMInfo.InfoUnion.WaylandInfo.ShellSurface">
+            <summary>
+            Wayland shell_surface (window manager handle)
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.SysWMInfo.InfoUnion.MirInfo.Connection">
+            <summary>
+            Mir display server connection
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.SysWMInfo.InfoUnion.MirInfo.Surface">
+            <summary>
+            Mir surface
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.GetWindowWMInfo(System.IntPtr,SDL2.SDL.SysWMInfo@)">
+            <summary>
+            This function allows access to driver-dependent window information.
+            </summary>
+            <param name="window"> The window about which information is being requested </param>
+            <param name="info"> This structure must be initialized with the SDL version, and is then filled in with information about the given window. </param>
+            <returns> True if the function is implemented and the version member of the <paramref name="info"/> struct is valid, false otherwise. </returns>
+        </member>
+        <member name="T:SDL2.SDL.Version">
+            <summary>
+            Information the version of SDL in use.
+            <para/> Represents the library's version as three levels: major revision (increments with massive changes, additions, and enhancements), minor revision (increments with backwards-compatible changes to the major revision), and patchlevel (increments with fixes to the minor revision).
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.GetVersion(SDL2.SDL.Version@)">
+            <summary>
+            Get the version of SDL that is linked against your program.
+            <para/> This function may be called safely at any time, even before SDL_Init().
+            </summary>
+        </member>
+        <member name="M:SDL2.SDL.GetRevision">
+            <summary>
+            Get the code revision of SDL that is linked against your program.
+            <para /> Returns an arbitrary string (a hash value) uniquely identifying the exact revision of the SDL library in use, and is only useful in comparing against other revisions.It is NOT an incrementing number.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SDL2.SDL.GetRevisionNumber">
+            <summary>
+            Get the revision number of SDL that is linked against your program.
+            <para /> Returns a number uniquely identifying the exact revision of the SDL library in use.It is an incrementing number based on commits to hg.libsdl.org
+            </summary>
+        </member>
+        <member name="T:SDL2.SDL.WindowFlags">
+            <summary>
+            The flags on a window.
+            </summary>
+            <seealso cref="M:SDL2.SDL.GetWindowFlags(System.IntPtr)"/>
+        </member>
+        <member name="F:SDL2.SDL.WindowFlags.Fullscreen">
+            <summary>
+            Fullscreen window
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowFlags.OpenGL">
+            <summary>
+            Window usable with OpenGL context
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowFlags.Shown">
+            <summary>
+            Window is visible
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowFlags.Hidden">
+            <summary>
+            Window is not visible
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowFlags.Borderless">
+            <summary>
+            No window decoration
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowFlags.Resizable">
+            <summary>
+            Window can be resized
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowFlags.Minimized">
+            <summary>
+            Window is minimized
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowFlags.Maximized">
+            <summary>
+            Window is maximized
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowFlags.InputGrabbed">
+            <summary>
+            Window has grabbed input focus
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowFlags.InputFocus">
+            <summary>
+            Window has input focus
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowFlags.MouseFocus">
+            <summary>
+            Window has mouse focus
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowFlags.Foreign">
+            <summary>
+            Window not created by SDL
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowFlags.AllowHighDPI">
+            <summary>
+            Window should be created in high-DPI mode if supported
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowFlags.MouseCapture">
+            <summary>
+            Window has mouse captured (unrelated to <see cref="F:SDL2.SDL.WindowFlags.InputGrabbed"/>)
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowFlags.AlwaysOnTop">
+            <summary>
+            Window should always be above others
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowFlags.SkipTaskbar">
+            <summary>
+            Window should not be added to the taskbar
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowFlags.Utility">
+            <summary>
+            Window should be treated as a utility window
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowFlags.Tooltip">
+            <summary>
+            Window should be treated as a tooltip
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowFlags.PopupMenu">
+            <summary>
+            Window should be treated as a popup menu
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowFlags.Vulkan">
+            <summary>
+            Window usable for Vulkan surface
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowEventID.None">
+            <summary>
+            Never used
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowEventID.Shown">
+            <summary>
+            Window has been shown
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowEventID.Hidden">
+            <summary>
+            Window has been hidden
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowEventID.Exposed">
+            <summary>
+            Window has been exposed and should be redrawn
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowEventID.Moved">
+            <summary>
+            Window has been moved to data1, data2
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowEventID.Resized">
+            <summary>
+            Window has been resized to data1 x data2
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowEventID.SizeChanged">
+            <summary>
+            The window size has changed, either as a result of an API call or through the system or user changing the window size
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowEventID.Minimized">
+            <summary>
+            Window has been minimized
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowEventID.Maximized">
+            <summary>
+            Window has been maximized
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowEventID.Restored">
+            <summary>
+            Window has been restored to normal size and position
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowEventID.Enter">
+            <summary>
+            Window has gained mouse focus
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowEventID.Leave">
+            <summary>
+            Window has lost mouse focus
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowEventID.FocusGained">
+            <summary>
+            Window has gained keyboard focus
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowEventID.FocusLost">
+            <summary>
+            Window has lost keyboard focus
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowEventID.Close">
+            <summary>
+            The window manager requests that the window be closed
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowEventID.TakeFocus">
+            <summary>
+            Window is being offered a focus (should <see cref="M:SDL2.SDL.SetWindowInputFocus(System.IntPtr)"/> on itself or a subwindow, or ignore)
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowEventID.HitTest">
+            <summary>
+            Window had a hit test that wasn't <see cref="!:HitTestNormal"/>
+            </summary>
+        </member>
+        <member name="T:SDL2.SDL.HitTestResult">
+            <summary> Possible return values from the <see cref="T:SDL2.SDL.HitTest"/> callback. </summary>
+            <seealso cref="T:SDL2.SDL.HitTest"/>
+        </member>
+        <member name="F:SDL2.SDL.HitTestResult.Normal">
+            <summary>
+            Region is normal. No special properties.
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.HitTestResult.Draggable">
+            <summary>
+            Region can drag entire window.
+            </summary>
+        </member>
+        <member name="T:SDL2.SDL.DisplayMode">
+            <summary>
+            A structure that describes a display mode.
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowPositionUndefinedMask">
+            <summary>
+            Used to indicate that you don't care what the window position is.
+            </summary>
+        </member>
+        <member name="F:SDL2.SDL.WindowPositionCenteredMask">
+            <summary>
+            Used to indicate that the window position should be centered.
+            </summary>
+        </member>
+        <member name="T:SDL2.SDL.HitTest">
+            <summary> Callback used for hit-testing. </summary>
+            <seealso cref="M:SDL2.SDL.SetWindowHitTest(System.IntPtr,SDL2.SDL.HitTest,System.IntPtr)"/>
+        </member>
+        <member name="M:SDL2.SDL.GetNumVideoDrivers">
+            <summary>
+            Get the number of video drivers compiled into SDL
+            </summary>
+            <seealso cref="M:SDL2.SDL.GetVideoDriver(System.Int32)"/>
+        </member>
+        <member name="M:SDL2.SDL.GetVideoDriver(System.Int32)">
+            <summary>
+            Get the name of a built in video driver.
+            </summary>
+            <remarks> The video drivers are presented in the order in which they are normally checked during initialization. </remarks>
+            <seealso cref="M:SDL2.SDL.GetNumVideoDrivers"/>
+        </member>
+        <member name="M:SDL2.SDL.VideoInit(System.IntPtr)">
+            <summary> Initialize the video subsystem, optionally specifying a video driver. </summary>
+            <param name="driver_name"/> Initialize a specific driver by name, or <see cref="F:System.IntPtr.Zero"/> for the default video driver.
+            <returns> 0 on success, -1 on error </returns>
+            <remarks>
+             This function initializes the video subsystem; setting up a connection
+             to the window manager, etc, and determines the available display modes
+             and pixel formats, but does not initialize a window or graphics mode.
+            </remarks>
+            <seealso cref="M:SDL2.SDL.VideoQuit"/>
+        </member>
+        <member name="M:SDL2.SDL.VideoQuit">
+            <summary> 
+            Shuts down the video subsystem.
+            <para/>
+            This function closes all windows, and restores the original video mode.
+            </summary>
+            <seealso cref="M:SDL2.SDL.VideoInit(System.IntPtr)"/>
+        </member>
+        <member name="M:SDL2.SDL.GetCurrentVideoDriver">
+            <summary> Returns the name of the currently initialized video driver. </summary>
+            <returns> The name of the current video driver or <see cref="F:System.IntPtr.Zero"/> if no driver has been initialized. </returns>
+            <seealso cref="M:SDL2.SDL.GetNumVideoDrivers"/>
+            <seealso cref="M:SDL2.SDL.GetVideoDriver(System.Int32)"/>
+        </member>
+        <member name="M:SDL2.SDL.GetNumVideoDisplays">
+            <summary> Returns the number of available video displays. </summary>
+            <seealso cref="M:SDL2.SDL.GetDisplayBounds(System.Int32,SDL2.Rectangle@)"/>
+        </member>
+        <member name="M:SDL2.SDL.GetDisplayName(System.Int32)">
+            <summary> Get the name of a display in UTF-8 encodin.g </summary>
+            <returns> The name of a display, or <see cref="F:System.IntPtr.Zero"/> for an invalid display index. </returns>
+            <seealso cref="M:SDL2.SDL.GetNumVideoDisplays"/>
+        </member>
+        <member name="M:SDL2.SDL.GetDisplayBounds(System.Int32,SDL2.Rectangle@)">
+            <summary> Get the deskTop area represented by a display, with the primary display located at 0,0 </summary>
+            <returns> 0 on success, or -1 if the index is out of range. </returns>
+            <seealso cref="M:SDL2.SDL.GetNumVideoDisplays"/>
+        </member>
+        <member name="M:SDL2.SDL.GetDisplayDPI(System.Int32,System.Single@,System.Single@,System.Single@)">
+            <summary> Get the dots/pixels-per-inch for a display </summary>
+            <remarks>
+            Diagonal, horizontal and vertical DPI can all be optionally returned if the parameter is non-<see cref="F:System.IntPtr.Zero"/>.
+            </remarks>
+            <returns> 0 on success, or -1 if no DPI information is available or the index is out of range. </returns>
+            <seealso cref="M:SDL2.SDL.GetNumVideoDisplays"/>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:SDL2.SDL.GetDisplayUsableBounds(System.Int32,SDL2.Rectangle@)" -->
+        <member name="M:SDL2.SDL.GetNumDisplayModes(System.Int32)">
+            <summary> Returns the number of available display modes. </summary>
+            <seealso cref="M:SDL2.SDL.GetDisplayMode(System.Int32,System.Int32,SDL2.SDL.DisplayMode@)"/>
+        </member>
+        <member name="M:SDL2.SDL.GetDisplayMode(System.Int32,System.Int32,SDL2.SDL.DisplayMode@)">
+            <summary> Fill in information about a specific display mode. </summary>
+            <remarks>
+            The display modes are sorted in this priority:
+            <list type="bullet">
+            <item> <description> bits per pixel -> more colors to fewer colors </description> </item>
+            <item> <description> width -> largest to smallest </description> </item>
+            <item> <description> height -> largest to smallest </description> </item>
+            <item> <description> refresh rate -> highest to lowest </description> </item>
+            </list>
+            </remarks>
+            <seealso cref="M:SDL2.SDL.GetNumDisplayModes(System.Int32)"/>
+        </member>
+        <member name="M:SDL2.SDL.GetDeskTopDisplayMode(System.Int32,SDL2.SDL.DisplayMode@)">
+            <summary> Fill in information about the deskTop display mode. </summary>
+        </member>
+        <member name="M:SDL2.SDL.GetCurrentDisplayMode(System.Int32,SDL2.SDL.DisplayMode@)">
+            <summary> Fill in information about the current display mode. </summary>
+        </member>
+        <member name="M:SDL2.SDL.GetClosestDisplayMode(System.Int32,SDL2.SDL.DisplayMode@,SDL2.SDL.DisplayMode@)">
+            <summary> Get the closest match to the requested display mode. </summary>
+            <param name="displayIndex"> The index of display from which mode should be queried. </param>
+            <param name="mode"> The desired display mode. </param>
+            <param name="closest"> A pointer to a display mode to be filled in with the closest match of the available display modes. </param>
+            <returns> The passed in value <paramref name="closest"/>, or <see cref="F:System.IntPtr.Zero"/> if no matching video mode was available. </returns>
+            <remarks>
+             The available display modes are scanned, and \c closest is filled in with the
+             closest mode matching the requested mode and returned.  The mode format and
+             refresh_rate default to the deskTop mode if they are 0.  The modes are
+             scanned with size being first priority, format being second priority, and
+             finally checking the refresh_rate.  If all the available modes are too
+             small, then <see cref="F:System.IntPtr.Zero"/> is returned.
+            </remarks>
+            <seealso cref="M:SDL2.SDL.GetNumDisplayModes(System.Int32)"/>
+            <seealso cref="M:SDL2.SDL.GetDisplayMode(System.Int32,System.Int32,SDL2.SDL.DisplayMode@)"/>
+        </member>
+        <member name="M:SDL2.SDL.GetWindowDisplayIndex(System.IntPtr)">
+            <summary> Get the display index associated with a window. </summary>
+            <returns> the display index of the display containing the center of the window, or -1 on error. </returns>
+        </member>
+        <member name="M:SDL2.SDL.SetWindowDisplayMode(System.IntPtr,SDL2.SDL.DisplayMode@)">
+            <summary> Set the display mode used when a fullscreen window is visible.
+            <para/>
+             By default the window's dimensions and the deskTop format and refresh rate
+             are used.
+            </summary>
+            <param name="window"/> The window for which the display mode should be set.
+            <param name="mode"/> The mode to use, or <see cref="F:System.IntPtr.Zero"/> for the default mode.
+            <returns> 0 on success, or -1 if setting the display mode failed. </returns>
+            <seealso cref="M:SDL2.SDL.GetWindowDisplayMode(System.IntPtr,SDL2.SDL.DisplayMode@)"/>
+            <seealso cref="M:SDL2.SDL.SetWindowFullscreen(System.IntPtr,SDL2.SDL.WindowFlags)"/>
+        </member>
+        <member name="M:SDL2.SDL.GetWindowDisplayMode(System.IntPtr,SDL2.SDL.DisplayMode@)">
+            <summary> Fill in information about the display mode used when a fullscreen window is visible. </summary>
+            <seealso cref="M:SDL2.SDL.SetWindowDisplayMode(System.IntPtr,SDL2.SDL.DisplayMode@)"/>
+            <seealso cref="M:SDL2.SDL.SetWindowFullscreen(System.IntPtr,SDL2.SDL.WindowFlags)"/>
+        </member>
+        <member name="M:SDL2.SDL.GetWindowPixelFormat(System.IntPtr)">
+            <summary> Get the pixel format associated with the window. </summary>
+        </member>
+        <member name="M:SDL2.SDL.CreateWindow(System.String,System.Int32,System.Int32,System.Int32,System.Int32,SDL2.SDL.WindowFlags)">
+            <summary> Create a window with the specified position, dimensions, and flags. </summary>
+            <param name="title"> The title of the window, in UTF-8 encoding. </param>
+            <param name="x"> The x position of the window, <see cref="F:SDL2.SDL.WindowPositionCentered"/>, or <see cref="F:SDL2.SDL.WindowPositionUndefined"/>. </param>
+            <param name="y"> The y position of the window, <see cref="F:SDL2.SDL.WindowPositionCentered"/>, or<see cref="F:SDL2.SDL.WindowPositionUndefined"/>. </param>
+            <param name="width"> The width of the window, in screen coordinates. </param>
+            <param name="height"> The height of the window, in screen coordinates. </param>
+            <param name="flags"> The flags for the window </param>
+            <returns> The created window, or <see cref="F:System.IntPtr.Zero"/> if window creation failed. </returns>
+            <remarks>
+             If the window is created with the WINDOW_ALLOW_HIGHDPI flag, its size
+             in pixels may differ from its size in screen coordinates on platforms with
+             high-DPI support (e.g. iOS and Mac OS X). Use GetWindowSize"/> to query
+             the client area's size in screen coordinates, and GL_GetDrawableSize"/>
+             or GetRendererOutputSize"/> to query the drawable size in pixels.
+            </remarks>
+            <seealso cref="M:SDL2.SDL.DestroyWindow(System.IntPtr)"/>
+        </member>
+        <member name="M:SDL2.SDL.CreateWindowFrom(System.IntPtr)">
+            <summary> Create an SDL window from an existing native window. </summary>
+            <param name="data"> A pointer to driver-dependent window creation data. </param>
+            <returns> The created window, or <see cref="F:System.IntPtr.Zero"/> if window creation failed. </returns>
+            <seealso cref="M:SDL2.SDL.DestroyWindow(System.IntPtr)"/>
+        </member>
+        <member name="M:SDL2.SDL.GetWindowID(System.IntPtr)">
+            <summary> Get the numeric ID of a window, for logging purposes. </summary>
+        </member>
+        <member name="M:SDL2.SDL.GetWindowFromID(System.UInt32)">
+            <summary> Get a window from a stored ID, or <see cref="F:System.IntPtr.Zero"/> if it doesn't exist. </summary>
+        </member>
+        <member name="M:SDL2.SDL.GetWindowFlags(System.IntPtr)">
+            <summary> Get the window flags. </summary>
+        </member>
+        <member name="M:SDL2.SDL.SetWindowTitle(System.IntPtr,System.IntPtr)">
+            <summary> Set the title of a window, in UTF-8 format. </summary>
+            <seealso cref="M:SDL2.SDL.GetWindowTitle(System.IntPtr)"/>
+        </member>
+        <member name="M:SDL2.SDL.GetWindowTitle(System.IntPtr)">
+            <summary> Get the title of a window, in UTF-8 format. </summary>
+            <seealso cref="M:SDL2.SDL.SetWindowTitle(System.IntPtr,System.IntPtr)"/>
+        </member>
+        <member name="M:SDL2.SDL.SetWindowIcon(System.IntPtr,System.IntPtr)">
+            <summary> Set the icon for a window. </summary>
+            <param name="window"> The window for which the icon should be set. </param>
+            <param name="icon"> icon The icon for the window. </param>
+        </member>
+        <member name="M:SDL2.SDL.SetWindowData(System.IntPtr,System.IntPtr,System.IntPtr)">
+            <summary> Associate an arbitrary named pointer with a window. </summary>
+            <param name="window"> The window to associate with the pointer. </param>
+            <param name="name"> The name of the pointer. </param>
+            <param name="userData"> The associated pointer. </param>
+            <returns> The previous value associated with 'name' </returns>
+            <remarks> The name is case-sensitive. </remarks>
+            <seealso cref="M:SDL2.SDL.GetWindowData(System.IntPtr,System.IntPtr)"/>
+        </member>
+        <member name="M:SDL2.SDL.GetWindowData(System.IntPtr,System.IntPtr)">
+            <summary> Retrieve the data pointer associated with a window. </summary>
+            <param name="window"> The window to query. </param>
+            <param name="name"> The name of the pointer. </param>
+            <returns> The value associated with 'name' </returns>
+            <seealso cref="M:SDL2.SDL.SetWindowData(System.IntPtr,System.IntPtr,System.IntPtr)"/>
+        </member>
+        <member name="M:SDL2.SDL.SetWindowPosition(System.IntPtr,System.Int32,System.Int32)">
+            <summary> Set the position of a window. </summary>
+            <param name="window"> The window to reposition. </param>
+            <param name="x"> The x coordinate of the window in screen coordinates, or <see cref="F:SDL2.SDL.WindowPositionCentered"/> or <see cref="F:SDL2.SDL.WindowPositionUndefined"/>. </param>
+            <param name="y"> The y coordinate of the window in screen coordinates, or <see cref="F:SDL2.SDL.WindowPositionCentered"/> or <see cref="F:SDL2.SDL.WindowPositionUndefined"/>. </param>
+            <remarks> The window coordinate origin is the upper Left of the display. </remarks>
+            <seealso cref="M:SDL2.SDL.GetWindowPosition(System.IntPtr,System.Int32@,System.Int32@)"/>
+        </member>
+        <member name="M:SDL2.SDL.GetWindowPosition(System.IntPtr,System.Int32@,System.Int32@)">
+            <summary> Get the position of a window. </summary>
+            <param name="window"> The window to query. </param>
+            <param name="x"> Pointer to variable for storing the x position, in screen coordinates. May be <see cref="F:System.IntPtr.Zero"/>. </param>
+            <param name="y"> Pointer to variable for storing the y position, in screen coordinates. May be <see cref="F:System.IntPtr.Zero"/>. </param>
+            <seealso cref="M:SDL2.SDL.SetWindowPosition(System.IntPtr,System.Int32,System.Int32)"/>
+        </member>
+        <member name="M:SDL2.SDL.SetWindowSize(System.IntPtr,System.Int32,System.Int32)">
+            <summary> Set the size of a window's client area. </summary>
+            <param name="window"> The window to resize. </param>
+            <param name="width"> The width of the window, in screen coordinates. Must be >0. </param>
+            <param name="height"> The height of the window, in screen coordinates. Must be >0. </param>
+            <remarks> 
+            You can't change the size of a fullscreen window, it automatically matches the size of the display mode.
+            <para/>
+             The window size in screen coordinates may differ from the size in pixels, if
+             the window was created with WINDOW_ALLOW_HIGHDPI on a platform with
+             high-dpi support (e.g. iOS or OS X). Use GL_GetDrawableSize"/> or
+             GetRendererOutputSize"/> to get the real client area size in pixels.
+            </remarks>
+            <seealso cref="M:SDL2.SDL.GetWindowSize(System.IntPtr,System.Int32@,System.Int32@)"/>
+        </member>
+        <member name="M:SDL2.SDL.GetWindowSize(System.IntPtr,System.Int32@,System.Int32@)">
+            <summary> Get the size of a window's client area. </summary>
+            <param name="window"> The window to query. </param>
+            <param name="width"> Pointer to variable for storing the width, in screen coordinates. May be <see cref="F:System.IntPtr.Zero"/>. </param>
+            <param name="height"> Pointer to variable for storing the height, in screen coordinates. May be <see cref="F:System.IntPtr.Zero"/>. </param>
+            <remarks>
+             The window size in screen coordinates may differ from the size in pixels, if
+             the window was created with WINDOW_ALLOW_HIGHDPI on a platform with
+             high-dpi support (e.g. iOS or OS X). Use GL_GetDrawableSize"/> or
+             GetRendererOutputSize"/> to get the real client area size in pixels.
+            </remarks>
+            <seealso cref="M:SDL2.SDL.SetWindowSize(System.IntPtr,System.Int32,System.Int32)"/>
+        </member>
+        <member name="M:SDL2.SDL.GetWindowBordersSize(System.IntPtr,System.Int32@,System.Int32@,System.Int32@,System.Int32@)">
+            <summary> Get the size of a window's borders (decorations) around the client area. </summary>
+            <param name="window"> The window to query. </param>
+            <param name="top"> Pointer to variable for storing the size of the Top border. <see cref="F:System.IntPtr.Zero"/> is permitted. </param>
+            <param name="left"> Pointer to variable for storing the size of the Left border. <see cref="F:System.IntPtr.Zero"/> is permitted. </param>
+            <param name="bottom"> Pointer to variable for storing the size of the Bottom border. <see cref="F:System.IntPtr.Zero"/> is permitted. </param>
+            <param name="right"> Pointer to variable for storing the size of the Right border. <see cref="F:System.IntPtr.Zero"/> is permitted. </param>
+            <returns> 0 on success, or -1 if getting this information is not supported. </returns>
+            <remarks>
+            If this function fails (returns -1), the size values will be initialized to 0, 0, 0, 0 (if a non-<see cref="F:System.IntPtr.Zero"/> pointer is provided), as if the window in question was borderless.
+            </remarks>
+        </member>
+        <member name="M:SDL2.SDL.SetWindowMinimumSize(System.IntPtr,System.Int32,System.Int32)">
+            <summary> Set the minimum size of a window's client area. </summary>
+            <param name="window"> The window to set a new minimum size. </param>
+            <param name="minwidth"> The minimum width of the window, must be >0 </param>
+            <param name="minHeight"> The minimum height of the window, must be >0 </param>
+            <remarks> You can't change the minimum size of a fullscreen window, it automatically matches the size of the display mode. </remarks>
+            <seealso cref="M:SDL2.SDL.GetWindowMinimumSize(System.IntPtr,System.Int32@,System.Int32@)"/>
+            <seealso cref="M:SDL2.SDL.SetWindowMaximumSize(System.IntPtr,System.Int32,System.Int32)"/>
+        </member>
+        <member name="M:SDL2.SDL.GetWindowMinimumSize(System.IntPtr,System.Int32@,System.Int32@)">
+            <summary> Get the minimum size of a window's client area. </summary>
+            <param name="window"/> The window to query.
+            <param name="width"/> Pointer to variable for storing the minimum width, may be <see cref="F:System.IntPtr.Zero"/>
+            <param name="height"/> Pointer to variable for storing the minimum height, may be <see cref="F:System.IntPtr.Zero"/>
+            <seealso cref="M:SDL2.SDL.GetWindowMaximumSize(System.IntPtr,System.Int32@,System.Int32@)"/>
+            <seealso cref="M:SDL2.SDL.SetWindowMinimumSize(System.IntPtr,System.Int32,System.Int32)"/>
+        </member>
+        <member name="M:SDL2.SDL.SetWindowMaximumSize(System.IntPtr,System.Int32,System.Int32)">
+            <summary> Set the maximum size of a window's client area. </summary>
+            <param name="window"/> The window to set a new maximum size.
+            <param name="maxWidth"/> The maximum width of the window, must be >0
+            <param name="maxHeight"/> The maximum height of the window, must be >0
+            <remarks/> You can't change the maximum size of a fullscreen window, it automatically matches the size of the display mode.
+            <seealso cref="M:SDL2.SDL.GetWindowMaximumSize(System.IntPtr,System.Int32@,System.Int32@)"/>
+            <seealso cref="M:SDL2.SDL.SetWindowMinimumSize(System.IntPtr,System.Int32,System.Int32)"/>
+        </member>
+        <member name="M:SDL2.SDL.GetWindowMaximumSize(System.IntPtr,System.Int32@,System.Int32@)">
+            <summary> Get the maximum size of a window's client area. </summary>
+            <param name="window"/> The window to query.
+            <param name="width"/> Pointer to variable for storing the maximum width, may be <see cref="F:System.IntPtr.Zero"/>
+            <param name="height"/> Pointer to variable for storing the maximum height, may be <see cref="F:System.IntPtr.Zero"/>
+            <seealso cref="M:SDL2.SDL.GetWindowMinimumSize(System.IntPtr,System.Int32@,System.Int32@)"/>
+            <seealso cref="M:SDL2.SDL.SetWindowMaximumSize(System.IntPtr,System.Int32,System.Int32)"/>
+        </member>
+        <member name="M:SDL2.SDL.SetWindowBordered(System.IntPtr,System.Boolean)">
+            <summary> 
+            Set the border state of a window.
+            <para/>
+             This will add or remove the window's WINDOW_BORDERLESS flag and
+             add or remove the border from the actual window. This is a no-op if the
+             window's border already matches the requested state.
+            </summary>
+            <param name="window"/> The window of which to change the border state.
+            <param name="bordered"/> FALSE to remove border, TRUE to add border.
+            <remarks/> You can't change the border state of a fullscreen window.
+            <seealso cref="M:SDL2.SDL.GetWindowFlags(System.IntPtr)"/>
+        </member>
+        <member name="M:SDL2.SDL.SetWindowResizable(System.IntPtr,System.Boolean)">
+            <summary>
+            Set the user-resizable state of a window.
+            <para/>
+             This will add or remove the window's WINDOW_RESIZABLE flag and
+             allow/disallow user resizing of the window. This is a no-op if the
+             window's resizable state already matches the requested state.
+            </summary>
+            <param name="window"/> The window of which to change the resizable state.
+            <param name="resizable"/> TRUE to allow resizing, FALSE to disallow.
+            <remarks> You can't change the resizable state of a fullscreen window. </remarks>
+            <seealso cref="M:SDL2.SDL.GetWindowFlags(System.IntPtr)"/>
+        </member>
+        <member name="M:SDL2.SDL.ShowWindow(System.IntPtr)">
+            <summary> Show a window. </summary>
+            <seealso cref="M:SDL2.SDL.HideWindow(System.IntPtr)"/>
+        </member>
+        <member name="M:SDL2.SDL.HideWindow(System.IntPtr)">
+            <summary> Hide a window. </summary>
+            <seealso cref="M:SDL2.SDL.ShowWindow(System.IntPtr)"/>
+        </member>
+        <member name="M:SDL2.SDL.RaiseWindow(System.IntPtr)">
+            <summary> Raise a window above other windows and set the input focus. </summary>
+        </member>
+        <member name="M:SDL2.SDL.MaximizeWindow(System.IntPtr)">
+            <summary> Make a window as large as possible. </summary>
+            <seealso cref="M:SDL2.SDL.RestoreWindow(System.IntPtr)"/>
+        </member>
+        <member name="M:SDL2.SDL.MinimizeWindow(System.IntPtr)">
+            <summary> Minimize a window to an iconic representation. </summary>
+            <seealso cref="M:SDL2.SDL.RestoreWindow(System.IntPtr)"/>
+        </member>
+        <member name="M:SDL2.SDL.RestoreWindow(System.IntPtr)">
+            <summary> Restore the size and position of a minimized or maximized window. </summary>
+            <seealso cref="M:SDL2.SDL.MaximizeWindow(System.IntPtr)"/>
+            <seealso cref="M:SDL2.SDL.MinimizeWindow(System.IntPtr)"/>
+        </member>
+        <member name="M:SDL2.SDL.SetWindowFullscreen(System.IntPtr,SDL2.SDL.WindowFlags)">
+            <summary> Set a window's fullscreen state. </summary>
+            <returns> 0 on success, or -1 if setting the display mode failed. </returns>
+            <seealso cref="M:SDL2.SDL.SetWindowDisplayMode(System.IntPtr,SDL2.SDL.DisplayMode@)"/>
+            <seealso cref="M:SDL2.SDL.GetWindowDisplayMode(System.IntPtr,SDL2.SDL.DisplayMode@)"/>
+        </member>
+        <member name="M:SDL2.SDL.GetWindowSurface(System.IntPtr)">
+            <summary> Get the SDL surface associated with the window. </summary>
+            <returns> The window's framebuffer surface, or <see cref="F:System.IntPtr.Zero"/> on error. </returns>
+            <remarks>
+             A new surface will be created with the optimal format for the window,
+             if necessary. This surface will be freed when the window is destroyed.
+            <para/>
+             You may not combine this with 3D or the rendering API on this window.
+            </remarks>
+            <seealso cref="M:SDL2.SDL.UpdateWindowSurface(System.IntPtr)"/>
+            <seealso cref="M:SDL2.SDL.UpdateWindowSurfaceRects(System.IntPtr,SDL2.Rectangle[],System.Int32)"/>
+        </member>
+        <member name="M:SDL2.SDL.UpdateWindowSurface(System.IntPtr)">
+            <summary> Copy the window surface to the screen. </summary>
+            <returns> 0 on success, or -1 on error. </returns>
+            <seealso cref="M:SDL2.SDL.GetWindowSurface(System.IntPtr)"/>
+            <seealso cref="M:SDL2.SDL.UpdateWindowSurfaceRects(System.IntPtr,SDL2.Rectangle[],System.Int32)"/>
+        </member>
+        <member name="M:SDL2.SDL.UpdateWindowSurfaceRects(System.IntPtr,SDL2.Rectangle[],System.Int32)">
+            <summary> Copy a number of rectangles on the window surface to the screen. </summary>
+            <returns> 0 on success, or -1 on error. </returns>
+            <seealso cref="M:SDL2.SDL.GetWindowSurface(System.IntPtr)"/>
+            <seealso cref="M:SDL2.SDL.UpdateWindowSurface(System.IntPtr)"/>
+        </member>
+        <member name="M:SDL2.SDL.SetWindowGrab(System.IntPtr,System.Boolean)">
+            <summary> Set a window's input grab mode. </summary>
+            <param name="window"/> The window for which the input grab mode should be set.
+            <param name="grabbed"/> This is TRUE to grab input, and FALSE to release input.
+            <remarks>
+             If the caller enables a grab while another window is currently grabbed,
+             the other window loses its grab in favor of the caller's window.
+            </remarks>
+            <seealso cref="M:SDL2.SDL.GetWindowGrab(System.IntPtr)"/>
+        </member>
+        <member name="M:SDL2.SDL.GetWindowGrab(System.IntPtr)">
+            <summary> Get a window's input grab mode. </summary>
+            <returns> This returns TRUE if input is grabbed, and FALSE otherwise. </returns>
+            <seealso cref="M:SDL2.SDL.SetWindowGrab(System.IntPtr,System.Boolean)"/>
+        </member>
+        <member name="M:SDL2.SDL.GetGrabbedWindow">
+            <summary> Get the window that currently has an input grab enabled. </summary>
+            <returns> This returns the window if input is grabbed, and <see cref="F:System.IntPtr.Zero"/> otherwise. </returns>
+            <seealso cref="M:SDL2.SDL.SetWindowGrab(System.IntPtr,System.Boolean)"/>
+        </member>
+        <member name="M:SDL2.SDL.SetWindowBRightness(System.IntPtr,System.Single)">
+            <summary> Set the bRightness (gamma correction) for a window. </summary>
+            <returns> 0 on success, or -1 if setting the bRightness isn't supported. </returns>
+            <seealso cref="M:SDL2.SDL.GetWindowBRightness(System.IntPtr)"/>
+            <seealso cref="M:SDL2.SDL.SetWindowGammaRamp(System.IntPtr,System.UInt16[],System.UInt16[],System.UInt16[])"/>
+        </member>
+        <member name="M:SDL2.SDL.GetWindowBRightness(System.IntPtr)">
+            <summary> Get the bRightness (gamma correction) for a window. </summary>
+            <returns> The last bRightness value passed to SetWindowBRightness"/> </returns>
+            <seealso cref="M:SDL2.SDL.SetWindowBRightness(System.IntPtr,System.Single)"/>
+        </member>
+        <member name="M:SDL2.SDL.SetWindowOpacity(System.IntPtr,System.Single)">
+            <summary> Set the opacity for a window </summary>
+            <param name="window"/> The window which will be made transparent or opaque
+            <param name="opacity"/> Opacity (0.0f - transparent, 1.0f - opaque) This will be clamped internally between 0.0f and 1.0f.
+            <returns> 0 on success, or -1 if setting the opacity isn't supported. </returns>
+            <seealso cref="M:SDL2.SDL.GetWindowOpacity(System.IntPtr,System.Single@)"/>
+        </member>
+        <member name="M:SDL2.SDL.GetWindowOpacity(System.IntPtr,System.Single@)">
+            <summary> 
+            Get the opacity of a window.
+            <para/>
+             If transparency isn't supported on this platform, opacity will be reported
+             as 1.0f without error.
+            </summary>
+            <param name="window"/> The window in question.
+            <param name="outOpacity"/> Opacity (0.0f - transparent, 1.0f - opaque)
+            <returns> 0 on success, or -1 on error (invalid window, etc). </returns>
+            <seealso cref="M:SDL2.SDL.SetWindowOpacity(System.IntPtr,System.Single)"/>
+        </member>
+        <member name="M:SDL2.SDL.SetWindowModalFor(System.IntPtr,System.IntPtr)">
+            <summary> Sets the window as a modal for another window (TODO: reconsider this function and/or its name) </summary>
+            <param name="modalWindow"> The window that should be modal </param>
+            <param name="parentWindow"> The parent window </param>
+            <returns> 0 on success, or -1 otherwise. </returns>
+        </member>
+        <member name="M:SDL2.SDL.SetWindowInputFocus(System.IntPtr)">
+            <summary> 
+            Explicitly sets input focus to the window.
+            <para/>
+             You almost certainly want <see cref="M:SDL2.SDL.RaiseWindow(System.IntPtr)"/> instead of this function. Use
+             this with caution, as you might give focus to a window that's completely
+             obscured by other windows.
+            </summary>
+            <param name="window"> The window that should get the input focus. </param>
+            <returns> 0 on success, or -1 otherwise. </returns>
+            <seealso cref="M:SDL2.SDL.RaiseWindow(System.IntPtr)"/>
+        </member>
+        <member name="M:SDL2.SDL.SetWindowGammaRamp(System.IntPtr,System.UInt16[],System.UInt16[],System.UInt16[])">
+            <summary> Set the gamma ramp for a window. </summary>
+            <param name="window"/> The window for which the gamma ramp should be set.
+            <param name="red"/> The translation table for the red channel, or <see cref="F:System.IntPtr.Zero"/>.
+            <param name="green"/> The translation table for the green channel, or <see cref="F:System.IntPtr.Zero"/>.
+            <param name="blue"/> The translation table for the blue channel, or <see cref="F:System.IntPtr.Zero"/>.
+            <returns> 0 on success, or -1 if gamma ramps are unsupported. </returns>
+            <remarks>
+             Set the gamma translation table for the red, green, and blue channels
+             of the video hardware.  Each table is an array of 256 16-bit quantities,
+             representing a mapping between the input and output for that channel.
+             The input is the index into the array, and the output is the 16-bit
+             gamma value at that index, scaled to the output color precision.
+            </remarks>
+            <seealso cref="M:SDL2.SDL.GetWindowGammaRamp(System.IntPtr,System.UInt16[],System.UInt16[],System.UInt16[])"/>
+        </member>
+        <member name="M:SDL2.SDL.GetWindowGammaRamp(System.IntPtr,System.UInt16[],System.UInt16[],System.UInt16[])">
+            <summary> Get the gamma ramp for a window. </summary>
+            <param name="window"/> The window from which the gamma ramp should be queried.
+            <param name="red"/> A pointer to a 256 element array of 16-bit quantities to hold the translation table for the red channel, or <see cref="F:System.IntPtr.Zero"/>.
+            <param name="green"/> A pointer to a 256 element array of 16-bit quantities to hold the translation table for the green channel, or <see cref="F:System.IntPtr.Zero"/>.
+            <param name="blue"/> A pointer to a 256 element array of 16-bit quantities to hold the translation table for the blue channel, or <see cref="F:System.IntPtr.Zero"/>.
+            <returns> 0 on success, or -1 if gamma ramps are unsupported. </returns>
+            <seealso cref="M:SDL2.SDL.SetWindowGammaRamp(System.IntPtr,System.UInt16[],System.UInt16[],System.UInt16[])"/>
+        </member>
+        <member name="M:SDL2.SDL.SetWindowHitTest(System.IntPtr,SDL2.SDL.HitTest,System.IntPtr)">
+            <summary> 
+            Provide a callback that decides if a window region has special properties.
+            <para/>
+             Normally windows are dragged and resized by decorations provided by the
+             system window manager (a title bar, borders, etc), but for some apps, it
+             makes sense to drag them from somewhere else inside the window itself; for
+             example, one might have a borderless window that wants to be draggable
+             from any part, or simulate its own title bar, etc.
+            <para/>
+             This function lets the app provide a callback that designates pieces of
+             a given window as special. This callback is run during event processing
+             if we need to tell the OS to treat a region of the window specially; the
+             use of this callback is known as "hit testing."
+            <para/>
+             Mouse input may not be delivered to your application if it is within
+             a special area; the OS will often apply that input to moving the window or
+             resizing the window and not deliver it to the application.
+            <para/>
+             Specifying <see cref="F:System.IntPtr.Zero"/> for a callback disables hit-testing. Hit-testing is
+             disabled by default.
+            <para/>
+             Platforms that don't support this functionality will return -1
+             unconditionally, even if you're attempting to disable hit-testing.
+            <para/>
+             Your callback may fire at any time, and its firing does not indicate any
+             specific behavior (for example, on Windows, this certainly might fire
+             when the OS is deciding whether to drag your window, but it fires for lots
+             of other reasons, too, some unrelated to anything you probably care about
+             _and when the mouse isn't actually at the location it is testing_).
+             Since this can fire at any time, you should try to keep your callback
+             efficient, devoid of allocations, etc.
+            </summary>
+            <paramref name="window"/> The window to set hit-testing on.
+            <paramref name="callback"/> The callback to call when doing a hit-test.
+            <paramref name="callbackData"/> An app-defined void pointer passed to the callback.
+            <returns> 0 on success, -1 on error (including unsupported). </returns>
+        </member>
+        <member name="M:SDL2.SDL.DestroyWindow(System.IntPtr)">
+            <summary> Destroy a window. </summary>
+        </member>
+        <member name="M:SDL2.SDL.IsScreenSaverEnabled">
+            <summary> Returns whether the screensaver is currently enabled (default off). </summary>
+            <seealso cref="M:SDL2.SDL.EnableScreenSaver"/>
+            <seealso cref="M:SDL2.SDL.DisableScreenSaver"/>
+        </member>
+        <member name="M:SDL2.SDL.EnableScreenSaver">
+            <summary> Allow the screen to be blanked by a screensaver. </summary>
+            <seealso cref="M:SDL2.SDL.IsScreenSaverEnabled"/>
+            <seealso cref="M:SDL2.SDL.DisableScreenSaver"/>
+        </member>
+        <member name="M:SDL2.SDL.DisableScreenSaver">
+            <summary> Prevent the screen from being blanked by a screensaver. </summary>
+            <seealso cref="M:SDL2.SDL.IsScreenSaverEnabled"/>
+            <seealso cref="M:SDL2.SDL.EnableScreenSaver"/>
+        </member>
+        <member name="T:SDL2.ButtonState">
+            <summary>
+            General keyboard/mouse state definitions
+            </summary>
+        </member>
+        <member name="T:SDL2.EventType">
+            <summary>
+            The types of events that can be delivered.
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.FirstEvent">
+            <summary>
+            Unused (do not remove)
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.Quit">
+            <summary>
+            User-requested quit
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.AppTerminating">
+            <summary>
+            The application is being terminated by the OS
+            <para /> Called on iOS in applicationWillTerminate()
+            <para /> Called on Android in onDestroy()
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.AppLowMemory">
+            <summary>
+            The application is low on memory, free memory if possible.
+            <para /> Called on iOS in applicationDidReceiveMemoryWarning()
+            <para /> Called on Android in onLowMemory()
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.AppWillEnterBackground">
+            <summary>
+            The application is about to enter the background
+            <para /> Called on iOS in applicationWillResignActive()
+            <para /> Called on Android in onPause()
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.AppDidEnterBackground">
+            <summary>
+            The application did enter the background and may not get CPU for some time
+            <para /> Called on iOS in applicationDidEnterBackground()
+            <para /> Called on Android in onPause()
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.AppWillEnterForeground">
+            <summary>
+            The application is about to enter the foreground
+            <para /> Called on iOS in applicationWillEnterForeground()
+            <para /> Called on Android in onResume()
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.AppDidEnterForeground">
+            <summary>
+            The application is now interactive
+            <para /> Called on iOS in applicationDidBecomeActive()
+            <para /> Called on Android in onResume()
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.WindowEvent">
+            <summary>
+            Window state change
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.SysWMEvent">
+            <summary>
+            System specific event
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.KeyDown">
+            <summary>
+            Key pressed
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.KeyUp">
+            <summary>
+            Key released
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.TextEditing">
+            <summary>
+            Keyboard text editing (composition)
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.TextInput">
+            <summary>
+            Keyboard text input
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.KeyMapChanged">
+            <summary>
+            Keymap changed due to a system event such as an input language or keyboard layout change.
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.MouseMotion">
+            <summary>
+            Mouse moved
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.MouseButtonDown">
+            <summary>
+            Mouse button pressed
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.MouseButtonUp">
+            <summary>
+            Mouse button released
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.MouseWheel">
+            <summary>
+            Mouse wheel motion
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.JoyAxisMotion">
+            <summary>
+            Joystick axis motion
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.JoyBallMotion">
+            <summary>
+            Joystick trackball motion 
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.JoyHatMotion">
+            <summary>
+            Joystick hat position change
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.JoyButtonDown">
+            <summary>
+            Joystick button presse
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.JoyButtonUp">
+            <summary>
+            Joystick button released
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.JoyDeviceAdded">
+            <summary>
+            A new joystick has been inserted into the system
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.JoyDeviceRemoved">
+            <summary>
+            An opened joystick has been removed
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.ControllerAxisMotion">
+            <summary>
+            Game controller axis motion
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.ControllerButtonDown">
+            <summary>
+            Game controller button pressed
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.ControllerButtonUp">
+            <summary>
+            Game controller button released
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "F:SDL2.EventType.ControllerDeviceAdded" -->
+        <member name="F:SDL2.EventType.ControllerDeviceRemoved">
+            <summary>
+            An opened Game controller has been removed
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.ControllerDeviceMapped">
+            <summary>
+            The controller mapping was updated
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.ClipboardUpdate">
+            <summary>
+            The clipboard changed
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.DropFile">
+            <summary>
+            The system requests a file open
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.DropText">
+            <summary>
+            text/plain drag-and-drop event
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.DropBegin">
+            <summary>
+            A new set of drops is beginning (NULL filename)
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.DropComplete">
+            <summary>
+            Current set of drops is now complete (NULL filename)
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.AudioDeviceAdded">
+            <summary>
+            A new audio device is available
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.AudioDeviceRemoved">
+            <summary>
+            An audio device has been removed.
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.RenderTargetsReset">
+            <summary>
+            The render targets have been reset and their contents need to be updated
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.RenderDeviceReset">
+            <summary>
+            The device has been reset and all textures need to be recreated
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.UserEvent">
+            <summary>
+            Events ::USEREVENT through ::LASTEVENT are for your use, and should be allocated with RegisterEvents()
+            </summary>
+        </member>
+        <member name="F:SDL2.EventType.LastEvent">
+            <summary>
+            This last event is only for bounding internal arrays
+            </summary>
+        </member>
+        <member name="T:SDL2.CommonEvent">
+            <summary>
+            Fields shared by every event
+            </summary>
+        </member>
+        <member name="T:SDL2.WindowEvent">
+            <summary>
+            Window state change event data (event.window.*)
+            </summary>
+        </member>
+        <member name="F:SDL2.WindowEvent.Type">
+            <summary>
+            WINDOWEVENT
+            </summary>
+        </member>
+        <member name="F:SDL2.WindowEvent.WindowID">
+            <summary>
+            The associated window
+            </summary>
+        </member>
+        <member name="F:SDL2.WindowEvent.Event">
+            <summary>
+            WindowEventID
+            </summary>
+        </member>
+        <member name="F:SDL2.WindowEvent.Data1">
+            <summary>
+            Event dependent data
+            </summary>
+        </member>
+        <member name="F:SDL2.WindowEvent.Data2">
+            <summary>
+            Event dependent data
+            </summary>
+        </member>
+        <member name="T:SDL2.KeyboardEvent">
+            <summary>
+            Keyboard button event structure (event.key.*)
+            </summary>
+        </member>
+        <member name="F:SDL2.KeyboardEvent.Type">
+            <summary>
+            KEYDOWN or KEYUP
+            </summary>
+        </member>
+        <member name="F:SDL2.KeyboardEvent.WindowID">
+            <summary>
+            The window with keyboard focus, if any
+            </summary>
+        </member>
+        <member name="F:SDL2.KeyboardEvent.State">
+            <summary>
+            PRESSED or RELEASED
+            </summary>
+        </member>
+        <member name="F:SDL2.KeyboardEvent.Repeat">
+            <summary>
+            Non-zero if this is a key repeat
+            </summary>
+        </member>
+        <member name="F:SDL2.KeyboardEvent.KeySym">
+            <summary>
+            The key that was pressed or released
+            </summary>
+        </member>
+        <member name="T:SDL2.TextEditingEvent">
+            <summary>
+            Keyboard text editing event structure (event.edit.*)
+            </summary>
+        </member>
+        <member name="F:SDL2.TextEditingEvent.Type">
+            <summary>
+            TEXTEDITING
+            </summary>
+        </member>
+        <member name="F:SDL2.TextEditingEvent.WindowID">
+            <summary>
+            The window with keyboard focus, if any
+            </summary>
+        </member>
+        <member name="F:SDL2.TextEditingEvent.Text">
+            <summary>
+            The editing text
+            </summary>
+        </member>
+        <member name="F:SDL2.TextEditingEvent.Start">
+            <summary>
+            The start cursor of selected editing text
+            </summary>
+        </member>
+        <member name="F:SDL2.TextEditingEvent.Length">
+            <summary>
+            The length of selected editing text
+            </summary>
+        </member>
+        <member name="T:SDL2.TextInputEvent">
+            <summary>
+            Keyboard text input event structure (event.text.*)
+            </summary>
+        </member>
+        <member name="F:SDL2.TextInputEvent.Type">
+            <summary>
+            TEXTINPUT
+            </summary>
+        </member>
+        <member name="F:SDL2.TextInputEvent.WindowID">
+            <summary>
+            The window with keyboard focus, if any
+            </summary>
+        </member>
+        <member name="F:SDL2.TextInputEvent.Text">
+            <summary>
+            The input text
+            </summary>
+        </member>
+        <member name="T:SDL2.MouseMotionEvent">
+            <summary>
+            Mouse motion event structure (event.motion.*)
+            </summary>
+        </member>
+        <member name="F:SDL2.MouseMotionEvent.Type">
+            <summary>
+            MOUSEMOTION
+            </summary>
+        </member>
+        <member name="F:SDL2.MouseMotionEvent.WindowID">
+            <summary>
+            The window with mouse focus, if any
+            </summary>
+        </member>
+        <member name="F:SDL2.MouseMotionEvent.Which">
+            <summary>
+            The mouse instance id, or TOUCH_MOUSEID
+            </summary>
+        </member>
+        <member name="F:SDL2.MouseMotionEvent.State">
+            <summary>
+            The current button state
+            </summary>
+        </member>
+        <member name="F:SDL2.MouseMotionEvent.X">
+            <summary>
+            X coordinate, relative to window
+            </summary>
+        </member>
+        <member name="F:SDL2.MouseMotionEvent.Y">
+            <summary>
+            Y coordinate, relative to window
+            </summary>
+        </member>
+        <member name="F:SDL2.MouseMotionEvent.Xrel">
+            <summary>
+            The relative motion in the X direction
+            </summary>
+        </member>
+        <member name="F:SDL2.MouseMotionEvent.Yrel">
+            <summary>
+            The relative motion in the Y direction
+            </summary>
+        </member>
+        <member name="T:SDL2.MouseButtonEvent">
+            <summary>
+            Mouse button event structure (event.button.*)
+            </summary>
+        </member>
+        <member name="F:SDL2.MouseButtonEvent.Type">
+            <summary>
+            MOUSEBUTTONDOWN or MOUSEBUTTONUP
+            </summary>
+        </member>
+        <member name="F:SDL2.MouseButtonEvent.WindowID">
+            <summary>
+            The window with mouse focus, if any
+            </summary>
+        </member>
+        <member name="F:SDL2.MouseButtonEvent.Which">
+            <summary>
+            The mouse instance id, or TOUCH_MOUSEID
+            </summary>
+        </member>
+        <member name="F:SDL2.MouseButtonEvent.Button">
+            <summary>
+            The mouse button index
+            </summary>
+        </member>
+        <member name="F:SDL2.MouseButtonEvent.State">
+            <summary>
+            PRESSED or RELEASED
+            </summary>
+        </member>
+        <member name="F:SDL2.MouseButtonEvent.Clicks">
+            <summary>
+            1 for single-click, 2 for double-click, etc.
+            </summary>
+        </member>
+        <member name="F:SDL2.MouseButtonEvent.X">
+            <summary>
+            X coordinate, relative to window
+            </summary>
+        </member>
+        <member name="F:SDL2.MouseButtonEvent.Y">
+            <summary>
+            Y coordinate, relative to window
+            </summary>
+        </member>
+        <member name="T:SDL2.MouseWheelEvent">
+            <summary>
+            Mouse wheel event structure (event.wheel.*)
+            </summary>
+        </member>
+        <member name="F:SDL2.MouseWheelEvent.Type">
+            <summary>
+            MOUSEWHEEL
+            </summary>
+        </member>
+        <member name="F:SDL2.MouseWheelEvent.WindowID">
+            <summary>
+            The window with mouse focus, if any
+            </summary>
+        </member>
+        <member name="F:SDL2.MouseWheelEvent.Which">
+            <summary>
+            The mouse instance id, or TOUCH_MOUSEID
+            </summary>
+        </member>
+        <member name="F:SDL2.MouseWheelEvent.X">
+            <summary>
+            The amount scrolled horizontally, positive to the right and negative to the left
+            </summary>
+        </member>
+        <member name="F:SDL2.MouseWheelEvent.Y">
+            <summary>
+            The amount scrolled vertically, positive away from the user and negative toward the user
+            </summary>
+        </member>
+        <member name="F:SDL2.MouseWheelEvent.Direction">
+            <summary>
+            Set to one of the MOUSEWHEEL_* defines. When FLIPPED the values in X and Y will be opposite. Multiply by -1 to change them back
+            </summary>
+        </member>
+        <member name="T:SDL2.JoyAxisEvent">
+            <summary>
+            Joystick axis motion event structure (event.jaxis.*)
+            </summary>
+        </member>
+        <member name="F:SDL2.JoyAxisEvent.Type">
+            <summary>
+            JOYAXISMOTION
+            </summary>
+        </member>
+        <member name="F:SDL2.JoyAxisEvent.Which">
+            <summary>
+            The joystick instance id
+            </summary>
+        </member>
+        <member name="F:SDL2.JoyAxisEvent.Axis">
+            <summary>
+            The joystick axis index
+            </summary>
+        </member>
+        <member name="F:SDL2.JoyAxisEvent.Value">
+            <summary>
+            The axis value (range: -32768 to 32767)
+            </summary>
+        </member>
+        <member name="T:SDL2.JoyBallEvent">
+            <summary>
+            Joystick trackball motion event structure (event.jball.*)
+            </summary>
+        </member>
+        <member name="F:SDL2.JoyBallEvent.Type">
+            <summary>
+            JOYBALLMOTION
+            </summary>
+        </member>
+        <member name="F:SDL2.JoyBallEvent.Which">
+            <summary>
+            The joystick instance id
+            </summary>
+        </member>
+        <member name="F:SDL2.JoyBallEvent.Ball">
+            <summary>
+            The joystick trackball index
+            </summary>
+        </member>
+        <member name="F:SDL2.JoyBallEvent.Xrel">
+            <summary>
+            The relative motion in the X direction
+            </summary>
+        </member>
+        <member name="F:SDL2.JoyBallEvent.Yrel">
+            <summary>
+            The relative motion in the Y direction
+            </summary>
+        </member>
+        <member name="T:SDL2.JoyHatEvent">
+            <summary>
+            Joystick hat position change event structure (event.jhat.*)
+            </summary>
+        </member>
+        <member name="F:SDL2.JoyHatEvent.Type">
+            <summary>
+            JOYHATMOTION
+            </summary>
+        </member>
+        <member name="F:SDL2.JoyHatEvent.Which">
+            <summary>
+            The joystick instance id
+            </summary>
+        </member>
+        <member name="F:SDL2.JoyHatEvent.Hat">
+            <summary>
+            The joystick hat index
+            </summary>
+        </member>
+        <member name="F:SDL2.JoyHatEvent.Value">
+            <summary>
+            The hat position value. 
+            <para /> HAT_LEFTUP HAT_UP HAT_RIGHTUP
+            <para /> HAT_LEFT HAT_CENTERED HAT_RIGHT
+            <para /> HAT_LEFTDOWN HAT_DOWN HAT_RIGHTDOWN
+            </summary>
+            <remarks> Note that zero means the POV is centered. </remarks>
+        </member>
+        <member name="T:SDL2.JoyButtonEvent">
+            <summary>
+            Joystick button event structure (event.jbutton.*)
+            </summary>
+        </member>
+        <member name="F:SDL2.JoyButtonEvent.Type">
+            <summary>
+            JOYBUTTONDOWN or JOYBUTTONUP
+            </summary>
+        </member>
+        <member name="F:SDL2.JoyButtonEvent.Which">
+            <summary>
+            The joystick instance id
+            </summary>
+        </member>
+        <member name="F:SDL2.JoyButtonEvent.Button">
+            <summary>
+            The joystick button index
+            </summary>
+        </member>
+        <member name="F:SDL2.JoyButtonEvent.State">
+            <summary>
+            PRESSED or RELEASED
+            </summary>
+        </member>
+        <member name="T:SDL2.JoyDeviceEvent">
+            <summary>
+            Joystick device event structure (event.jdevice.*)
+            </summary>
+        </member>
+        <member name="F:SDL2.JoyDeviceEvent.Type">
+            <summary>
+            JOYDEVICEADDED or JOYDEVICEREMOVED
+            </summary>
+        </member>
+        <member name="F:SDL2.JoyDeviceEvent.Which">
+            <summary>
+            The joystick device index for the ADDED event, instance id for the REMOVED event
+            </summary>
+        </member>
+        <member name="T:SDL2.ControllerAxisEvent">
+            <summary>
+            Game controller axis motion event structure (event.caxis.*)
+            </summary>
+        </member>
+        <member name="F:SDL2.ControllerAxisEvent.Type">
+            <summary>
+            CONTROLLERAXISMOTION
+            </summary>
+        </member>
+        <member name="F:SDL2.ControllerAxisEvent.Which">
+            <summary>
+            The joystick instance id
+            </summary>
+        </member>
+        <member name="F:SDL2.ControllerAxisEvent.Axis">
+            <summary>
+            The controller axis (GameControllerAxis)
+            </summary>
+        </member>
+        <member name="F:SDL2.ControllerAxisEvent.Value">
+            <summary>
+            The axis value (range: -32768 to 32767)
+            </summary>
+        </member>
+        <member name="T:SDL2.ControllerButtonEvent">
+            <summary>
+            Game controller button event structure (event.cbutton.*)
+            </summary>
+        </member>
+        <member name="F:SDL2.ControllerButtonEvent.Type">
+            <summary>
+            CONTROLLERBUTTONDOWN or CONTROLLERBUTTONUP
+            </summary>
+        </member>
+        <member name="F:SDL2.ControllerButtonEvent.Which">
+            <summary>
+            The joystick instance id
+            </summary>
+        </member>
+        <member name="F:SDL2.ControllerButtonEvent.Button">
+            <summary>
+            The controller button (GameControllerButton)
+            </summary>
+        </member>
+        <member name="F:SDL2.ControllerButtonEvent.State">
+            <summary>
+            PRESSED or RELEASED
+            </summary>
+        </member>
+        <member name="T:SDL2.ControllerDeviceEvent">
+            <summary>
+            Controller device event structure (event.cdevice.*)
+            </summary>
+        </member>
+        <member name="F:SDL2.ControllerDeviceEvent.Type">
+            <summary>
+            CONTROLLERDEVICEADDED, CONTROLLERDEVICEREMOVED or CONTROLLERDEVICEREMAPPED
+            </summary>
+        </member>
+        <member name="F:SDL2.ControllerDeviceEvent.Which">
+            <summary>
+            The joystick device index for the ADDED event, instance id for the REMOVED or REMAPPED event
+            </summary>
+        </member>
+        <member name="T:SDL2.AudioDeviceEvent">
+            <summary>
+            Audio device event structure (event.adevice.*)
+            </summary>
+        </member>
+        <member name="F:SDL2.AudioDeviceEvent.Type">
+            <summary>
+            AUDIODEVICEADDED or AUDIODEVICEREMOVED
+            </summary>
+        </member>
+        <member name="F:SDL2.AudioDeviceEvent.Which">
+            <summary>
+            The audio device index for the ADDED event (valid until next GetNumAudioDevices() call), AudioDeviceID for the REMOVED event
+            </summary>
+        </member>
+        <member name="F:SDL2.AudioDeviceEvent.Iscapture">
+            <summary>
+            Zero if an output device, non-zero if a capture device.
+            </summary>
+        </member>
+        <member name="T:SDL2.TouchFingerEvent">
+            <summary>
+            Touch finger event structure (event.tfinger.*)
+            </summary>
+        </member>
+        <member name="F:SDL2.TouchFingerEvent.Type">
+            <summary>
+            FINGERMOTION or FINGERDOWN or FINGERUP
+            </summary>
+        </member>
+        <member name="F:SDL2.TouchFingerEvent.TouchId">
+            <summary>
+            The touch device id
+            </summary>
+        </member>
+        <member name="F:SDL2.TouchFingerEvent.X">
+            <summary>
+            Normalized in the range 0...1
+            </summary>
+        </member>
+        <member name="F:SDL2.TouchFingerEvent.Y">
+            <summary>
+            Normalized in the range 0...1
+            </summary>
+        </member>
+        <member name="F:SDL2.TouchFingerEvent.Dx">
+            <summary>
+            Normalized in the range -1...1
+            </summary>
+        </member>
+        <member name="F:SDL2.TouchFingerEvent.Dy">
+            <summary>
+            Normalized in the range -1...1 
+            </summary>
+        </member>
+        <member name="F:SDL2.TouchFingerEvent.Pressure">
+            <summary>
+            Normalized in the range 0...1
+            </summary>
+        </member>
+        <member name="T:SDL2.MultiGestureEvent">
+            <summary>
+            Multiple Finger Gesture Event (event.mgesture.*)
+            </summary>
+        </member>
+        <member name="F:SDL2.MultiGestureEvent.Type">
+            <summary>
+            MULTIGESTURE
+            </summary>
+        </member>
+        <member name="F:SDL2.MultiGestureEvent.TouchId">
+            <summary>
+            The touch device id
+            </summary>
+        </member>
+        <member name="T:SDL2.DollarGestureEvent">
+            <summary>
+            Dollar Gesture Event (event.dgesture.*)
+            </summary>
+        </member>
+        <member name="F:SDL2.DollarGestureEvent.Type">
+            <summary>
+            DOLLARGESTURE or DOLLARRECORD
+            </summary>
+        </member>
+        <member name="F:SDL2.DollarGestureEvent.TouchId">
+            <summary>
+            The touch device id
+            </summary>
+        </member>
+        <member name="F:SDL2.DollarGestureEvent.X">
+            <summary>
+            Normalized center of gesture
+            </summary>
+        </member>
+        <member name="F:SDL2.DollarGestureEvent.Y">
+            <summary>
+            Normalized center of gesture
+            </summary>
+        </member>
+        <member name="T:SDL2.DropEvent">
+            <summary>
+            An event used to request a file open by the system (event.drop.*)
+            This event is enabled by default, you can disable it with EventState().
+            </summary>
+            <remarks>
+            If this event is enabled, you must free the filename in the event. 
+            </remarks>
+        </member>
+        <member name="F:SDL2.DropEvent.Type">
+            <summary>
+            DROPBEGIN or DROPFILE or DROPTEXT or DROPCOMPLETE
+            </summary>
+        </member>
+        <member name="F:SDL2.DropEvent.File">
+            <summary>
+            The file name, which should be freed with free(), is NULL on begin/complete
+            </summary>
+        </member>
+        <member name="F:SDL2.DropEvent.WindowID">
+            <summary>
+            The window that was dropped on, if any
+            </summary>
+        </member>
+        <member name="T:SDL2.QuitEvent">
+            <summary>
+            The "quit requested" event
+            </summary>
+        </member>
+        <member name="F:SDL2.QuitEvent.Type">
+            <summary>
+            QUIT
+            </summary>
+        </member>
+        <member name="T:SDL2.OSEvent">
+            <summary>
+            OS Specific event
+            </summary>
+        </member>
+        <member name="F:SDL2.OSEvent.Type">
+            <summary>
+            QUIT
+            </summary>
+        </member>
+        <member name="T:SDL2.UserEvent">
+            <summary>
+            A user-defined event type (event.user.*)
+            </summary>
+        </member>
+        <member name="F:SDL2.UserEvent.Type">
+            <summary>
+            USEREVENT through LASTEVENT-1
+            </summary>
+        </member>
+        <member name="F:SDL2.UserEvent.WindowID">
+            <summary>
+            The associated window if any
+            </summary>
+        </member>
+        <member name="F:SDL2.UserEvent.Code">
+            <summary>
+            User defined event code
+            </summary>
+        </member>
+        <member name="F:SDL2.UserEvent.Data1">
+            <summary>
+            User defined data pointer
+            </summary>
+        </member>
+        <member name="F:SDL2.UserEvent.Data2">
+            <summary>
+            User defined data pointer
+            </summary>
+        </member>
+        <member name="T:SDL2.SysWMEvent">
+            <summary>
+            A video driver dependent system event (event.syswm.*)
+            This event is disabled by default, you can enable it with EventState()
+            </summary>
+            <remarks>
+            If you want to use this event, you should include syswm.h.
+            </remarks>
+        </member>
+        <member name="F:SDL2.SysWMEvent.Type">
+            <summary>
+            SYSWMEVENT
+            </summary>
+        </member>
+        <member name="F:SDL2.SysWMEvent.Msg">
+            <summary>
+            Driver dependent data, defined in syswm.h
+            </summary>
+        </member>
+        <member name="T:SDL2.Event">
+            <summary>
+            General event structure
+            </summary>
+        </member>
+        <member name="F:SDL2.Event.Type">
+            <summary>
+            Event type, shared with all events
+            </summary>
+        </member>
+        <member name="F:SDL2.Event.Common">
+            <summary>
+            Common event data
+            </summary>
+        </member>
+        <member name="F:SDL2.Event.Window">
+            <summary>
+            Window event data
+            </summary>
+        </member>
+        <member name="F:SDL2.Event.Key">
+            <summary>
+            Keyboard event data
+            </summary>
+        </member>
+        <member name="F:SDL2.Event.Edit">
+            <summary>
+            Text editing event data
+            </summary>
+        </member>
+        <member name="F:SDL2.Event.Text">
+            <summary>
+            Text input event data
+            </summary>
+        </member>
+        <member name="F:SDL2.Event.Motion">
+            <summary>
+            Mouse motion event data
+            </summary>
+        </member>
+        <member name="F:SDL2.Event.Button">
+            <summary>
+            Mouse button event data
+            </summary>
+        </member>
+        <member name="F:SDL2.Event.Wheel">
+            <summary>
+            Mouse wheel event data
+            </summary>
+        </member>
+        <member name="F:SDL2.Event.Jaxis">
+            <summary>
+            Joystick axis event data
+            </summary>
+        </member>
+        <member name="F:SDL2.Event.Jball">
+            <summary>
+            Joystick ball event data
+            </summary>
+        </member>
+        <member name="F:SDL2.Event.Jhat">
+            <summary>
+            Joystick hat event data
+            </summary>
+        </member>
+        <member name="F:SDL2.Event.Jbutton">
+            <summary>
+            Joystick button event data
+            </summary>
+        </member>
+        <member name="F:SDL2.Event.Jdevice">
+            <summary>
+            Joystick device change event data
+            </summary>
+        </member>
+        <member name="F:SDL2.Event.Caxis">
+            <summary>
+            Game Controller axis event data
+            </summary>
+        </member>
+        <member name="F:SDL2.Event.Cbutton">
+            <summary>
+            Game Controller button event data
+            </summary>
+        </member>
+        <member name="F:SDL2.Event.Cdevice">
+            <summary>
+            Game Controller device event data
+            </summary>
+        </member>
+        <member name="F:SDL2.Event.Adevice">
+            <summary>
+            Audio device event data
+            </summary>
+        </member>
+        <member name="F:SDL2.Event.Quit">
+            <summary>
+            Quit request event data
+            </summary>
+        </member>
+        <member name="F:SDL2.Event.User">
+            <summary>
+            Custom event data
+            </summary>
+        </member>
+        <member name="F:SDL2.Event.Syswm">
+            <summary>
+            System dependent window event data
+            </summary>
+        </member>
+        <member name="F:SDL2.Event.Tfinger">
+            <summary>
+            Touch finger event data
+            </summary>
+        </member>
+        <member name="F:SDL2.Event.Mgesture">
+            <summary>
+            Gesture event data
+            </summary>
+        </member>
+        <member name="F:SDL2.Event.Dgesture">
+            <summary>
+            Gesture event data
+            </summary>
+        </member>
+        <member name="F:SDL2.Event.Drop">
+            <summary>
+            Drag and drop event data
+            </summary>
+        </member>
+        <member name="F:SDL2.Event._padding">
+            <summary>
+            This is necessary for ABI compatibility between Visual C++ and GCC.
+            <para /> Visual C++ will respect the push pack pragma and use 52 bytes for this structure, and GCC will use the alignment of the largest datatype within the union, which is 8 bytes. So...we'll add padding to force the size to be 56 bytes for both.
+            </summary>
+        </member>
+        <member name="T:SDL2.HintCallback">
+            <summary>
+            Type definition of the hint callback function.
+            </summary>
+        </member>
+        <member name="T:SDL2.HintPriority">
+            <summary>
+            An enumeration of hint priorities
+            </summary>
+        </member>
+        <member name="T:SDL2.KeySym">
+            <summary>
+            The SDL keysym structure, used in key events.
+            </summary>
+            <remarks>
+            If you are looking for translated character input, see the TextInput event.
+            </remarks>
+        </member>
+        <member name="F:SDL2.KeySym.ScanCode">
+            <summary>
+            SDL physical key code - see ScanCode for details
+            </summary>
+        </member>
+        <member name="F:SDL2.KeySym.Sym">
+            <summary>
+            SDL virtual key code - see KeyCode for details
+            </summary>
+        </member>
+        <member name="F:SDL2.KeySym.Mod">
+            <summary>
+            Current key modifiers
+            </summary>
+        </member>
+        <member name="T:SDL2.KeyCode">
+            <summary>
+            The SDL virtual key representation.
+            <para /> Values of this type are used to represent keyboard keys using the current layout of the keyboard. These values include Unicode values representing the unmodified character that would be generated by pressing the key, or an SDLK_* constant for those keys that do not generate characters.
+            </summary>
+        </member>
+        <member name="T:SDL2.KeyMod">
+            <summary>
+            Enumeration of valid key mods (possibly OR'd together).
+            </summary>
+        </member>
+        <member name="T:SDL2.ScanCode">
+            <summary>
+            The SDL keyboard scancode representation.
+            <para /> Values of this type are used to represent keyboard keys, among other places in the <see cref="F:SDL2.KeySym.ScanCode"/> field of the <see cref="T:SDL2.Event"/> structure.
+            <para /> The values in this enumeration are based on the USB usage page standard: http://www.usb.org/developers/devclass_docs/Hut1_12v2.pdf
+            </summary>
+        </member>
+        <member name="F:SDL2.ScanCode.A">
+              \name Usage page 0x07
+            
+              These values are from usage page 0x07 (USB keyboard page).
+        </member>
+        <member name="F:SDL2.ScanCode.Backslash">
+            <summary>
+            Located at the lower left of the return key on ISO keyboards and at the right end of the QWERTY row on ANSI keyboards. Produces REVERSE SOLIDUS (backslash) and VERTICAL LINE in a US layout, REVERSE SOLIDUS and VERTICAL LINE in a UK Mac layout, NUMBER SIGN and TILDE in a UK Windows layout, DOLLAR SIGN and POUND SIGN in a Swiss German layout, NUMBER SIGN and APOSTROPHE in a German layout, GRAVE ACCENT and POUND SIGN in a French Mac layout, and ASTERISK and MICRO SIGN in a French Windows layout.
+            </summary>
+        </member>
+        <member name="F:SDL2.ScanCode.NonUSHash">
+            <summary>
+            ISO USB keyboards actually use this code instead of 49 for the same key, but all OSes I've seen treat the two codes identically. So, as an implementor, unless your keyboard generates both of those codes and your OS treats them differently, you should generate BACKSLASH instead of this code. As a user, you should not rely on this code because SDL will never generate it with most (all?) keyboards.
+            </summary>
+        </member>
+        <member name="F:SDL2.ScanCode.Grave">
+            <summary>
+            Located in the top left corner (on both ANSI and ISO keyboards). Produces GRAVE ACCENT and TILDE in a US Windows layout and in US and UK Mac layouts on ANSI keyboards, GRAVE ACCENT and NOT SIGN in a UK Windows layout, SECTION SIGN and PLUS-MINUS SIGN in US and UK Mac layouts on ISO keyboards, SECTION SIGN and DEGREE SIGN in a Swiss German layout (Mac: only on ISO keyboards), CIRCUMFLEX ACCENT and DEGREE SIGN in a German layout (Mac: only on ISO keyboards), SUPERSCRIPT TWO and TILDE in a French Windows layout, COMMERCIAL AT and NUMBER SIGN in a French Mac layout on ISO keyboards, and LESS-THAN SIGN and GREATER-THAN SIGN in a Swiss German, German, or French Mac layout on ANSI keyboards.
+            </summary>
+        </member>
+        <member name="F:SDL2.ScanCode.Insert">
+            <summary>
+            insert on PC, help on some Mac keyboards (but does send code 73, not 117)
+            </summary>
+        </member>
+        <member name="F:SDL2.ScanCode.NumlockClear">
+            <summary>
+            Num lock on PC, clear on Mac keyboards
+            </summary>
+        </member>
+        <member name="F:SDL2.ScanCode.NonUSBackslash">
+            <summary>
+            This is the additional key that ISO keyboards have over ANSI ones, located between left shift and Y. Produces GRAVE ACCENT and TILDE in a US or UK Mac layout, REVERSE SOLIDUS (backslash) and VERTICAL LINE in a US or UK Windows layout, and LESS-THAN SIGN and GREATER-THAN SIGN in a Swiss German, German, or French layout.
+            </summary>
+        </member>
+        <member name="F:SDL2.ScanCode.Application">
+            <summary>
+            Windows contextual menu, compose
+            </summary>
+        </member>
+        <member name="F:SDL2.ScanCode.Power">
+            <summary>
+            The USB document says this is a status flag, not a physical key - but some Mac keyboards do have a power key.
+            </summary>
+        </member>
+        <member name="F:SDL2.ScanCode.Again">
+            <summary>
+            Redo
+            </summary>
+        </member>
+        <member name="F:SDL2.ScanCode.International1">
+            <summary>
+            Used on Asian keyboards, see footnotes in USB doc
+            </summary>
+        </member>
+        <member name="F:SDL2.ScanCode.International3">
+            <summary>
+            Yen
+            </summary>
+        </member>
+        <member name="F:SDL2.ScanCode.Lang1">
+            <summary>
+            Hangul/English toggle
+            </summary>
+        </member>
+        <member name="F:SDL2.ScanCode.Lang2">
+            <summary>
+            Hanja conversion
+            </summary>
+        </member>
+        <member name="F:SDL2.ScanCode.Lang3">
+            <summary>
+            Katakana
+            </summary>
+        </member>
+        <member name="F:SDL2.ScanCode.Lang4">
+            <summary>
+            Hiragana
+            </summary>
+        </member>
+        <member name="F:SDL2.ScanCode.Lang5">
+            <summary>
+            Zenkaku/Hankak
+            </summary>
+        </member>
+        <member name="F:SDL2.ScanCode.Lang6">
+            <summary>
+            Reserved
+            </summary>
+        </member>
+        <member name="F:SDL2.ScanCode.Lang7">
+            <summary>
+            Reserved
+            </summary>
+        </member>
+        <member name="F:SDL2.ScanCode.Lang8">
+            <summary>
+            Reserved
+            </summary>
+        </member>
+        <member name="F:SDL2.ScanCode.Lang9">
+            <summary>
+            Reserved
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "F:SDL2.ScanCode.SysReq" -->
+        <member name="F:SDL2.ScanCode.LeftAlt">
+            <summary>
+            alt, option
+            </summary>
+        </member>
+        <member name="F:SDL2.ScanCode.LeftGUI">
+            <summary>
+            windows, command (apple), meta
+            </summary>
+        </member>
+        <member name="F:SDL2.ScanCode.RightAlt">
+            <summary>
+            alt gr, option
+            </summary>
+        </member>
+        <member name="F:SDL2.ScanCode.RightGUI">
+            <summary>
+            windows, command (apple), meta
+            </summary>
+        </member>
+        <member name="F:SDL2.ScanCode.Mode">
+            <summary>
+            I'm not sure if this is really not covered by any of the above, but since there's a special KMOD_MODE for it I'm adding it here
+            </summary>
+        </member>
+        <member name="F:SDL2.ScanCode.AudioNext">
+              \name Usage page 0x0C
+            
+              These values are mapped from usage page 0x0C (USB consumer page).
+        </member>
+        <member name="F:SDL2.ScanCode.BrightnessDown">
+              \name Walther keys
+            
+              These are values that Christian Walther added (for mac keyboard?).
+        </member>
+        <member name="F:SDL2.ScanCode.DisplaySwitch">
+            <summary>
+            Display mirroring/dual display switch, video mode switch
+            </summary>
+        </member>
+        <member name="F:SDL2.ScanCode.NumScancodes">
+            <summary>
+            Not a key, just marks the number of scancodes for array bounds
+            </summary>
+        </member>
+    </members>
+</doc>

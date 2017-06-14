@@ -3,12 +3,8 @@ using System.Runtime.InteropServices;
 
 namespace SDL2
 {
-    // TODO: Check if params are working
     [UnmanagedFunctionPointer (CallingConvention.Cdecl)]
     public delegate int EventFilter (IntPtr userData, IntPtr sdlEvent);
-
-    public const int TextEditingEventTextSize = 32;
-    public const int TextInputEventTextSize = 32;
 
     public enum EventAction
     {
@@ -350,7 +346,7 @@ namespace SDL2
         /// <summary>
         /// The editing text
         /// </summary>
-        public fixed char Text[SDL.TEXTEDITINGEVENT_TEXT_SIZE];
+        public fixed char Text[SDL.TextEditingEventTextSize];
         /// <summary>
         /// The start cursor of selected editing text
         /// </summary>
@@ -379,7 +375,7 @@ namespace SDL2
         /// <summary>
         /// The input text
         /// </summary>
-        public fixed char Text[SDL.TEXTINPUTEVENT_TEXT_SIZE];
+        public fixed char Text[SDL.TextInputEventTextSize];
     }
 
     /// <summary>
@@ -1042,6 +1038,9 @@ namespace SDL2
 
     public static partial class SDL
     {
+        public const int TextEditingEventTextSize = 32;
+        public const int TextInputEventTextSize = 32;
+
         /// <summary>
         /// Pumps the event loop, gathering events from the input devices.
         /// <para> This function updates the event queue and internal input device state. </para>

@@ -10,7 +10,7 @@ namespace SDL2
         /// </summary>
         /// <seealso cref="GetWindowFlags"/>
         [Flags]
-        public enum WindowFlags
+        public enum WindowFlags : uint
         {
             /// <summary>
             /// Fullscreen window
@@ -56,7 +56,7 @@ namespace SDL2
             /// Window has mouse focus
             /// </summary>
             MouseFocus = 1 << 10,
-            FullscreenDesktop = (Fullscreen | 1 << 12),
+            FullscreenDeskTop = (Fullscreen | 1 << 12),
             /// <summary>
             /// Window not created by SDL
             /// </summary>
@@ -171,17 +171,56 @@ namespace SDL2
             HitTest
         }
 
+        /// <summary> Possible return values from the <see cref="HitTest"/> callback. </summary>
+        /// <seealso cref="HitTest"/>
+        public enum HitTestResult
+        {
+            /// <summary>
+            /// Region is normal. No special properties.
+            /// </summary>
+            Normal,
+            /// <summary>
+            /// Region can drag entire window.
+            /// </summary>
+            Draggable,
+            ResizeTopLeft,
+            ResizeTop,
+            ResizeTopRight,
+            ResizeRight,
+            ResizeBottomRight,
+            ResizeBottom,
+            ResizeBottomLeft,
+            ResizeLeft
+        }
+
+        /// <summary>
+		/// A structure that describes a display mode.
+		/// </summary>
+		[StructLayout (LayoutKind.Sequential)]
+        public struct DisplayMode
+        {
+            public readonly uint Format;
+            public readonly int Width;
+            public readonly int Height;
+            public readonly int RefreshRate;
+            public readonly IntPtr DriverData; // void*
+        }
+
         /// <summary>
         /// Used to indicate that you don't care what the window position is.
         /// </summary>
         public const uint WindowPositionUndefinedMask = 0x1FFF0000u;
-        public const uint WindowPositionUndefined = WindowPositionUndefinedMask;
+        public const int WindowPositionUndefined = (int)WindowPositionUndefinedMask;
 
         /// <summary>
         /// Used to indicate that the window position should be centered.
         /// </summary>
         public const uint WindowPositionCenteredMask = 0x2FFF0000u;
-        public const uint WindowPositionCentered = WindowPositionCenteredMask;
+        public const int WindowPositionCentered = (int)WindowPositionCenteredMask;
+
+        /// <summary> Callback used for hit-testing. </summary>
+        /// <seealso cref="SetWindowHitTest(IntPtr, HitTest, IntPtr)"/>
+        public delegate HitTestResult HitTest (IntPtr win, IntPtr area, IntPtr data);
 
         public static uint WindowPositionUndefinedDisplay (uint x)
         {
@@ -222,5 +261,601 @@ namespace SDL2
         {
             return GetVideoDriverInternal (index).ToStr ();
         }
+
+        /// <summary> Initialize the video subsystem, optionally specifying a video driver. </summary>
+        /// <param name="driver_name"/> Initialize a specific driver by name, or <see cref="IntPtr.Zero"/> for the default video driver.
+        /// <returns> 0 on success, -1 on error </returns>
+        /// <remarks>
+        ///  This function initializes the video subsystem; setting up a connection
+        ///  to the window manager, etc, and determines the available display modes
+        ///  and pixel formats, but does not initialize a window or graphics mode.
+        /// </remarks>
+        /// <seealso cref="VideoQuit"/>
+        [DllImport (LibName, EntryPoint = "SDL_VideoInit", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int VideoInit (IntPtr driver_name);
+
+        /// <summary> 
+        /// Shuts down the video subsystem.
+        /// <para/>
+        /// This function closes all windows, and restores the original video mode.
+        /// </summary>
+        /// <seealso cref="VideoInit"/>
+        [DllImport (LibName, EntryPoint = "SDL_VideoQuit", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void VideoQuit ();
+
+        /// <summary> Returns the name of the currently initialized video driver. </summary>
+        /// <returns> The name of the current video driver or <see cref="IntPtr.Zero"/> if no driver has been initialized. </returns>
+        /// <seealso cref="GetNumVideoDrivers"/>
+        /// <seealso cref="GetVideoDriver"/>
+        [DllImport (LibName, EntryPoint = "SDL_GetCurrentVideoDriver", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr GetCurrentVideoDriver ();
+
+        /// <summary> Returns the number of available video displays. </summary>
+        /// <seealso cref="GetDisplayBounds"/>
+        [DllImport (LibName, EntryPoint = "SDL_GetNumVideoDisplays", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int GetNumVideoDisplays ();
+
+        /// <summary> Get the name of a display in UTF-8 encodin.g </summary>
+        /// <returns> The name of a display, or <see cref="IntPtr.Zero"/> for an invalid display index. </returns>
+        /// <seealso cref="GetNumVideoDisplays"/>
+        [DllImport (LibName, EntryPoint = "SDL_GetDisplayName", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr GetDisplayName (int displayIndex);
+
+        /// <summary> Get the deskTop area represented by a display, with the primary display located at 0,0 </summary>
+        /// <returns> 0 on success, or -1 if the index is out of range. </returns>
+        /// <seealso cref="GetNumVideoDisplays"/>
+        [DllImport (LibName, EntryPoint = "SDL_GetDisplayBounds", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int GetDisplayBounds (int displayIndex, out Rectangle rectangle);
+
+        /// <summary> Get the dots/pixels-per-inch for a display </summary>
+        /// <remarks>
+        /// Diagonal, horizontal and vertical DPI can all be optionally returned if the parameter is non-<see cref="IntPtr.Zero"/>.
+        /// </remarks>
+        /// <returns> 0 on success, or -1 if no DPI information is available or the index is out of range. </returns>
+        /// <seealso cref="GetNumVideoDisplays"/>
+        [DllImport (LibName, EntryPoint = "SDL_GetDisplayDPI", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int GetDisplayDPI (int displayIndex, out float ddpi, out float hdpi, out float vdpi);
+
+        /// <summary> 
+        /// Get the usable deskTop area represented by a display, with the primary display located at 0,0
+        /// <para/>
+        ///  This is the same area as <see cref="GetDisplayBounds(int, out Rectangle)"/> reports, but with portions
+        ///  reserved by the system removed. For example, on Mac OS X, this subtracts
+        ///  the area occupied by the menu bar and dock.
+        /// <para/>
+        ///  Setting a window to be fullscreen generally bypasses these unusable areas,
+        ///  so these are good guidelines for the maximum space available to a
+        ///  non-fullscreen window.
+        /// <returns> 0 on success, or -1 if the index is out of range. </returns>
+        /// <seealso cref="GetDisplayBounds"/>
+        /// <seealso cref="GetNumVideoDisplays"/>
+        [DllImport (LibName, EntryPoint = "SDL_GetDisplayUsableBounds", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int GetDisplayUsableBounds (int displayIndex, out Rectangle rectangle);
+
+        /// <summary> Returns the number of available display modes. </summary>
+        /// <seealso cref="GetDisplayMode"/>
+        [DllImport (LibName, EntryPoint = "SDL_GetNumDisplayModes", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int GetNumDisplayModes (int displayIndex);
+
+        /// <summary> Fill in information about a specific display mode. </summary>
+        /// <remarks>
+        /// The display modes are sorted in this priority:
+        /// <list type="bullet">
+        /// <item> <description> bits per pixel -> more colors to fewer colors </description> </item>
+        /// <item> <description> width -> largest to smallest </description> </item>
+        /// <item> <description> height -> largest to smallest </description> </item>
+        /// <item> <description> refresh rate -> highest to lowest </description> </item>
+        /// </list>
+        /// </remarks>
+        /// <seealso cref="GetNumDisplayModes"/>
+        [DllImport (LibName, EntryPoint = "SDL_GetDisplayMode", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int GetDisplayMode (int displayIndex, int modeIndex, out DisplayMode mode);
+
+        /// <summary> Fill in information about the deskTop display mode. </summary>
+        [DllImport (LibName, EntryPoint = "SDL_GetDeskTopDisplayMode", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int GetDeskTopDisplayMode (int displayIndex, out DisplayMode mode);
+
+        /// <summary> Fill in information about the current display mode. </summary>
+        [DllImport (LibName, EntryPoint = "SDL_GetCurrentDisplayMode", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int GetCurrentDisplayMode (int displayIndex, out DisplayMode mode);
+
+        /// <summary> Get the closest match to the requested display mode. </summary>
+        /// <param name="displayIndex"> The index of display from which mode should be queried. </param>
+        /// <param name="mode"> The desired display mode. </param>
+        /// <param name="closest"> A pointer to a display mode to be filled in with the closest match of the available display modes. </param>
+        /// <returns> The passed in value <paramref name="closest"/>, or <see cref="IntPtr.Zero"/> if no matching video mode was available. </returns>
+        /// <remarks>
+        ///  The available display modes are scanned, and \c closest is filled in with the
+        ///  closest mode matching the requested mode and returned.  The mode format and
+        ///  refresh_rate default to the deskTop mode if they are 0.  The modes are
+        ///  scanned with size being first priority, format being second priority, and
+        ///  finally checking the refresh_rate.  If all the available modes are too
+        ///  small, then <see cref="IntPtr.Zero"/> is returned.
+        /// </remarks>
+        /// <seealso cref="GetNumDisplayModes"/>
+        /// <seealso cref="GetDisplayMode"/>
+        [DllImport (LibName, EntryPoint = "SDL_GetClosestDisplayMode", CallingConvention = CallingConvention.Cdecl)]
+        [return: MarshalAs (UnmanagedType.LPStruct)]
+        public static extern DisplayMode GetClosestDisplayMode (int displayIndex, ref DisplayMode mode, out DisplayMode closest);
+
+        /// <summary> Get the display index associated with a window. </summary>
+        /// <returns> the display index of the display containing the center of the window, or -1 on error. </returns>
+        [DllImport (LibName, EntryPoint = "SDL_GetWindowDisplayIndex", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int GetWindowDisplayIndex (IntPtr window);
+
+        /// <summary> Set the display mode used when a fullscreen window is visible.
+        /// <para/>
+        ///  By default the window's dimensions and the deskTop format and refresh rate
+        ///  are used.
+        /// </summary>
+        /// <param name="window"/> The window for which the display mode should be set.
+        /// <param name="mode"/> The mode to use, or <see cref="IntPtr.Zero"/> for the default mode.
+        /// <returns> 0 on success, or -1 if setting the display mode failed. </returns>
+        /// <seealso cref="GetWindowDisplayMode"/>
+        /// <seealso cref="SetWindowFullscreen"/>
+        [DllImport (LibName, EntryPoint = "SDL_SetWindowDisplayMode", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int SetWindowDisplayMode (IntPtr window, ref DisplayMode mode);
+
+        /// <summary> Fill in information about the display mode used when a fullscreen window is visible. </summary>
+        /// <seealso cref="SetWindowDisplayMode"/>
+        /// <seealso cref="SetWindowFullscreen"/>
+        [DllImport (LibName, EntryPoint = "SDL_GetWindowDisplayMode", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int GetWindowDisplayMode (IntPtr window, out DisplayMode mode);
+
+        /// <summary> Get the pixel format associated with the window. </summary>
+        [DllImport (LibName, EntryPoint = "SDL_GetWindowPixelFormat", CallingConvention = CallingConvention.Cdecl)]
+        public static extern uint GetWindowPixelFormat (IntPtr window);
+
+        [DllImport (LibName, EntryPoint = "SDL_CreateWindow", CallingConvention = CallingConvention.Cdecl)]
+        private static extern IntPtr CreateWindowInternal (IntPtr title, int x, int y, int width, int height, WindowFlags flags);
+
+        /// <summary> Create a window with the specified position, dimensions, and flags. </summary>
+        /// <param name="title"> The title of the window, in UTF-8 encoding. </param>
+        /// <param name="x"> The x position of the window, <see cref="WindowPositionCentered"/>, or <see cref="WindowPositionUndefined"/>. </param>
+        /// <param name="y"> The y position of the window, <see cref="WindowPositionCentered"/>, or<see cref="WindowPositionUndefined"/>. </param>
+        /// <param name="width"> The width of the window, in screen coordinates. </param>
+        /// <param name="height"> The height of the window, in screen coordinates. </param>
+        /// <param name="flags"> The flags for the window </param>
+        /// <returns> The created window, or <see cref="IntPtr.Zero"/> if window creation failed. </returns>
+        /// <remarks>
+        ///  If the window is created with the WINDOW_ALLOW_HIGHDPI flag, its size
+        ///  in pixels may differ from its size in screen coordinates on platforms with
+        ///  high-DPI support (e.g. iOS and Mac OS X). Use GetWindowSize"/> to query
+        ///  the client area's size in screen coordinates, and GL_GetDrawableSize"/>
+        ///  or GetRendererOutputSize"/> to query the drawable size in pixels.
+        /// </remarks>
+        /// <seealso cref="DestroyWindow"/>
+        public static IntPtr CreateWindow (string title, int x, int y, int width, int height, WindowFlags flags)
+        {
+            return CreateWindowInternal (title.ToIntPtr (), x, y, width, height, flags);
+        }
+
+        /// <summary> Create an SDL window from an existing native window. </summary>
+        /// <param name="data"> A pointer to driver-dependent window creation data. </param>
+        /// <returns> The created window, or <see cref="IntPtr.Zero"/> if window creation failed. </returns>
+        /// <seealso cref="DestroyWindow"/>
+        [DllImport (LibName, EntryPoint = "SDL_CreateWindowFrom", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr CreateWindowFrom (IntPtr data);
+
+        /// <summary> Get the numeric ID of a window, for logging purposes. </summary>
+        [DllImport (LibName, EntryPoint = "SDL_GetWindowID", CallingConvention = CallingConvention.Cdecl)]
+        public static extern uint GetWindowID (IntPtr window);
+
+        /// <summary> Get a window from a stored ID, or <see cref="IntPtr.Zero"/> if it doesn't exist. </summary>
+        [DllImport (LibName, EntryPoint = "SDL_GetWindowFromID", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr GetWindowFromID (uint id);
+
+        /// <summary> Get the window flags. </summary>
+        [DllImport (LibName, EntryPoint = "SDL_GetWindowFlags", CallingConvention = CallingConvention.Cdecl)]
+        public static extern uint GetWindowFlags (IntPtr window);
+
+        /// <summary> Set the title of a window, in UTF-8 format. </summary>
+        /// <seealso cref="GetWindowTitle"/>
+        [DllImport (LibName, EntryPoint = "SDL_GetVideoDriver", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetWindowTitle (IntPtr window, IntPtr title);
+
+        /// <summary> Get the title of a window, in UTF-8 format. </summary>
+        /// <seealso cref="SetWindowTitle"/>
+        [DllImport (LibName, EntryPoint = "SDL_GetWindowTitle", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr GetWindowTitle (IntPtr window);
+
+        /// <summary> Set the icon for a window. </summary>
+        /// <param name="window"> The window for which the icon should be set. </param>
+        /// <param name="icon"> icon The icon for the window. </param>
+        [DllImport (LibName, EntryPoint = "SDL_SetWindowIcon", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetWindowIcon (IntPtr window, IntPtr icon);
+        
+        /// <summary> Associate an arbitrary named pointer with a window. </summary>
+        /// <param name="window"> The window to associate with the pointer. </param>
+        /// <param name="name"> The name of the pointer. </param>
+        /// <param name="userData"> The associated pointer. </param>
+        /// <returns> The previous value associated with 'name' </returns>
+        /// <remarks> The name is case-sensitive. </remarks>
+        /// <seealso cref="GetWindowData"/>
+        [DllImport (LibName, EntryPoint = "SDL_SetWindowData", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr SetWindowData (IntPtr window, IntPtr name, IntPtr userData);
+
+        /// <summary> Retrieve the data pointer associated with a window. </summary>
+        /// <param name="window"> The window to query. </param>
+        /// <param name="name"> The name of the pointer. </param>
+        /// <returns> The value associated with 'name' </returns>
+        /// <seealso cref="SetWindowData"/>
+        [DllImport (LibName, EntryPoint = "SDL_GetWindowData", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr GetWindowData (IntPtr window, IntPtr name);
+
+        /// <summary> Set the position of a window. </summary>
+        /// <param name="window"> The window to reposition. </param>
+        /// <param name="x"> The x coordinate of the window in screen coordinates, or <see cref="WindowPositionCentered"/> or <see cref="WindowPositionUndefined"/>. </param>
+        /// <param name="y"> The y coordinate of the window in screen coordinates, or <see cref="WindowPositionCentered"/> or <see cref="WindowPositionUndefined"/>. </param>
+        /// <remarks> The window coordinate origin is the upper Left of the display. </remarks>
+        /// <seealso cref="GetWindowPosition"/>
+        [DllImport (LibName, EntryPoint = "SDL_SetWindowPosition", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetWindowPosition (IntPtr window, int x, int y);
+
+        /// <summary> Get the position of a window. </summary>
+        /// <param name="window"> The window to query. </param>
+        /// <param name="x"> Pointer to variable for storing the x position, in screen coordinates. May be <see cref="IntPtr.Zero"/>. </param>
+        /// <param name="y"> Pointer to variable for storing the y position, in screen coordinates. May be <see cref="IntPtr.Zero"/>. </param>
+        /// <seealso cref="SetWindowPosition"/>
+        [DllImport (LibName, EntryPoint = "SDL_GetWindowPosition", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void GetWindowPosition (IntPtr window, out int x, out int y);
+
+        /// <summary> Set the size of a window's client area. </summary>
+        /// <param name="window"> The window to resize. </param>
+        /// <param name="width"> The width of the window, in screen coordinates. Must be >0. </param>
+        /// <param name="height"> The height of the window, in screen coordinates. Must be >0. </param>
+        /// <remarks> 
+        /// You can't change the size of a fullscreen window, it automatically matches the size of the display mode.
+        /// <para/>
+        ///  The window size in screen coordinates may differ from the size in pixels, if
+        ///  the window was created with WINDOW_ALLOW_HIGHDPI on a platform with
+        ///  high-dpi support (e.g. iOS or OS X). Use GL_GetDrawableSize"/> or
+        ///  GetRendererOutputSize"/> to get the real client area size in pixels.
+        /// </remarks>
+        /// <seealso cref="GetWindowSize"/>
+        [DllImport (LibName, EntryPoint = "SDL_SetWindowSize", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetWindowSize (IntPtr window, int width, int height);
+
+        /// <summary> Get the size of a window's client area. </summary>
+        /// <param name="window"> The window to query. </param>
+        /// <param name="width"> Pointer to variable for storing the width, in screen coordinates. May be <see cref="IntPtr.Zero"/>. </param>
+        /// <param name="height"> Pointer to variable for storing the height, in screen coordinates. May be <see cref="IntPtr.Zero"/>. </param>
+        /// <remarks>
+        ///  The window size in screen coordinates may differ from the size in pixels, if
+        ///  the window was created with WINDOW_ALLOW_HIGHDPI on a platform with
+        ///  high-dpi support (e.g. iOS or OS X). Use GL_GetDrawableSize"/> or
+        ///  GetRendererOutputSize"/> to get the real client area size in pixels.
+        /// </remarks>
+        /// <seealso cref="SetWindowSize"/>
+        [DllImport (LibName, EntryPoint = "SDL_GetWindowSize", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void GetWindowSize (IntPtr window, out int width, out int height);
+
+        /// <summary> Get the size of a window's borders (decorations) around the client area. </summary>
+        /// <param name="window"> The window to query. </param>
+        /// <param name="top"> Pointer to variable for storing the size of the Top border. <see cref="IntPtr.Zero"/> is permitted. </param>
+        /// <param name="left"> Pointer to variable for storing the size of the Left border. <see cref="IntPtr.Zero"/> is permitted. </param>
+        /// <param name="bottom"> Pointer to variable for storing the size of the Bottom border. <see cref="IntPtr.Zero"/> is permitted. </param>
+        /// <param name="right"> Pointer to variable for storing the size of the Right border. <see cref="IntPtr.Zero"/> is permitted. </param>
+        /// <returns> 0 on success, or -1 if getting this information is not supported. </returns>
+        /// <remarks>
+        /// If this function fails (returns -1), the size values will be initialized to 0, 0, 0, 0 (if a non-<see cref="IntPtr.Zero"/> pointer is provided), as if the window in question was borderless.
+        /// </remarks>
+        [DllImport (LibName, EntryPoint = "SDL_GetWindowBordersSize", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int GetWindowBordersSize (IntPtr window, out int top, out int left, out int bottom, out int right);
+
+        /// <summary> Set the minimum size of a window's client area. </summary>
+        /// <param name="window"> The window to set a new minimum size. </param>
+        /// <param name="minwidth"> The minimum width of the window, must be >0 </param>
+        /// <param name="minHeight"> The minimum height of the window, must be >0 </param>
+        /// <remarks> You can't change the minimum size of a fullscreen window, it automatically matches the size of the display mode. </remarks>
+        /// <seealso cref="GetWindowMinimumSize"/>
+        /// <seealso cref="SetWindowMaximumSize"/>
+        [DllImport (LibName, EntryPoint = "SDL_SetWindowMinimumSize", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetWindowMinimumSize (IntPtr window, int minwidth, int minHeight);
+
+        /// <summary> Get the minimum size of a window's client area. </summary>
+        /// <param name="window"/> The window to query.
+        /// <param name="width"/> Pointer to variable for storing the minimum width, may be <see cref="IntPtr.Zero"/>
+        /// <param name="height"/> Pointer to variable for storing the minimum height, may be <see cref="IntPtr.Zero"/>
+        /// <seealso cref="GetWindowMaximumSize"/>
+        /// <seealso cref="SetWindowMinimumSize"/>
+        [DllImport (LibName, EntryPoint = "SDL_GetWindowMinimumSize", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void GetWindowMinimumSize (IntPtr window, out int width, out int height);
+
+        /// <summary> Set the maximum size of a window's client area. </summary>
+        /// <param name="window"/> The window to set a new maximum size.
+        /// <param name="maxWidth"/> The maximum width of the window, must be >0
+        /// <param name="maxHeight"/> The maximum height of the window, must be >0
+        /// <remarks/> You can't change the maximum size of a fullscreen window, it automatically matches the size of the display mode.
+        /// <seealso cref="GetWindowMaximumSize"/>
+        /// <seealso cref="SetWindowMinimumSize"/>
+        [DllImport (LibName, EntryPoint = "SDL_SetWindowMaximumSize", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetWindowMaximumSize (IntPtr window, int maxWidth, int maxHeight);
+
+        /// <summary> Get the maximum size of a window's client area. </summary>
+        /// <param name="window"/> The window to query.
+        /// <param name="width"/> Pointer to variable for storing the maximum width, may be <see cref="IntPtr.Zero"/>
+        /// <param name="height"/> Pointer to variable for storing the maximum height, may be <see cref="IntPtr.Zero"/>
+        /// <seealso cref="GetWindowMinimumSize"/>
+        /// <seealso cref="SetWindowMaximumSize"/>
+        [DllImport (LibName, EntryPoint = "SDL_GetWindowMaximumSize", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void GetWindowMaximumSize (IntPtr window, out int width, out int height);
+        
+        /// <summary> 
+        /// Set the border state of a window.
+        /// <para/>
+        ///  This will add or remove the window's WINDOW_BORDERLESS flag and
+        ///  add or remove the border from the actual window. This is a no-op if the
+        ///  window's border already matches the requested state.
+        /// </summary>
+        /// <param name="window"/> The window of which to change the border state.
+        /// <param name="bordered"/> FALSE to remove border, TRUE to add border.
+        /// <remarks/> You can't change the border state of a fullscreen window.
+        /// <seealso cref="GetWindowFlags"/>
+        [DllImport (LibName, EntryPoint = "SDL_SetWindowBordered", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetWindowBordered (IntPtr window, bool bordered);
+        
+        /// <summary>
+        /// Set the user-resizable state of a window.
+        /// <para/>
+        ///  This will add or remove the window's WINDOW_RESIZABLE flag and
+        ///  allow/disallow user resizing of the window. This is a no-op if the
+        ///  window's resizable state already matches the requested state.
+        /// </summary>
+        /// <param name="window"/> The window of which to change the resizable state.
+        /// <param name="resizable"/> TRUE to allow resizing, FALSE to disallow.
+        /// <remarks> You can't change the resizable state of a fullscreen window. </remarks>
+        /// <seealso cref="GetWindowFlags"/>
+        [DllImport (LibName, EntryPoint = "SDL_SetWindowResizable", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetWindowResizable (IntPtr window, bool resizable);
+        
+        /// <summary> Show a window. </summary>
+        /// <seealso cref="HideWindow"/>
+        [DllImport (LibName, EntryPoint = "SDL_ShowWindow", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void ShowWindow (IntPtr window);
+        
+        /// <summary> Hide a window. </summary>
+        /// <seealso cref="ShowWindow"/>
+        [DllImport (LibName, EntryPoint = "SDL_HideWindow", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void HideWindow (IntPtr window);
+        
+        /// <summary> Raise a window above other windows and set the input focus. </summary>
+        [DllImport (LibName, EntryPoint = "SDL_RaiseWindow", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void RaiseWindow (IntPtr window);
+        
+        /// <summary> Make a window as large as possible. </summary>
+        /// <seealso cref="RestoreWindow"/>
+        [DllImport (LibName, EntryPoint = "SDL_MaximizeWindow", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void MaximizeWindow (IntPtr window);
+        
+        /// <summary> Minimize a window to an iconic representation. </summary>
+        /// <seealso cref="RestoreWindow"/>
+        [DllImport (LibName, EntryPoint = "SDL_MinimizeWindow", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void MinimizeWindow (IntPtr window);
+        
+        /// <summary> Restore the size and position of a minimized or maximized window. </summary>
+        /// <seealso cref="MaximizeWindow"/>
+        /// <seealso cref="MinimizeWindow"/>
+        [DllImport (LibName, EntryPoint = "SDL_RestoreWindow", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void RestoreWindow (IntPtr window);
+        
+        /// <summary> Set a window's fullscreen state. </summary>
+        /// <returns> 0 on success, or -1 if setting the display mode failed. </returns>
+        /// <seealso cref="SetWindowDisplayMode"/>
+        /// <seealso cref="GetWindowDisplayMode"/>
+        [DllImport (LibName, EntryPoint = "SDL_SetWindowFullscreen", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int SetWindowFullscreen (IntPtr window, WindowFlags flags);
+        
+        /// <summary> Get the SDL surface associated with the window. </summary>
+        /// <returns> The window's framebuffer surface, or <see cref="IntPtr.Zero"/> on error. </returns>
+        /// <remarks>
+        ///  A new surface will be created with the optimal format for the window,
+        ///  if necessary. This surface will be freed when the window is destroyed.
+        /// <para/>
+        ///  You may not combine this with 3D or the rendering API on this window.
+        /// </remarks>
+        /// <seealso cref="UpdateWindowSurface"/>
+        /// <seealso cref="UpdateWindowSurfaceRects"/>
+        [DllImport (LibName, EntryPoint = "SDL_GetWindowSurface", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr GetWindowSurface (IntPtr window);
+        
+        /// <summary> Copy the window surface to the screen. </summary>
+        /// <returns> 0 on success, or -1 on error. </returns>
+        /// <seealso cref="GetWindowSurface"/>
+        /// <seealso cref="UpdateWindowSurfaceRects"/>
+        [DllImport (LibName, EntryPoint = "SDL_UpdateWindowSurface", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int UpdateWindowSurface (IntPtr window);
+        
+        /// <summary> Copy a number of rectangles on the window surface to the screen. </summary>
+        /// <returns> 0 on success, or -1 on error. </returns>
+        /// <seealso cref="GetWindowSurface"/>
+        /// <seealso cref="UpdateWindowSurface"/>
+        [DllImport (LibName, EntryPoint = "SDL_UpdateWindowSurfaceRects", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int UpdateWindowSurfaceRects (
+            IntPtr window, 
+            [In(), MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 2)]
+            Rectangle[] rectangles, 
+            int numRectangles);
+        
+        /// <summary> Set a window's input grab mode. </summary>
+        /// <param name="window"/> The window for which the input grab mode should be set.
+        /// <param name="grabbed"/> This is TRUE to grab input, and FALSE to release input.
+        /// <remarks>
+        ///  If the caller enables a grab while another window is currently grabbed,
+        ///  the other window loses its grab in favor of the caller's window.
+        /// </remarks>
+        /// <seealso cref="GetWindowGrab"/>
+        [DllImport (LibName, EntryPoint = "SDL_SetWindowGrab", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetWindowGrab (IntPtr window, bool grabbed);
+        
+        /// <summary> Get a window's input grab mode. </summary>
+        /// <returns> This returns TRUE if input is grabbed, and FALSE otherwise. </returns>
+        /// <seealso cref="SetWindowGrab"/>
+        [DllImport (LibName, EntryPoint = "SDL_GetWindowGrab", CallingConvention = CallingConvention.Cdecl)]
+        public static extern bool GetWindowGrab (IntPtr window);
+        
+        /// <summary> Get the window that currently has an input grab enabled. </summary>
+        /// <returns> This returns the window if input is grabbed, and <see cref="IntPtr.Zero"/> otherwise. </returns>
+        /// <seealso cref="SetWindowGrab"/>
+        [DllImport (LibName, EntryPoint = "SDL_GetGrabbedWindow", CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr GetGrabbedWindow ();
+        
+        /// <summary> Set the bRightness (gamma correction) for a window. </summary>
+        /// <returns> 0 on success, or -1 if setting the bRightness isn't supported. </returns>
+        /// <seealso cref="GetWindowBRightness"/>
+        /// <seealso cref="SetWindowGammaRamp"/>
+        [DllImport (LibName, EntryPoint = "SDL_SetWindowBRightness", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int SetWindowBRightness (IntPtr window, float brightness);
+        
+        /// <summary> Get the bRightness (gamma correction) for a window. </summary>
+        /// <returns> The last bRightness value passed to SetWindowBRightness"/> </returns>
+        /// <seealso cref="SetWindowBRightness"/>
+        [DllImport (LibName, EntryPoint = "SDL_GetWindowBRightness", CallingConvention = CallingConvention.Cdecl)]
+        public static extern float GetWindowBRightness (IntPtr window);
+        
+        /// <summary> Set the opacity for a window </summary>
+        /// <param name="window"/> The window which will be made transparent or opaque
+        /// <param name="opacity"/> Opacity (0.0f - transparent, 1.0f - opaque) This will be clamped internally between 0.0f and 1.0f.
+        /// <returns> 0 on success, or -1 if setting the opacity isn't supported. </returns>
+        /// <seealso cref="GetWindowOpacity"/>
+        [DllImport (LibName, EntryPoint = "SDL_SetWindowOpacity", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int SetWindowOpacity (IntPtr window, float opacity);
+        
+        /// <summary> 
+        /// Get the opacity of a window.
+        /// <para/>
+        ///  If transparency isn't supported on this platform, opacity will be reported
+        ///  as 1.0f without error.
+        /// </summary>
+        /// <param name="window"/> The window in question.
+        /// <param name="outOpacity"/> Opacity (0.0f - transparent, 1.0f - opaque)
+        /// <returns> 0 on success, or -1 on error (invalid window, etc). </returns>
+        /// <seealso cref="SetWindowOpacity"/>
+        [DllImport (LibName, EntryPoint = "SDL_GetWindowOpacity", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int GetWindowOpacity (IntPtr window, out float outOpacity);
+        
+        /// <summary> Sets the window as a modal for another window (TODO: reconsider this function and/or its name) </summary>
+        /// <param name="modalWindow"> The window that should be modal </param>
+        /// <param name="parentWindow"> The parent window </param>
+        /// <returns> 0 on success, or -1 otherwise. </returns>
+        [DllImport (LibName, EntryPoint = "SDL_SetWindowModalFor", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int SetWindowModalFor (IntPtr modalWindow, IntPtr parentWindow);
+
+        /// <summary> 
+        /// Explicitly sets input focus to the window.
+        /// <para/>
+        ///  You almost certainly want <see cref="RaiseWindow(IntPtr)"/> instead of this function. Use
+        ///  this with caution, as you might give focus to a window that's completely
+        ///  obscured by other windows.
+        /// </summary>
+        /// <param name="window"> The window that should get the input focus. </param>
+        /// <returns> 0 on success, or -1 otherwise. </returns>
+        /// <seealso cref="RaiseWindow"/>
+        [DllImport (LibName, EntryPoint = "SDL_SetWindowInputFocus", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int SetWindowInputFocus (IntPtr window);
+
+
+        /// <summary> Set the gamma ramp for a window. </summary>
+        /// <param name="window"/> The window for which the gamma ramp should be set.
+        /// <param name="red"/> The translation table for the red channel, or <see cref="IntPtr.Zero"/>.
+        /// <param name="green"/> The translation table for the green channel, or <see cref="IntPtr.Zero"/>.
+        /// <param name="blue"/> The translation table for the blue channel, or <see cref="IntPtr.Zero"/>.
+        /// <returns> 0 on success, or -1 if gamma ramps are unsupported. </returns>
+        /// <remarks>
+        ///  Set the gamma translation table for the red, green, and blue channels
+        ///  of the video hardware.  Each table is an array of 256 16-bit quantities,
+        ///  representing a mapping between the input and output for that channel.
+        ///  The input is the index into the array, and the output is the 16-bit
+        ///  gamma value at that index, scaled to the output color precision.
+        /// </remarks>
+        /// <seealso cref="GetWindowGammaRamp"/>
+        [DllImport (LibName, EntryPoint = "SDL_SetWindowGammaRamp", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int SetWindowGammaRamp (
+            IntPtr window,
+            [In(), MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U2, SizeConst = 256)]
+            ushort[] red,
+            [In(), MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U2, SizeConst = 256)]
+            ushort[] green,
+            [In(), MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U2, SizeConst = 256)]
+            ushort[] blue);
+
+
+        /// <summary> Get the gamma ramp for a window. </summary>
+        /// <param name="window"/> The window from which the gamma ramp should be queried.
+        /// <param name="red"/> A pointer to a 256 element array of 16-bit quantities to hold the translation table for the red channel, or <see cref="IntPtr.Zero"/>.
+        /// <param name="green"/> A pointer to a 256 element array of 16-bit quantities to hold the translation table for the green channel, or <see cref="IntPtr.Zero"/>.
+        /// <param name="blue"/> A pointer to a 256 element array of 16-bit quantities to hold the translation table for the blue channel, or <see cref="IntPtr.Zero"/>.
+        /// <returns> 0 on success, or -1 if gamma ramps are unsupported. </returns>
+        /// <seealso cref="SetWindowGammaRamp"/>
+        [DllImport (LibName, EntryPoint = "SDL_GetWindowGammaRamp", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int GetWindowGammaRamp (
+            IntPtr window,
+            [Out(), MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U2, SizeConst = 256)]
+            ushort[] red,
+            [Out(), MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U2, SizeConst = 256)]
+            ushort[] green,
+            [Out(), MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U2, SizeConst = 256)]
+            ushort[] blue);
+
+        /// <summary> 
+        /// Provide a callback that decides if a window region has special properties.
+        /// <para/>
+        ///  Normally windows are dragged and resized by decorations provided by the
+        ///  system window manager (a title bar, borders, etc), but for some apps, it
+        ///  makes sense to drag them from somewhere else inside the window itself; for
+        ///  example, one might have a borderless window that wants to be draggable
+        ///  from any part, or simulate its own title bar, etc.
+        /// <para/>
+        ///  This function lets the app provide a callback that designates pieces of
+        ///  a given window as special. This callback is run during event processing
+        ///  if we need to tell the OS to treat a region of the window specially; the
+        ///  use of this callback is known as "hit testing."
+        /// <para/>
+        ///  Mouse input may not be delivered to your application if it is within
+        ///  a special area; the OS will often apply that input to moving the window or
+        ///  resizing the window and not deliver it to the application.
+        /// <para/>
+        ///  Specifying <see cref="IntPtr.Zero"/> for a callback disables hit-testing. Hit-testing is
+        ///  disabled by default.
+        /// <para/>
+        ///  Platforms that don't support this functionality will return -1
+        ///  unconditionally, even if you're attempting to disable hit-testing.
+        /// <para/>
+        ///  Your callback may fire at any time, and its firing does not indicate any
+        ///  specific behavior (for example, on Windows, this certainly might fire
+        ///  when the OS is deciding whether to drag your window, but it fires for lots
+        ///  of other reasons, too, some unrelated to anything you probably care about
+        ///  _and when the mouse isn't actually at the location it is testing_).
+        ///  Since this can fire at any time, you should try to keep your callback
+        ///  efficient, devoid of allocations, etc.
+        /// </summary>
+        /// <paramref name="window"/> The window to set hit-testing on.
+        /// <paramref name="callback"/> The callback to call when doing a hit-test.
+        /// <paramref name="callbackData"/> An app-defined void pointer passed to the callback.
+        /// <returns> 0 on success, -1 on error (including unsupported). </returns>
+        [DllImport (LibName, EntryPoint = "SDL_SetWindowHitTest", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int SetWindowHitTest (IntPtr window, HitTest callback, IntPtr callbackData);
+
+        /// <summary> Destroy a window. </summary>
+        [DllImport (LibName, EntryPoint = "SDL_DestroyWindow", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void DestroyWindow (IntPtr window);
+
+        /// <summary> Returns whether the screensaver is currently enabled (default off). </summary>
+        /// <seealso cref="EnableScreenSaver"/>
+        /// <seealso cref="DisableScreenSaver"/>
+        [DllImport (LibName, EntryPoint = "SDL_IsScreenSaverEnabled", CallingConvention = CallingConvention.Cdecl)]
+        public static extern bool IsScreenSaverEnabled ();
+
+        /// <summary> Allow the screen to be blanked by a screensaver. </summary>
+        /// <seealso cref="IsScreenSaverEnabled"/>
+        /// <seealso cref="DisableScreenSaver"/>
+        [DllImport (LibName, EntryPoint = "SDL_EnableScreenSaver", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void EnableScreenSaver ();
+
+        /// <summary> Prevent the screen from being blanked by a screensaver. </summary>
+        /// <seealso cref="IsScreenSaverEnabled"/>
+        /// <seealso cref="EnableScreenSaver"/>
+        [DllImport (LibName, EntryPoint = "SDL_DisableScreenSaver", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void DisableScreenSaver ();
     }
 }

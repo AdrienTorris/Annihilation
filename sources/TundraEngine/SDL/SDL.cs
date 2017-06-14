@@ -5,8 +5,11 @@ namespace SDL2
 {
     public static partial class SDL
     {
-        private const string LibName = "SDL2.dll";
+        public const string LibName = "SDL2.dll";
         
+        /// <summary>
+        /// These are the flags which may be passed to SDL_Init(). You should specify the subsystems which you will be using in your application.
+        /// </summary>
         [Flags]
         public enum InitFlags : uint
         {
