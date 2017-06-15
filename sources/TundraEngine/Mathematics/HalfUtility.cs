@@ -2,7 +2,7 @@
 
 namespace TundraEngine.Mathematics
 {
-    internal static class HalfUtility
+    public static class HalfUtility
     {
         [StructLayout(LayoutKind.Explicit, Pack = 4)]
         private struct FloatToUint

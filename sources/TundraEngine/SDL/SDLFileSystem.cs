@@ -1,12 +1,11 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
-namespace SDL2
+namespace SDL
 {
     public static partial class SDL
     {
-        [DllImport (LibName, EntryPoint = "SDL_GetBasePath", CallingConvention = CallingConvention.Cdecl)]
-        private extern static IntPtr GetBasePathInternal ();
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        unsafe private extern static byte* SDL_GetBasePath ();
 
         /// <summary>
         /// Use this function to get the directory where the application was run from. This is where the application data directory is.
@@ -19,13 +18,13 @@ namespace SDL2
         /// <remarks>
         /// This is not necessarily a fast call, though, so you should call this once near startup and save the string if you need it.
         /// </remarks>
-        public static string GetBasePath ()
+        unsafe public static string SDL_GetBasePathString ()
         {
-            return GetBasePathInternal ().ToStr ();
+            return Interop.PointerToString(SDL_GetBasePath ());
         }
 
-        [DllImport (LibName, EntryPoint = "SDL_GetPrefPath", CallingConvention = CallingConvention.Cdecl)]
-        private extern static IntPtr GetPrefPathInternal (IntPtr org, IntPtr app);
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        unsafe private extern static byte* SDL_GetPrefPath (byte* org, byte* app);
 
         /// <summary>
         /// Use this function to get the "pref dir". This is meant to be where the application can write personal files (Preferences and save games, etc.) that are specific to the application. This directory is unique per user and per application.
@@ -38,9 +37,9 @@ namespace SDL2
         /// <remarks>
         /// You should assume the path returned by this function is the only safe place to write files (and that <see cref="GetBasePath"/>, while it might be writable, or even the parent of the returned path, aren't where you should be writing things).
         /// </remarks>
-        public static string GetPrefPath (string org, string app)
+        unsafe public static string SDL_GetPrefPath (string org, string app)
         {
-            return GetPrefPathInternal (org.ToIntPtr (), app.ToIntPtr ()).ToStr ();
+            return Interop.PointerToString (SDL_GetPrefPath (Interop.StringToPointer(org), Interop.StringToPointer (app)));
         }
     }
 }

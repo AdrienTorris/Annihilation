@@ -1,35 +1,23 @@
 ﻿using System;
-using SDL2;
 using SharpVk;
+
+using static SDL.SDL;
 
 namespace TundraEngine
 {
-    public class Window
+    public class Window : IDisposable
     {
+        private IntPtr _window;
         private Instance _instance;
-        private PhysicalDevice _physicalDevice;
-        private Device _device;
 
         public Window ()
         {
-            // Extensions and layers
-            LayerProperties[] layers = Instance.EnumerateLayerProperties ();
-            foreach (var layer in layers)
-            {
-                SDL.Log (layer.LayerName);
-            }
-
             // Instance
             InstanceCreateInfo instanceInfo = new InstanceCreateInfo
             {
                 ApplicationInfo = new ApplicationInfo
                 {
                     ApplicationName = "Tundra Engine"
-                },
-                EnabledLayerNames = new string[]
-                {
-                    "VK_LAYER_LUNARG_core_validation",
-                    "VK_LAYER_LUNARG_object_tracker"
                 },
                 EnabledExtensionNames = new string[]
                 {
@@ -40,21 +28,25 @@ namespace TundraEngine
             _instance = Instance.Create (instanceInfo);
 
             // SDL Window
-            IntPtr windowPtr = SDL.CreateWindow (
+            _window = SDL_CreateWindow (
                 "Tundra Engine",
-                SDL.WindowPositionUndefined,
-                SDL.WindowPositionUndefined,
+                SDL_WindowPositionUndefined,
+                SDL_WindowPositionUndefined,
                 1280,
                 768,
-                SDL.WindowFlags.Shown | SDL.WindowFlags.Vulkan);
+                SDL_WindowFlags.Shown | SDL_WindowFlags.Vulkan);
 
-            if (windowPtr == IntPtr.Zero)
+            if (_window == IntPtr.Zero)
             {
-                SDL.LogError (SDL.LogCategory.Error, SDL.GetError ());
+                SDL_LogError (SDL_LogCategory.Error, SDL_GetErrorString ());
                 return;
             }
 
-            SDL.CreateVulkanSurface (windowPtr, _instance, out Surface surface);
+            if (!SDL_CreateVulkanSurface (_window, _instance, out Surface surface))
+            {
+                SDL_LogError (SDL_LogCategory.Error, SDL_GetErrorString ());
+                return;
+            }
 
             // Device
             PhysicalDevice[] physicalDevices = _instance.EnumeratePhysicalDevices ();
@@ -70,12 +62,15 @@ namespace TundraEngine
                 };
                 Device device = physicalDevice.CreateDevice (deviceInfo);
             }
+        }
 
-            Win32SurfaceCreateInfo surfaceInfo = new Win32SurfaceCreateInfo
-            {
-                
-            };
-            //KhrWin32Surface win32Surface = Create
+        public void Dispose ()
+        {
+            SDL_DestroyWindow (_window);
+            _window = IntPtr.Zero;
+            _instance.Dispose ();
+
+            GC.SuppressFinalize (this);
         }
     }
 }

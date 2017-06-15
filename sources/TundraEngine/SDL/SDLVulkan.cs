@@ -1,21 +1,21 @@
 ﻿using System;
 using SharpVk;
 
-namespace SDL2
+namespace SDL
 {
     public static partial class SDL
     {
-        public static bool CreateVulkanSurface (IntPtr window, Instance instance, out Surface surface)
+        public static bool SDL_CreateVulkanSurface (IntPtr window, Instance instance, out Surface surface)
         {
             if (window == null)
             {
-                SetError ("window is null");
+                SDL_SetError ("window is null");
                 surface = null;
                 return false;
             }
             if (instance == null)
             {
-                SetError ("instance is null");
+                SDL_SetError ("instance is null");
                 surface = null;
                 return false;
             }
@@ -24,7 +24,7 @@ namespace SDL2
             FillVersion (out wmInfo.Version);
             if (!GetWindowWMInfo (window, ref wmInfo))
             {
-                SetError ("Invalid SDL version number");
+                SDL_SetError ("Invalid SDL version number");
                 surface = null;
                 return false;
             }
@@ -47,7 +47,7 @@ namespace SDL2
                     break;
                 default:
                     surface = null;
-                    SetError ("Unsupported subsystem: " + wmInfo.SubSystem);
+                    SDL_SetError ("Unsupported subsystem: " + wmInfo.SubSystem);
                     return false;
             }
             return true;

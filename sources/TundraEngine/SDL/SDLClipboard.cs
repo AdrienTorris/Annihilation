@@ -1,39 +1,38 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
-namespace SDL2
+namespace SDL
 {
     public static partial class SDL
     {
-        [DllImport (LibName, EntryPoint = "SDL_SetClipboardText", CallingConvention = CallingConvention.Cdecl)]
-        private extern static int SetClipboardTextInternal (IntPtr text);
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        unsafe private extern static int SDL_SetClipboardText (byte* text);
 
         /// <summary>
         /// Put UTF-8 text into the clipboard
         /// </summary>
-        /// <seealso cref="GetClipboardText"/>
-        public static int SetClipboardText (string text)
+        /// <seealso cref="GetText"/>
+        unsafe public static int SDL_SetClipboardText (string text)
         {
-            return SetClipboardTextInternal (text.ToIntPtr ());
+            return SDL_SetClipboardText (Interop.StringToPointer (text));
         }
 
-        [DllImport (LibName, EntryPoint = "SDL_GetClipboardText", CallingConvention = CallingConvention.Cdecl)]
-        private extern static IntPtr GetClipboardTextInternal ();
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        unsafe private extern static byte* SDL_GetClipboardText ();
 
         /// <summary>
         /// Get UTF-8 text from the clipboard, which must be freed with SDL_free()
         /// </summary>
-        /// <seealso cref="SetClipboardText"/>
-        public static string GetClipboardText ()
+        /// <seealso cref="SetText"/>
+        unsafe public static string SDL_GetClipboardTextString ()
         {
-            return GetClipboardTextInternal ().ToStr ();
+            return Interop.PointerToString (SDL_GetClipboardText ());
         }
 
         /// <summary>
         /// Returns a flag indicating whether the clipboard exists and contains a text string that is non-empty
         /// </summary>
-        /// <seealso cref="GetClipboardText"/>
-        [DllImport (LibName, EntryPoint = "SDL_HasClipboardText", CallingConvention = CallingConvention.Cdecl)]
-        public extern static bool HasClipboardText ();
+        /// <seealso cref="GetText"/>
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        public extern static bool SDL_HasClipboardText ();
     }
 }

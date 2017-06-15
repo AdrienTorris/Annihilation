@@ -1,26 +1,26 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace SDL2
+namespace SDL
 {
-    /// <summary>
-    /// Type definition of the hint callback function.
-    /// </summary>
-    [UnmanagedFunctionPointer (CallingConvention.Cdecl)]
-    public delegate void HintCallback (IntPtr userData, IntPtr name, IntPtr oldValue, IntPtr newValue);
-
-    /// <summary>
-    /// An enumeration of hint priorities
-    /// </summary>
-    public enum HintPriority
-    {
-        Default,
-        Normal,
-        Override
-    }
-
     public static partial class SDL
     {
+        /// <summary>
+        /// Type definition of the hint callback function.
+        /// </summary>
+        [UnmanagedFunctionPointer (CallingConvention.Cdecl)]
+        public delegate void HintCallback (IntPtr userData, IntPtr name, IntPtr oldValue, IntPtr newValue);
+
+        /// <summary>
+        /// An enumeration of hint priorities
+        /// </summary>
+        public enum HintPriority
+        {
+            Default,
+            Normal,
+            Override
+        }
+
         /// <summary>
         /// A variable controlling how 3D acceleration is used to accelerate the SDL screen surface.
         /// <para /> SDL can try to accelerate the SDL screen surface by using streaming textures with a 3D rendering engine.This variable controls whether and how this is done.
@@ -42,57 +42,39 @@ namespace SDL2
 
         // TODO: Add all other non-renderer specific hints
 
-        [DllImport (LibName, EntryPoint = "SDL_SetHintWithPriority", CallingConvention = CallingConvention.Cdecl)]
-        private extern static bool SetHintWithPriorityInternal (IntPtr name, IntPtr value, HintPriority priority);
-
         /// <summary>
         /// Set a hint with a specific priority
         /// <para /> The priority controls the behavior when setting a hint that already has a value.Hints will replace existing hints of their priority and lower.Environment variables are considered to have override priority.
         /// </summary>
         /// <returns> True if the hint was set, false otherwise </returns>
-        public static bool SetHintWithPriority (string name, string value, HintPriority priority)
-        {
-            return SetHintWithPriorityInternal (name.ToIntPtr (), value.ToIntPtr (), priority);
-        }
-
-        [DllImport (LibName, EntryPoint = "SDL_SetHint", CallingConvention = CallingConvention.Cdecl)]
-        private extern static bool SetHintInternal (IntPtr name, IntPtr value);
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        public extern static bool SDL_SetHintWithPriority (string name, string value, HintPriority priority);
 
         /// <summary>
         /// Set a hint with normal priority.
         /// </summary>
         /// <returns> True if the hint was set, false otherwise </returns>
-        public static bool SetHint (string name, string value)
-        {
-            return SetHintInternal (name.ToIntPtr (), value.ToIntPtr ());
-        }
-
-        [DllImport (LibName, EntryPoint = "SDL_GetHint", CallingConvention = CallingConvention.Cdecl)]
-        private extern static IntPtr GetHintInternal (IntPtr name);
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        public extern static bool SDL_SetHint (string name, string value);
+        
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        private extern static IntPtr SDL_GetHint (string name);
 
         /// <summary>
         /// Get a hint.
         /// </summary>
         /// <returns> The string value of a hint variable. </returns>
-        public static string GetHint (string name)
+        unsafe public static string SDL_GetHintString (string name)
         {
-            return GetHintInternal (name.ToIntPtr ()).ToStr ();
+            return GetString (SDL_GetHint (name));
         }
-
-        [DllImport (LibName, EntryPoint = "SDL_GetHintBoolean", CallingConvention = CallingConvention.Cdecl)]
-        private extern static bool GetHintBooleanInternal (IntPtr name, bool defaultValue);
 
         /// <summary>
         /// Get a hint.
         /// </summary>
         /// <returns> The boolean value of a hint variable. </returns>
-        public static bool GetHintBoolean (string name, bool defaultValue)
-        {
-            return GetHintBooleanInternal (name.ToIntPtr (), defaultValue);
-        }
-
-        [DllImport (LibName, EntryPoint = "SDL_AddHintCallback", CallingConvention = CallingConvention.Cdecl)]
-        private extern static void AddHintCallbackInternal (IntPtr name, HintCallback callback, IntPtr userData);
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        public extern static bool SDL_GetHintBoolean (string name, bool defaultValue);
 
         /// <summary>
         /// Add a function to watch a particular hint.
@@ -100,13 +82,8 @@ namespace SDL2
         /// <param name="name"> The hint to watch </param>
         /// <param name="callback"> The function to call when the hint value changes </param>
         /// <param name="userData"> A pointer to pass to the callback function </param>
-        public static void AddHintCallback (string name, HintCallback callback, IntPtr userData)
-        {
-            AddHintCallbackInternal (name.ToIntPtr (), callback, userData);
-        }
-
-        [DllImport (LibName, EntryPoint = "SDL_DelHintCallback", CallingConvention = CallingConvention.Cdecl)]
-        private extern static void DelHintCallbackInternal (IntPtr name, HintCallback callback, IntPtr userData);
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        public extern static void SDL_AddHintCallback (string name, HintCallback callback, IntPtr userData);
 
         /// <summary>
         /// Remove a function watching a particular hint.
@@ -114,16 +91,14 @@ namespace SDL2
         /// <param name="name"> The hint to watch </param>
         /// <param name="callback"> The function to call when the hint value changes </param>
         /// <param name="userData"> A pointer to pass to the callback function </param>
-        public static void DelHintCallback (string name, HintCallback callback, IntPtr userData)
-        {
-            DelHintCallbackInternal (name.ToIntPtr (), callback, userData);
-        }
-
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        public extern static void SDL_DelHintCallback (string name, HintCallback callback, IntPtr userData);
+        
         /// <summary>
         /// Clear all hints.
         /// <para /> This function is called during <see cref="Quit"/> to free stored hints.
         /// </summary>
-        [DllImport (LibName, EntryPoint = "SDL_ClearHints", CallingConvention = CallingConvention.Cdecl)]
-        public extern static void ClearHints ();
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        public extern static void SDL_ClearHints ();
     }
 }

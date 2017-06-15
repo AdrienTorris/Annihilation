@@ -26,7 +26,7 @@ namespace TundraEngine.Mathematics
             // Find the difference in ULPs.
             int ulp = Math.Abs(aInt - bInt);
             // Choose of maxUlp = 4
-            // according to http://code.google.com/p/googletest/source/browse/trunk/include/gtest/internal/gtest-internal.h
+            // according to http://code.google.com/p/googletest/source/browse/trunk/include/gtest/Native/gtest-Native.h
             const int maxUlp = 4;
             return (ulp <= maxUlp);
         }

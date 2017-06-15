@@ -5,11 +5,14 @@ namespace TundraEngine
 {
     public static class EntityManager
     {
+        // Entities
         private static List<byte> _generations = new List<byte> (MinFreeIndices);
         private static Queue<int> _freeIndexQueue = new Queue<int> (MinFreeIndices);
-        
         private const int MinFreeIndices = 1024;
-        
+
+        // Components
+        private static Dictionary<byte, ComponentManager> _componentManagerMap = new Dictionary<byte, ComponentManager> ();
+
         public static Entity Create (World world)
         {
             Entity entity;
@@ -34,21 +37,20 @@ namespace TundraEngine
             return entity;
         }
 
-        public static Entity Spawn (EntityAsset entityAsset, World world)
+        public static Entity Spawn (IEntityResource entityResource, World world)
         {
             Entity entity = Create(world);
 
-            foreach (Component component in entityAsset.Components)
-            {
-
-            }
+            entityResource.Spawn (entity);
 
             return entity;
         }
 
-        public static Entity Spawn (EntityAsset entityAsset, World world, Vector3 position, Quaternion orientation)
+        public static Entity Spawn (IEntityResource entityResource, World world, Vector3 position, Quaternion orientation)
         {
-            Entity entity = Spawn(entityAsset, world);
+            Entity entity = Spawn(entityResource, world);
+
+            entityResource.Spawn (entity);
 
             return entity;
         }

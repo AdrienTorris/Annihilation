@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace SDL2
+namespace SDL
 {
     public static partial class SDL
     {
-        public delegate void LogOutputFunction (IntPtr userData, LogCategory category, LogPriority priority, IntPtr message);
+        public delegate void LogOutputFunction (IntPtr userData, SDL_LogCategory category, SDL_LogPriority priority, IntPtr message);
 
         /// <summary>
         /// The predefined log categories
         /// <para /> By default the application category is enabled at the INFO level, the assert category is enabled at the WARN level, test is enabled at the VERBOSE level and all other categories are enabled at the CRITICAL level.
         /// </summary>
-        public enum LogCategory
+        public enum SDL_LogCategory
         {
             Application,
             Error,
@@ -49,7 +49,7 @@ namespace SDL2
         /// <summary>
         /// The predefined log priorities
         /// </summary>
-        public enum LogPriority
+        public enum SDL_LogPriority
         {
             Verbose = 1,
             Debug,
@@ -61,96 +61,86 @@ namespace SDL2
             NumLogPriorities
         }
         
-        [DllImport (LibName, EntryPoint = "SDL_LogSetAllPriority", CallingConvention = CallingConvention.Cdecl)]
-        public extern static void LogSetAllPriority (LogPriority priority);
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        public extern static void SDL_LogSetAllPriority (SDL_LogPriority priority);
 
-        [DllImport (LibName, EntryPoint = "SDL_LogSetPriority", CallingConvention = CallingConvention.Cdecl)]
-        public extern static void LogSetPriority (LogCategory category, LogPriority priority);
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        public extern static void SDL_LogSetPriority (SDL_LogCategory category, SDL_LogPriority priority);
 
-        [DllImport (LibName, EntryPoint = "SDL_LogGetPriority", CallingConvention = CallingConvention.Cdecl)]
-        public extern static LogPriority LogGetPriority (LogCategory category);
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        public extern static SDL_LogPriority SDL_LogGetPriority (SDL_LogCategory category);
 
-        [DllImport (LibName, EntryPoint = "SDL_LogResetPriorities", CallingConvention = CallingConvention.Cdecl)]
-        public extern static void LogResetPriorities ();
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        public extern static void SDL_LogResetPriorities ();
 
-        [DllImport (LibName, EntryPoint = "SDL_Log", CallingConvention = CallingConvention.Cdecl)]
-        private extern static void LogInternal (IntPtr fmt, params object[] objects);
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        unsafe private extern static void SDL_Log (byte* fmt, params object[] objects);
 
-        public static void Log (string fmt)
+        unsafe public static void SDL_Log (string fmt)
         {
-            LogInternal (fmt.ToIntPtr ());
+            SDL_Log (Interop.StringToPointer(fmt));
         }
 
-        [DllImport (LibName, EntryPoint = "SDL_LogVerbose", CallingConvention = CallingConvention.Cdecl)]
-        private extern static void LogVerboseInternal (LogCategory category, IntPtr fmt, params object[] objects);
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        unsafe private extern static void SDL_LogVerbose (SDL_LogCategory category, byte* fmt, params object[] objects);
 
-        public static void LogVerbose (LogCategory category, string fmt)
+        unsafe public static void SDL_LogVerbose (SDL_LogCategory category, string fmt)
         {
-            LogVerboseInternal (category, fmt.ToIntPtr ());
+            SDL_LogVerbose (category, Interop.StringToPointer (fmt));
         }
 
-        [DllImport (LibName, EntryPoint = "SDL_LogDebug", CallingConvention = CallingConvention.Cdecl)]
-        private extern static void LogDebugInternal (LogCategory category, IntPtr fmt, params object[] objects);
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        unsafe private extern static void SDL_LogDebug (SDL_LogCategory category, byte* fmt, params object[] objects);
 
-        public static void LogDebug (LogCategory category, string fmt)
+        unsafe public static void SDL_LogDebug (SDL_LogCategory category, string fmt)
         {
-            LogDebugInternal (category, fmt.ToIntPtr ());
+            SDL_LogDebug (category, Interop.StringToPointer (fmt));
         }
 
-        [DllImport (LibName, EntryPoint = "SDL_LogInfo", CallingConvention = CallingConvention.Cdecl)]
-        private extern static void LogInfoInternal (LogCategory category, IntPtr fmt, params object[] objects);
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        unsafe private extern static void SDL_LogInfo (SDL_LogCategory category, byte* fmt, params object[] objects);
 
-        public static void LogInfo (LogCategory category, string fmt)
+        unsafe public static void SDL_LogInfo (SDL_LogCategory category, string fmt)
         {
-            LogInfoInternal (category, fmt.ToIntPtr ());
+            SDL_LogInfo (category, Interop.StringToPointer (fmt));
         }
 
-        [DllImport (LibName, EntryPoint = "SDL_LogWarn", CallingConvention = CallingConvention.Cdecl)]
-        private extern static void LogWarnInternal (LogCategory category, IntPtr fmt, params object[] objects);
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        unsafe private extern static void SDL_LogWarn (SDL_LogCategory category, byte* fmt, params object[] objects);
 
-        public static void LogWarn (LogCategory category, string fmt)
+        unsafe public static void SDL_LogWarn (SDL_LogCategory category, string fmt)
         {
-            LogWarnInternal (category, fmt.ToIntPtr ());
+            SDL_LogWarn (category, Interop.StringToPointer (fmt));
         }
 
-        [DllImport (LibName, EntryPoint = "SDL_LogError", CallingConvention = CallingConvention.Cdecl)]
-        private extern static void LogErrorInternal (LogCategory category, IntPtr fmt, params object[] objects);
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        unsafe private extern static void SDL_LogError (SDL_LogCategory category, byte* fmt, params object[] objects);
 
-        public static void LogError (LogCategory category, string fmt)
+        unsafe public static void SDL_LogError (SDL_LogCategory category, string fmt)
         {
-            LogErrorInternal (category, fmt.ToIntPtr ());
+            SDL_LogError (category, Interop.StringToPointer (fmt));
         }
 
-        [DllImport (LibName, EntryPoint = "SDL_LogCritical", CallingConvention = CallingConvention.Cdecl)]
-        private extern static void LogCriticalInternal (LogCategory category, IntPtr fmt, params object[] objects);
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        unsafe private extern static void SDL_LogCritical (SDL_LogCategory category, byte* fmt, params object[] objects);
 
-        public static void LogCritical (LogCategory category, string fmt)
+        unsafe public static void SDL_LogCritical (SDL_LogCategory category, string fmt)
         {
-            LogCriticalInternal (category, fmt.ToIntPtr ());
+            SDL_LogCritical (category, Interop.StringToPointer (fmt));
         }
 
-        [DllImport (LibName, EntryPoint = "SDL_LogMessage", CallingConvention = CallingConvention.Cdecl)]
-        private extern static void LogMessageInternal (LogCategory category, LogPriority priority, IntPtr fmt, params object[] objects);
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        unsafe private extern static void SDL_LogMessage (SDL_LogCategory category, SDL_LogPriority priority, byte* fmt, params object[] objects);
 
-        public static void LogMessage (LogCategory category, LogPriority priority, string fmt)
+        unsafe public static void SDL_LogMessage (SDL_LogCategory category, SDL_LogPriority priority, string fmt)
         {
-            LogMessageInternal (category, priority, fmt.ToIntPtr ());
+            SDL_LogMessage (category, priority, Interop.StringToPointer (fmt));
         }
 
-        [DllImport (LibName, EntryPoint = "SDL_LogGetOutputFunction", CallingConvention = CallingConvention.Cdecl)]
-        private extern static void LogGetOutputFunctionInternal (LogOutputFunction callback, IntPtr userData);
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        public extern static void SDL_LogGetOutputFunction (LogOutputFunction callback, IntPtr userData);
 
-        public static void LogGetOutputFunction (LogOutputFunction callback, IntPtr userData)
-        {
-            LogGetOutputFunctionInternal (callback, userData);
-        }
-
-        [DllImport (LibName, EntryPoint = "SDL_LogSetOutputFunction", CallingConvention = CallingConvention.Cdecl)]
-        private extern static void LogSetOutputFunctionInternal (LogOutputFunction callback, IntPtr userData);
-
-        public static void LogSetOutputFunction (LogOutputFunction callback, IntPtr userData)
-        {
-            LogGetOutputFunctionInternal (callback, userData);
-        }
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        public extern static void SDL_LogSetOutputFunction (LogOutputFunction callback, IntPtr userData);
     }
 }

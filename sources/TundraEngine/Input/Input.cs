@@ -1,5 +1,5 @@
 ﻿using System;
-using SDL2;
+using SDL;
 
 namespace TundraEngine.Input
 {

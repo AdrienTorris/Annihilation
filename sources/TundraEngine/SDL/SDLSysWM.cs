@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace SDL2
+namespace SDL
 {
     public static partial class SDL
     {
@@ -175,7 +175,7 @@ namespace SDL2
                 [FieldOffset (0)] public readonly VivanteInfo Vivante;
             }
 
-            public Version Version;
+            public SDL_Version Version;
             public readonly SysWMType SubSystem;
             public readonly InfoUnion Info;
         }
