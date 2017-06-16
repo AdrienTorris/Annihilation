@@ -36,16 +36,28 @@ namespace TundraEngine
                 768,
                 SDL_WindowFlags.Shown | SDL_WindowFlags.Vulkan);
 
-            if (_window == IntPtr.Zero)
-            {
-                SDL_LogError (SDL_LogCategory.Error, SDL_GetErrorString ());
-                return;
-            }
+            // System WM
+            SysWMInfo wmInfo = new SysWMInfo ();
+            FillVersion (out wmInfo.Version);
+            GetWindowWMInfo (_window, ref wmInfo);
 
-            if (!SDL_CreateVulkanSurface (_window, _instance, out Surface surface))
+            Surface surface;
+            switch (wmInfo.SubSystem)
             {
-                SDL_LogError (SDL_LogCategory.Error, SDL_GetErrorString ());
-                return;
+                case SysWMType.Windows:
+                    surface = _instance.CreateWin32Surface (new Win32SurfaceCreateInfo
+                    {
+                        Hwnd = wmInfo.Info.Windows.Window,
+                        Hinstance = wmInfo.Info.Windows.HInstance
+                    });
+                    break;
+                case SysWMType.X11:
+                    surface = _instance.CreateXcbSurface (new XcbSurfaceCreateInfo
+                    {
+                        Connection = wmInfo.Info.X11.Display,
+                        Window = wmInfo.Info.X11.Window
+                    });
+                    break;
             }
 
             // Device
@@ -58,19 +70,29 @@ namespace TundraEngine
 
                 DeviceCreateInfo deviceInfo = new DeviceCreateInfo
                 {
-                    
+
                 };
                 Device device = physicalDevice.CreateDevice (deviceInfo);
             }
         }
 
-        public void Dispose ()
+        ~Window ()
+        {
+            Dispose (false);
+        }
+
+        private void Dispose (bool isDisposing)
         {
             SDL_DestroyWindow (_window);
             _window = IntPtr.Zero;
             _instance.Dispose ();
 
             GC.SuppressFinalize (this);
+        }
+
+        public void Dispose ()
+        {
+            Dispose (true);
         }
     }
 }

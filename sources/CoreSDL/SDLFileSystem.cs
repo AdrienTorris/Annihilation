@@ -1,11 +1,12 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace SDL
 {
     public static partial class SDL
     {
         [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        unsafe private extern static byte* SDL_GetBasePath ();
+        unsafe private extern static IntPtr SDL_GetBasePath ();
 
         /// <summary>
         /// Use this function to get the directory where the application was run from. This is where the application data directory is.
@@ -20,11 +21,11 @@ namespace SDL
         /// </remarks>
         unsafe public static string SDL_GetBasePathString ()
         {
-            return Interop.PointerToString(SDL_GetBasePath ());
+            return GetString(SDL_GetBasePath ());
         }
 
         [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        unsafe private extern static byte* SDL_GetPrefPath (byte* org, byte* app);
+        unsafe private extern static IntPtr SDL_GetPrefPath (string org, string app);
 
         /// <summary>
         /// Use this function to get the "pref dir". This is meant to be where the application can write personal files (Preferences and save games, etc.) that are specific to the application. This directory is unique per user and per application.
@@ -37,9 +38,9 @@ namespace SDL
         /// <remarks>
         /// You should assume the path returned by this function is the only safe place to write files (and that <see cref="GetBasePath"/>, while it might be writable, or even the parent of the returned path, aren't where you should be writing things).
         /// </remarks>
-        unsafe public static string SDL_GetPrefPath (string org, string app)
+        unsafe public static string SDL_GetPrefPathString (string org, string app)
         {
-            return Interop.PointerToString (SDL_GetPrefPath (Interop.StringToPointer(org), Interop.StringToPointer (app)));
+            return GetString (SDL_GetPrefPath (org, app));
         }
     }
 }

@@ -4,11 +4,11 @@ using static SDL.SDL;
 
 namespace TundraEngine
 {
-    public static class Game
+    public static class Application
     {
         private static bool _quitRequested = false;
 
-        public static Action OnGameQuit;
+        public static Action OnQuit;
 
         static void Main (string[] args)
         {
@@ -37,7 +37,7 @@ namespace TundraEngine
 
             }
             
-            OnGameQuit?.Invoke ();
+            OnQuit?.Invoke ();
 
             // Shutdown
             window.Dispose ();

@@ -1,12 +1,10 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace SDL
 {
     public static partial class SDL
     {
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        unsafe private extern static int SDL_SetError (byte* fmt, params object[] objects);
-
         /// <summary>
         /// Use this function to set the SDL error message.
         /// </summary>
@@ -14,13 +12,11 @@ namespace SDL
         /// <param name="fmt"> A printf() style message format string </param>
         /// <param name="objects"> Additional parameters matching % tokens in the fmt string, if any </param>
         /// <remarks> Calling this function will replace any previous error message that was set. </remarks>
-        unsafe public static int SDL_SetError (string fmt)
-        {
-            return SDL_SetError (Interop.StringToPointer(fmt));
-        }
-
         [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        unsafe private extern static byte* SDL_GetError ();
+        unsafe public extern static int SDL_SetError (string fmt, params object[] objects);
+        
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        unsafe private extern static IntPtr SDL_GetError ();
 
         /// <summary>
         /// Use this function to retrieve a message about the last error that occurred.
@@ -32,7 +28,7 @@ namespace SDL
         /// </remarks>
         unsafe public static string SDL_GetErrorString ()
         {
-            return Interop.PointerToString(SDL_GetError ());
+            return GetString(SDL_GetError ());
         }
 
         /// <summary>

@@ -44,4 +44,8 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CoreSDL\CoreSDL.csproj" />
+  </ItemGroup>
+
 </Project>

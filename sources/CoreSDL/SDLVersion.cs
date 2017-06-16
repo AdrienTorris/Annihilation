@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace SDL
 {
@@ -40,7 +41,7 @@ namespace SDL
         public extern static void SDL_GetVersion (out SDL_Version version);
 
         [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        unsafe private extern static byte* SDL_GetRevision ();
+        unsafe private extern static IntPtr SDL_GetRevision ();
 
         /// <summary>
         /// Get the code revision of SDL that is linked against your program.
@@ -49,7 +50,7 @@ namespace SDL
         /// <returns></returns>
         unsafe public static string SDL_GetRevisionString ()
         {
-            return Interop.PointerToString (SDL_GetRevision ());
+            return GetString (SDL_GetRevision ());
         }
 
         /// <summary>

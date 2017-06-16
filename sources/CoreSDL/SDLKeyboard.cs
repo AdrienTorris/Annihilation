@@ -82,7 +82,7 @@ namespace SDL
         public extern static SDL_ScanCode SDL_GetScancodeFromKey (SDL_KeyCode key);
 
         [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        unsafe private extern static byte* SDL_GetScancodeName (SDL_ScanCode scanCode);
+        unsafe private extern static IntPtr SDL_GetScancodeName (SDL_ScanCode scanCode);
 
         /// <summary>
         /// Get a human-readable name for a scancode.
@@ -91,24 +91,19 @@ namespace SDL
         /// <returns> A pointer to the name for the scancode. If the scancode doesn't have a name, this function returns an empty string (""). </returns>
         unsafe public static string SDL_GetScancodeNameString (SDL_ScanCode scanCode)
         {
-            return Interop.PointerToString (SDL_GetScancodeName (scanCode));
+            return GetString (SDL_GetScancodeName (scanCode));
         }
-
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        unsafe private extern static SDL_ScanCode SDL_GetScancodeFromName (byte* name);
 
         /// <summary>
         /// Get a scancode from a human-readable name.
         /// </summary>
         /// <returns> ScanCsode, or <see cref="ScanCode.Unknown"/> if the name wasn't recognized </returns>
         /// <seealso cref="ScanCode"/>
-        unsafe public static SDL_ScanCode SDL_GetScancodeFromName (string name)
-        {
-            return SDL_GetScancodeFromName (Interop.StringToPointer (name));
-        }
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        public extern static SDL_ScanCode SDL_GetScancodeFromName (string name);
 
         [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        unsafe private extern static byte* SDL_GetKeyName (SDL_KeyCode key);
+        unsafe private extern static IntPtr SDL_GetKeyName (SDL_KeyCode key);
 
         /// <summary>
         /// Get a human-readable name for a key.
@@ -120,21 +115,16 @@ namespace SDL
         /// <seealso cref="KeyCode"/>
         unsafe public static string SDL_GetKeyNameString (SDL_KeyCode key)
         {
-            return Interop.PointerToString (SDL_GetKeyName (key));
+            return GetString (SDL_GetKeyName (key));
         }
-
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        unsafe private extern static SDL_KeyCode SDL_GetKeyFromName (byte* name);
 
         /// <summary>
         /// Get a key code from a human-readable name
         /// </summary>
         /// <returns/> key code, or <see cref="KeyCode.Unknown"/> if the name wasn't recognized
         /// <seealso cref="KeyCode"/>
-        unsafe public static SDL_KeyCode SDL_GetKeyFromName (string name)
-        {
-            return SDL_GetKeyFromName (Interop.StringToPointer (name));
-        }
+        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        public extern static SDL_KeyCode SDL_GetKeyFromName (string name);
 
         /// <summary>
         /// Start accepting Unicode text input events. This function will show the on-screen keyboard if supported.
