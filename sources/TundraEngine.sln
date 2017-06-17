@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TundraEngine", "TundraEngin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreSDL", "CoreSDL\CoreSDL.csproj", "{BA83D7DE-9AC4-4176-A925-6427F26ADB64}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Slayer", "Slayer\Slayer.csproj", "{8C2DFE30-99F3-4999-87AE-AF53F3366CA0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,14 @@ Global
 		{BA83D7DE-9AC4-4176-A925-6427F26ADB64}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BA83D7DE-9AC4-4176-A925-6427F26ADB64}.Release|x64.ActiveCfg = Release|Any CPU
 		{BA83D7DE-9AC4-4176-A925-6427F26ADB64}.Release|x64.Build.0 = Release|Any CPU
+		{8C2DFE30-99F3-4999-87AE-AF53F3366CA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C2DFE30-99F3-4999-87AE-AF53F3366CA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C2DFE30-99F3-4999-87AE-AF53F3366CA0}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8C2DFE30-99F3-4999-87AE-AF53F3366CA0}.Debug|x64.Build.0 = Debug|Any CPU
+		{8C2DFE30-99F3-4999-87AE-AF53F3366CA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C2DFE30-99F3-4999-87AE-AF53F3366CA0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C2DFE30-99F3-4999-87AE-AF53F3366CA0}.Release|x64.ActiveCfg = Release|Any CPU
+		{8C2DFE30-99F3-4999-87AE-AF53F3366CA0}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -12,8 +12,17 @@ namespace TundraEngine
 
         public Window ()
         {
-            // Instance
-            InstanceCreateInfo instanceInfo = new InstanceCreateInfo
+            // Window
+            _window = SDL_CreateWindow (
+                "Tundra Engine",
+                SDL_WindowPositionUndefined,
+                SDL_WindowPositionUndefined,
+                1280,
+                768,
+                SDL_WindowFlags.Shown | SDL_WindowFlags.Vulkan);
+            
+            // Graphics Instance
+            _instance = Instance.Create (new InstanceCreateInfo
             {
                 ApplicationInfo = new ApplicationInfo
                 {
@@ -24,17 +33,7 @@ namespace TundraEngine
                     KhrSurface.ExtensionName,
                     KhrWin32Surface.ExtensionName
                 }
-            };
-            _instance = Instance.Create (instanceInfo);
-
-            // SDL Window
-            _window = SDL_CreateWindow (
-                "Tundra Engine",
-                SDL_WindowPositionUndefined,
-                SDL_WindowPositionUndefined,
-                1280,
-                768,
-                SDL_WindowFlags.Shown | SDL_WindowFlags.Vulkan);
+            });
 
             // System WM
             SysWMInfo wmInfo = new SysWMInfo ();
