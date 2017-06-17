@@ -1,45 +1,32 @@
 ﻿using System;
 using SharpVk;
 
-using static SDL.SDL;
+using static TundraEngine.SDL.SDL;
 
-namespace TundraEngine
+namespace TundraEngine.Graphics
 {
     public class Window : IDisposable
     {
         private IntPtr _window;
         private Instance _instance;
 
-        public Window ()
+        public Window (WindowInfo windowInfo, Instance instance)
         {
             // Window
             _window = SDL_CreateWindow (
-                "Tundra Engine",
-                SDL_WindowPositionUndefined,
-                SDL_WindowPositionUndefined,
-                1280,
-                768,
+                windowInfo.Name,
+                windowInfo.PositionX,
+                windowInfo.PositionY,
+                windowInfo.Width,
+                windowInfo.Height,
                 SDL_WindowFlags.Shown | SDL_WindowFlags.Vulkan);
-            
-            // Graphics Instance
-            _instance = Instance.Create (new InstanceCreateInfo
-            {
-                ApplicationInfo = new ApplicationInfo
-                {
-                    ApplicationName = "Tundra Engine"
-                },
-                EnabledExtensionNames = new string[]
-                {
-                    KhrSurface.ExtensionName,
-                    KhrWin32Surface.ExtensionName
-                }
-            });
 
             // System WM
             SysWMInfo wmInfo = new SysWMInfo ();
             FillVersion (out wmInfo.Version);
             GetWindowWMInfo (_window, ref wmInfo);
 
+            // Surface
             Surface surface;
             switch (wmInfo.SubSystem)
             {
@@ -57,21 +44,6 @@ namespace TundraEngine
                         Window = wmInfo.Info.X11.Window
                     });
                     break;
-            }
-
-            // Device
-            PhysicalDevice[] physicalDevices = _instance.EnumeratePhysicalDevices ();
-            foreach (var physicalDevice in physicalDevices)
-            {
-                QueueFamilyProperties[] queueProperties = physicalDevice.GetQueueFamilyProperties ();
-                PhysicalDeviceMemoryProperties memoryProperties = physicalDevice.GetMemoryProperties ();
-                PhysicalDeviceProperties physicalDeviceProperties = physicalDevice.GetProperties ();
-
-                DeviceCreateInfo deviceInfo = new DeviceCreateInfo
-                {
-
-                };
-                Device device = physicalDevice.CreateDevice (deviceInfo);
             }
         }
 

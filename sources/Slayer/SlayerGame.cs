@@ -17,13 +17,7 @@ namespace Slayer
 
         protected override void Simulate (double deltaTime)
         {
-            int x = 0;
-            for (int i = 0; i < 1000000; ++i)
-            {
-                x = 2;
-            }
 
-            Console.WriteLine (deltaTime);
         }
     }
 }

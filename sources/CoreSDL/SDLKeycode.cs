@@ -1,4 +1,4 @@
-﻿namespace SDL
+﻿namespace TundraEngine.SDL
 {
     public static partial class SDL
     {

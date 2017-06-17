@@ -1,6 +1,8 @@
 ﻿using System;
+using TundraEngine.Graphics;
+using SharpVk;
 
-using static SDL.SDL;
+using static TundraEngine.SDL.SDL;
 
 namespace TundraEngine
 {
@@ -9,7 +11,13 @@ namespace TundraEngine
         private static bool _quitRequested = false;
         private bool _disposedValue = false; // To detect redundant calls
 
+        public static WindowInfo WindowInfo { get; private set; }
         public static double DeltaTime { get; private set; }
+
+        public Game (WindowInfo windowInfo)
+        {
+            WindowInfo = windowInfo;
+        }
 
         /// <summary>
         /// Quits the game.
@@ -25,36 +33,53 @@ namespace TundraEngine
 
         public void Run ()
         {
-            // Initialize window
             SDL_SetHint (HintFrameBufferAcceleration, "1");
-            SDL_Init (SDL_InitFlags.Video);
-            Window window = new Window ();
+            SDL_Init (SDL_InitFlags.Video | SDL_InitFlags.Timer);
 
-            // Initialize game
-            Initialize ();
-
-            ulong currentTime = SDL_GetPerformanceCounter ();
-            ulong lastTime = 0;
-            while (!_quitRequested)
+            InstanceCreateInfo instanceInfo = new InstanceCreateInfo
             {
-                // Calculate delta time
-                lastTime = currentTime;
-                currentTime = SDL_GetPerformanceCounter ();
-                DeltaTime = (currentTime - lastTime) * 1000 / SDL_GetPerformanceFrequency ();
+                ApplicationInfo = new ApplicationInfo
+                {
+                    ApplicationName = WindowInfo.Name,
+                    EngineName = "Tundra Engine"
+                },
+                EnabledExtensionNames = new string[]
+                {
+                    KhrSurface.ExtensionName,
+                    KhrWin32Surface.ExtensionName,
+                }
+            };
 
-                // Process input
-                ProcessInput ();
+            using (Instance instance = Instance.Create (instanceInfo))
+            using (Window window = new Window (WindowInfo, instance))
+            using (GraphicsDevice graphicsDevice = new GraphicsDevice (instance))
+            {
+                // Initialize game
+                Initialize ();
 
-                // Simulate game
-                Simulate (DeltaTime);
+                ulong currentTime = SDL_GetPerformanceCounter ();
+                ulong lastTime = 0;
+                while (!_quitRequested)
+                {
+                    // Calculate delta time
+                    lastTime = currentTime;
+                    currentTime = SDL_GetPerformanceCounter ();
+                    DeltaTime = (currentTime - lastTime) * 1000 / SDL_GetPerformanceFrequency ();
 
-                // Render
-                Render ();
+                    // Process input
+                    ProcessInput ();
+
+                    // Simulate game
+                    Simulate (DeltaTime);
+
+                    // Render
+                    Render ();
+                }
+
+                // Shutdown game
+                Shutdown ();
             }
 
-            // Shutdown
-            Shutdown ();
-            window.Dispose ();
             SDL_Quit ();
         }
 
@@ -76,7 +101,7 @@ namespace TundraEngine
         {
 
         }
-        
+
         protected virtual void Dispose (bool disposing)
         {
             if (!_disposedValue)
@@ -92,7 +117,7 @@ namespace TundraEngine
                 _disposedValue = true;
             }
         }
-        
+
         ~Game ()
         {
             // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
@@ -104,7 +129,7 @@ namespace TundraEngine
         {
             // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
             Dispose (true);
-            GC.SuppressFinalize(this);
+            GC.SuppressFinalize (this);
         }
     }
 }
