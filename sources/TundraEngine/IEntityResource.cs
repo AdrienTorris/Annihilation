@@ -1,6 +1,6 @@
 ﻿namespace TundraEngine
 {
-    public interface IEntityResource
+    public interface IEntityAsset
     {
         void Spawn (Entity entity);
     }

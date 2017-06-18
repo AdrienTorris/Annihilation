@@ -8,6 +8,7 @@ namespace TundraEngine
         public int PositionY;
         public int Width;
         public int Height;
+        public SDL_WindowFlags Flags;
 
         public const int DefaultPosition = SDL_WindowPositionUndefined;
         public const int DefaultWidth = 1280;

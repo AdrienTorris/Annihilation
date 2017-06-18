@@ -5,6 +5,11 @@ namespace Slayer
 {
     class SlayerGame : Game
     {
+        public SlayerGame (GameInfo gameInfo) : base (gameInfo)
+        {
+
+        }
+
         protected override void Initialize ()
         {
 

@@ -26,23 +26,22 @@ namespace TundraEngine.Graphics
         private const QueueFlags QueueTypes = QueueFlags.Graphics | QueueFlags.Compute;
         private const Format DepthFormat = Format.D32SFloatS8UInt;
 
-        internal GraphicsDevice (string applicationName, SysWMInfo windowManagerInfo)
+        internal GraphicsDevice (string applicationName, GraphicsInfo graphicsInfo, SysWMInfo windowManagerInfo)
         {
-            _instance = Vulkan.CreateInstance (applicationName, windowManagerInfo.SubSystem);
-            _physicalDevice = Vulkan.GetPhysicalDevice (_instance);
-            (_device, _commandPool) = Vulkan.CreateDeviceAndCommandPool (_physicalDevice, QueueTypes, out _queueFamilyIndices, null);
-            _graphicsQueue = _device.GetQueue (_queueFamilyIndices.Graphics, 0);
-            _surface = Vulkan.CreateSurface (_instance, windowManagerInfo);
-            // TODO: Create command pool
-            // TODO: Setup swap chain
+            Vulkan.CreateInstance (applicationName, windowManagerInfo.SubSystem, out _instance);
+            Vulkan.CreateSurface (_instance, windowManagerInfo, out _surface);
+            Vulkan.SelectPhysicalDevice (_instance, out _physicalDevice);
+            Vulkan.CreateLogicalDevice (_physicalDevice, QueueTypes, new PhysicalDeviceFeatures { }, out _device, out _queueFamilyIndices);
+            Vulkan.CreateCommandPool (_device, _queueFamilyIndices.Graphics, out _commandPool);
+            Vulkan.CreateSwapchain (_device, graphicsInfo.ResolutionX, graphicsInfo.ResolutionY, _swapchain, out _swapchain);
             // TODO: Create command buffers
             // TODO: Setup depth stencil
             // TODO: Setup render pass
             // TODO: Create pipeline cache
             // TODO: Setup framebuffer
+            
+            _graphicsQueue = _device.GetQueue (_queueFamilyIndices.Graphics, 0);
         }
-
-
         
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls

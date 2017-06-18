@@ -2,6 +2,9 @@
 
 namespace TundraEngine
 {
+    /// <summary>
+    /// A world manages entities through a set of component managers.
+    /// </summary>
     public class World
     {
         public List<Entity> Entities { get; private set; }

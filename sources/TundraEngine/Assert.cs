@@ -28,5 +28,11 @@ namespace TundraEngine
         {
             if (value) throw new Exception (message);
         }
+
+        [Conditional ("DEBUG")]
+        public static void IsZero (int value, string message)
+        {
+            if (value != 0) throw new Exception (message);
+        }
     }
 }

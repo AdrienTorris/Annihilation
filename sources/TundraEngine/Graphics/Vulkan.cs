@@ -10,7 +10,7 @@ namespace TundraEngine.Graphics
     {
         private const float DefaultQueuePriority = 0f;
 
-        public static Instance CreateInstance (string applicationName, SysWMType windowSubsystem)
+        public static void CreateInstance (string applicationName, SysWMType windowSubsystem, out Instance instance)
         {
             // Find proper extensions depending on system
             string surfaceExtension = string.Empty;
@@ -29,7 +29,7 @@ namespace TundraEngine.Graphics
             Assert.IsFalse (string.IsNullOrEmpty (surfaceExtension), "Windowing subsystem \"" + windowSubsystem + "\" not supported.");
 
             // Create the instance
-            Instance instance = Instance.Create (new InstanceCreateInfo
+            instance = Instance.Create (new InstanceCreateInfo
             {
                 ApplicationInfo = new ApplicationInfo
                 {
@@ -43,19 +43,47 @@ namespace TundraEngine.Graphics
                 }
             });
             Assert.IsNotNull (instance, "Could not create Vulkan instance.");
-            return instance;
         }
 
-        public static PhysicalDevice GetPhysicalDevice (Instance instance)
+        public static void CreateSurface (Instance instance, SysWMInfo windowManagerInfo, out Surface surface)
+        {
+            surface = null;
+            switch (windowManagerInfo.SubSystem)
+            {
+                case SysWMType.Windows:
+                    surface = instance.CreateWin32Surface (new Win32SurfaceCreateInfo
+                    {
+                        Hwnd = windowManagerInfo.Info.Windows.Window,
+                        Hinstance = windowManagerInfo.Info.Windows.HInstance
+                    });
+                    break;
+                case SysWMType.X11:
+                    surface = instance.CreateXcbSurface (new XcbSurfaceCreateInfo
+                    {
+                        Window = windowManagerInfo.Info.X11.Window,
+                        Connection = windowManagerInfo.Info.X11.Display
+                    });
+                    break;
+                case SysWMType.Wayland:
+                    surface = instance.CreateWaylandSurface (new WaylandSurfaceCreateInfo
+                    {
+                        Surface = windowManagerInfo.Info.Wayland.Surface,
+                        Display = windowManagerInfo.Info.Wayland.Display
+                    });
+                    break;
+            }
+            Assert.IsNotNull (surface, "Could not create surface.");
+        }
+
+        public static void SelectPhysicalDevice (Instance instance, out PhysicalDevice physicalDevice)
         {
             PhysicalDevice[] physicalDevices = instance.EnumeratePhysicalDevices ();
             Assert.IsTrue (physicalDevices.Length > 0, "No physical devices found.");
-            PhysicalDevice physicalDevice = physicalDevices[0];
+            physicalDevice = physicalDevices[0];
             Assert.IsNotNull (physicalDevice, "Physical device is null.");
-            return physicalDevice;
         }
 
-        public static (Device, CommandPool) CreateDeviceAndCommandPool (PhysicalDevice physicalDevice, QueueFlags queueTypes, out QueueFamilyIndices queueFamilyIndices, Func<PhysicalDeviceFeatures> getFeatures)
+        public static void CreateLogicalDevice (PhysicalDevice physicalDevice, QueueFlags queueTypes, PhysicalDeviceFeatures requestedFeatures, out Device device, out QueueFamilyIndices queueFamilyIndices)
         {
             // Physical device features and properties
             PhysicalDeviceProperties properties = physicalDevice.GetProperties ();
@@ -66,7 +94,7 @@ namespace TundraEngine.Graphics
             QueueFamilyProperties[] queueFamilyProperties = physicalDevice.GetQueueFamilyProperties ();
             Assert.IsTrue (queueFamilyProperties.Length > 0, "No queue family properties found.");
 
-            // Extensions
+            // TODO: Extensions
             ExtensionProperties[] extensionProperties = physicalDevice.EnumerateDeviceExtensionProperties (null);
 
             // Queue infos
@@ -128,26 +156,16 @@ namespace TundraEngine.Graphics
             }
 
             // Create the logical device
-            Device device = physicalDevice.CreateDevice (new DeviceCreateInfo
+            device = physicalDevice.CreateDevice (new DeviceCreateInfo
             {
                 QueueCreateInfos = queueCreateInfos.ToArray (),
-                EnabledFeatures = getFeatures (),
+                EnabledFeatures = requestedFeatures,
                 EnabledExtensionNames = new string[]
                 {
                     KhrSwapchain.ExtensionName
                 }
             });
             Assert.IsNotNull (device, "Could not create logical device.");
-
-            // Create a default command pool for graphics command buffers
-            CommandPool commandPool = device.CreateCommandPool (new CommandPoolCreateInfo
-            {
-                Flags = CommandPoolCreateFlags.ResetCommandBuffer,
-                QueueFamilyIndex = queueFamilyIndices.Graphics
-            });
-            Assert.IsNotNull (commandPool, "Could not create command pool.");
-
-            return (device, commandPool);
 
             // Get the index of a queue family that supports the requested queue flags
             uint GetQueueFamilyIndex (QueueFlags queueFlags)
@@ -194,36 +212,19 @@ namespace TundraEngine.Graphics
             }
         }
 
-        public static Surface CreateSurface (Instance instance, SysWMInfo windowManagerInfo)
+        public static void CreateCommandPool (Device device, uint presentQueueIndex, out CommandPool commandPool)
         {
-            Surface surface = null;
-            switch (windowManagerInfo.SubSystem)
+            commandPool = device.CreateCommandPool (new CommandPoolCreateInfo
             {
-                case SysWMType.Windows:
-                    surface = instance.CreateWin32Surface (new Win32SurfaceCreateInfo
-                    {
-                        Hwnd = windowManagerInfo.Info.Windows.Window,
-                        Hinstance = windowManagerInfo.Info.Windows.HInstance
-                    });
-                    break;
-                case SysWMType.X11:
-                    surface = instance.CreateXcbSurface (new XcbSurfaceCreateInfo
-                    {
-                        Window = windowManagerInfo.Info.X11.Window,
-                        Connection = windowManagerInfo.Info.X11.Display
-                    });
-                    break;
-                case SysWMType.Wayland:
-                    surface = instance.CreateWaylandSurface (new WaylandSurfaceCreateInfo
-                    {
-                        Surface = windowManagerInfo.Info.Wayland.Surface,
-                        Display = windowManagerInfo.Info.Wayland.Display
-                    });
-                    break;
-            }
-            Assert.IsNotNull (surface, "Could not create surface.");
+                Flags = CommandPoolCreateFlags.ResetCommandBuffer,
+                QueueFamilyIndex = presentQueueIndex
+            });
+            Assert.IsNotNull (commandPool, "Could not create command pool.");
+        }
 
-            return surface;
+        public static void CreateSwapchain (Device device, uint width, uint height, Swapchain oldSwapchain, out Swapchain swapchain)
+        {
+            swapchain = null;
         }
     }
 }

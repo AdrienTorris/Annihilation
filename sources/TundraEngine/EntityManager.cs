@@ -13,7 +13,7 @@ namespace TundraEngine
         // Components
         private static Dictionary<byte, ComponentManager> _componentManagerMap = new Dictionary<byte, ComponentManager> ();
 
-        public static Entity Create (World world)
+        public static Entity Create (World owner)
         {
             Entity entity;
 
@@ -28,29 +28,24 @@ namespace TundraEngine
                 int index = _generations.Count;
                 entity = new Entity (index, 0);
             }
-
-            if (!ReferenceEquals(world, null))
-            {
-                world.AddEntity (entity);
-            }
-
+            
             return entity;
         }
 
-        public static Entity Spawn (IEntityResource entityResource, World world)
+        public static Entity Spawn (World world, IEntityAsset entityAsset)
         {
             Entity entity = Create(world);
 
-            entityResource.Spawn (entity);
+            entityAsset.Spawn (entity);
 
             return entity;
         }
 
-        public static Entity Spawn (IEntityResource entityResource, World world, Vector3 position, Quaternion orientation)
+        public static Entity Spawn (World world, IEntityAsset entityAsset, Matrix transform)
         {
-            Entity entity = Spawn(entityResource, world);
+            Entity entity = Spawn(world, entityAsset);
 
-            entityResource.Spawn (entity);
+            entityAsset.Spawn (entity);
 
             return entity;
         }
@@ -66,7 +61,7 @@ namespace TundraEngine
 
         public static bool IsAlive (Entity entity)
         {
-            // TODO: Index could easily be out of bounds here. Handle that?
+            Assert.IsFalse (entity.Index - 1 < _generations.Count, "Index overflow.");
             return _generations[entity.Index - 1] == entity.Generation;
         }
     }

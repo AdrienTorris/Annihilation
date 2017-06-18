@@ -45,15 +45,7 @@ namespace TundraEngine.SDL
         /// </summary>
         [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
         public extern static int SDL_Init (SDL_InitFlags flags);
-
-        public static void InitVideoAndTimer ()
-        {
-            if (!SDL_SetHint (HintFrameBufferAcceleration, "1"))
-                SDL_LogCritical (SDL_LogCategory.Application, "Unable to set hint \"" + HintFrameBufferAcceleration + "\"");
-            if (SDL_Init (SDL_InitFlags.Video | SDL_InitFlags.Timer) != 0)
-                SDL_LogCritical (SDL_LogCategory.Application, "Unable to init SDL");
-        }
-
+        
         /// <summary>
         /// This function initializes specific SDL subsystems
         /// <para /> Subsystem initialization is ref-counted, you must call SDL_QuitSubSystem () for each SDL_InitSubSystem () to correctly shutdown a subsystem manually (or call SDL_Quit() to force shutdown).

@@ -6,14 +6,13 @@ namespace Slayer
     {
         static void Main (string[] args)
         {
-            var gameInfo = new GameInfo
+            var game = new SlayerGame (new GameInfo
             {
                 Name = "Slayer",
                 WindowInfo = WindowInfo.Default
-            };
-            var game = new SlayerGame ();
+            });
 
-            game.Run (gameInfo);
+            game.Run ();
         }
     }
 }
