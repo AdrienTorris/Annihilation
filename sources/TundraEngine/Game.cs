@@ -1,24 +1,15 @@
-﻿using System;
-using TundraEngine.Graphics;
-using SharpVk;
+﻿using TundraEngine.Graphics;
 
 using static TundraEngine.SDL.SDL;
 
 namespace TundraEngine
 {
-    public abstract class Game : IDisposable
+    public abstract class Game
     {
         private static bool _quitRequested = false;
-        private bool _disposedValue = false; // To detect redundant calls
-
-        public static WindowInfo WindowInfo { get; private set; }
+        
         public static double DeltaTime { get; private set; }
-
-        public Game (WindowInfo windowInfo)
-        {
-            WindowInfo = windowInfo;
-        }
-
+        
         /// <summary>
         /// Quits the game.
         /// </summary>
@@ -31,28 +22,12 @@ namespace TundraEngine
         protected abstract void Simulate (double deltaTime);
         protected abstract void Shutdown ();
 
-        public void Run ()
+        public void Run (GameInfo gameInfo)
         {
-            SDL_SetHint (HintFrameBufferAcceleration, "1");
-            SDL_Init (SDL_InitFlags.Video | SDL_InitFlags.Timer);
-
-            InstanceCreateInfo instanceInfo = new InstanceCreateInfo
-            {
-                ApplicationInfo = new ApplicationInfo
-                {
-                    ApplicationName = WindowInfo.Name,
-                    EngineName = "Tundra Engine"
-                },
-                EnabledExtensionNames = new string[]
-                {
-                    KhrSurface.ExtensionName,
-                    KhrWin32Surface.ExtensionName,
-                }
-            };
-
-            using (Instance instance = Instance.Create (instanceInfo))
-            using (Window window = new Window (WindowInfo, instance))
-            using (GraphicsDevice graphicsDevice = new GraphicsDevice (instance))
+            InitVideoAndTimer ();
+            
+            using (Window window = new Window (gameInfo.Name, gameInfo.WindowInfo))
+            using (GraphicsDevice graphicsDevice = new GraphicsDevice(gameInfo.Name, window.WindowManagerInfo))
             {
                 // Initialize game
                 Initialize ();
@@ -100,36 +75,6 @@ namespace TundraEngine
         internal void Render ()
         {
 
-        }
-
-        protected virtual void Dispose (bool disposing)
-        {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    // TODO: dispose managed state (managed objects).
-                }
-
-                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-                // TODO: set large fields to null.
-
-                _disposedValue = true;
-            }
-        }
-
-        ~Game ()
-        {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose (false);
-        }
-
-        // This code added to correctly implement the disposable pattern.
-        public void Dispose ()
-        {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose (true);
-            GC.SuppressFinalize (this);
         }
     }
 }

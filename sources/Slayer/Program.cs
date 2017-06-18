@@ -1,13 +1,19 @@
-﻿namespace Slayer
+﻿using TundraEngine;
+
+namespace Slayer
 {
     class Program
     {
         static void Main (string[] args)
         {
-            using (var game = new SlayerGame ())
+            var gameInfo = new GameInfo
             {
-                game.Run ();
-            }
+                Name = "Slayer",
+                WindowInfo = WindowInfo.Default
+            };
+            var game = new SlayerGame ();
+
+            game.Run (gameInfo);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
-using SDL;
+
+using static TundraEngine.SDL.SDL;
 
 namespace TundraEngine.Input
 {

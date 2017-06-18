@@ -1,10 +1,9 @@
-﻿using static SDL.SDL;
+﻿using static TundraEngine.SDL.SDL;
 
 namespace TundraEngine
 {
     public struct WindowInfo
     {
-        public string Name;
         public int PositionX;
         public int PositionY;
         public int Width;
@@ -16,16 +15,6 @@ namespace TundraEngine
 
         public static WindowInfo Default => new WindowInfo
         {
-            Name = "Tundra Game",
-            PositionX = DefaultPosition,
-            PositionY = DefaultPosition,
-            Width = DefaultWidth,
-            Height = DefaultHeight
-        };
-
-        public static WindowInfo DefaultWithName (string name) => new WindowInfo
-        {
-            Name = name,
             PositionX = DefaultPosition,
             PositionY = DefaultPosition,
             Width = DefaultWidth,
