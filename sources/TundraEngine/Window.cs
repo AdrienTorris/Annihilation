@@ -2,18 +2,18 @@
 
 using static TundraEngine.SDL.SDL;
 
-namespace TundraEngine.Graphics
+namespace TundraEngine
 {
     public class Window : IDisposable
     {
-        private IntPtr _window;
+        private IntPtr _windowHandle;
 
         public SysWMInfo WindowManagerInfo { get; private set; }
-
+        
         public Window (string name, WindowInfo windowInfo)
         {
             // SDL Window
-            _window = SDL_CreateWindow (
+            _windowHandle = SDL_CreateWindow (
                 name,
                 windowInfo.PositionX,
                 windowInfo.PositionY,
@@ -24,7 +24,7 @@ namespace TundraEngine.Graphics
             // Window Manager
             SysWMInfo wmInfo = new SysWMInfo ();
             FillVersion (out wmInfo.Version);
-            GetWindowWMInfo (_window, ref wmInfo);
+            GetWindowWMInfo (_windowHandle, ref wmInfo);
             WindowManagerInfo = wmInfo;
         }
 
@@ -40,7 +40,7 @@ namespace TundraEngine.Graphics
                     // TODO: dispose managed state (managed objects).
                 }
 
-                _window = IntPtr.Zero;
+                _windowHandle = IntPtr.Zero;
 
                 disposedValue = true;
             }

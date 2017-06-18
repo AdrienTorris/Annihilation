@@ -13,8 +13,8 @@ namespace TundraEngine
             _count = 0;
             _indexMap = new Dictionary<Entity, int> (capacity);
         }
-
-        public int Create (Entity entity)
+        
+        public ComponentInstance Create (Entity entity)
         {
             int index = _count;
             _entities[index] = entity;
@@ -23,15 +23,25 @@ namespace TundraEngine
             return index;
         }
 
-        public void Destroy (Entity entity, int instanceIndex = -1)
+        public void Destroy (Entity entity, ComponentInstance instance)
         {
-            int index = instanceIndex > -1 ? instanceIndex : _indexMap[entity];
+            int index = instance.IsValid() ? instance.Index : _indexMap[entity];
             int lastIndex = _count - 1;
 
             Entity lastEntity = _entities[lastIndex];
             _indexMap[lastEntity] = index;
             _indexMap.Remove (entity);
             --_count;
+        }
+
+        public void Register (World world)
+        {
+            world.ComponentManagers.Add (this);
+        }
+
+        public void Unregister (World world)
+        {
+            world.ComponentManagers.Remove (this);
         }
     }
 }
