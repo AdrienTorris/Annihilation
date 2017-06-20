@@ -11,7 +11,7 @@ namespace TundraEngine
     public abstract class Game
     {
         private static bool _quitRequested = false;
-        
+
         /// <summary>
         /// The startup settings of the game.
         /// </summary>
@@ -65,7 +65,7 @@ namespace TundraEngine
         /// </summary>
         public static World CreateWorld (WorldFlags flags)
         {
-            World world = new World ();
+            World world = new World (flags);
             Worlds.Add (world);
             return world;
         }

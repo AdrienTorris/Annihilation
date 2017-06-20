@@ -7,9 +7,10 @@ namespace TundraEngine
     {
         Nothing = 0,
         EnableSound = 1 << 0,
-        EnableRendering = 1 << 1,
-        EnablePhysics = 1 << 2,
-        EnableTimeOfDay = 1 << 3,
+        Enable3D = 1 << 1,
+        Enable2D = 1 << 2,
+        EnablePhysics = 1 << 3,
+        EnableTimeOfDay = 1 << 4,
         Everything = ~0
     }
 

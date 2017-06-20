@@ -9,113 +9,111 @@ namespace TundraEngine
     /// </summary>
     public class World
     {
-        public List<ComponentManager> ComponentManagers { get; private set; }
-
         private WorldFlags _worldFlags;
-
         private Entity[] _entities;
-        private int _numEntities;
         private Dictionary<Entity, int> _indexMap;
-
-        private ResourceManager _resourceManager;
-
+        private List<ComponentManager> _componentManagers = new List<ComponentManager>();
+        
         private const int DefaultEntityCapacity = 1024;
 
-        public World (WorldFlags flags, ResourceManager resourceManager) : 
-            this (flags, DefaultEntityCapacity, resourceManager) { }
+        public int NumEntities { get; private set; }
 
-        public World (WorldFlags flags, int entityCapacity, ResourceManager resourceManager)
+        public World(WorldFlags flags) :
+            this(flags, DefaultEntityCapacity)
+        { }
+
+        public World(WorldFlags flags, int entityCapacity)
         {
             _worldFlags = flags;
-            ComponentManagers = new List<ComponentManager> (8);
-            _numEntities = 0;
+            _componentManagers = new List<ComponentManager>(8);
+            NumEntities = 0;
             _entities = new Entity[entityCapacity];
-            _indexMap = new Dictionary<Entity, int> (entityCapacity);
+            _indexMap = new Dictionary<Entity, int>(entityCapacity);
         }
 
-        public void Destroy ()
+        public void Destroy()
         {
-
+            foreach (var entity in _entities)
+            {
+                EntityManager.Destroy(entity);
+            }
         }
 
-        public Entity SpawnEntity ()
+        public Entity SpawnEntity()
         {
-            Entity entity = EntityManager.Create ();
-            int index = _numEntities++;
+            Entity entity = EntityManager.Create();
+            int index = NumEntities++;
             _entities[index] = entity;
-            _indexMap.Add (entity, index);
-            // TODO: Post UnitSpawned event
+            _indexMap.Add(entity, index);
+            // TODO: Post EntitySpawned event
             return entity;
         }
 
-        public Entity SpawnEntity (Text name)
+        public Entity SpawnEntity(StringId32 name)
         {
-            Entity entity = EntityManager.Create ();
-            EntityResource resource = _resourceManager.Get<EntityResource> (name);
+            Entity entity = EntityManager.Create();
+            EntityResource resource = ResourceManager.Get<EntityResource>(name);
             foreach (Guid componentId in resource.Components)
             {
 
             }
             return entity;
         }
-        
-        public void DestroyEntity (Entity entity)
+
+        public void DestroyEntity(Entity entity)
         {
-            EntityManager.Destroy (entity);
-            int lastIndex = _numEntities - 1;
+            EntityManager.Destroy(entity);
+            int lastIndex = NumEntities - 1;
             int index = _indexMap[entity];
             _entities[index] = _entities[lastIndex];
             _indexMap[_entities[lastIndex]] = index;
-            _indexMap.Remove (entity);
-            --_numEntities;
+            _indexMap.Remove(entity);
+            --NumEntities;
+            // TODO: Post EntityDestroyed event
         }
 
-        public void UpdateAnimations (float deltaTime)
+        private void UpdateAnimations(float deltaTime)
         {
 
         }
 
-        public void UpdateTransforms (float deltaTime)
+        private void UpdateTransforms(float deltaTime)
         {
 
         }
 
-        public void Render (Matrix view, Matrix projection)
+        private void UpdatePhysics()
         {
 
         }
 
-        public void UpdatePhysics ()
+        private void UpdateTimeOfDay(float deltaTime)
         {
 
         }
 
-        public void UpdateTimeOfDay (float deltaTime)
+        public void Update(float deltaTime)
         {
-
-        }
-
-        public void Update (float deltaTime)
-        {
-            bool hasRendering = _worldFlags.Has (WorldFlags.EnableRendering);
+            bool hasRendering = _worldFlags.Has(WorldFlags.Enable3D);
 
             if (hasRendering)
             {
-                UpdateAnimations (deltaTime);
-                UpdateTransforms (deltaTime);
+                UpdateAnimations(deltaTime);
+                UpdateTransforms(deltaTime);
             }
-            if (_worldFlags.Has (WorldFlags.EnablePhysics))
+            if (_worldFlags.Has(WorldFlags.EnablePhysics))
             {
-                UpdatePhysics ();
+                UpdatePhysics();
             }
-            if (_worldFlags.Has (WorldFlags.EnableTimeOfDay))
+            if (_worldFlags.Has(WorldFlags.EnableTimeOfDay))
             {
-                UpdateTimeOfDay (deltaTime);
+                UpdateTimeOfDay(deltaTime);
             }
-            if (hasRendering)
-            {
-                Render ();
-            }
+        }
+
+        public void Render(Matrix view, Matrix projection)
+        {
+
         }
     }
 }

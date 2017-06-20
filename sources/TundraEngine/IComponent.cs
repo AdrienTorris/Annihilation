@@ -4,7 +4,6 @@ namespace TundraEngine
 {
     public interface IComponent
     {
-        uint Type { get; }
-
+        StringId32 Type { get; }
     }
 }
