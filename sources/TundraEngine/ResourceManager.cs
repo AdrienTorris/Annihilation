@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.IO;
 using ZeroFormatter;
@@ -9,6 +10,7 @@ namespace TundraEngine
 {
     public static class ResourceManager
     {
+
         public static T Get<T>(StringId32 name) where T : IResource
         {
             Load(name, out byte[] bytes);
@@ -36,6 +38,11 @@ namespace TundraEngine
         }
 
         public static void Unload()
+        {
+
+        }
+
+        public static void RegisterType(StringId64 type)
         {
 
         }

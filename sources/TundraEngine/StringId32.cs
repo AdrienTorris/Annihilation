@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using TundraEngine.Mathematics;
 
 namespace TundraEngine
@@ -7,16 +6,10 @@ namespace TundraEngine
     public struct StringId32 : IEquatable<StringId32>
     {
         private uint _hash;
-
-        private static readonly Dictionary<uint, string> _stringMap = new Dictionary<uint, string> ();
-
+        
         public StringId32 (string text)
         {
-            _hash = MathUtility.Hash (text);
-            if (_stringMap.ContainsKey (_hash) == false)
-            {
-                _stringMap.Add (_hash, text);
-            }
+            _hash = text.GetCityHash32();
         }
 
         public bool IsValid ()
@@ -43,13 +36,7 @@ namespace TundraEngine
         {
             return a._hash != b._hash;
         }
-
-        public static implicit operator string (StringId32 stringId)
-        {
-            Assert.IsTrue(_stringMap.ContainsKey(stringId._hash), "String map does not contain Id \"" + stringId.ToString() + "\"");
-            return _stringMap[stringId._hash];
-        }
-
+        
         public static implicit operator StringId32 (string text)
         {
             return new StringId32 (text);

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Text;
+using System.Runtime.InteropServices;
 
 namespace TundraEngine.Mathematics
 {
@@ -273,16 +275,6 @@ namespace TundraEngine.Mathematics
                 (float)Math.Round((value.Y / gap), MidpointRounding.AwayFromZero) * gap,
                 (float)Math.Round((value.Z / gap), MidpointRounding.AwayFromZero) * gap,
                 (float)Math.Round((value.W / gap), MidpointRounding.AwayFromZero) * gap);
-        }
-
-        public static uint Hash (string str)
-        {
-            uint hash = 0;
-            foreach (char c in str)
-            {
-                hash = ((hash << 5) + hash) + c;
-            }
-            return hash;
         }
     }
 }
