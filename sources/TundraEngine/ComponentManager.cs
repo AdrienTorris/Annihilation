@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace TundraEngine
 {
@@ -7,6 +8,8 @@ namespace TundraEngine
         protected int _count;
         protected Entity[] _entities;
         protected Dictionary<Entity, int> _indexMap;
+
+        private static Dictionary<Guid, ComponentManager> _componentManagerMap = new Dictionary<Guid, ComponentManager> ();
 
         public ComponentManager (int capacity)
         {

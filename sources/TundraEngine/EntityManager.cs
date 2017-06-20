@@ -6,42 +6,47 @@ namespace TundraEngine
     public static class EntityManager
     {
         // Entities
-        private static List<byte> _generations = new List<byte> (MinFreeIndices);
-        private static Queue<int> _freeIndexQueue = new Queue<int> (MinFreeIndices);
+        private static List<uint> _generations = new List<uint> (MinFreeIndices);
+        private static Queue<uint> _freeIndexQueue = new Queue<uint> (MinFreeIndices);
         private const int MinFreeIndices = 1024;
 
         // Components
         private static Dictionary<byte, ComponentManager> _componentManagerMap = new Dictionary<byte, ComponentManager> ();
 
-        public static Entity Create (World owner)
+        public static Entity Create ()
         {
             Entity entity;
 
             if (_freeIndexQueue.Count > MinFreeIndices)
             {
-                int index = _freeIndexQueue.Dequeue ();
-                entity = new Entity (index, _generations[index]);
+                uint index = _freeIndexQueue.Dequeue ();
+                entity = new Entity (index, _generations[(int)index]);
             }
             else
             {
                 _generations.Add (0);
-                int index = _generations.Count;
+                uint index = (uint)_generations.Count - 1;
                 entity = new Entity (index, 0);
             }
             
             return entity;
         }
 
-        public static Entity Spawn (World world, IEntityAsset entityAsset)
+        public static Entity Create (World world)
         {
-            Entity entity = Create(world);
+
+        }
+
+        public static Entity Spawn (World world, IEntityResource entityAsset)
+        {
+            Entity entity = Create();
 
             entityAsset.Spawn (entity);
 
             return entity;
         }
 
-        public static Entity Spawn (World world, IEntityAsset entityAsset, Matrix transform)
+        public static Entity Spawn (World world, IEntityResource entityAsset, Matrix transform)
         {
             Entity entity = Spawn(world, entityAsset);
 
@@ -54,15 +59,15 @@ namespace TundraEngine
         {
             if (!IsAlive (entity)) return;
 
-            int index = entity.Index;
-            ++_generations[index - 1];
+            uint index = entity.Index;
+            ++_generations[(int)index - 1];
             _freeIndexQueue.Enqueue (index);
         }
 
         public static bool IsAlive (Entity entity)
         {
             Assert.IsFalse (entity.Index - 1 < _generations.Count, "Index overflow.");
-            return _generations[entity.Index - 1] == entity.Generation;
+            return _generations[(int)entity.Index] == entity.Generation;
         }
     }
 }

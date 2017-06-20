@@ -20,6 +20,7 @@ namespace TundraEngine.Graphics
         private CommandPool _commandPool;
         private QueueFamilyIndices _queueFamilyIndices;
         private Queue _graphicsQueue;
+        private Queue _presentQueue;
         private Surface _surface;
         private Swapchain _swapchain;
 

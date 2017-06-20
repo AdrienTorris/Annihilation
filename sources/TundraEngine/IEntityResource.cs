@@ -1,7 +1,9 @@
-﻿namespace TundraEngine
+﻿using System;
+
+namespace TundraEngine
 {
-    public interface IEntityAsset
+    public struct EntityResource : IResource
     {
-        void Spawn (Entity entity);
+        public Guid[] Components;
     }
 }

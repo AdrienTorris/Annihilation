@@ -5,15 +5,21 @@ using MessagePack;
 namespace TundraEngine
 {
     [MessagePackObject]
-    [StructLayout (LayoutKind.Sequential, Pack = 1)]
+    [StructLayout (LayoutKind.Sequential, Pack = 4)]
     public struct Entity : IEquatable<Entity>
     {
-        [Key(0)] public readonly int Index;
-        [Key(1)] public readonly byte Generation;
+        [Key(0)] public readonly uint Index;
+        [Key(1)] public readonly uint Generation;
 
-        public static readonly Entity Invalid;
+        private const uint MaxIndex = uint.MaxValue - 2;
+        private const uint MaxGeneration = uint.MaxValue - 2;
 
-        public Entity (int index, byte generation)
+        public const uint InvalidIndex = MaxIndex + 1;
+        public const uint InvalidGeneration = MaxGeneration + 1;
+        
+        public static readonly Entity Invalid = new Entity (InvalidIndex, InvalidGeneration);
+        
+        public Entity (uint index, uint generation)
         {
             Index = index;
             Generation = generation;
@@ -21,7 +27,7 @@ namespace TundraEngine
 
         public bool IsValid ()
         {
-            return Index != 0;
+            return Index != InvalidIndex && Generation != InvalidGeneration;
         }
 
         public bool Equals (Entity other)
