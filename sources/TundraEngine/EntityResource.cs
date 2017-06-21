@@ -1,5 +1,4 @@
-﻿using System;
-using ZeroFormatter;
+﻿using ZeroFormatter;
 
 namespace TundraEngine
 {
@@ -7,7 +6,7 @@ namespace TundraEngine
     public struct EntityResource : IResource
     {
         [Index(0)]
-        public Guid[] Components;
+        public StringId32[] Components;
 
         public StringId32 Name { get; }
         public byte[] Bytes { get; }
