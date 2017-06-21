@@ -10,11 +10,18 @@ namespace TundraEngine
 {
     public static class ResourceManager
     {
+        private static Dictionary<StringId64, IResource> _loadedResources = new Dictionary<StringId64, IResource>(512);
 
-        public static T Get<T>(StringId32 name) where T : IResource
+        public static T Get<T>(StringId64 name) where T : IResource
         {
-            Load(name, out byte[] bytes);
-            return ZeroFormatterSerializer.Deserialize<T>(bytes);
+            if (_loadedResources.TryGetValue(name, out IResource resource))
+            {
+
+            }
+            else
+            {
+
+            }
         }
 
         // TODO: Compare performance of .Net vs SDL
