@@ -1,8 +1,9 @@
-﻿using System;
+﻿using System.Security;
 using System.Runtime.InteropServices;
 
 namespace TundraEngine.SDL
 {
+    [SuppressUnmanagedCodeSecurity]
     public static partial class SDL
     {
         public enum SDL_GameControllerBindType

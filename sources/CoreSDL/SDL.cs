@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Text;
+using System.Security;
 using System.Runtime.InteropServices;
 
 namespace TundraEngine.SDL
 {
+    [SuppressUnmanagedCodeSecurity]
     public static partial class SDL
     {
         public const string LibName = "SDL2.dll";

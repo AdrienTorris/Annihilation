@@ -1,5 +1,8 @@
-﻿namespace TundraEngine.SDL
+﻿using System.Security;
+
+namespace TundraEngine.SDL
 {
+    [SuppressUnmanagedCodeSecurity]
     public static partial class SDL
     {
         /// <summary>

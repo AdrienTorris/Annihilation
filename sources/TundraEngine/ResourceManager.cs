@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.IO;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using ZeroFormatter;
 
 using static TundraEngine.SDL.SDL;
@@ -24,24 +27,24 @@ namespace TundraEngine
             }
         }
 
-        // TODO: Compare performance of .Net vs SDL
-        public static void ReadFileNative(string path, out byte[] bytes)
+        public static void Load<T>(string path, out T resource) where T : IResource, new()
         {
-            IntPtr rwOps = SDL_RWFromFile(path, "rb");
-            Assert.IsFalse(rwOps == IntPtr.Zero, "Could not open the file \"" + path + "\"");
-            int size = (int)SDL_RWsize(rwOps);
-            Assert.IsTrue(size >= 0, "Could not get the size of the file \"" + path + "\"");
-            IntPtr bytesPtr = Marshal.AllocHGlobal(size);
-            SDL_RWread(rwOps, bytesPtr, size, size);
-            bytes = new byte[size];
-            Marshal.Copy(bytesPtr, bytes, 0, size);
-            int result = SDL_RWclose(rwOps);
-            Assert.IsZero(result, "Could not close the file \"" + path + "\"");
+            resource = await LoadAsync<T>(path);
         }
 
-        public static void Load(string path, out byte[] bytes)
+        public static async Task<T> LoadAsync<T>(string path) where T : IResource, new()
         {
-            bytes = File.ReadAllBytes(path);
+            T resource = new T();
+            byte[] bytes;
+            using (var file = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true))
+            {
+                resource.Name = file.Name;
+                bytes = new byte[file.Length];
+                await file.ReadAsync(bytes, 0, (int)file.Length);
+            }
+
+            resource.NumBytes = bytes.Length;
+            resource.Bytes = &bytes;
         }
 
         public static void Unload()

@@ -1,7 +1,9 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Security;
+using System.Runtime.InteropServices;
 
 namespace TundraEngine.SDL
 {
+    [SuppressUnmanagedCodeSecurity]
     public static partial class SDL
     {
         /// <summary>

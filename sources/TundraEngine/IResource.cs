@@ -1,8 +1,9 @@
 ﻿namespace TundraEngine
 {
-    public interface IResource
+    unsafe public interface IResource
     {
-        StringId32 Name { get; }
-        byte[] Bytes { get; }
+        StringId32 Name { get; set; }
+        int NumBytes { get; set; }
+        byte* Bytes { get; set; }
     }
 }
