@@ -1,14 +1,13 @@
-﻿using ZeroFormatter;
-
-namespace TundraEngine
+﻿namespace TundraEngine
 {
-    [ZeroFormattable]
-    public struct EntityResource : IResource
+    public struct ComponentResource
     {
-        [Index(0)]
-        public StringId32[] Components;
+        public StringId64 Type;
+        public 
+    }
 
-        public StringId32 Name { get; }
-        public byte[] Bytes { get; }
+    public struct EntityResource
+    {
+        
     }
 }

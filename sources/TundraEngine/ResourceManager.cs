@@ -11,6 +11,8 @@ using static TundraEngine.SDL.SDL;
 
 namespace TundraEngine
 {
+    unsafe public delegate void* LoadFunction(string path);
+
     public static class ResourceManager
     {
         private static Dictionary<StringId64, IResource> _loadedResources = new Dictionary<StringId64, IResource>(512);

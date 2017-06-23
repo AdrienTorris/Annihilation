@@ -5,5 +5,6 @@
         public uint ResolutionX;
         public uint ResolutionY;
         public bool VSync;
+        public uint SSAA;
     }
 }

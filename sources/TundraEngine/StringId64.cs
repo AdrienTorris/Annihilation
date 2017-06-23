@@ -3,6 +3,9 @@ using TundraEngine.Mathematics;
 
 namespace TundraEngine
 {
+    /// <summary>
+    /// A 64 bit hashed string.
+    /// </summary>
     public struct StringId64 : IEquatable<StringId64>
     {
         private ulong _hash;

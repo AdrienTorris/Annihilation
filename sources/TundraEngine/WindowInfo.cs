@@ -2,13 +2,22 @@
 
 namespace TundraEngine
 {
+    public enum WindowMode
+    {
+        Windowed,
+        Fullscreen,
+        FullscreenBorderless
+    }
+
     public struct WindowInfo
     {
         public int PositionX;
         public int PositionY;
         public int Width;
         public int Height;
-        public SDL_WindowFlags Flags;
+        public WindowMode Mode;
+        public bool AllowHighDPI;
+        public bool AlwaysOnTop;
 
         public const int DefaultPosition = SDL_WindowPositionUndefined;
         public const int DefaultWidth = 1280;
