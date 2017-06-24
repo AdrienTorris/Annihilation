@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace TundraEngine.Input
 {
@@ -11,7 +12,7 @@ namespace TundraEngine.Input
     public enum Button : byte
     {
         None,
-
+        // Keyboard
         A,
         B,
         C,
@@ -143,13 +144,13 @@ namespace TundraEngine.Input
         SysReq,
         Break,
         Menu,
-
+        // Mouse
         MouseLeft,
         MouseMiddle,
         MouseRight,
         MouseExtra1,
         MouseExtra2,
-
+        // Controller
         ControllerUp,
         ControllerDown,
         ControllerLeft,
@@ -167,6 +168,24 @@ namespace TundraEngine.Input
         ControllerX,
 
         Count
+    }
+    
+    [Flags]
+    public enum ModifierKeys : byte
+    {
+        None = 0,
+        LeftShift = 1 << 0,
+        RightShift = 1 << 1,
+        LeftControl = 1 << 2,
+        RightControl = 1 << 3,
+        LeftAlt = 1 << 4,
+        RightAlt = 1 << 5,
+        LeftCommand = 1 << 6,
+        RightCommand = 1 << 7,
+        Control = LeftControl | RightControl,
+        Shift = LeftShift | RightShift,
+        Alt = LeftAlt | RightAlt,
+        Command = LeftCommand | RightCommand
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

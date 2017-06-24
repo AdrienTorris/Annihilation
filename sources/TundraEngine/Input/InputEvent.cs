@@ -15,6 +15,6 @@ namespace TundraEngine.Input
     {
         [FieldOffset(0)] public InputEventType Type;
         [FieldOffset(1)] public ButtonEvent ButtonEvent;
-        
+        [FieldOffset(1)] public AxisEvent AxisEvent;
     }
 }
