@@ -13,13 +13,26 @@ namespace TundraEngine
         public Window (string name, WindowInfo windowInfo)
         {
             // SDL Window
+            SDL_WindowFlags windowFlags = SDL_WindowFlags.Shown | SDL_WindowFlags.Vulkan;
+            if (windowInfo.AllowHighDPI) windowFlags |= SDL_WindowFlags.AllowHighDPI;
+            if (windowInfo.AlwaysOnTop) windowFlags |= SDL_WindowFlags.AlwaysOnTop;
+            switch (windowInfo.Mode)
+            {
+                case WindowMode.Fullscreen:
+                    windowFlags |= SDL_WindowFlags.Fullscreen;
+                    break;
+                case WindowMode.FullscreenBorderless:
+                    windowFlags |= SDL_WindowFlags.FullscreenDeskTop;
+                    break;
+            }
+
             _windowHandle = SDL_CreateWindow (
                 name,
                 windowInfo.PositionX,
                 windowInfo.PositionY,
                 windowInfo.Width,
                 windowInfo.Height,
-                SDL_WindowFlags.Shown | SDL_WindowFlags.Vulkan);
+                windowFlags);
 
             // Window Manager
             SysWMInfo wmInfo = new SysWMInfo ();
