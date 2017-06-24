@@ -38,9 +38,7 @@ namespace TundraEngine
         {
             GameInfo = gameInfo;
             Args = args;
-            Worlds = new List<World> (gameInfo.ApproximateWorldCound == 0 ? 
-                                      DefaultWorldCount : 
-                                      gameInfo.ApproximateWorldCound);
+            Worlds = new List<World> (DefaultWorldCount);
         }
 
         /// <summary>
@@ -84,20 +82,6 @@ namespace TundraEngine
         protected abstract void Simulate (double deltaTime);
         protected abstract void Shutdown ();
         
-        internal void ProcessInput ()
-        {
-            SDL_Event sdlEvent;
-            while (SDL_PollEvent (out sdlEvent) == 1)
-            {
-                // TODO: Here we should fill the high-level input manager
-                if (sdlEvent.Type == SDL_EventType.Quit ||
-                    sdlEvent.Type == SDL_EventType.KeyDown)
-                {
-                    Quit ();
-                }
-            }
-        }
-
         public void Run ()
         {
             {
@@ -110,9 +94,9 @@ namespace TundraEngine
             }
 
             // Create window
-            using (Window window = new Window (GameInfo.Name, GameInfo.WindowInfo))
+            using (Window window = new Window (GameInfo.Name.ToString(), GameInfo.WindowInfo))
             // Create graphics device
-            using (GraphicsDevice graphicsDevice = new GraphicsDevice (GameInfo.Name, GameInfo.GraphicsInfo, window.WindowManagerInfo))
+            using (GraphicsDevice graphicsDevice = new GraphicsDevice (GameInfo.Name.ToString(), GameInfo.GraphicsInfo, window.WindowManagerInfo))
             {
                 // Create timer
                 Timer timer = new Timer ();
