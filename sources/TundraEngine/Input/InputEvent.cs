@@ -6,8 +6,8 @@ namespace TundraEngine.Input
     {
         None,
         Button,
+        Axis,
         MouseMove,
-        Axis
     }
 
     [StructLayout(LayoutKind.Explicit)]
@@ -16,5 +16,6 @@ namespace TundraEngine.Input
         [FieldOffset(0)] public InputEventType Type;
         [FieldOffset(1)] public ButtonEvent ButtonEvent;
         [FieldOffset(1)] public AxisEvent AxisEvent;
+        [FieldOffset(1)] public MouseMoveEvent MouseMoveEvent;
     }
 }

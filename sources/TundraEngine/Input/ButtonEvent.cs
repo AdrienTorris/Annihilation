@@ -12,6 +12,7 @@ namespace TundraEngine.Input
     public enum Button : byte
     {
         None,
+
         // Keyboard
         A,
         B,
@@ -144,12 +145,14 @@ namespace TundraEngine.Input
         SysReq,
         Break,
         Menu,
+
         // Mouse
         MouseLeft,
         MouseMiddle,
         MouseRight,
         MouseExtra1,
         MouseExtra2,
+
         // Controller
         ControllerUp,
         ControllerDown,

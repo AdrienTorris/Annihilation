@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using static TundraEngine.SDL.SDL;
 
@@ -7,6 +8,11 @@ namespace TundraEngine.Input
     public class EventProviderSDL : IEventProvider
     {
         private IntPtr[] _gameControllers = new IntPtr[Constants.MaxPlayerCount];
+
+        private static Dictionary<SDL_KeyCode, Button> _keyMap = new Dictionary<SDL_KeyCode, Button>(200)
+        {
+            { SDL_KeyCode.Unknown, Button.None },
+        };
 
         public uint ConnectedControllerCount { get; private set; }
 
