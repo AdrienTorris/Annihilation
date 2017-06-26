@@ -4,7 +4,7 @@ using TundraEngine.Mathematics;
 
 namespace TundraEngine
 {
-    public enum ParamType : byte
+    public enum VariantType : byte
     {
         Byte,
         Short,
@@ -22,9 +22,9 @@ namespace TundraEngine
     }
 
     [StructLayout (LayoutKind.Explicit, Pack = 1)]
-    public struct GameParam
+    public struct Variant
     {
-        [FieldOffset (0)] public ParamType Type;
+        [FieldOffset (0)] public VariantType Type;
         [FieldOffset (1)] public byte Byte;
         [FieldOffset (1)] public short Short;
         [FieldOffset (1)] public ushort UShort;
@@ -39,14 +39,14 @@ namespace TundraEngine
         [FieldOffset (1)] public Entity Entity;
         [FieldOffset (1)] public IntPtr Struct;
 
-        public static GameParam NewByte (byte value)
+        public static Variant NewByte (byte value)
         {
-            return new GameParam { Type = ParamType.Byte, Byte = value };
+            return new Variant { Type = VariantType.Byte, Byte = value };
         }
 
-        public static GameParam NewShort (short value)
+        public static Variant NewShort (short value)
         {
-            return new GameParam { Type = ParamType.Short, Short = value };
+            return new Variant { Type = VariantType.Short, Short = value };
         }
     }
 }

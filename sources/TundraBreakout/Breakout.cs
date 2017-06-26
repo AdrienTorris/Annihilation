@@ -5,13 +5,9 @@ using TundraEngine.EntityComponent;
 
 namespace Slayer
 {
-    public class SlayerGame : Game
+    public class Breakout
     {
-        public SlayerGame(GameInfo gameInfo, string[] args) : base(gameInfo, args)
-        {
-        }
-
-        protected override void Initialize()
+        public void Initialize()
         {
             // Pad transform
             Transform2DComponent padTransform = new Transform2DComponent()
@@ -42,16 +38,6 @@ namespace Slayer
             
             // Spawn Pad
             EntityManager.Spawn(GetWorld(0), padResource);
-        }
-
-        protected override void Shutdown()
-        {
-
-        }
-
-        protected override void Simulate(double deltaTime)
-        {
-
         }
     }
 }

@@ -5,6 +5,7 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>
     <Platforms>AnyCPU;x64</Platforms>
+    <RootNamespace>Breakout</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -25,6 +26,25 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TundraEngine\TundraEngine.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="GameAction.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>GameAction.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="GameAction.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>GameAction.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

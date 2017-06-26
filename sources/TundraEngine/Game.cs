@@ -1,5 +1,6 @@
-﻿using TundraEngine.Graphics;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+
+using TundraEngine.Graphics;
 
 using static TundraEngine.SDL.SDL;
 
@@ -8,7 +9,7 @@ namespace TundraEngine
     /// <summary>
     /// The game manages all systems (Input, Graphics, etc.) and worlds.
     /// </summary>
-    public abstract class Game
+    public sealed class Game
     {
         private static bool _quitRequested = false;
 
@@ -77,10 +78,6 @@ namespace TundraEngine
             Assert.IsTrue (result, "World \"" + world + "\" was not created through the game.");
             // TODO: Release world memory
         }
-
-        protected abstract void Initialize ();
-        protected abstract void Simulate (double deltaTime);
-        protected abstract void Shutdown ();
         
         public void Run ()
         {
@@ -100,26 +97,12 @@ namespace TundraEngine
             {
                 // Create timer
                 Timer timer = new Timer ();
-
-                // Initialize game
-                Initialize ();
-
+                
                 while (!_quitRequested)
                 {
                     // Update timer
                     timer.Update ();
-
-                    // Process input
-                    //ProcessInput ();
-
-                    // Simulate game
-                    Simulate (timer.DeltaTime);
-
-                    // Render
                 }
-
-                // Shutdown game
-                Shutdown ();
             }
 
             SDL_Quit ();

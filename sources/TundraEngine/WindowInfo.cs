@@ -5,8 +5,9 @@ namespace TundraEngine
     public enum WindowMode
     {
         Windowed,
+        BorderlessWindow,
         Fullscreen,
-        FullscreenBorderless
+        FullscreenDesktop
     }
 
     public struct WindowInfo

@@ -8,7 +8,7 @@ namespace TundraEngine
     {
         public String32 Name;
         public String8 Version;
-        public StringId64 MainPrefab;
+        public StringId64 InitialPrefab;
         public int MaxResources;
         public int MaxEntitiesPerPrefab;
         public WindowInfo WindowInfo;

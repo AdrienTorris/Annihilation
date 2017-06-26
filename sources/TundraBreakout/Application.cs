@@ -4,17 +4,17 @@ using TundraEngine.Graphics;
 
 namespace Slayer
 {
-    class Program
+    class Application
     {
         static void Main (string[] args)
         {
-            SlayerGame game = new SlayerGame(new GameInfo
+            Game game = new Game(new GameInfo
             {
                 Name = new String32("Tundra Breakout"),
                 Version = new String8("0.1.0"),
                 MaxResources = GameInfo.DefaultMaxResources,
                 MaxEntitiesPerPrefab = GameInfo.DefaultMaxEntitiesPerPrefab,
-                MainPrefab = "MainMenu",
+                InitialPrefab = "MainMenu",
                 WindowInfo = new WindowInfo
                 {
                     PositionX = WindowInfo.DefaultPosition,
@@ -27,16 +27,17 @@ namespace Slayer
                 },
                 GraphicsInfo = new GraphicsInfo
                 {
-                    ResolutionX = 1280,
-                    ResolutionY = 720,
+                    RenderScale = 1f,
                     SSAA = 8,
-                    VSync = false
+                    VSync = false,
+                    PresentMode = PresentMode.Fifo,
+                    EnableValidation = false
                 },
                 InputInfo = new InputInfo
                 {
                     RepeatInterval = InputInfo.DefaultRepeatInterval,
                     RepeatDelay = InputInfo.DefaultRepeatDelay,
-                    Bindings = new InputBindings
+                    ActionMap = new ActionMap
                     {
                         Name = "Game",
                         ButtonBindings = new ButtonBinding[]
@@ -49,9 +50,13 @@ namespace Slayer
 
                             // Gamepad
                             new ButtonBinding(Button.GamepadLeft, "MoveLeft"),
-                            new ButtonBinding(Button.GamepadRight, "MoveLeft"),
-                            new ButtonBinding(Button.GamepadUp, "MoveLeft"),
-                            new ButtonBinding(Button.GamepadDown, "MoveLeft"),
+                            new ButtonBinding(Button.GamepadRight, "MoveRight"),
+                            new ButtonBinding(Button.GamepadUp, "MoveUp"),
+                            new ButtonBinding(Button.GamepadDown, "MoveDown"),
+                        },
+                        AxisBindings = new AxisBinding[]
+                        {
+                            new AxisBinding(Axis.MouseWheel, "Zoom")
                         }
                     }
                 }

@@ -21,7 +21,7 @@ namespace TundraEngine
                 case WindowMode.Fullscreen:
                     windowFlags |= SDL_WindowFlags.Fullscreen;
                     break;
-                case WindowMode.FullscreenBorderless:
+                case WindowMode.FullscreenDesktop:
                     windowFlags |= SDL_WindowFlags.FullscreenDeskTop;
                     break;
             }
