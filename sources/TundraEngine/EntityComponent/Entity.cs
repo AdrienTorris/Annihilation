@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using MessagePack;
 
 namespace TundraEngine
 {
-    [MessagePackObject]
     [StructLayout (LayoutKind.Sequential, Pack = 4)]
     public struct Entity : IEquatable<Entity>
     {
-        [Key(0)] public readonly uint Index;
-        [Key(1)] public readonly uint Generation;
+        public readonly uint Index;
+        public readonly uint Generation;
 
         private const uint MaxIndex = uint.MaxValue - 2;
         private const uint MaxGeneration = uint.MaxValue - 2;

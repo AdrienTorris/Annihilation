@@ -2,6 +2,11 @@
 {
     public static class StringExtensions
     {
+        public static StringId32 ToHash32(this string str)
+        {
+            return new StringId32(str);
+        }
+
         public static StringId64 ToHash64(this string str)
         {
             return new StringId64(str);

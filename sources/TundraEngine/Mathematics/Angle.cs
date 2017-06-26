@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Globalization;
-using MessagePack;
 
 namespace TundraEngine.Mathematics
 {
-    [MessagePackObject]
     public struct Angle : IComparable, IComparable<Angle>, IEquatable<Angle>
     {
-        [Key(0)] private float _radians;
+        private float _radians;
         
         public const float Degree = 0.002777777777777778f;
         public const float Minute = 0.000046296296296296f;

@@ -7,8 +7,9 @@ namespace TundraEngine.Input
     {
         private static IEventProvider _eventProvider;
 
-        private static ButtonState[] _buttonStates = new ButtonState[(int)Button.Count];
-        private static float[] _axisStates = new float[(int)Axis.Count];
+        // TODO: Have bitmasks for button & axis states
+        //private static ButtonState[] _buttonStates = new ButtonState[(int)Button.Count];
+        //private static float[] _axisStates = new float[(int)Axis.Count];
 
         private static Vector2 _lastMousePos;
         private static Vector2 _lastMousePosViewport;

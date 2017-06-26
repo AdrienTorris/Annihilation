@@ -110,7 +110,7 @@ namespace TundraEngine
                     timer.Update ();
 
                     // Process input
-                    ProcessInput ();
+                    //ProcessInput ();
 
                     // Simulate game
                     Simulate (timer.DeltaTime);

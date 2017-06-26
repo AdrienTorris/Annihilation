@@ -5,7 +5,7 @@ namespace Slayer
 {
     class SlayerGame : Game
     {
-        public SlayerGame (GameInfo gameInfo) : base (gameInfo)
+        public SlayerGame (GameInfo gameInfo, string[] args) : base (gameInfo, args)
         {
 
         }

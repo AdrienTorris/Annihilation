@@ -1,24 +1,27 @@
 ﻿using System.Runtime.InteropServices;
 
+using TundraEngine.Mathematics;
+
 namespace TundraEngine.Input
 {
-    public enum Axis
+    public enum Axis : byte
     {
-        LeftX,
-        LeftY,
-        RightX,
-        RightY,
-        TriggerLeft,
-        TriggerRight,
+        // Mouse
+        MouseMove,
+        MouseWheel,
 
-        Count
+        // Gamepad
+        LeftThumb,
+        RightThumb,
+        LeftTrigger,
+        RightTrigger,
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct AxisEvent
     {
         public Axis Axis;
-        public float Value;
+        public Vector2 Value;
         public byte PlayerId;
     }
 }

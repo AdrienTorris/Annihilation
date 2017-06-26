@@ -4,32 +4,32 @@ using System.Runtime.InteropServices;
 namespace TundraEngine
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    unsafe public struct UnmanagedArray
+    public struct Array8<T>
     {
         public int Length;
-        public int ElementSize;
-        public byte* Data;
+        public IntPtr Data;
 
-        public UnmanagedArray(int length, int elementSize)
+        public const int ElementSize = 8;
+
+        public Array8(int length)
         {
-            Data = (byte*)Marshal.AllocHGlobal(length * elementSize);
+            Data = Marshal.AllocHGlobal(length * ElementSize);
             Length = length;
-            ElementSize = elementSize;
         }
 
-        public byte* this[int index]
+        unsafe public T this[int index]
         {
             get
             {
                 Assert.IsTrue(index < Length, "Index is out of bounds.");
-                return Data + ElementSize * index;
+                return Marshal.PtrToStructure<T>(Data + ElementSize * index);
             }
         }
 
         public void Free()
         {
-            Marshal.FreeHGlobal((IntPtr)Data);
-            Data = null;
+            Marshal.FreeHGlobal(Data);
+            Data = IntPtr.Zero;
             Length = 0;
         }
     }

@@ -31,26 +31,21 @@ namespace TundraEngine
             
             return entity;
         }
-
-        public static Entity Create (World world)
-        {
-
-        }
-
-        public static Entity Spawn (World world, IEntityResource entityAsset)
+        
+        public static Entity Spawn (World world, StringId64 entityResource)
         {
             Entity entity = Create();
 
-            entityAsset.Spawn (entity);
+            //entityResource.Spawn (entity);
 
             return entity;
         }
 
-        public static Entity Spawn (World world, IEntityResource entityAsset, Matrix transform)
+        public static Entity Spawn (World world, StringId64 entityResource, Matrix transform)
         {
-            Entity entity = Spawn(world, entityAsset);
+            Entity entity = Spawn(world, entityResource);
 
-            entityAsset.Spawn (entity);
+            //entityResource.Spawn (entity);
 
             return entity;
         }

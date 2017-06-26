@@ -36,15 +36,5 @@ namespace TundraEngine
             _indexMap.Remove (entity);
             --_count;
         }
-
-        public void Register (World world)
-        {
-            world.ComponentManagers.Add (this);
-        }
-
-        public void Unregister (World world)
-        {
-            world.ComponentManagers.Remove (this);
-        }
     }
 }
