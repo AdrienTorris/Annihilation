@@ -38,40 +38,7 @@ namespace TundraEngine
                 EntityManager.Destroy(entity);
             }
         }
-
-        public Entity SpawnEntity()
-        {
-            Entity entity = EntityManager.Create();
-            int index = NumEntities++;
-            _entities[index] = entity;
-            _indexMap.Add(entity, index);
-            // TODO: Post EntitySpawned event
-            return entity;
-        }
-
-        public Entity SpawnEntity(StringId32 name)
-        {
-            Entity entity = EntityManager.Create();
-            EntityResource resource = ResourceManager.Get<EntityResource>(name);
-            foreach (Guid componentId in resource.Components)
-            {
-
-            }
-            return entity;
-        }
-
-        public void DestroyEntity(Entity entity)
-        {
-            EntityManager.Destroy(entity);
-            int lastIndex = NumEntities - 1;
-            int index = _indexMap[entity];
-            _entities[index] = _entities[lastIndex];
-            _indexMap[_entities[lastIndex]] = index;
-            _indexMap.Remove(entity);
-            --NumEntities;
-            // TODO: Post EntityDestroyed event
-        }
-
+        
         private void UpdateAnimations(float deltaTime)
         {
 

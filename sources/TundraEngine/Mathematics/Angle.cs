@@ -41,6 +41,13 @@ namespace TundraEngine.Mathematics
             _radians = arcLength / radius;
         }
 
+        public void GetBytes(out byte[] bytes)
+        {
+            float[] floats = new float[1] { _radians };
+            bytes = new byte[floats.Length * 4];
+            Buffer.BlockCopy(floats, 0, bytes, 0, bytes.Length);
+        }
+
         public void Wrap()
         {
             float newangle = (float)Math.IEEERemainder(_radians, MathUtility.TwoPi);
@@ -58,22 +65,19 @@ namespace TundraEngine.Mathematics
                 newangle += MathUtility.TwoPi;
             _radians = newangle;
         }
-
-        [IgnoreMember]
+        
         public float Revolutions
         {
             get { return MathUtility.RadiansToRevolutions(_radians); }
             set { _radians = MathUtility.RevolutionsToRadians(value); }
         }
-
-        [IgnoreMember]
+        
         public float Degrees
         {
             get { return MathUtility.RadiansToDegrees(_radians); }
             set { _radians = MathUtility.DegreesToRadians(value); }
         }
-
-        [IgnoreMember]
+        
         public float Minutes
         {
             get
@@ -98,8 +102,7 @@ namespace TundraEngine.Mathematics
                 _radians = MathUtility.DegreesToRadians(degreesfloor);
             }
         }
-
-        [IgnoreMember]
+        
         public float Seconds
         {
             get
@@ -138,70 +141,59 @@ namespace TundraEngine.Mathematics
             get { return _radians; }
             set { _radians = value; }
         }
-
-        [IgnoreMember]
+        
         public float Milliradians
         {
             get { return _radians / (Milliradian * MathUtility.TwoPi); }
             set { _radians = value * (Milliradian * MathUtility.TwoPi); }
         }
-
-        [IgnoreMember]
+        
         public float Gradians
         {
             get { return MathUtility.RadiansToGradians(_radians); }
             set { _radians = MathUtility.GradiansToRadians(value); }
         }
-
-        [IgnoreMember]
+        
         public bool IsRight
         {
             get { return _radians == MathUtility.PiOverTwo; }
         }
-
-        [IgnoreMember]
+        
         public bool IsStraight
         {
             get { return _radians == MathUtility.Pi; }
         }
-
-        [IgnoreMember]
+        
         public bool IsFullRotation
         {
             get { return _radians == MathUtility.TwoPi; }
         }
-
-        [IgnoreMember]
+        
         public bool IsOblique
         {
             get { return WrapPositive(this)._radians != MathUtility.PiOverTwo; }
         }
-
-        [IgnoreMember]
+        
         public bool IsAcute
         {
             get { return _radians > 0.0 && _radians < MathUtility.PiOverTwo; }
         }
-
-        [IgnoreMember]
+        
         public bool IsObtuse
         {
             get { return _radians > MathUtility.PiOverTwo && _radians < MathUtility.Pi; }
         }
-
-        [IgnoreMember]
+        
         public bool IsReflex
         {
             get { return _radians > MathUtility.Pi && _radians < MathUtility.TwoPi; }
         }
-
-        [IgnoreMember]
+        
         public Angle Complement
         {
             get { return new Angle(MathUtility.PiOverTwo - _radians, AngleType.Radian); }
         }
-
-        [IgnoreMember]
+        
         public Angle Supplement
         {
             get { return new Angle(MathUtility.Pi - _radians, AngleType.Radian); }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TundraEngine
 {
-    public abstract class ComponentManager
+    public class ComponentManager
     {
         protected int _count;
         protected Entity[] _entities;
@@ -17,7 +17,7 @@ namespace TundraEngine
             _indexMap = new Dictionary<Entity, int> (capacity);
         }
         
-        public ComponentInstance Create (Entity entity)
+        public ComponentInstance Create (Entity entity, ComponentInstance instance)
         {
             int index = _count;
             _entities[index] = entity;

@@ -1,12 +1,12 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace TundraEngine.Resource
+namespace TundraEngine
 {
     public struct ComponentTypeData
     {
         public StringId32 Type;
         public uint NumInstances;
-        public uint Size;
+        public int Size;
         public uint[] EntityIndices;
         public byte[] Data;
     }

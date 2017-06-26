@@ -11,10 +11,5 @@
         {
             EntityManager.Destroy (entity);
         }
-
-        public static string Name (this Entity entity)
-        {
-            return string.Empty;
-        }
     }
 }

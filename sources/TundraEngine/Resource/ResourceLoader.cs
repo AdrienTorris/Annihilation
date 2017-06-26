@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TundraEngine.Resources
+namespace TundraEngine
 {
     class ResourceLoader
     {

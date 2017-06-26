@@ -2,23 +2,23 @@
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
-using MessagePack;
 
 using static System.Math;
 
 namespace TundraEngine.Mathematics
 {
-    [MessagePackObject]
     [StructLayout (LayoutKind.Sequential, Pack = 4)]
     public struct Vector2 : IEquatable<Vector2>
     {
-        [Key (0)] public readonly float X;
-        [Key (1)] public readonly float Y;
+        public readonly float X;
+        public readonly float Y;
 
         public static readonly Vector2 Zero = new Vector2 ();
         public static readonly Vector2 Right = new Vector2 (1.0f, 0.0f);
         public static readonly Vector2 Up = new Vector2 (0.0f, 1.0f);
         public static readonly Vector2 One = new Vector2 (1.0f, 1.0f);
+
+        public static readonly int NumBytes = sizeof(float) * 2;
 
         public Vector2 (float x, float y)
         {
@@ -42,6 +42,13 @@ namespace TundraEngine.Mathematics
                 }
                 throw new ArgumentOutOfRangeException ("index", "Indices for Vector2 run from 0 to 1, inclusive.");
             }
+        }
+
+        public void GetBytes(out byte[] bytes)
+        {
+            float[] floats = new float[2] { X, Y };
+            bytes = new byte[floats.Length * 4];
+            Buffer.BlockCopy(floats, 0, bytes, 0, bytes.Length);
         }
 
         public bool IsNormalized ()
