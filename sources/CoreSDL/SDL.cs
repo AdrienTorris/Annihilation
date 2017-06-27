@@ -43,7 +43,7 @@ namespace TundraEngine.SDL
         }
 
         /// <summary>
-        /// This function initializes  the subsystems specified by <paramref name="flags"/>
+        /// This function initializes the subsystems specified by <paramref name="flags"/>
         /// </summary>
         [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
         public extern static int SDL_Init (SDL_InitFlags flags);

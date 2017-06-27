@@ -1,37 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
-using SharpVk;
 
-using static TundraEngine.SDL.SDL;
+using TundraEngine.Windowing;
+
+using SharpVk;
 
 namespace TundraEngine.Graphics
 {
-    internal static class Vulkan
+    public static class Vulkan
     {
+        public struct QueueFamilyIndices
+        {
+            public uint Graphics;
+            public uint Compute;
+            public uint Transfer;
+        }
+
         private const float DefaultQueuePriority = 0f;
 
-        public static void CreateInstance (string applicationName, SysWMType windowSubsystem, out Instance instance)
+        public static void CreateInstance (string applicationName, WindowManagerType windowManagerType, out Instance instance)
         {
             // Find proper extensions depending on system
             string surfaceExtension = string.Empty;
-            switch (windowSubsystem)
+            switch (windowManagerType)
             {
-                case SysWMType.Windows:
+                case WindowManagerType.Windows:
                     surfaceExtension = KhrWin32Surface.ExtensionName;
                     break;
-                case SysWMType.X11:
+                case WindowManagerType.X11:
                     surfaceExtension = KhrXcbSurface.ExtensionName;
                     break;
-                case SysWMType.Wayland:
+                case WindowManagerType.Wayland:
                     surfaceExtension = KhrWaylandSurface.ExtensionName;
                     break;
             }
-            Assert.IsFalse (string.IsNullOrEmpty (surfaceExtension), "Windowing subsystem \"" + windowSubsystem + "\" not supported.");
+            Assert.IsFalse (string.IsNullOrEmpty (surfaceExtension), "Windowing subsystem \"" + windowManagerType + "\" not supported.");
 
             // Create the instance
             instance = Instance.Create (new InstanceCreateInfo
             {
-                ApplicationInfo = new ApplicationInfo
+                ApplicationInfo = new SharpVk.ApplicationInfo
                 {
                     ApplicationName = applicationName,
                     EngineName = "Tundra Engine"
@@ -45,30 +53,30 @@ namespace TundraEngine.Graphics
             Assert.IsNotNull (instance, "Could not create Vulkan instance.");
         }
 
-        public static void CreateSurface (Instance instance, SysWMInfo windowManagerInfo, out Surface surface)
+        public static void CreateSurface (Instance instance, ref WindowManagerInfo windowManagerInfo, out Surface surface)
         {
             surface = null;
-            switch (windowManagerInfo.SubSystem)
+            switch (windowManagerInfo.Type)
             {
-                case SysWMType.Windows:
+                case WindowManagerType.Windows:
                     surface = instance.CreateWin32Surface (new Win32SurfaceCreateInfo
                     {
-                        Hwnd = windowManagerInfo.Info.Windows.Window,
-                        Hinstance = windowManagerInfo.Info.Windows.HInstance
+                        Hwnd = windowManagerInfo.Windows.HWindow,
+                        Hinstance = windowManagerInfo.Windows.HInstance
                     });
                     break;
-                case SysWMType.X11:
+                case WindowManagerType.X11:
                     surface = instance.CreateXcbSurface (new XcbSurfaceCreateInfo
                     {
-                        Window = windowManagerInfo.Info.X11.Window,
-                        Connection = windowManagerInfo.Info.X11.Display
+                        Window = windowManagerInfo.X11.Window,
+                        Connection = windowManagerInfo.X11.Connection
                     });
                     break;
-                case SysWMType.Wayland:
+                case WindowManagerType.Wayland:
                     surface = instance.CreateWaylandSurface (new WaylandSurfaceCreateInfo
                     {
-                        Surface = windowManagerInfo.Info.Wayland.Surface,
-                        Display = windowManagerInfo.Info.Wayland.Display
+                        Surface = windowManagerInfo.Wayland.Surface,
+                        Display = windowManagerInfo.Wayland.Display
                     });
                     break;
             }

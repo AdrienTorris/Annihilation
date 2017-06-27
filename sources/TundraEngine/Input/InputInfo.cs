@@ -1,6 +1,4 @@
-﻿using TundraEngine.Input;
-
-namespace TundraEngine
+﻿namespace TundraEngine.Input
 {
     public struct InputInfo
     {

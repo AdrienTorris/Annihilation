@@ -1,6 +1,4 @@
-﻿using static TundraEngine.SDL.SDL;
-
-namespace TundraEngine
+﻿namespace TundraEngine.Windowing
 {
     public enum WindowMode
     {
@@ -12,6 +10,7 @@ namespace TundraEngine
 
     public struct WindowInfo
     {
+        public string Name;
         public int PositionX;
         public int PositionY;
         public int Width;
@@ -19,17 +18,8 @@ namespace TundraEngine
         public WindowMode Mode;
         public bool AllowHighDPI;
         public bool AlwaysOnTop;
-
-        public const int DefaultPosition = SDL_WindowPositionUndefined;
+        
         public const int DefaultWidth = 1280;
         public const int DefaultHeight = 720;
-
-        public static WindowInfo Default => new WindowInfo
-        {
-            PositionX = DefaultPosition,
-            PositionY = DefaultPosition,
-            Width = DefaultWidth,
-            Height = DefaultHeight
-        };
     }
 }

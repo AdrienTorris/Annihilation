@@ -3,6 +3,7 @@
 using TundraEngine;
 using TundraEngine.Input;
 using TundraEngine.Graphics;
+using TundraEngine.Windowing;
 using TundraEngine.Mathematics;
 using TundraEngine.EntityComponent;
 
@@ -26,6 +27,12 @@ namespace Breakout
 
             public static readonly StringId32 Accept = "Accept";
             public static readonly StringId32 Cancel = "Cancel";
+        }
+        
+        static void Main(string[] args)
+        {
+            Game game = new Game();
+            game.Run(args);
         }
 
         protected override void Initialize()
@@ -71,19 +78,22 @@ namespace Breakout
             throw new System.NotImplementedException();
         }
 
-        protected override void GetGameInfo(out GameInfo gameInfo)
+        protected override void GetApplicationInfo(out ApplicationInfo applicationInfo)
         {
-            gameInfo = new GameInfo
+            applicationInfo = new ApplicationInfo
             {
-                Name = new String32("Tundra Breakout"),
-                Version = new String8("0.1.0"),
-                MaxResources = GameInfo.DefaultMaxResources,
-                MaxEntitiesPerPrefab = GameInfo.DefaultMaxEntitiesPerPrefab,
+                Name = "Tundra Breakout",
+                Version = "0.1.0",
+
+                ResourcePath = ApplicationInfo.DefaultResourcePath,
+                MaxResources = ApplicationInfo.DefaultMaxResources,
                 InitialPrefab = "MainMenu",
+                MaxEntitiesPerPrefab = ApplicationInfo.DefaultMaxEntitiesPerPrefab,
+
                 WindowInfo = new WindowInfo
                 {
-                    PositionX = WindowInfo.DefaultPosition,
-                    PositionY = WindowInfo.DefaultPosition,
+                    PositionX = 10,
+                    PositionY = 10,
                     Width = 1280,
                     Height = 720,
                     Mode = WindowMode.Windowed,

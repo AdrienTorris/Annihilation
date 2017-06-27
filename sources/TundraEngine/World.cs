@@ -1,6 +1,5 @@
-﻿using System;
+﻿using System.Numerics;
 using System.Collections.Generic;
-using TundraEngine.Mathematics;
 
 namespace TundraEngine
 {
@@ -78,7 +77,7 @@ namespace TundraEngine
             }
         }
 
-        public void Render(Matrix view, Matrix projection)
+        public void Render(Matrix4x4 view, Matrix4x4 projection)
         {
 
         }

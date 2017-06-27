@@ -1,4 +1,4 @@
-﻿using TundraEngine.Mathematics;
+﻿using System.Numerics;
 
 namespace TundraEngine.EntityComponent
 {

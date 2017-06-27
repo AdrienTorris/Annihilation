@@ -1,4 +1,7 @@
-﻿using TundraEngine.Graphics;
+﻿using System;
+
+using TundraEngine.Windowing;
+using TundraEngine.Graphics;
 
 using static TundraEngine.SDL.SDL;
 
@@ -17,16 +20,16 @@ namespace TundraEngine
         /// <summary>
         /// The startup settings of the game.
         /// </summary>
-        public static GameInfo GameInfo;
+        public static ApplicationInfo ApplicationInfo;
         /// <summary>
         /// The command-line arguments that were supplied to the game when it was executed, if any.
         /// </summary>
         public static string[] Args { get; private set; }
         
         /// <summary>
-        /// The application must override this method to fill the <see cref="GameInfo"/> struct from code or from a resource.
+        /// The application must override this method to fill the <see cref="ApplicationInfo"/> struct from code or from a resource.
         /// </summary>
-        protected abstract void GetGameInfo(out GameInfo gameInfo);
+        protected abstract void GetApplicationInfo(out ApplicationInfo applicationInfo);
         /// <summary>
         /// This is called after all engine subsystems have been initialized and before the main loop.
         /// </summary>
@@ -43,22 +46,21 @@ namespace TundraEngine
         public void Run(string[] args)
         {
             Args = args;
-            GetGameInfo(out GameInfo);
-
+            GetApplicationInfo(out ApplicationInfo);
+            
             // Init SDL
             {
                 bool result = SDL_SetHint(HintFrameBufferAcceleration, "1");
                 Assert.IsTrue(result, "Unable to set hint \"" + HintFrameBufferAcceleration + "\"");
             }
             {
-                int result = SDL_Init(SDL_InitFlags.Video | SDL_InitFlags.Timer);
+                int result = SDL_Init(SDL_InitFlags.Video);
                 Assert.IsZero(result, "Unable to init SDL");
             }
-
-            // Create window
-            using (Window window = new Window(GameInfo.Name.ToString(), GameInfo.WindowInfo))
-            // Create graphics device
-            using (GraphicsDevice graphicsDevice = new GraphicsDevice(GameInfo.Name.ToString(), GameInfo.GraphicsInfo, window.WindowManagerInfo))
+            
+            // Create window and graphics device
+            using (Window window = new Window(ref ApplicationInfo.WindowInfo, new WindowProviderSDL()))
+            using (var graphicsProvider = new GraphicsProviderBGFX(ref ApplicationInfo, ref window.WindowManagerInfo))
             {
                 // Create timer
                 Timer timer = new Timer();
@@ -73,18 +75,21 @@ namespace TundraEngine
 
                     // Do game-specific update
                     Update(timer.DeltaTime);
+
+                    // Render
+                    graphicsProvider.Render(ApplicationInfo.WindowInfo.Width, ApplicationInfo.WindowInfo.Height);
                 }
 
                 // Do game-specific shutdown
                 Shutdown();
             }
-
+            
             // Shutdown SDL
             SDL_Quit();
         }
 
         /// <summary>
-        /// Quits the game.
+        /// Quits the application.
         /// </summary>
         public static void Quit ()
         {

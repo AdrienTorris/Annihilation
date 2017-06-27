@@ -16,7 +16,7 @@ namespace TundraEngine
             byte[] bytes = Encoding.UTF8.GetBytes(str);
             fixed (byte* byteAddress = Bytes)
             {
-                for (int i = 0; i < NumBytes; ++i)
+                for (int i = 0; i < bytes.Length; ++i)
                 {
                     *(byteAddress + i) = bytes[i];
                 }
@@ -27,7 +27,7 @@ namespace TundraEngine
         {
             fixed (byte* byteAddress = Bytes)
             {
-                for (int i = 0; i < NumBytes; ++i)
+                for (int i = 0; i < utf8Bytes.Length; ++i)
                 {
                     *(byteAddress + i) = utf8Bytes[i];
                 }

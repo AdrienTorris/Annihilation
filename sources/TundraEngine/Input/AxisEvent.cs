@@ -1,6 +1,5 @@
-﻿using System.Runtime.InteropServices;
-
-using TundraEngine.Mathematics;
+﻿using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace TundraEngine.Input
 {

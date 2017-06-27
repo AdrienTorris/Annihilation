@@ -4,6 +4,11 @@ using System.Threading.Tasks;
 
 namespace TundraEngine
 {
+    /// <summary>
+    /// Design:
+    /// 
+    /// </summary>
+
     public static class TaskManager
     {
 

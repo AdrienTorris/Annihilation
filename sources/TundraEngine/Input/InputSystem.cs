@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using TundraEngine.Mathematics;
+﻿using System.Numerics;
 
 namespace TundraEngine.Input
 {
