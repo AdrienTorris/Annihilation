@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Numerics;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-
-using TundraEngine.Mathematics;
 
 namespace TundraEngine
 {
@@ -53,7 +52,7 @@ namespace TundraEngine
             return entity;
         }
 
-        public static Entity Spawn(World world, StringId64 entityResource, Matrix transform)
+        public static Entity Spawn(World world, StringId64 entityResource, Matrix4x4 transform)
         {
             Entity entity = Spawn(world, entityResource);
 
@@ -82,7 +81,7 @@ namespace TundraEngine
             
         }
 
-        public static Entity Get(World world, int index)
+        /*public static Entity Get(World world, int index)
         {
 
         }
@@ -95,7 +94,7 @@ namespace TundraEngine
         public static int Count(World world)
         {
 
-        }
+        }*/
 
         public static World GetWorld(Entity entity)
         {
