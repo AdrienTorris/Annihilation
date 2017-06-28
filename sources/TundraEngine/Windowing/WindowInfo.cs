@@ -1,6 +1,12 @@
 ﻿namespace TundraEngine.Windowing
 {
-    public enum WindowMode
+    public enum WindowType : byte
+    {
+        None,
+        SDL
+    }
+
+    public enum WindowMode : byte
     {
         Windowed,
         BorderlessWindow,
@@ -10,6 +16,7 @@
 
     public struct WindowInfo
     {
+        public WindowType WindowType;
         public string Name;
         public int PositionX;
         public int PositionY;
