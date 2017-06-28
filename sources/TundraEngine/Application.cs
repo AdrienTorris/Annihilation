@@ -1,5 +1,6 @@
-﻿using System;
+﻿using System.Threading.Tasks;
 
+using TundraEngine.Input;
 using TundraEngine.Windowing;
 using TundraEngine.Graphics;
 
@@ -37,12 +38,12 @@ namespace TundraEngine
         /// <summary>
         /// This is called in the main loop, after processing input and before rendering.
         /// </summary>
-        protected abstract void Update(double deltaTime);
+        protected abstract Task UpdateAsync(double deltaTime);
         /// <summary>
         /// This is called when exiting the main loop, before shutting down engine subsystems.
         /// </summary>
         protected abstract void Shutdown();
-
+        
         public void Run(string[] args)
         {
             Args = args;
@@ -62,25 +63,21 @@ namespace TundraEngine
             using (Window window = new Window(ref ApplicationInfo.WindowInfo, new WindowProviderSDL()))
             using (var graphicsProvider = new GraphicsProviderBGFX(ref ApplicationInfo, ref window.WindowManagerInfo))
             {
-                // Create timer
-                Timer timer = new Timer();
-
-                // Do game-specific initialization
+                var eventProvider = new EventProviderSDL();
+                
+                // Do application-specific initialization
                 Initialize();
 
+                // Main loop
                 while (!_quitRequested)
                 {
-                    // Update timer
-                    timer.Update();
-
-                    // Do game-specific update
-                    Update(timer.DeltaTime);
-
-                    // Render
-                    graphicsProvider.Render(ApplicationInfo.WindowInfo.Width, ApplicationInfo.WindowInfo.Height);
+                    eventProvider.PumpEvents(out InputEvent inputEvent);
+                    
+                    UpdateAsync(Constants.TargetFrameStepTime * 0.001f).Wait();
+                    graphicsProvider.RenderAsync().Wait();
                 }
 
-                // Do game-specific shutdown
+                // Do application-specific shutdown
                 Shutdown();
             }
             

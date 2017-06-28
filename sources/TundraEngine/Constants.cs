@@ -16,5 +16,9 @@
         /// Size in bytes of a pointer or reference.
         /// </summary>
         public const int PointerSize = 8;
+        /// <summary>
+        /// The target time in ms that each step (logic, command buffers, gpu) should take.
+        /// </summary>
+        public const float TargetFrameStepTime = 6.944f;
     }
 }

@@ -68,14 +68,12 @@ namespace Breakout
             EntityManager.Spawn(null, padResource);
         }
 
-        protected override void Update(double deltaTime)
+        protected override void UpdateAsync(double deltaTime)
         {
-            throw new System.NotImplementedException();
         }
 
         protected override void Shutdown()
         {
-            throw new System.NotImplementedException();
         }
 
         protected override void GetApplicationInfo(out ApplicationInfo applicationInfo)
@@ -116,35 +114,35 @@ namespace Breakout
                     {
                         new ActionMap()
                         {
-                            Context = Game.Context.Game,
+                            Context = Context.Game,
                             ButtonBindings = new ButtonBinding[]
                             {
                                 // Keyboard
-                                new ButtonBinding(Button.LeftArrow, Game.Action.MoveLeft),
-                                new ButtonBinding(Button.RightArrow, Game.Action.MoveRight),
-                                new ButtonBinding(Button.A, Game.Action.MoveLeft),
-                                new ButtonBinding(Button.D, Game.Action.MoveRight),
-                                new ButtonBinding(Button.Space, Game.Action.Power),
+                                new ButtonBinding(Button.LeftArrow, Action.MoveLeft),
+                                new ButtonBinding(Button.RightArrow, Action.MoveRight),
+                                new ButtonBinding(Button.A, Action.MoveLeft),
+                                new ButtonBinding(Button.D, Action.MoveRight),
+                                new ButtonBinding(Button.Space, Action.Power),
                                 // Gamepad
-                                new ButtonBinding(Button.GamepadA, Game.Action.Power)
+                                new ButtonBinding(Button.GamepadA, Action.Power)
                             },
                             AxisBindings = new AxisBinding[]
                             {
                                 // Gamepad
-                                new AxisBinding(Axis.LeftThumb, Game.Action.Move)
+                                new AxisBinding(Axis.LeftThumb, Action.Move)
                             }
                         },
                         new ActionMap()
                         {
-                            Context = Game.Context.MainMenu,
+                            Context = Context.MainMenu,
                             ButtonBindings = new ButtonBinding[]
                             {
                                 // Keyboard
-                                new ButtonBinding(Button.Return, Game.Action.Accept),
-                                new ButtonBinding(Button.Escape, Game.Action.Cancel),
+                                new ButtonBinding(Button.Return, Action.Accept),
+                                new ButtonBinding(Button.Escape, Action.Cancel),
                                 // Gamepad
-                                new ButtonBinding(Button.GamepadA, Game.Action.Accept),
-                                new ButtonBinding(Button.GamepadB, Game.Action.Cancel)
+                                new ButtonBinding(Button.GamepadA, Action.Accept),
+                                new ButtonBinding(Button.GamepadB, Action.Cancel)
                             }
                         }
                     }

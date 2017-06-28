@@ -64,9 +64,12 @@ namespace TundraEngine.Windowing
                     windowManagerInfo.Wayland.Display = wmInfo.Info.Wayland.Display;
                     windowManagerInfo.Wayland.Surface = wmInfo.Info.Wayland.Surface;
                     break;
+                default:
+                    windowManagerInfo.Type = WindowManagerType.None;
+                    Assert.IsTrue(windowManagerInfo.Type != WindowManagerType.None, "Could not get window manager.");
+                    break;
             }
 
-            windowManagerInfo.Type = WindowManagerType.None;
         }
     }
 }

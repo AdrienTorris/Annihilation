@@ -1,22 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace TundraEngine
 {
-    /// <summary>
-    /// Design:
-    /// 
-    /// </summary>
-
-    public static class TaskManager
+    public class TaskManager
     {
+        private Queue<Action> _taskQueue = new Queue<Action>();
+        private List<Action> _waitingTasks = new List<Action>();
 
-
-        public static void ExecuteTasks()
+        public void ExecuteTasks()
         {
-            // TODO: Update time, deltaTime, frames, target fps, etc.
-
 
         }
     }
