@@ -1,6 +1,8 @@
-﻿namespace TundraEngine.Input
+﻿using System;
+
+namespace TundraEngine.Input
 {
-    public interface IEventProvider
+    public interface IEventProvider : IDisposable
     {
         void PumpEvents(out InputEvent inputEvent);
     }

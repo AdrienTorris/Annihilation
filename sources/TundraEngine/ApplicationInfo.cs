@@ -1,8 +1,9 @@
 ﻿using System.Runtime.InteropServices;
 
 using TundraEngine.Windowing;
-using TundraEngine.Graphics;
+using TundraEngine.Rendering;
 using TundraEngine.Input;
+using TundraEngine.IMGUI;
 
 namespace TundraEngine
 {
@@ -47,11 +48,12 @@ namespace TundraEngine
         /// <summary>
         /// Renderer settings.
         /// </summary>
-        public GraphicsInfo GraphicsInfo;
+        public RendererInfo RendererInfo;
         /// <summary>
         /// Input settings and default action maps.
         /// </summary>
         public InputInfo InputInfo;
+        public DebugUIInfo DebugUIInfo;
 
         public const string DefaultResourcePath = "/Resources/";
         public const int DefaultMaxResources = 1024;

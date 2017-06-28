@@ -1,14 +1,14 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 using TundraEngine.Windowing;
-
 using SharpVk;
 
-using static TundraEngine.Graphics.Vulkan;
+using static TundraEngine.Rendering.Vulkan;
 
-namespace TundraEngine.Graphics
+namespace TundraEngine.Rendering
 {
-    public class GraphicsProviderVulkan : GraphicsProvider
+    public class RendererVulkan : IRenderer
     {
         private Instance _instance;
         private PhysicalDevice _physicalDevice;
@@ -23,8 +23,7 @@ namespace TundraEngine.Graphics
         private const QueueFlags QueueTypes = QueueFlags.Graphics | QueueFlags.Compute;
         private const Format DepthFormat = Format.D32SFloatS8UInt;
 
-        public GraphicsProviderVulkan(ref ApplicationInfo applicationInfo, ref WindowManagerInfo windowManagerInfo)
-            : base(ref applicationInfo, ref windowManagerInfo)
+        public void Initialize(ref ApplicationInfo applicationInfo, ref WindowManagerInfo windowManagerInfo)
         {
             CreateInstance(applicationInfo.Name.ToString(), windowManagerInfo.Type, out _instance);
             CreateSurface(_instance, ref windowManagerInfo, out _surface);
@@ -33,8 +32,8 @@ namespace TundraEngine.Graphics
             CreateCommandPool(_device, _queueFamilyIndices.Graphics, out _commandPool);
             CreateSwapchain(
                 _device,
-                (uint)(applicationInfo.WindowInfo.Width * applicationInfo.GraphicsInfo.RenderScale),
-                (uint)(applicationInfo.WindowInfo.Height * applicationInfo.GraphicsInfo.RenderScale),
+                (uint)(applicationInfo.WindowInfo.Width * applicationInfo.RendererInfo.RenderScale),
+                (uint)(applicationInfo.WindowInfo.Height * applicationInfo.RendererInfo.RenderScale),
                 _swapchain,
                 out _swapchain);
             // TODO: Create command buffers
@@ -46,18 +45,44 @@ namespace TundraEngine.Graphics
             _graphicsQueue = _device.GetQueue(_queueFamilyIndices.Graphics, 0);
         }
         
-        public override void Render(int width, int height)
+        public async Task RenderAsync()
         {
+            await Task.Delay(0);
             throw new NotImplementedException();
         }
-
-        protected override void DisposeUnmanaged()
+        
+        protected virtual void Dispose(bool disposing)
         {
-            _swapchain.Dispose();
-            _surface.Dispose();
-            _commandPool.Dispose();
-            _device.Dispose();
-            _instance.Dispose();
+            if (!disposedValue)
+            {
+                if (disposing) { }
+
+                _swapchain.Dispose();
+                _surface.Dispose();
+                _commandPool.Dispose();
+                _device.Dispose();
+                _instance.Dispose();
+
+                disposedValue = true;
+            }
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+        
+        ~RendererVulkan()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(false);
+        }
+
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }

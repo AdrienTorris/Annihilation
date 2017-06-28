@@ -1,11 +1,14 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
+using System.Threading.Tasks;
 
 using TundraEngine;
 using TundraEngine.Input;
-using TundraEngine.Graphics;
+using TundraEngine.Rendering;
 using TundraEngine.Windowing;
 using TundraEngine.Mathematics;
 using TundraEngine.EntityComponent;
+using TundraEngine.IMGUI;
 
 namespace Breakout
 {
@@ -68,8 +71,9 @@ namespace Breakout
             EntityManager.Spawn(null, padResource);
         }
 
-        protected override void UpdateAsync(double deltaTime)
+        protected override async Task UpdateAsync(double deltaTime)
         {
+            await Task.Delay(TimeSpan.FromMilliseconds(Constants.TargetFrameStepTime));
         }
 
         protected override void Shutdown()
@@ -80,12 +84,12 @@ namespace Breakout
         {
             applicationInfo = new ApplicationInfo
             {
-                Name = "Tundra Breakout",
+                Name = "Breakout",
                 Version = "0.1.0",
+                InitialPrefab = "MainMenu",
 
                 ResourcePath = ApplicationInfo.DefaultResourcePath,
                 MaxResources = ApplicationInfo.DefaultMaxResources,
-                InitialPrefab = "MainMenu",
                 MaxEntitiesPerPrefab = ApplicationInfo.DefaultMaxEntitiesPerPrefab,
 
                 WindowInfo = new WindowInfo
@@ -98,13 +102,17 @@ namespace Breakout
                     AllowHighDPI = true,
                     AlwaysOnTop = false
                 },
-                GraphicsInfo = new GraphicsInfo
+                RendererInfo = new RendererInfo
                 {
                     RenderScale = 1f,
                     SSAA = 8,
                     VSync = false,
                     PresentMode = PresentMode.Fifo,
                     EnableValidation = false
+                },
+                DebugUIInfo = new DebugUIInfo
+                {
+                    DebugUIType = DebugUIType.BGFX
                 },
                 InputInfo = new InputInfo
                 {

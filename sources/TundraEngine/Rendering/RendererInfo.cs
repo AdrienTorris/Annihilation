@@ -1,5 +1,12 @@
-﻿namespace TundraEngine.Graphics
+﻿namespace TundraEngine.Rendering
 {
+    public enum RendererType : byte
+    {
+        Vulkan,
+        BGFX,
+        SDL,
+    }
+
     public enum PresentMode : byte
     {
         Immediate,
@@ -8,8 +15,9 @@
         FifoRelaxed
     }
 
-    public struct GraphicsInfo
+    public struct RendererInfo
     {
+        public RendererType RendererType;
         /// <summary>
         /// Window resolution multiplier to use for the renderer.
         /// <para/> 1.0 means "use window size as rendering resolution".

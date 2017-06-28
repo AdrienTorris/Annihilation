@@ -2,7 +2,8 @@
 
 using TundraEngine.Input;
 using TundraEngine.Windowing;
-using TundraEngine.Graphics;
+using TundraEngine.Rendering;
+using TundraEngine.IMGUI;
 
 using static TundraEngine.SDL.SDL;
 
@@ -50,6 +51,7 @@ namespace TundraEngine
             GetApplicationInfo(out ApplicationInfo);
             
             // Init SDL
+            // TODO: Do this in the first SDL-related system to init.
             {
                 bool result = SDL_SetHint(HintFrameBufferAcceleration, "1");
                 Assert.IsTrue(result, "Unable to set hint \"" + HintFrameBufferAcceleration + "\"");
@@ -59,11 +61,14 @@ namespace TundraEngine
                 Assert.IsZero(result, "Unable to init SDL");
             }
             
-            // Create window and graphics device
-            using (Window window = new Window(ref ApplicationInfo.WindowInfo, new WindowProviderSDL()))
-            using (var graphicsProvider = new GraphicsProviderBGFX(ref ApplicationInfo, ref window.WindowManagerInfo))
+            using (var window = new WindowSDL())
+            using (var renderer = new RendererBGFX())
+            using (var eventProvider = new EventProviderSDL())
+            using (var debugUI = new DebugUIBGFX())
             {
-                var eventProvider = new EventProviderSDL();
+                window.CreateWindow(ref ApplicationInfo.WindowInfo);
+                renderer.Initialize(ref ApplicationInfo, window);
+                debugUI.Initialize(ref ApplicationInfo, window);
                 
                 // Do application-specific initialization
                 Initialize();
@@ -72,9 +77,9 @@ namespace TundraEngine
                 while (!_quitRequested)
                 {
                     eventProvider.PumpEvents(out InputEvent inputEvent);
-                    
+
                     UpdateAsync(Constants.TargetFrameStepTime * 0.001f).Wait();
-                    graphicsProvider.RenderAsync().Wait();
+                    renderer.RenderAsync().Wait();
                 }
 
                 // Do application-specific shutdown
@@ -82,6 +87,7 @@ namespace TundraEngine
             }
             
             // Shutdown SDL
+            // TODO: Do this in the last SDL-related system to dispose.
             SDL_Quit();
         }
 
