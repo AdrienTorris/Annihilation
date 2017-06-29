@@ -73,6 +73,9 @@ namespace Breakout
 
         protected override async Task UpdateAsync(double deltaTime)
         {
+            DebugUI.Clear();
+            DebugUI.Text(DateTime.Now.Second, 0, "Allo?");
+
             await Task.Delay(TimeSpan.FromMilliseconds(Constants.TargetFrameStepTime));
         }
 
