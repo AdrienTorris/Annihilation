@@ -23,17 +23,19 @@ namespace TundraEngine.Rendering
         private const QueueFlags QueueTypes = QueueFlags.Graphics | QueueFlags.Compute;
         private const Format DepthFormat = Format.D32SFloatS8UInt;
 
-        public void Initialize(ref ApplicationInfo applicationInfo, ref WindowManagerInfo windowManagerInfo)
+        public RendererVulkan()
         {
-            CreateInstance(applicationInfo.Name.ToString(), windowManagerInfo.Type, out _instance);
-            CreateSurface(_instance, ref windowManagerInfo, out _surface);
+            WindowManagerInfo windowManagerInfo = Application.Window.WindowManagerInfo;
+
+            CreateInstance(Application.Info.Name.ToString(), windowManagerInfo.Type, out _instance);
+            CreateSurface(_instance, ref windowManagerInfo, out Surface surface);
             SelectPhysicalDevice(_instance, out _physicalDevice);
             CreateLogicalDevice(_physicalDevice, QueueTypes, new PhysicalDeviceFeatures { }, out _device, out _queueFamilyIndices);
             CreateCommandPool(_device, _queueFamilyIndices.Graphics, out _commandPool);
             CreateSwapchain(
                 _device,
-                (uint)(applicationInfo.WindowInfo.Width * applicationInfo.RendererInfo.RenderScale),
-                (uint)(applicationInfo.WindowInfo.Height * applicationInfo.RendererInfo.RenderScale),
+                (uint)Application.Info.RendererInfo.ResolutionX,
+                (uint)Application.Info.RendererInfo.ResolutionY,
                 _swapchain,
                 out _swapchain);
             // TODO: Create command buffers

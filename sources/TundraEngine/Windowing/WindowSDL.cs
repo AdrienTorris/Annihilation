@@ -4,14 +4,16 @@ using static TundraEngine.SDL.SDL;
 
 namespace TundraEngine.Windowing
 {
-    public class WindowSDL : IWindow
+    internal class WindowSDL : LibrarySystem<LibSDL>, IWindow
     {
         public IntPtr Window { get; set; }
         public WindowManagerInfo WindowManagerInfo { get; set; }
         public int UndefinedPosition => SDL_WindowPositionUndefined;
-
-        public void CreateWindow(ref WindowInfo windowInfo)
+        
+        public WindowSDL()
         {
+            WindowInfo windowInfo = Application.Info.WindowInfo;
+
             // Window
             SDL_WindowFlags windowFlags = SDL_WindowFlags.Shown | SDL_WindowFlags.Vulkan;
             if (windowInfo.AllowHighDPI) windowFlags |= SDL_WindowFlags.AllowHighDPI;
@@ -88,38 +90,21 @@ namespace TundraEngine.Windowing
         {
             SDL_DestroyWindow(Window);
         }
-        
-        protected virtual void Dispose(bool disposing)
+
+        protected override void DisposeUnmanaged()
         {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    // TODO: dispose managed state (managed objects).
-                }
-
-                SDL_DestroyWindow(Window);
-
-                disposedValue = true;
-            }
+            SDL_DestroyWindow(Window);
+            Window = IntPtr.Zero;
         }
 
-        #region IDisposable Support
-        private bool disposedValue = false; // To detect redundant calls
-        
-        ~WindowSDL()
+        protected override void InitializeLibrary()
         {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(false);
+            Application.InitializeSDL();
         }
 
-        // This code added to correctly implement the disposable pattern.
-        public void Dispose()
+        protected override void ShutdownLibrary()
         {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            SDL_Quit();
         }
-        #endregion
     }
 }

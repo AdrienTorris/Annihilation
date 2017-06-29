@@ -31,7 +31,7 @@ namespace Breakout
             public static readonly StringId32 Accept = "Accept";
             public static readonly StringId32 Cancel = "Cancel";
         }
-        
+
         static void Main(string[] args)
         {
             Game game = new Game();
@@ -94,6 +94,7 @@ namespace Breakout
 
                 WindowInfo = new WindowInfo
                 {
+                    WindowType = WindowType.SDL,
                     PositionX = 10,
                     PositionY = 10,
                     Width = 1280,
@@ -104,7 +105,9 @@ namespace Breakout
                 },
                 RendererInfo = new RendererInfo
                 {
-                    RenderScale = 1f,
+                    RendererType = RendererType.BGFX,
+                    ResolutionX = 1280,
+                    ResolutionY = 720,
                     SSAA = 8,
                     VSync = false,
                     PresentMode = PresentMode.Fifo,

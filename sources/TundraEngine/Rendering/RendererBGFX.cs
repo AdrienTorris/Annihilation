@@ -1,86 +1,39 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-using TundraEngine.Windowing;
 using SharpBgfx;
-
-using static SharpBgfx.Bgfx;
 
 namespace TundraEngine.Rendering
 {
-    public class RendererBGFX : IRenderer
+    internal class RendererBGFX : LibrarySystem<LibBGFX>, IRenderer
     {
-        private int _width;
-        private int _height;
-        
-        public static bool IsInitialized { get; private set; }
-
-        public void Initialize(ref ApplicationInfo applicationInfo, IWindow window)
-        {
-            // Hook window
-            SetWindowHandle(
-                window.WindowManagerInfo.Type == WindowManagerType.Windows
-                ? window.WindowManagerInfo.Windows.HWindow
-                : window.WindowManagerInfo.Type == WindowManagerType.X11
-                ? window.WindowManagerInfo.X11.Window
-                : window.WindowManagerInfo.Wayland.Display);
-
-            // Initialize
-            Init(RendererBackend.Vulkan);
-
-            _width = (int)(applicationInfo.WindowInfo.Width * applicationInfo.RendererInfo.RenderScale);
-            _height = (int)(applicationInfo.WindowInfo.Height * applicationInfo.RendererInfo.RenderScale);
-            Reset(_width, _height);
-
-            // Set view 0 clear state
-            SetViewClear(0, ClearTargets.Color | ClearTargets.Depth, 0x303030ff);
-
-            // Mark initialized so that other BGFX systems don't repeat initialization.
-            IsInitialized = true;
-        }
-
         public async Task RenderAsync()
         {
             // Set view 0 viewport
-            SetViewRect(0, 0, 0, _width, _height);
+            Bgfx.SetViewRect(0, 0, 0, Application.Info.RendererInfo.ResolutionX, Application.Info.RendererInfo.ResolutionY);
 
             // Make sure view 0 is cleared if no other draw calls are submitted
-            Touch(0);
-            
+            Bgfx.Touch(0);
+
             // Advance to the next frame. Rendering thread will be kicked to process submitted rendering primitives.
-            Frame();
+            Bgfx.Frame();
 
             await Task.Delay(TimeSpan.FromMilliseconds(Constants.TargetFrameStepTime)).ConfigureAwait(false);
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected override void DisposeUnmanaged()
         {
-            if (!disposedValue)
-            {
-                if (disposing) { }
 
-                Shutdown();
-
-                disposedValue = true;
-            }
         }
 
-        #region IDisposable Support
-        private bool disposedValue = false; // To detect redundant calls
-        
-        ~RendererBGFX()
+        protected override void InitializeLibrary()
         {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(false);
+            Application.InitializeBGFX();
         }
 
-        // This code added to correctly implement the disposable pattern.
-        public void Dispose()
+        protected override void ShutdownLibrary()
         {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            Bgfx.Shutdown();
         }
-        #endregion
     }
 }

@@ -5,6 +5,7 @@
         Vulkan,
         BGFX,
         SDL,
+        None
     }
 
     public enum PresentMode : byte
@@ -18,11 +19,8 @@
     public struct RendererInfo
     {
         public RendererType RendererType;
-        /// <summary>
-        /// Window resolution multiplier to use for the renderer.
-        /// <para/> 1.0 means "use window size as rendering resolution".
-        /// </summary>
-        public float RenderScale;
+        public int ResolutionX;
+        public int ResolutionY;
         public bool VSync;
         public uint SSAA;
         public PresentMode PresentMode;

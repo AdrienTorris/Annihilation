@@ -5,7 +5,7 @@ using static TundraEngine.SDL.SDL;
 
 namespace TundraEngine.Input
 {
-    public class EventProviderSDL : IEventProvider
+    internal class EventProviderSDL : LibrarySystem<LibSDL>, IEventProvider
     {
         private IntPtr[] _gameControllers = new IntPtr[Constants.MaxPlayerCount];
 
@@ -15,7 +15,7 @@ namespace TundraEngine.Input
         };
 
         public uint ConnectedControllerCount { get; private set; }
-
+        
         public void PumpEvents(out InputEvent inputEvent)
         {
             inputEvent = new InputEvent
@@ -23,8 +23,7 @@ namespace TundraEngine.Input
                 Type = InputEventType.None
             };
 
-            SDL_Event sdlEvent;
-            while (SDL_PollEvent(out sdlEvent) == 1)
+            while (SDL_PollEvent(out SDL_Event sdlEvent) == 1)
             {
                 if (sdlEvent.Type == SDL_EventType.KeyDown ||
                     sdlEvent.Type == SDL_EventType.KeyUp)
@@ -36,6 +35,7 @@ namespace TundraEngine.Input
                     };
 
                     // TODO: Add the missing keys
+                    // TODO: Put these in a static dictionary
                     switch (sdlEvent.Key.KeySym.Sym)
                     {
                         case SDL_KeyCode.a:
@@ -191,8 +191,8 @@ namespace TundraEngine.Input
                         default:
                             return;
                     }
-                    
-                    buttonEvent.State = sdlEvent.Type == SDL_EventType.KeyDown ? ButtonState.Pressed  : ButtonState.Released;
+
+                    buttonEvent.State = sdlEvent.Type == SDL_EventType.KeyDown ? ButtonState.Pressed : ButtonState.Released;
                     inputEvent.Type = InputEventType.Button;
                     inputEvent.ButtonEvent = buttonEvent;
                     return;
@@ -205,39 +205,19 @@ namespace TundraEngine.Input
             }
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected override void InitializeLibrary()
         {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    // TODO: dispose managed state (managed objects).
-                }
-
-                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-                // TODO: set large fields to null.
-
-                disposedValue = true;
-            }
+            Application.InitializeSDL();
         }
 
-        #region IDisposable Support
-        private bool disposedValue = false; // To detect redundant calls
-
-        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
-        // ~EventProviderSDL() {
-        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-        //   Dispose(false);
-        // }
-
-        // This code added to correctly implement the disposable pattern.
-        public void Dispose()
+        protected override void ShutdownLibrary()
         {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(true);
-            // TODO: uncomment the following line if the finalizer is overridden above.
-            // GC.SuppressFinalize(this);
+            SDL_Quit();
         }
-        #endregion
+
+        protected override void DisposeUnmanaged()
+        {
+            // TODO: Dispose of controllers and other SDL handles
+        }
     }
 }

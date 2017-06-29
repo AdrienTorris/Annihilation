@@ -7,8 +7,5 @@ namespace TundraEngine.Windowing
         IntPtr Window { get; set; }
         WindowManagerInfo WindowManagerInfo { get; set; }
         int UndefinedPosition { get; }
-
-        void CreateWindow(ref WindowInfo windowInfo);
-        void DestroyWindow();
     }
 }

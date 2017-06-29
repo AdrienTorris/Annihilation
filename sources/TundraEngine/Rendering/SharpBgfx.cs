@@ -501,7 +501,7 @@ namespace SharpBgfx {
         /// <param name="colorRgba">The clear color.</param>
         /// <param name="depth">The value to fill the depth buffer.</param>
         /// <param name="stencil">The value to fill the stencil buffer.</param>
-        public static void SetViewClear (byte id, ClearTargets targets, int colorRgba, float depth = 1.0f, byte stencil = 0) {
+        public static void SetViewClear (byte id, ClearTargets targets, uint colorRgba, float depth = 1.0f, byte stencil = 0) {
             NativeMethods.bgfx_set_view_clear(id, targets, colorRgba, depth, stencil);
         }
 
@@ -1138,8 +1138,7 @@ namespace SharpBgfx {
         /// - PVR
         /// </remarks>
         public static Texture FromFile (MemoryBlock memory, TextureFlags flags = TextureFlags.None, int skipMips = 0) {
-            TextureInfo info;
-            var handle = NativeMethods.bgfx_create_texture(memory.ptr, flags, (byte)skipMips, out info);
+            var handle = NativeMethods.bgfx_create_texture(memory.ptr, flags, (byte)skipMips, out TextureInfo info);
 
             return new Texture(handle, ref info);
         }
@@ -4430,8 +4429,7 @@ namespace SharpBgfx {
         /// </summary>
         public string Name {
             get {
-                Info info;
-                NativeMethods.bgfx_get_uniform_info(handle, out info);
+                NativeMethods.bgfx_get_uniform_info(handle, out Info info);
                 return Marshal.PtrToStringAnsi(new IntPtr(info.name));
             }
         }
@@ -4441,8 +4439,7 @@ namespace SharpBgfx {
         /// </summary>
         public UniformType Type {
             get {
-                Info info;
-                NativeMethods.bgfx_get_uniform_info(handle, out info);
+                NativeMethods.bgfx_get_uniform_info(handle, out Info info);
                 return info.type;
             }
         }
@@ -4452,8 +4449,7 @@ namespace SharpBgfx {
         /// </summary>
         public int ArraySize {
             get {
-                Info info;
-                NativeMethods.bgfx_get_uniform_info(handle, out info);
+                NativeMethods.bgfx_get_uniform_info(handle, out Info info);
                 return info.arraySize;
             }
         }
@@ -4803,7 +4799,7 @@ namespace SharpBgfx {
     /// Specifies flags for clearing surfaces.
     /// </summary>
     [Flags]
-    public enum ClearTargets : short {
+    public enum ClearTargets : ushort {
         /// <summary>
         /// Don't clear anything.
         /// </summary>
@@ -6533,7 +6529,7 @@ namespace SharpBgfx {
         public static extern void bgfx_set_view_scissor (byte id, ushort x, ushort y, ushort width, ushort height);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void bgfx_set_view_clear (byte id, ClearTargets flags, int rgba, float depth, byte stencil);
+        public static extern void bgfx_set_view_clear (byte id, ClearTargets flags, uint rgba, float depth, byte stencil);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void bgfx_set_view_clear_mrt (byte id, ClearTargets flags, float depth, byte stencil, byte rt0, byte rt1, byte rt2, byte rt3, byte rt4, byte rt5, byte rt6, byte rt7);
