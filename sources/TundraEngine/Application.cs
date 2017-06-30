@@ -52,7 +52,7 @@ namespace TundraEngine
                 // Main loop
                 while (!_quitRequested)
                 {
-                    EventProvider.PumpEvents(out InputEvent inputEvent);
+                    EventProvider.PollEvents(out InputEvent inputEvent);
 
                     UpdateAsync(Constants.TargetFrameStepTime * 0.001f).Wait();
                     Renderer.RenderAsync().Wait();

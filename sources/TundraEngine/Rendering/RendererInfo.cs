@@ -1,4 +1,6 @@
-﻿namespace TundraEngine.Rendering
+﻿using System.Runtime.InteropServices;
+
+namespace TundraEngine.Rendering
 {
     public enum RendererType : byte
     {
@@ -16,14 +18,28 @@
         FifoRelaxed
     }
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8)]
+    public struct VulkanInfo
+    {
+        public bool EnableValidation;
+        public PresentMode PresentMode;
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8)]
+    public struct BGFXInfo
+    {
+        public bool EnableDebug;
+    }
+
+    [StructLayout(LayoutKind.Explicit)]
     public struct RendererInfo
     {
-        public RendererType RendererType;
-        public int ResolutionX;
-        public int ResolutionY;
-        public bool VSync;
-        public uint SSAA;
-        public PresentMode PresentMode;
-        public bool EnableValidation;
+        [FieldOffset(0)] public RendererType RendererType;
+        [FieldOffset(1)] public VulkanInfo VulkanInfo;
+        [FieldOffset(1)] public BGFXInfo BGFXInfo;
+        [FieldOffset(9)] public int ResolutionX;
+        [FieldOffset(13)] public int ResolutionY;
+        [FieldOffset(17)] public bool VSync;
+        [FieldOffset(18)] public uint SSAA;
     }
 }

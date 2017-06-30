@@ -31,7 +31,7 @@ namespace TundraEngine.SDL
         /// <summary>
         /// General keyboard/mouse state definitions
         /// </summary>
-        public enum SDL_ButtonState
+        public enum SDL_ButtonState : byte
         {
             Released = 0,
             Pressed = 1
@@ -322,7 +322,7 @@ namespace TundraEngine.SDL
             /// <summary>
             /// PRESSED or RELEASED
             /// </summary>
-            public readonly byte State;
+            public readonly SDL_ButtonState State;
             /// <summary>
             /// Non-zero if this is a key repeat
             /// </summary>
@@ -448,11 +448,11 @@ namespace TundraEngine.SDL
             /// <summary>
             /// The mouse button index
             /// </summary>
-            public readonly byte Button;
+            public readonly SDL_MouseButton Button;
             /// <summary>
             /// PRESSED or RELEASED
             /// </summary>
-            public readonly byte State;
+            public readonly SDL_ButtonState State;
             /// <summary>
             /// 1 for single-click, 2 for double-click, etc.
             /// </summary>
@@ -957,15 +957,15 @@ namespace TundraEngine.SDL
             /// <summary>
             /// Mouse motion event data
             /// </summary>
-            [FieldOffset (0)] public readonly SDL_MouseMotionEvent Motion;
+            [FieldOffset (0)] public readonly SDL_MouseMotionEvent MouseMotion;
             /// <summary>
             /// Mouse button event data
             /// </summary>
-            [FieldOffset (0)] public readonly SDL_MouseButtonEvent Button;
+            [FieldOffset (0)] public readonly SDL_MouseButtonEvent MouseButton;
             /// <summary>
             /// Mouse wheel event data
             /// </summary>
-            [FieldOffset (0)] public readonly SDL_MouseWheelEvent Wheel;
+            [FieldOffset (0)] public readonly SDL_MouseWheelEvent MouseWheel;
             /// <summary>
             /// Joystick axis event data
             /// </summary>

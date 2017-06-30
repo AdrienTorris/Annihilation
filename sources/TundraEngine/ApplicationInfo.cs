@@ -7,6 +7,7 @@ using TundraEngine.IMGUI;
 
 namespace TundraEngine
 {
+    // TODO: How do we handle modified (saved) values?
     /// <summary>
     /// Main configuration data for the engine.
     /// </summary>

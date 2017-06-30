@@ -23,7 +23,7 @@ namespace TundraEngine.Input
 
         public static void ProcessEvents()
         {
-            _eventProvider.PumpEvents(out InputEvent inputEvent);
+            _eventProvider.PollEvents(out InputEvent inputEvent);
 
             switch(inputEvent.Type)
             {

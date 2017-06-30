@@ -5,8 +5,8 @@ namespace TundraEngine.Input
 {
     public enum ButtonState : byte
     {
-        Released,
-        Pressed
+        Released = 0,
+        Pressed = 1
     }
 
     public enum Button : byte
@@ -135,10 +135,8 @@ namespace TundraEngine.Input
         LeftControl,
         RightAlt,
         LeftAlt,
-        RightCommand,
-        LeftCommand,
-        RightWindows,
-        LeftWindows,
+        RightWindowsCommand,
+        LeftWindowsCommand,
         AltGr,
         Help,
         Print,
