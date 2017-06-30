@@ -14,9 +14,6 @@ namespace TundraEngine.SDL
             Right = 3,
             X1 = 4,
             X2 = 5,
-            LeftDouble = Left | 0b10000000,
-            MiddleDouble = Middle | 0b10000000,
-            RightDouble = Right | 0b10000000,
         }
 
         [Flags]
