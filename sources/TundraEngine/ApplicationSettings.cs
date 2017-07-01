@@ -7,12 +7,25 @@ using TundraEngine.IMGUI;
 
 namespace TundraEngine
 {
-    // TODO: How do we handle modified (saved) values?
+    public struct Version
+    {
+        public int Major;
+        public int Minor;
+        public int Patch;
+
+        public Version(int major, int minor, int patch)
+        {
+            Major = major;
+            Minor = minor;
+            Patch = patch;
+        }
+    }
+    
     /// <summary>
     /// Main configuration data for the engine.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
-    public struct ApplicationInfo
+    public struct ApplicationSettings
     {
         /// <summary>
         /// The name of the application.
@@ -21,7 +34,7 @@ namespace TundraEngine
         /// <summary>
         /// The version of the application.
         /// </summary>
-        public string Version;
+        public Version Version;
 
         /// <summary>
         /// The prefab to load on initialization.
@@ -45,16 +58,16 @@ namespace TundraEngine
         /// <summary>
         /// Window settings.
         /// </summary>
-        public WindowInfo WindowInfo;
+        public WindowSettings WindowSettings;
         /// <summary>
         /// Renderer settings.
         /// </summary>
-        public RendererInfo RendererInfo;
+        public RendererSettings RendererSettings;
         /// <summary>
         /// Input settings and default action maps.
         /// </summary>
-        public InputInfo InputInfo;
-        public DebugUIInfo DebugUIInfo;
+        public InputSettings InputSettings;
+        public DebugUISettings DebugUISettings;
 
         public const string DefaultResourcePath = "/Resources/";
         public const int DefaultMaxResources = 1024;

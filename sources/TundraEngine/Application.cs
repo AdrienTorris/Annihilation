@@ -23,7 +23,7 @@ namespace TundraEngine
         /// <summary>
         /// The startup settings of the game.
         /// </summary>
-        public static ApplicationInfo Info;
+        public static ApplicationSettings Settings;
         /// <summary>
         /// The command-line arguments that were supplied to the game when it was executed, if any.
         /// </summary>
@@ -38,21 +38,25 @@ namespace TundraEngine
         public void Run(string[] args)
         {
             Args = args;
-            GetApplicationInfo(out Info);
-            
+            GetApplicationSettings(out Settings);
+
             // Create all engine systems
             using (Window = new WindowSDL())
-            using (Renderer = new RendererBGFX())
+            using (Renderer = Settings.RendererSettings.RendererType == RendererType.Vulkan
+                ? new RendererVulkan()
+                : Settings.RendererSettings.RendererType == RendererType.BGFX
+                    ? (IRenderer)new RendererBGFX()
+                    : new RendererNull())
             using (EventProvider = new EventProviderSDL())
             using (DebugUI = new DebugUIBGFX())
-            {   
+            {
                 // Do application-specific initialization
                 Initialize();
 
                 // Main loop
                 while (!_quitRequested)
                 {
-                    EventProvider.PollEvents(out InputEvent inputEvent);
+                    EventProvider.PollEvents();
 
                     UpdateAsync(Constants.TargetFrameStepTime * 0.001f).Wait();
                     Renderer.RenderAsync().Wait();
@@ -64,9 +68,9 @@ namespace TundraEngine
         }
 
         /// <summary>
-        /// The application must override this method to fill the <see cref="Info"/> struct from code or from a resource.
+        /// The application must override this method to fill the <see cref="Settings"/> struct from code or from a resource.
         /// </summary>
-        protected abstract void GetApplicationInfo(out ApplicationInfo applicationInfo);
+        protected abstract void GetApplicationSettings(out ApplicationSettings applicationInfo);
         /// <summary>
         /// This is called after all engine subsystems have been initialized and before the main loop.
         /// </summary>
@@ -83,7 +87,7 @@ namespace TundraEngine
         /// <summary>
         /// Quits the application.
         /// </summary>
-        public static void Quit ()
+        public static void Quit()
         {
             _quitRequested = true;
         }
@@ -115,7 +119,7 @@ namespace TundraEngine
 
             // Initialize
             Bgfx.Init(RendererBackend.Direct3D12);
-            Bgfx.Reset(Info.RendererInfo.ResolutionX, Info.RendererInfo.ResolutionY);
+            Bgfx.Reset(Settings.RendererSettings.ResolutionX, Settings.RendererSettings.ResolutionY);
 
             // Set view 0 clear state
             Bgfx.SetViewClear(0, ClearTargets.Color | ClearTargets.Depth, 0x303030ff);

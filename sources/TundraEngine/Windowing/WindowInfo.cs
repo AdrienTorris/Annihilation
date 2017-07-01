@@ -14,7 +14,7 @@
         FullscreenDesktop
     }
 
-    public struct WindowInfo
+    public struct WindowSettings
     {
         public WindowType WindowType;
         public string Name;

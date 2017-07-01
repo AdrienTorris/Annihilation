@@ -1,6 +1,6 @@
 ﻿namespace TundraEngine.Input
 {
-    public struct InputInfo
+    public struct InputSettings
     {
         public float RepeatDelay;
         public float RepeatInterval;

@@ -70,7 +70,6 @@ namespace TundraEngine.Input
             { (int)SDL_KeyCode.Help, Button.Help },
             { (int)SDL_KeyCode.Printscreen, Button.Print },
             { (int)SDL_KeyCode.SysReq, Button.SysReq },
-            { (int)SDL_KeyCode.Pause, Button.Break },
             { (int)SDL_KeyCode.Menu, Button.Menu },
             { (int)SDL_KeyCode.a, Button.A },
             { (int)SDL_KeyCode.b, Button.B },

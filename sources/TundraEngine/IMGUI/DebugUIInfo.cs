@@ -8,7 +8,7 @@
         DearIMGUI,
     }
 
-    public struct DebugUIInfo
+    public struct DebugUISettings
     {
         public DebugUIType DebugUIType;
     }

@@ -32,7 +32,7 @@ namespace TundraEngine.Rendering
     }
 
     [StructLayout(LayoutKind.Explicit)]
-    public struct RendererInfo
+    public struct RendererSettings
     {
         [FieldOffset(0)] public RendererType RendererType;
         [FieldOffset(1)] public VulkanInfo VulkanInfo;

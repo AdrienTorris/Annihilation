@@ -20,23 +20,5 @@ namespace TundraEngine.Input
         {
             _eventProvider = eventProvider;
         }
-
-        public static void ProcessEvents()
-        {
-            _eventProvider.PollEvents(out InputEvent inputEvent);
-
-            switch(inputEvent.Type)
-            {
-                case InputEventType.Button:
-
-                    break;
-                case InputEventType.MouseMove:
-
-                    break;
-                case InputEventType.Axis:
-
-                    break;
-            }
-        }
     }
 }

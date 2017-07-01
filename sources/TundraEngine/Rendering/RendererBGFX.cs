@@ -10,7 +10,7 @@ namespace TundraEngine.Rendering
         public async Task RenderAsync()
         {
             // Set view 0 viewport
-            Bgfx.SetViewRect(0, 0, 0, Application.Info.RendererInfo.ResolutionX, Application.Info.RendererInfo.ResolutionY);
+            Bgfx.SetViewRect(0, 0, 0, Application.Settings.RendererSettings.ResolutionX, Application.Settings.RendererSettings.ResolutionY);
 
             // Make sure view 0 is cleared if no other draw calls are submitted
             Bgfx.Touch(0);

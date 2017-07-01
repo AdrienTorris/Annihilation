@@ -12,7 +12,7 @@ namespace TundraEngine.Windowing
         
         public WindowSDL()
         {
-            WindowInfo windowInfo = Application.Info.WindowInfo;
+            WindowSettings windowInfo = Application.Settings.WindowSettings;
 
             // Window
             SDL_WindowFlags windowFlags = SDL_WindowFlags.Shown | SDL_WindowFlags.Vulkan;

@@ -83,19 +83,19 @@ namespace Breakout
         {
         }
 
-        protected override void GetApplicationInfo(out ApplicationInfo applicationInfo)
+        protected override void GetApplicationSettings(out ApplicationSettings applicationInfo)
         {
-            applicationInfo = new ApplicationInfo
+            applicationInfo = new ApplicationSettings
             {
                 Name = "Breakout",
-                Version = "0.1.0",
+                Version = new TundraEngine.Version(0, 1, 0),
                 InitialPrefab = "MainMenu",
 
-                ResourcePath = ApplicationInfo.DefaultResourcePath,
-                MaxResources = ApplicationInfo.DefaultMaxResources,
-                MaxEntitiesPerPrefab = ApplicationInfo.DefaultMaxEntitiesPerPrefab,
+                ResourcePath = ApplicationSettings.DefaultResourcePath,
+                MaxResources = ApplicationSettings.DefaultMaxResources,
+                MaxEntitiesPerPrefab = ApplicationSettings.DefaultMaxEntitiesPerPrefab,
 
-                WindowInfo = new WindowInfo
+                WindowSettings = new WindowSettings
                 {
                     WindowType = WindowType.SDL,
                     PositionX = 10,
@@ -106,24 +106,26 @@ namespace Breakout
                     AllowHighDPI = true,
                     AlwaysOnTop = false
                 },
-                RendererInfo = new RendererInfo
+                RendererSettings = new RendererSettings
                 {
-                    RendererType = RendererType.BGFX,
+                    RendererType = RendererType.Vulkan,
+                    VulkanInfo = new VulkanInfo
+                    {
+                        PresentMode = PresentMode.Fifo
+                    },
                     ResolutionX = 1280,
                     ResolutionY = 720,
                     SSAA = 8,
                     VSync = false,
-                    PresentMode = PresentMode.Fifo,
-                    EnableValidation = false
                 },
-                DebugUIInfo = new DebugUIInfo
+                DebugUISettings = new DebugUISettings
                 {
                     DebugUIType = DebugUIType.BGFX
                 },
-                InputInfo = new InputInfo
+                InputSettings = new InputSettings
                 {
-                    RepeatInterval = InputInfo.DefaultRepeatInterval,
-                    RepeatDelay = InputInfo.DefaultRepeatDelay,
+                    RepeatInterval = InputSettings.DefaultRepeatInterval,
+                    RepeatDelay = InputSettings.DefaultRepeatDelay,
                     ActionMaps = new ActionMap[]
                     {
                         new ActionMap()
