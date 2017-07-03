@@ -111,7 +111,7 @@ namespace Breakout
                     RendererType = RendererType.Vulkan,
                     VulkanInfo = new VulkanInfo
                     {
-                        PresentMode = PresentMode.Fifo
+                        PresentMode = SharpVk.PresentMode.Fifo
                     },
                     ResolutionX = 1280,
                     ResolutionY = 720,

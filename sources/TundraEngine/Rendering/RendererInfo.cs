@@ -1,5 +1,8 @@
 ﻿using System.Runtime.InteropServices;
 
+using SharpVk;
+using SharpBgfx;
+
 namespace TundraEngine.Rendering
 {
     public enum RendererType : byte
@@ -9,15 +12,7 @@ namespace TundraEngine.Rendering
         SDL,
         None
     }
-
-    public enum PresentMode : byte
-    {
-        Immediate,
-        Mailbox,
-        Fifo,
-        FifoRelaxed
-    }
-
+    
     [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8)]
     public struct VulkanInfo
     {

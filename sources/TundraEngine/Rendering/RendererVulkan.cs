@@ -10,30 +10,61 @@ namespace TundraEngine.Rendering
 {
     public class RendererVulkan : IRenderer
     {
-        private bool _wasDisposed;
         private Instance _instance;
-#if DEBUG
-        private DebugReportCallback _debugCallback;
-#endif
         private Surface _surface;
         private PhysicalDevice _physicalDevice;
-        private uint _graphicsQueueIndex = uint.MaxValue;
-        private uint _computeQueueIndex = uint.MaxValue;
-        private uint _transferQueueIndex = uint.MaxValue;
-        private uint _presentQueueIndex = uint.MaxValue;
         private Device _device;
+        private Swapchain _swapchain;
+
+        private uint _graphicsQueueFamilyIndex = uint.MaxValue;
+        private uint _computeQueueFamilyIndex = uint.MaxValue;
+        private uint _transferQueueFamilyIndex = uint.MaxValue;
+        private uint _presentQueueFamilyIndex = uint.MaxValue;
         private Queue _graphicsQueue;
         private Queue _computeQueue;
         private Queue _transferQueue;
         private Queue _presentQueue;
-        private CommandPool _commandPool;
-        private Swapchain _swapchain;
-        
+
+        private SurfaceCapabilities _surfaceCapabilities;
+        private SurfaceFormat[] _surfaceFormats;
+        private PresentMode[] _presentModes;
+
+        private bool _wasDisposed;
+
+#if DEBUG
+        private DebugReportCallback _debugCallback;
+#endif
+
         private const float DefaultQueuePriority = 1f;
-        private static readonly PhysicalDeviceFeatures Features = new PhysicalDeviceFeatures
+
+#if DEBUG
+        private static readonly string[] InstanceLayers = new string[]
+        {
+            "VK_LAYER_LUNARG_standard_validation"
+        };
+#endif
+        private static readonly string[] InstanceExtensions = new string[]
+        {
+                KhrSurface.ExtensionName,
+                Application.Window.WindowManagerInfo.Type == WindowManagerType.Windows
+                ? KhrWin32Surface.ExtensionName
+                : Application.Window.WindowManagerInfo.Type == WindowManagerType.X11
+                ? KhrXcbSurface.ExtensionName
+                : KhrWaylandSurface.ExtensionName,
+#if DEBUG
+                ExtDebugReport.ExtensionName
+#endif
+        };
+        private static readonly string[] DeviceExtensions = new string[]
+        {
+            KhrSwapchain.ExtensionName
+        };
+        private static readonly PhysicalDeviceFeatures DeviceFeatures = new PhysicalDeviceFeatures
         {
             MultiDrawIndirect = true
         };
+        private const Format SurfaceFormat = Format.B8G8R8A8UNorm;
+        private const ColorSpace SurfaceColorSpace = ColorSpace.SrgbNonlinear;
         private const Format DepthFormat = Format.D32SFloatS8UInt;
 
         public RendererVulkan()
@@ -88,22 +119,6 @@ namespace TundraEngine.Rendering
 
         private void CreateInstance()
         {
-            WindowManagerType windowManagerType = Application.Window.WindowManagerInfo.Type;
-
-            // Get desired extensions depending on system
-            string[] desiredExtensions = new string[]
-            {
-                KhrSurface.ExtensionName,
-                windowManagerType == WindowManagerType.Windows
-                ? KhrWin32Surface.ExtensionName
-                : windowManagerType == WindowManagerType.X11
-                ? KhrXcbSurface.ExtensionName
-                : KhrWaylandSurface.ExtensionName,
-#if DEBUG
-                ExtDebugReport.ExtensionName
-#endif
-            };
-
             // Check if we support the desired extensions
             ExtensionProperties[] availableExtensions = Instance.EnumerateExtensionProperties(null);
             HashSet<string> availableExtensionNames = new HashSet<string>(availableExtensions.Length);
@@ -111,18 +126,12 @@ namespace TundraEngine.Rendering
             {
                 availableExtensionNames.Add(extension.ExtensionName);
             }
-            foreach (string extension in desiredExtensions)
+            foreach (string extension in InstanceExtensions)
             {
                 Assert.IsTrue(availableExtensionNames.Contains(extension), "Extension " + extension + " is not supported.");
             }
 
 #if DEBUG
-            // Enable standard validation in Debug mode
-            string[] desiredValidationLayers = new string[]
-            {
-                "VK_LAYER_LUNARG_standard_validation",
-            };
-
             // Check validation layer support
             LayerProperties[] availableLayers = Instance.EnumerateLayerProperties();
             HashSet<string> availableLayerNames = new HashSet<string>(availableLayers.Length);
@@ -130,7 +139,7 @@ namespace TundraEngine.Rendering
             {
                 availableLayerNames.Add(layer.LayerName);
             }
-            foreach (string layer in desiredValidationLayers)
+            foreach (string layer in InstanceLayers)
             {
                 Assert.IsTrue(availableLayerNames.Contains(layer), "Validation layer " + layer + " is not supported.");
             }
@@ -147,9 +156,9 @@ namespace TundraEngine.Rendering
                     EngineName = "Tundra Engine",
                     EngineVersion = new SharpVk.Version(0, 1, 0)
                 },
-                EnabledExtensionNames = desiredExtensions,
+                EnabledExtensionNames = InstanceExtensions,
 #if DEBUG
-                EnabledLayerNames = desiredValidationLayers
+                EnabledLayerNames = InstanceLayers
 #endif
             });
             Assert.IsNotNull(_instance, "Could not create Vulkan instance.");
@@ -213,98 +222,132 @@ namespace TundraEngine.Rendering
 
             bool IsDeviceSuitable(PhysicalDevice device)
             {
-                PhysicalDeviceFeatures features = device.GetFeatures();
+                PhysicalDeviceFeatures availableFeatures = device.GetFeatures();
                 QueueFamilyProperties[] queueFamilies = device.GetQueueFamilyProperties();
 
-                _graphicsQueueIndex = GetQueueFamilyIndex(QueueFlags.Graphics);
-                _computeQueueIndex = GetQueueFamilyIndex(QueueFlags.Compute);
-                _transferQueueIndex = GetQueueFamilyIndex(QueueFlags.Transfer);
-                _presentQueueIndex = GetPresentQueueFamilyIndex();
+                // The first queue family is the one with graphics + present
+                _graphicsQueueFamilyIndex = 0;
+                _presentQueueFamilyIndex = 0;
 
-                return features.MultiDrawIndirect &&
-                    _graphicsQueueIndex != uint.MaxValue &&
-                    _computeQueueIndex != uint.MaxValue &&
-                    _transferQueueIndex != uint.MaxValue &&
-                    _presentQueueIndex != uint.MaxValue;
-
-                // Get the index of a queue family that supports the requested queue flags
-                uint GetQueueFamilyIndex(QueueFlags queueFlags)
+                // Compute is in queue family 1 on AMD and 2 on NVIDIA
+                for (uint i = 1; i < queueFamilies.Length; ++i)
                 {
-                    // Dedicated queue for compute
-                    // Try to find a queue family index that supports compute but not graphics
-                    if (queueFlags.Has(QueueFlags.Compute))
+                    if (queueFamilies[i].QueueFlags.Has(QueueFlags.Compute))
                     {
-                        for (uint i = 0; i < queueFamilies.Length; ++i)
-                        {
-                            Assert.IsTrue(queueFamilies[i].QueueCount > 0, "No queues in this queue family.");
-
-                            if (queueFamilies[i].QueueFlags.Has(queueFlags) &&
-                                queueFamilies[i].QueueFlags.HasNot(QueueFlags.Graphics))
-                            {
-                                return i;
-                            }
-                        }
+                        _computeQueueFamilyIndex = i;
                     }
-
-                    // Dedicated queue for transfer
-                    // Try to find a queue family index that supports transfer but not graphics and compute
-                    if (queueFlags.Has(QueueFlags.Transfer))
-                    {
-                        for (uint i = 0; i < queueFamilies.Length; ++i)
-                        {
-                            Assert.IsTrue(queueFamilies[i].QueueCount > 0, "No queues in this queue family.");
-
-                            if (queueFamilies[i].QueueFlags.Has(queueFlags) &&
-                                queueFamilies[i].QueueFlags.HasNot(QueueFlags.Graphics) &&
-                                queueFamilies[i].QueueFlags.HasNot(QueueFlags.Compute))
-                            {
-                                return i;
-                            }
-                        }
-                    }
-
-                    // For other queue types or if no separate compute queue is present, return the first one to support the requested flags
-                    for (uint i = 0; i < queueFamilies.Length; ++i)
-                    {
-                        Assert.IsTrue(queueFamilies[i].QueueCount > 0, "No queues in this queue family.");
-
-                        if (queueFamilies[i].QueueFlags.Has(queueFlags))
-                        {
-                            return i;
-                        }
-                    }
-
-                    throw new Exception("Could not find a queue family index for " + queueFlags);
                 }
 
-                uint GetPresentQueueFamilyIndex()
+                // Transfer queue is different from both graphics and compute queue
+                for (uint i = 1; i < queueFamilies.Length; ++i)
                 {
-                    // Try to find a dedicated present queue
-                    // TODO: Check what's the most efficient pattern. Graphics + present in same queue?
-                    for (uint i = 0; i < queueFamilies.Length; ++i)
+                    if (queueFamilies[i].QueueFlags.Has(QueueFlags.Transfer) &&
+                        i != _graphicsQueueFamilyIndex &&
+                        i != _computeQueueFamilyIndex)
                     {
-                        Assert.IsTrue(queueFamilies[i].QueueCount > 0, "No queues in this queue family.");
-                        
-                        if (i != _graphicsQueueIndex &&
-                            i != _computeQueueIndex &&
-                            i != _transferQueueIndex &&
-                            _physicalDevice.GetSurfaceSupport(i, _surface))
-                        {
-                            return i;
-                        }
+                        _transferQueueFamilyIndex = i;
+                    }
+                }
+
+                return
+                    AreFeaturesSupported() &&
+                    AreExtensionsSupported() &&
+                    IsSwapChainSupported() &&
+                    _graphicsQueueFamilyIndex != uint.MaxValue &&
+                    _presentQueueFamilyIndex != uint.MaxValue &&
+                    _computeQueueFamilyIndex != uint.MaxValue &&
+                    _transferQueueFamilyIndex != uint.MaxValue;
+                
+                bool AreFeaturesSupported()
+                {
+                    bool ok =
+                        !(DeviceFeatures.AlphaToOne && !availableFeatures.AlphaToOne) &&
+                        !(DeviceFeatures.DepthBiasClamp && !availableFeatures.DepthBiasClamp) &&
+                        !(DeviceFeatures.DepthBounds && !availableFeatures.DepthBounds) &&
+                        !(DeviceFeatures.DepthClamp && !availableFeatures.DepthClamp) &&
+                        !(DeviceFeatures.DrawIndirectFirstInstance && !availableFeatures.DrawIndirectFirstInstance) &&
+                        !(DeviceFeatures.DualSourceBlend && !availableFeatures.DualSourceBlend) &&
+                        !(DeviceFeatures.FillModeNonSolid && !availableFeatures.FillModeNonSolid) &&
+                        !(DeviceFeatures.FragmentStoresAndAtomics && !availableFeatures.FragmentStoresAndAtomics) &&
+                        !(DeviceFeatures.FullDrawIndexUInt32 && !availableFeatures.FullDrawIndexUInt32) &&
+                        !(DeviceFeatures.GeometryShader && !availableFeatures.GeometryShader) &&
+                        !(DeviceFeatures.ImageCubeArray && !availableFeatures.ImageCubeArray) &&
+                        !(DeviceFeatures.IndependentBlend && !availableFeatures.IndependentBlend) &&
+                        !(DeviceFeatures.InheritedQueries && !availableFeatures.InheritedQueries) &&
+                        !(DeviceFeatures.LargePoints && !availableFeatures.LargePoints) &&
+                        !(DeviceFeatures.LogicOp && !availableFeatures.LogicOp) &&
+                        !(DeviceFeatures.MultiDrawIndirect && !availableFeatures.MultiDrawIndirect) &&
+                        !(DeviceFeatures.MultiViewport && !availableFeatures.MultiViewport) &&
+                        !(DeviceFeatures.OcclusionQueryPrecise && !availableFeatures.OcclusionQueryPrecise) &&
+                        !(DeviceFeatures.PipelineStatisticsQuery && !availableFeatures.PipelineStatisticsQuery) &&
+                        !(DeviceFeatures.RobustBufferAccess && !availableFeatures.RobustBufferAccess) &&
+                        !(DeviceFeatures.SamplerAnisotropy && !availableFeatures.SamplerAnisotropy) &&
+                        !(DeviceFeatures.SampleRateShading && !availableFeatures.SampleRateShading) &&
+                        !(DeviceFeatures.ShaderClipDistance && !availableFeatures.ShaderClipDistance) &&
+                        !(DeviceFeatures.ShaderCullDistance && !availableFeatures.ShaderCullDistance) &&
+                        !(DeviceFeatures.ShaderFloat64 && !availableFeatures.ShaderFloat64) &&
+                        !(DeviceFeatures.ShaderImageGatherExtended && !availableFeatures.ShaderImageGatherExtended) &&
+                        !(DeviceFeatures.ShaderInt16 && !availableFeatures.ShaderInt16) &&
+                        !(DeviceFeatures.ShaderInt64 && !availableFeatures.ShaderInt64) &&
+                        !(DeviceFeatures.ShaderResourceMinLod && !availableFeatures.ShaderResourceMinLod) &&
+                        !(DeviceFeatures.ShaderResourceResidency && !availableFeatures.ShaderResourceResidency) &&
+                        !(DeviceFeatures.ShaderSampledImageArrayDynamicIndexing && !availableFeatures.ShaderSampledImageArrayDynamicIndexing) &&
+                        !(DeviceFeatures.ShaderStorageBufferArrayDynamicIndexing && !availableFeatures.ShaderStorageBufferArrayDynamicIndexing) &&
+                        !(DeviceFeatures.ShaderStorageImageArrayDynamicIndexing && !availableFeatures.ShaderStorageImageArrayDynamicIndexing) &&
+                        !(DeviceFeatures.ShaderStorageImageExtendedFormats && !availableFeatures.ShaderStorageImageExtendedFormats) &&
+                        !(DeviceFeatures.ShaderStorageImageMultisample && !availableFeatures.ShaderStorageImageMultisample) &&
+                        !(DeviceFeatures.ShaderStorageImageReadWithoutFormat && !availableFeatures.ShaderStorageImageReadWithoutFormat) &&
+                        !(DeviceFeatures.ShaderStorageImageWriteWithoutFormat && !availableFeatures.ShaderStorageImageWriteWithoutFormat) &&
+                        !(DeviceFeatures.ShaderTessellationAndGeometryPointSize && !availableFeatures.ShaderTessellationAndGeometryPointSize) &&
+                        !(DeviceFeatures.ShaderUniformBufferArrayDynamicIndexing && !availableFeatures.ShaderUniformBufferArrayDynamicIndexing) &&
+                        !(DeviceFeatures.SparseBinding && !availableFeatures.SparseBinding) &&
+                        !(DeviceFeatures.SparseResidency16Samples && !availableFeatures.SparseResidency16Samples) &&
+                        !(DeviceFeatures.SparseResidency2Samples && !availableFeatures.SparseResidency2Samples) &&
+                        !(DeviceFeatures.SparseResidency4Samples && !availableFeatures.SparseResidency4Samples) &&
+                        !(DeviceFeatures.SparseResidency8Samples && !availableFeatures.SparseResidency8Samples) &&
+                        !(DeviceFeatures.SparseResidencyAliased && !availableFeatures.SparseResidencyAliased) &&
+                        !(DeviceFeatures.SparseResidencyBuffer && !availableFeatures.SparseResidencyBuffer) &&
+                        !(DeviceFeatures.SparseResidencyImage2D && !availableFeatures.SparseResidencyImage2D) &&
+                        !(DeviceFeatures.SparseResidencyImage3D && !availableFeatures.SparseResidencyImage3D) &&
+                        !(DeviceFeatures.TessellationShader && !availableFeatures.TessellationShader) &&
+                        !(DeviceFeatures.TextureCompressionASTC_LDR && !availableFeatures.TextureCompressionASTC_LDR) &&
+                        !(DeviceFeatures.TextureCompressionBC && !availableFeatures.TextureCompressionBC) &&
+                        !(DeviceFeatures.TextureCompressionETC2 && !availableFeatures.TextureCompressionETC2) &&
+                        !(DeviceFeatures.VariableMultisampleRate && !availableFeatures.VariableMultisampleRate) &&
+                        !(DeviceFeatures.VertexPipelineStoresAndAtomics && !availableFeatures.VertexPipelineStoresAndAtomics) &&
+                        !(DeviceFeatures.WideLines && !availableFeatures.WideLines);
+
+                    Assert.IsTrue(ok, "Device features are not supported on this GPU.");
+                    return ok;
+                }
+
+                bool AreExtensionsSupported()
+                {
+                    ExtensionProperties[] availableExtensions = device.EnumerateDeviceExtensionProperties(null);
+
+                    HashSet<string> extensionSet = new HashSet<string>(DeviceExtensions);
+                    
+                    foreach (var extension in availableExtensions)
+                    {
+                        extensionSet.Remove(extension.ExtensionName);
                     }
 
-                    // Else just use the first available
-                    for (uint i = 0; i < queueFamilies.Length; ++i)
-                    {
-                        Assert.IsTrue(queueFamilies[i].QueueCount > 0, "No queues in this queue family.");
+                    bool ok = extensionSet.Count == 0;
+                    Assert.IsTrue(ok, "Device extensions are not supported on this GPU.");
 
-                        if (_physicalDevice.GetSurfaceSupport(i, _surface))
-                        {
-                            return i;
-                        }
-                    }
-                    throw new Exception("Could not find a present queue family index.");
+                    return ok;
+                }
+                
+                bool IsSwapChainSupported()
+                {
+                    _surfaceCapabilities = device.GetSurfaceCapabilities(_surface);
+                    _surfaceFormats = device.GetSurfaceFormats(_surface);
+                    _presentModes = device.GetSurfacePresentModes(_surface);
+
+                    bool ok = _surfaceFormats.Length != 0 && _presentModes.Length != 0;
+                    Assert.IsTrue(ok, "Swapchain format is not supported.");
+
+                    return ok;
                 }
             }
         }
@@ -316,57 +359,48 @@ namespace TundraEngine.Rendering
             Assert.IsTrue(queueFamilyProperties.Length > 0, "No queue family properties found.");
 
             // Queue infos
-            List<DeviceQueueCreateInfo> queueCreateInfos = new List<DeviceQueueCreateInfo>(3)
+            DeviceQueueCreateInfo[] queueCreateInfos = new DeviceQueueCreateInfo[3]
             {
-                // Graphics queue
+                // Graphics and present queue
                 new DeviceQueueCreateInfo
                 {
-                    QueueFamilyIndex = _graphicsQueueIndex,
+                    QueueFamilyIndex = _graphicsQueueFamilyIndex,
+                    QueuePriorities = new float[1] { DefaultQueuePriority }
+                },
+                // Compute queue
+                new DeviceQueueCreateInfo
+                {
+                    QueueFamilyIndex = _computeQueueFamilyIndex,
+                    QueuePriorities = new float[1] { DefaultQueuePriority }
+                },
+                // Transfer queue
+                new DeviceQueueCreateInfo
+                {
+                    QueueFamilyIndex = _transferQueueFamilyIndex,
                     QueuePriorities = new float[1] { DefaultQueuePriority }
                 }
             };
 
-            // Dedicated compute queue, if any
-            if (_computeQueueIndex != _graphicsQueueIndex)
-            {
-                // If compute family index differs, we need an additional queue create info for the compute queue
-                queueCreateInfos.Add(new DeviceQueueCreateInfo
-                {
-                    QueueFamilyIndex = _computeQueueIndex,
-                    QueuePriorities = new float[1] { DefaultQueuePriority }
-                });
-            }
-
-            // Dedicated transfer queue, if any
-            if (_transferQueueIndex != _graphicsQueueIndex &&
-                _transferQueueIndex != _computeQueueIndex)
-            {
-                // If graphics and compute family indices differ, we need an additional queue create info for the transfer queue
-                queueCreateInfos.Add(new DeviceQueueCreateInfo
-                {
-                    QueueFamilyIndex = _transferQueueIndex,
-                    QueuePriorities = new float[1] { DefaultQueuePriority }
-                });
-            }
-
             // Create the logical device
             _device = _physicalDevice.CreateDevice(new DeviceCreateInfo
             {
-                QueueCreateInfos = queueCreateInfos.ToArray(),
-                EnabledFeatures = Features,
-                EnabledExtensionNames = new string[]
-                {
-                    KhrSwapchain.ExtensionName
-                },
-                
+                QueueCreateInfos = queueCreateInfos,
+                EnabledFeatures = DeviceFeatures,
+                EnabledExtensionNames = DeviceExtensions,
+
             });
             Assert.IsNotNull(_device, "Could not create logical device.");
 
             // Set the queue handles
-            // TODO: Check if queue index is 0 for all families
-            _graphicsQueue = _device.GetQueue(_graphicsQueueIndex, 0);
-            _computeQueue = _device.GetQueue(_computeQueueIndex, 0);
-            _transferQueue = _device.GetQueue(_transferQueueIndex, 0);
+            _graphicsQueue = _device.GetQueue(_graphicsQueueFamilyIndex, 0);
+            _computeQueue = _device.GetQueue(_computeQueueFamilyIndex, 0);
+            _transferQueue = _device.GetQueue(_transferQueueFamilyIndex, 0);
+            _presentQueue = _device.GetQueue(_presentQueueFamilyIndex, 0);
+        }
+
+        private void CreateSwapChain()
+        {
+
         }
 
         private void CreateCommandPool(Device device, uint presentQueueIndex, out CommandPool commandPool)
@@ -378,12 +412,7 @@ namespace TundraEngine.Rendering
             });
             Assert.IsNotNull(commandPool, "Could not create command pool.");
         }
-
-        private void CreateSwapchain(Device device, uint width, uint height, Swapchain oldSwapchain, out Swapchain swapchain)
-        {
-            swapchain = null;
-        }
-
+        
         ~RendererVulkan()
         {
             Dispose(false);
