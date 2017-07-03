@@ -6,10 +6,30 @@ namespace TundraEngine.Windowing
 {
     internal class WindowSDL : LibrarySystem<LibSDL>, IWindow
     {
-        public IntPtr Window { get; set; }
         public WindowManagerInfo WindowManagerInfo { get; set; }
         public int UndefinedPosition => SDL_WindowPositionUndefined;
         
+        private IntPtr _window;
+
+        // TODO: This is ugly. Store width and height and change on resize event
+        public uint Width
+        {
+            get
+            {
+                SDL_GetWindowSize(_window, out int width, out int height);
+                return (uint)width;
+            }
+        }
+
+        public uint Height
+        {
+            get
+            {
+                SDL_GetWindowSize(_window, out int width, out int height);
+                return (uint)height;
+            }
+        }
+
         public WindowSDL()
         {
             WindowSettings windowInfo = Application.Settings.WindowSettings;
@@ -28,19 +48,19 @@ namespace TundraEngine.Windowing
                     break;
             }
 
-            Window = SDL_CreateWindow(
+            _window = SDL_CreateWindow(
                 windowInfo.Name,
                 windowInfo.PositionX,
                 windowInfo.PositionY,
                 windowInfo.Width,
                 windowInfo.Height,
                 windowFlags);
-            Assert.IsTrue(Window != IntPtr.Zero, "Could not create SDL window.");
+            Assert.IsTrue(_window != IntPtr.Zero, "Could not create SDL window.");
 
             // Window manager
             SysWMInfo wmInfo = new SysWMInfo();
             FillVersion(out wmInfo.Version);
-            GetWindowWMInfo(Window, ref wmInfo);
+            GetWindowWMInfo(_window, ref wmInfo);
             
             switch (wmInfo.SubSystem)
             {
@@ -88,13 +108,13 @@ namespace TundraEngine.Windowing
 
         public void DestroyWindow()
         {
-            SDL_DestroyWindow(Window);
+            SDL_DestroyWindow(_window);
         }
 
         protected override void DisposeUnmanaged()
         {
-            SDL_DestroyWindow(Window);
-            Window = IntPtr.Zero;
+            SDL_DestroyWindow(_window);
+            _window = IntPtr.Zero;
         }
 
         protected override void InitializeLibrary()

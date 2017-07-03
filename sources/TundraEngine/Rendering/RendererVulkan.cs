@@ -14,7 +14,10 @@ namespace TundraEngine.Rendering
         private Surface _surface;
         private PhysicalDevice _physicalDevice;
         private Device _device;
-        private Swapchain _swapchain;
+        private Swapchain _swapChain;
+        private Extent2D _swapChainExtent;
+        private Image[] _swapChainImages;
+        private ImageView[] _swapChainImageViews;
 
         private uint _graphicsQueueFamilyIndex = uint.MaxValue;
         private uint _computeQueueFamilyIndex = uint.MaxValue;
@@ -26,8 +29,6 @@ namespace TundraEngine.Rendering
         private Queue _presentQueue;
 
         private SurfaceCapabilities _surfaceCapabilities;
-        private SurfaceFormat[] _surfaceFormats;
-        private PresentMode[] _presentModes;
 
         private bool _wasDisposed;
 
@@ -66,6 +67,7 @@ namespace TundraEngine.Rendering
         private const Format SurfaceFormat = Format.B8G8R8A8UNorm;
         private const ColorSpace SurfaceColorSpace = ColorSpace.SrgbNonlinear;
         private const Format DepthFormat = Format.D32SFloatS8UInt;
+        private const PresentMode PresentModeType = PresentMode.Mailbox;
 
         public RendererVulkan()
         {
@@ -74,15 +76,9 @@ namespace TundraEngine.Rendering
             CreateSurface();
             SelectPhysicalDevice();
             CreateLogicalDevice();
-            //CreateCommandPool();
-            //CreateSwapchain((uint)Application.Settings.RendererSettings.ResolutionX, (uint)Application.Settings.RendererSettings.ResolutionY);
-            // TODO: Create command buffers
-            // TODO: Setup depth stencil
-            // TODO: Setup render pass
-            // TODO: Create pipeline cache
-            // TODO: Setup framebuffer
-
-            //_graphicsQueue = _device.GetQueue(_graphicsQueueIndex, 0);
+            CreateSwapChain();
+            CreateImageViews();
+            CreateGraphicsPipeline();
         }
 
         public async Task RenderAsync()
@@ -95,25 +91,36 @@ namespace TundraEngine.Rendering
             if (!_wasDisposed)
             {
                 if (disposing) { }
-
-                //_swapchain.Dispose();
-                //_surface.Dispose();
-                //_commandPool.Dispose();
+                
+                for (int i = _swapChainImageViews.Length - 1; i >= 0; --i)
+                {
+                    _swapChainImageViews[i].Dispose();
+                    _swapChainImageViews[i] = null;
+                }
+                _swapChain.Dispose();
+                _swapChain = null;
                 _device.Dispose();
+                _device = null;
                 _surface.Dispose();
+                _surface = null;
                 _debugCallback.Dispose();
+                _debugCallback = null;
                 _instance.Dispose();
+                _instance = null;
 
                 _wasDisposed = true;
             }
         }
 
 #if DEBUG
+        private static readonly SharpVk.Interop.DebugReportCallbackDelegate DebugReportDelegate = DebugCallback;
+
+        // TODO: This doesn't do shit
         private static Bool32 DebugCallback(DebugReportFlags flags, DebugReportObjectType objectType, ulong @object, Size location, int messageCode, string layerPrefix, string message, IntPtr userData)
         {
             Debug.WriteLine("Validation Layer: " + message);
 
-            return new Bool32(false);
+            return false;
         }
 #endif
 
@@ -169,8 +176,8 @@ namespace TundraEngine.Rendering
         {
             _debugCallback = _instance.CreateDebugReportCallback(new DebugReportCallbackCreateInfo
             {
-                Flags = DebugReportFlags.Error | DebugReportFlags.Warning,
-                PfnCallback = DebugCallback
+                Flags = DebugReportFlags.Error | DebugReportFlags.Warning | DebugReportFlags.PerformanceWarning | DebugReportFlags.Debug | DebugReportFlags.Information,
+                PfnCallback = DebugReportDelegate
             });
             Assert.IsNotNull(_debugCallback, "Could not create debug callback.");
         }
@@ -341,11 +348,11 @@ namespace TundraEngine.Rendering
                 bool IsSwapChainSupported()
                 {
                     _surfaceCapabilities = device.GetSurfaceCapabilities(_surface);
-                    _surfaceFormats = device.GetSurfaceFormats(_surface);
-                    _presentModes = device.GetSurfacePresentModes(_surface);
+                    SurfaceFormat[] surfaceFormats = device.GetSurfaceFormats(_surface);
+                    PresentMode[] presentModes = device.GetSurfacePresentModes(_surface);
 
-                    bool ok = _surfaceFormats.Length != 0 && _presentModes.Length != 0;
-                    Assert.IsTrue(ok, "Swapchain format is not supported.");
+                    bool ok = surfaceFormats.Length != 0 && presentModes.Length != 0;
+                    Assert.IsTrue(ok, "Swapchain is not supported.");
 
                     return ok;
                 }
@@ -399,6 +406,76 @@ namespace TundraEngine.Rendering
         }
 
         private void CreateSwapChain()
+        {
+            uint imageCount = _surfaceCapabilities.MinImageCount + 1;
+            if (_surfaceCapabilities.MaxImageCount > 0 &&
+                imageCount > _surfaceCapabilities.MaxImageCount)
+            {
+                imageCount = _surfaceCapabilities.MaxImageCount;
+            }
+
+            ChooseExtent(out Extent2D _swapChainExtent);
+
+            _swapChain = _device.CreateSwapchain(new SwapchainCreateInfo
+            {
+                Surface = _surface,
+                MinImageCount = imageCount,
+                ImageFormat = SurfaceFormat,
+                ImageColorSpace = SurfaceColorSpace,
+                ImageExtent = _swapChainExtent,
+                ImageArrayLayers = 1,
+                ImageUsage = ImageUsageFlags.ColorAttachment,
+                ImageSharingMode = SharingMode.Exclusive,
+                PreTransform = _surfaceCapabilities.CurrentTransform,
+                CompositeAlpha = CompositeAlphaFlags.Opaque,
+                PresentMode = PresentModeType,
+                Clipped = true,
+                OldSwapchain = null,
+            });
+            Assert.IsNotNull(_swapChain, "Could not create swap chain.");
+
+            _swapChainImages = _swapChain.GetImages();
+
+            void ChooseExtent(out Extent2D extent)
+            {
+                if (_surfaceCapabilities.CurrentExtent.Width != uint.MaxValue)
+                {
+                    extent = _surfaceCapabilities.CurrentExtent;
+                }
+                else
+                {
+                    extent = new Extent2D(Application.Window.Width, Application.Window.Height);
+                    extent.Width = Math.Max(_surfaceCapabilities.MinImageExtent.Width, Math.Min(_surfaceCapabilities.MaxImageExtent.Width, extent.Width));
+                    extent.Height = Math.Max(_surfaceCapabilities.MinImageExtent.Height, Math.Min(_surfaceCapabilities.MaxImageExtent.Height, extent.Height));
+                }
+            }
+        }
+
+        private void CreateImageViews()
+        {
+            _swapChainImageViews = new ImageView[_swapChainImages.Length];
+            for (int i = 0; i < _swapChainImages.Length; ++i)
+            {
+                _swapChainImageViews[i] = _device.CreateImageView(new ImageViewCreateInfo
+                {
+                    Image = _swapChainImages[i],
+                    ViewType = ImageViewType.ImageView2d,
+                    Format = SurfaceFormat,
+                    Components = ComponentMapping.Identity,
+                    SubresourceRange = new ImageSubresourceRange
+                    {
+                        AspectMask = ImageAspectFlags.Color,
+                        BaseMipLevel = 0,
+                        LevelCount = 1,
+                        BaseArrayLayer = 0,
+                        LayerCount = 1
+                    }
+                });
+                Assert.IsNotNull(_swapChainImageViews[i], "Could not create image view.");
+            }
+        }
+
+        private void CreateGraphicsPipeline()
         {
 
         }

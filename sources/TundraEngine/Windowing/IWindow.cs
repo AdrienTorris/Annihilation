@@ -4,7 +4,8 @@ namespace TundraEngine.Windowing
 {
     public interface IWindow : IDisposable
     {
-        IntPtr Window { get; set; }
+        uint Width { get; }
+        uint Height { get; }
         WindowManagerInfo WindowManagerInfo { get; set; }
         int UndefinedPosition { get; }
     }
