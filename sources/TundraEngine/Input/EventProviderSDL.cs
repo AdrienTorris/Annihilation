@@ -11,7 +11,6 @@ namespace TundraEngine.Input
 
         private static readonly Dictionary<int, Button> _keyboardButtonMap = new Dictionary<int, Button>(200)
         {
-            { (int)SDL_KeyCode.Unknown, Button.None },
             { (int)SDL_KeyCode.Space, Button.Space },
             { (int)SDL_KeyCode.Return, Button.Return },
             { (int)SDL_KeyCode.Backspace, Button.Backspace },
@@ -150,7 +149,6 @@ namespace TundraEngine.Input
         };
         private static readonly Dictionary<int, Button> _gamepadButtonMap = new Dictionary<int, Button>(15)
         {
-            { (int)SDL_GameControllerButton.Invalid, Button.None },
             { (int)SDL_GameControllerButton.A, Button.GamepadA },
             { (int)SDL_GameControllerButton.B, Button.GamepadB },
             { (int)SDL_GameControllerButton.X, Button.GamepadX },

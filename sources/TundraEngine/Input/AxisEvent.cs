@@ -3,19 +3,6 @@ using System.Runtime.InteropServices;
 
 namespace TundraEngine.Input
 {
-    public enum Axis : byte
-    {
-        // Mouse
-        MouseMove,
-        MouseWheel,
-
-        // Gamepad
-        LeftThumb,
-        RightThumb,
-        LeftTrigger,
-        RightTrigger,
-    }
-
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct AxisEvent
     {

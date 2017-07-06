@@ -4,11 +4,12 @@ namespace TundraEngine.Input
 {
     public class InputSystem
     {
-        private static IEventProvider _eventProvider;
-
-        // TODO: Have bitmasks for button & axis states
-        //private static ButtonState[] _buttonStates = new ButtonState[(int)Button.Count];
-        //private static float[] _axisStates = new float[(int)Axis.Count];
+        private bool[][] _buttons = new bool[2][]
+        {
+            new bool[(int)Button.NumButtons],
+            new bool[(int)Button.NumButtons]
+        };
+        private float[] _holdDurations = new float[(int)Button.NumButtons];
 
         private static Vector2 _lastMousePos;
         private static Vector2 _lastMousePosViewport;
@@ -16,9 +17,8 @@ namespace TundraEngine.Input
 
         private static float[][] _actionStates = new float[Constants.MaxPlayerCount][];
 
-        internal InputSystem(IEventProvider eventProvider)
+        internal InputSystem()
         {
-            _eventProvider = eventProvider;
         }
     }
 }
