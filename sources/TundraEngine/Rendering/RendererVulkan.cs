@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -477,7 +478,25 @@ namespace TundraEngine.Rendering
 
         private void CreateGraphicsPipeline()
         {
+            ResourceSystem.LoadBinary("Assets/Shaders/vert.spv", out byte[] vertCode);
+            ResourceSystem.LoadBinary("Assets/Shaders/frag.spv", out byte[] fragCode);
 
+            ShaderModule vertShaderModule = CreateShaderModule(vertCode);
+            ShaderModule fragShaderModule = CreateShaderModule(fragCode);
+            
+            vertShaderModule.Destroy();
+            fragShaderModule.Destroy();
+        }
+
+        private ShaderModule CreateShaderModule(byte[] code)
+        {
+            ShaderModule shaderModule = _device.CreateShaderModule(new ShaderModuleCreateInfo
+            {
+                Code = new ByteUintUnion { Bytes = code }.Uints,
+                CodeSize = code.Length
+            });
+            Assert.IsNotNull(shaderModule, "Could not create shader module.");
+            return shaderModule;
         }
 
         private void CreateCommandPool(Device device, uint presentQueueIndex, out CommandPool commandPool)
@@ -502,7 +521,14 @@ namespace TundraEngine.Rendering
         }
     }
 
-    public static class QueueFlagsExtensions
+    [StructLayout(LayoutKind.Explicit)]
+    internal struct ByteUintUnion
+    {
+        [FieldOffset(0)] public byte[] Bytes;
+        [FieldOffset(0)] public uint[] Uints;
+    }
+
+    internal static class QueueFlagsExtensions
     {
         public static bool Has(this QueueFlags variable, QueueFlags flag)
         {

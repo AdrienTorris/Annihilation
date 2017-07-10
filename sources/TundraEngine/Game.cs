@@ -41,11 +41,14 @@ namespace TundraEngine
 
             // Create all engine systems
             using (Window = new WindowProviderSDL())
-            using (Renderer = Settings.RendererSettings.RendererType == RendererType.Vulkan
+            using (Renderer = 
+                Settings.RendererSettings.RendererType == RendererType.Vulkan
                 ? new RendererVulkan()
                 : Settings.RendererSettings.RendererType == RendererType.BGFX
-                    ? (IRenderer)new RendererBGFX()
-                    : new RendererNull())
+                    ? new RendererBGFX()
+                    : Settings.RendererSettings.RendererType == RendererType.SDL
+                        ? (IRenderer)new RendererSDL(IntPtr.Zero)
+                        : new RendererNull())
             using (var eventProvider = new EventProviderSDL())
             using (DebugUI = new DebugUIBGFX())
             {
