@@ -32,6 +32,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Tiles\Product.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="SharpVk" Version="0.3.4" />
     <PackageReference Include="ZeroFormatter" Version="1.6.4" />
   </ItemGroup>
