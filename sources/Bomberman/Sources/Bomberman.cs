@@ -63,9 +63,9 @@ namespace Bomberman
 
             settings.RendererSettings = new RendererSettings
             {
-                RendererType = RendererType.SDL,
-                Width = RendererSettings.DefaultSize,
-                Height = RendererSettings.DefaultSize,
+                RendererType = RendererType.Vulkan,
+                Width = 1280,
+                Height = 720,
                 SSAA = 8,
                 VSync = false,
             };

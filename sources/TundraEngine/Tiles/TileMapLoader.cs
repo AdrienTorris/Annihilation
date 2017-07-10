@@ -29,7 +29,7 @@ public class TileMapLoader
 
     public void LoadTileMap()
     {
-        TiledMapData Map = new TiledMapData();
+        TiledMapData Map = new TiledMapData(); 
         //maptest.json
         Map.Name = "Apple";
        // Map.Color = "Red";
