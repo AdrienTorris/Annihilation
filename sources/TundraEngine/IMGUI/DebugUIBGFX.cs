@@ -49,7 +49,7 @@ namespace TundraEngine.IMGUI
 
         protected override void InitializeLibrary()
         {
-            Application.InitializeBGFX();
+            LibraryUtility.InitializeBGFX();
         }
 
         protected override void ShutdownLibrary()

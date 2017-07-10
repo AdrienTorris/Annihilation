@@ -175,7 +175,7 @@ namespace TundraEngine.Input
                 switch (sdlEvent.Type)
                 {
                     case SDL_EventType.Quit:
-                    Game.Quit();
+                    Game.Instance.Quit();
                     break;
 
                     case SDL_EventType.KeyDown:
@@ -230,7 +230,7 @@ namespace TundraEngine.Input
 
         protected override void InitializeLibrary()
         {
-            Game.InitializeSDL();
+            LibraryUtility.InitializeSDL();
         }
 
         protected override void ShutdownLibrary()

@@ -2,9 +2,9 @@
 {
     public struct SpriteComponentInfo
     {
-        public StringId64 SpriteResource;
-        public StringId64 MaterialResource;
+        public StringHash64 SpriteResource;
+        public StringHash64 MaterialResource;
 
-        public static readonly StringId32 Type = "Sprite";
+        public static readonly StringHash32 Type = "Sprite";
     }
 }

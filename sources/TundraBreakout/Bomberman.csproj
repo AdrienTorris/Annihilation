@@ -25,6 +25,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Resources\Shaders\**" />
+    <EmbeddedResource Remove="Resources\Shaders\**" />
+    <None Remove="Resources\Shaders\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\TundraEngine\TundraEngine.csproj" />
   </ItemGroup>
 
@@ -45,10 +51,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>GameAction.tt</DependentUpon>
     </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Resources\Shaders\" />
   </ItemGroup>
 
 </Project>

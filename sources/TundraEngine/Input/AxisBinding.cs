@@ -6,9 +6,9 @@ namespace TundraEngine.Input
     public struct AxisBinding // Size: 5 bytes
     {
         public Axis Axis;
-        public StringId32 Action;
+        public StringHash32 Action;
 
-        public AxisBinding(Axis axis, StringId32 action)
+        public AxisBinding(Axis axis, StringHash32 action)
         {
             Axis = axis;
             Action = action;

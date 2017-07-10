@@ -8,6 +8,6 @@ namespace TundraEngine.EntityComponent
         public Quaternion Rotation;
         public Vector3 Scale;
 
-        public static readonly StringId32 Type = "Transform3D";
+        public static readonly StringHash32 Type = "Transform3D";
     }
 }

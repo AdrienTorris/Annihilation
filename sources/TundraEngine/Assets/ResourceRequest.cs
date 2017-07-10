@@ -6,8 +6,8 @@ namespace TundraEngine
 {
     unsafe public struct ResourceRequest
     {
-        public StringId64 Type;
-        public StringId64 Name;
+        public StringHash64 Type;
+        public StringHash64 Name;
         public uint Version;
         public LoadFunction LoadFunction;
         public byte* Data;

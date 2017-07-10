@@ -2,9 +2,9 @@
 {
     public struct MeshComponent
     {
-        public StringId64 MeshResource;
-        public StringId64 MaterialResource;
+        public StringHash64 MeshResource;
+        public StringHash64 MaterialResource;
 
-        public static readonly StringId32 Type = "Mesh";
+        public static readonly StringHash32 Type = "Mesh";
     }
 }

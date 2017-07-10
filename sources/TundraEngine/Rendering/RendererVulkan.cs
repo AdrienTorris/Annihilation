@@ -47,9 +47,9 @@ namespace TundraEngine.Rendering
         private static readonly string[] InstanceExtensions = new string[]
         {
                 KhrSurface.ExtensionName,
-                Application.Window.WindowManagerInfo.Type == WindowManagerType.Windows
+                Game.Instance.Window.WindowManagerInfo.Type == WindowManagerType.Windows
                 ? KhrWin32Surface.ExtensionName
-                : Application.Window.WindowManagerInfo.Type == WindowManagerType.X11
+                : Game.Instance.Window.WindowManagerInfo.Type == WindowManagerType.X11
                 ? KhrXcbSurface.ExtensionName
                 : KhrWaylandSurface.ExtensionName,
 #if DEBUG
@@ -153,12 +153,12 @@ namespace TundraEngine.Rendering
 #endif
 
             // Create the instance
-            Version version = Application.Settings.Version;
+            Version version = Game.Instance.Settings.Version;
             _instance = Instance.Create(new InstanceCreateInfo
             {
                 ApplicationInfo = new ApplicationInfo
                 {
-                    ApplicationName = Application.Settings.Name,
+                    ApplicationName = Game.Instance.Settings.Name,
                     ApplicationVersion = new SharpVk.Version(version.Major, version.Minor, version.Patch),
                     EngineName = "Tundra Engine",
                     EngineVersion = new SharpVk.Version(0, 1, 0)
@@ -184,7 +184,7 @@ namespace TundraEngine.Rendering
 
         private void CreateSurface()
         {
-            WindowManagerInfo windowManagerInfo = Application.Window.WindowManagerInfo;
+            WindowManagerInfo windowManagerInfo = Game.Instance.Window.WindowManagerInfo;
 
             switch (windowManagerInfo.Type)
             {
@@ -444,7 +444,7 @@ namespace TundraEngine.Rendering
                 }
                 else
                 {
-                    extent = new Extent2D(Application.Window.Width, Application.Window.Height);
+                    extent = new Extent2D(Game.Instance.Window.Width, Game.Instance.Window.Height);
                     extent.Width = Math.Max(_surfaceCapabilities.MinImageExtent.Width, Math.Min(_surfaceCapabilities.MaxImageExtent.Width, extent.Width));
                     extent.Height = Math.Max(_surfaceCapabilities.MinImageExtent.Height, Math.Min(_surfaceCapabilities.MaxImageExtent.Height, extent.Height));
                 }

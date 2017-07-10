@@ -53,20 +53,20 @@ namespace TundraEngine
                 InputSystem = new InputSystem(eventProvider);
 
                 // Do application-specific initialization
-                initialize();
+                initialize?.Invoke();
 
                 // Main loop
                 while (!_quitRequested)
                 {
                     InputSystem.Update();
 
-                    update(1f / 144);
+                    update?.Invoke(1f / 144);
                     //UpdateAsync(Constants.TargetFrameStepTime * 0.001f).Wait();
-                    Renderer.RenderAsync().Wait();
+                    //Renderer.RenderAsync().Wait();
                 }
 
                 // Do application-specific shutdown
-                shutdown();
+                shutdown?.Invoke();
             }
         }
         

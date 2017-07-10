@@ -42,7 +42,7 @@ namespace Bomberman
             settings.Version = new TundraEngine.Version(0, 1, 0);
             settings.CommandLineArgs = args;
 
-            settings.InitialPrefab = "MainMenu";
+            settings.InitialContext = Context.MainMenu;
 
             settings.ResourcePath = GameSettings.DefaultResourcePath;
             settings.MaxResources = GameSettings.DefaultMaxResources;
@@ -51,22 +51,18 @@ namespace Bomberman
             settings.WindowSettings = new WindowSettings
             {
                 Type = WindowType.SDL,
-                PositionX = WindowSettings.DefaultPosition,
-                PositionY = WindowSettings.DefaultPosition,
-                Width = WindowSettings.DefaultSize,
-                Height = WindowSettings.DefaultSize,
-                Mode = WindowMode.FullscreenDesktop,
-                AllowHighDPI = true,
-                AlwaysOnTop = true
+                PositionX = 50,
+                PositionY = 50,
+                Width = 1280,
+                Height = 720,
+                Mode = WindowMode.Windowed,
+                AllowHighDPI = false,
+                AlwaysOnTop = false
             };
 
             settings.RendererSettings = new RendererSettings
             {
-                RendererType = RendererType.Vulkan,
-                VulkanInfo = new VulkanInfo
-                {
-                    PresentMode = SharpVk.PresentMode.Mailbox
-                },
+                RendererType = RendererType.SDL,
                 Width = RendererSettings.DefaultSize,
                 Height = RendererSettings.DefaultSize,
                 SSAA = 8,
@@ -128,35 +124,7 @@ namespace Bomberman
 
         private static void Initialize()
         {
-            // Pad transform
-            Transform2DComponent padTransform = new Transform2DComponent()
-            {
-                Position = Vector2.Zero,
-                Rotation = new Angle(),
-                Scale = Vector2.One
-            };
-            padTransform.GetBytes(out byte[] transformBytes);
 
-            // Pad entity
-            Prefab padResource = new Prefab()
-            {
-                NumEntities = 1,
-                NumComponentTypes = 3,
-                Components = new ComponentTypeData[]
-                {
-                    new ComponentTypeData()
-                    {
-                        Type = Transform2DComponent.Type,
-                        Size = Transform2DComponent.Size,
-                        NumInstances = 1,
-                        EntityIndices = new uint[] { 0 },
-                        Data = transformBytes
-                    }
-                }
-            };
-
-            // Spawn Pad
-            EntityManager.Spawn(null, padResource);
         }
 
         /*protected override async Task UpdateAsync(double deltaTime)

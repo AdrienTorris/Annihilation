@@ -195,6 +195,15 @@ namespace TundraEngine.SDL
             ResizeLeft
         }
 
+        [Flags]
+        public enum SDL_BlendMode
+        {
+            None = 0,
+            Blend = 1 << 0,
+            Add = 1 << 1,
+            Mod = 1 << 2
+        }
+
         /// <summary>
 		/// A structure that describes a display mode.
 		/// </summary>

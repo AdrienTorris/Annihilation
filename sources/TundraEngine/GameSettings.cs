@@ -40,15 +40,11 @@ namespace TundraEngine
         /// Command line arguments passed to the program.
         /// </summary>
         public string[] CommandLineArgs;
-
-        public Action Initialize;
-        public Action<float> Update;
-        public Action Shutdown;
-
+        
         /// <summary>
         /// The prefab to load on initialization.
         /// </summary>
-        public StringHash64 InitialPrefab;
+        public StringHash32 InitialContext;
         
         /// <summary>
         /// Path to binary application resources.

@@ -2,8 +2,8 @@
 {
     public class TagComponent
     {
-        public StringId32[] Tags;
+        public StringHash32[] Tags;
 
-        public static readonly StringId32 Type = "Tag";
+        public static readonly StringHash32 Type = "Tag";
     }
 }

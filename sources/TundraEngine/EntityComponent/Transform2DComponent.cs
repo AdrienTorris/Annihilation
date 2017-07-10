@@ -13,7 +13,7 @@ namespace TundraEngine.EntityComponent
         public Angle Rotation;
         public Vector2 Scale;
 
-        public static readonly StringId32 Type = "Transform2D";
+        public static readonly StringHash32 Type = "Transform2D";
         public static readonly int Size = sizeof(Vector2) * 2 + sizeof(Angle);
 
         public void GetBytes(out byte[] bytes)

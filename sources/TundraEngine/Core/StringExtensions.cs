@@ -2,14 +2,14 @@
 {
     public static class StringExtensions
     {
-        public static StringId32 ToHash32(this string str)
+        public static StringHash32 ToHash32(this string str)
         {
-            return new StringId32(str);
+            return new StringHash32(str);
         }
 
-        public static StringId64 ToHash64(this string str)
+        public static StringHash64 ToHash64(this string str)
         {
-            return new StringId64(str);
+            return new StringHash64(str);
         }
 
         public static String8 ToString8(this string str)

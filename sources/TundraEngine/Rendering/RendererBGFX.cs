@@ -10,7 +10,7 @@ namespace TundraEngine.Rendering
         public async Task RenderAsync()
         {
             // Set view 0 viewport
-            Bgfx.SetViewRect(0, 0, 0, Application.Settings.RendererSettings.ResolutionX, Application.Settings.RendererSettings.ResolutionY);
+            Bgfx.SetViewRect(0, 0, 0, Game.Instance.Settings.RendererSettings.Width, Game.Instance.Settings.RendererSettings.Height);
 
             // Make sure view 0 is cleared if no other draw calls are submitted
             Bgfx.Touch(0);
@@ -28,7 +28,7 @@ namespace TundraEngine.Rendering
 
         protected override void InitializeLibrary()
         {
-            Application.InitializeBGFX();
+            LibraryUtility.InitializeBGFX();
         }
 
         protected override void ShutdownLibrary()

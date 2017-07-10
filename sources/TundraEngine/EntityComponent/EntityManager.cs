@@ -34,7 +34,7 @@ namespace TundraEngine
             return entity;
         }
 
-        public static Entity Spawn(World world, StringId64 entityResource)
+        public static Entity Spawn(World world, StringHash64 entityResource)
         {
             Entity entity = Create(world);
 
@@ -42,17 +42,8 @@ namespace TundraEngine
 
             return entity;
         }
-
-        public static Entity Spawn(World world, EntityResource entityResource)
-        {
-            Entity entity = Create(world);
-
-            //entityResource.Spawn (entity);
-
-            return entity;
-        }
-
-        public static Entity Spawn(World world, StringId64 entityResource, Matrix4x4 transform)
+        
+        public static Entity Spawn(World world, StringHash64 entityResource, Matrix4x4 transform)
         {
             Entity entity = Spawn(world, entityResource);
 
