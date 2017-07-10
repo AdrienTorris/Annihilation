@@ -4,14 +4,14 @@ namespace TundraEngine
 {
     public struct ComponentTypeData
     {
-        public StringId32 Type;
+        public StringHash32 Type;
         public uint NumInstances;
         public int Size;
         public uint[] EntityIndices;
         public byte[] Data;
     }
 
-    unsafe public struct EntityResource
+    unsafe public struct Prefab
     {
         public uint NumEntities;
         public uint NumComponentTypes;

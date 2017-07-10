@@ -4,7 +4,7 @@ using static TundraEngine.SDL.SDL;
 
 namespace TundraEngine.Windowing
 {
-    internal class WindowSDL : LibrarySystem<LibSDL>, IWindow
+    internal class WindowProviderSDL : LibrarySystem<LibSDL>, IWindowProvider
     {
         public WindowManagerInfo WindowManagerInfo { get; set; }
         public int UndefinedPosition => SDL_WindowPositionUndefined;
@@ -30,15 +30,15 @@ namespace TundraEngine.Windowing
             }
         }
 
-        public WindowSDL()
+        public WindowProviderSDL()
         {
-            WindowSettings windowInfo = Application.Settings.WindowSettings;
+            WindowSettings settings = Game.Instance.Settings.WindowSettings;
 
             // Window
             SDL_WindowFlags windowFlags = SDL_WindowFlags.Shown | SDL_WindowFlags.Vulkan;
-            if (windowInfo.AllowHighDPI) windowFlags |= SDL_WindowFlags.AllowHighDPI;
-            if (windowInfo.AlwaysOnTop) windowFlags |= SDL_WindowFlags.AlwaysOnTop;
-            switch (windowInfo.Mode)
+            if (settings.AllowHighDPI) windowFlags |= SDL_WindowFlags.AllowHighDPI;
+            if (settings.AlwaysOnTop) windowFlags |= SDL_WindowFlags.AlwaysOnTop;
+            switch (settings.Mode)
             {
                 case WindowMode.Fullscreen:
                     windowFlags |= SDL_WindowFlags.Fullscreen;
@@ -49,11 +49,11 @@ namespace TundraEngine.Windowing
             }
 
             _window = SDL_CreateWindow(
-                windowInfo.Name,
-                windowInfo.PositionX,
-                windowInfo.PositionY,
-                windowInfo.Width,
-                windowInfo.Height,
+                settings.Name,
+                settings.PositionX,
+                settings.PositionY,
+                settings.Width,
+                settings.Height,
                 windowFlags);
             Assert.IsTrue(_window != IntPtr.Zero, "Could not create SDL window.");
 
@@ -119,7 +119,7 @@ namespace TundraEngine.Windowing
 
         protected override void InitializeLibrary()
         {
-            Application.InitializeSDL();
+            LibraryUtility.InitializeSDL();
         }
 
         protected override void ShutdownLibrary()

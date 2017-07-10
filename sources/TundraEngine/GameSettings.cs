@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 using TundraEngine.Windowing;
 using TundraEngine.Rendering;
@@ -25,7 +26,7 @@ namespace TundraEngine
     /// Main configuration data for the engine.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
-    public struct ApplicationSettings
+    public struct GameSettings
     {
         /// <summary>
         /// The name of the application.
@@ -35,12 +36,20 @@ namespace TundraEngine
         /// The version of the application.
         /// </summary>
         public Version Version;
+        /// <summary>
+        /// Command line arguments passed to the program.
+        /// </summary>
+        public string[] CommandLineArgs;
+
+        public Action Initialize;
+        public Action<float> Update;
+        public Action Shutdown;
 
         /// <summary>
         /// The prefab to load on initialization.
         /// </summary>
-        public StringId64 InitialPrefab;
-
+        public StringHash64 InitialPrefab;
+        
         /// <summary>
         /// Path to binary application resources.
         /// </summary>

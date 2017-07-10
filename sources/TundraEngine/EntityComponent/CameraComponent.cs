@@ -13,7 +13,7 @@
         public float NearPlane;
         public float FarPlane;
 
-        public static readonly StringId32 Type = "Camera";
+        public static readonly StringHash32 Type = "Camera";
 
         public const float DefaultAspectRatio = 16f / 9f;
         public const float DefaultOrthographicSize = 10f;

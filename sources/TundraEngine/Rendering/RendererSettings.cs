@@ -32,9 +32,11 @@ namespace TundraEngine.Rendering
         [FieldOffset(0)] public RendererType RendererType;
         [FieldOffset(1)] public VulkanInfo VulkanInfo;
         [FieldOffset(1)] public BGFXInfo BGFXInfo;
-        [FieldOffset(9)] public int ResolutionX;
-        [FieldOffset(13)] public int ResolutionY;
+        [FieldOffset(9)] public int Width;
+        [FieldOffset(13)] public int Height;
         [FieldOffset(17)] public bool VSync;
         [FieldOffset(18)] public uint SSAA;
+
+        public const int DefaultSize = -1;
     }
 }

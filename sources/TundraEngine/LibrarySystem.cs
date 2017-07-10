@@ -16,7 +16,7 @@ namespace TundraEngine
 
         private static int _systemCount = 0;
 
-        public LibrarySystem()
+        internal LibrarySystem()
         {
             if (_systemCount == 0)
             {

@@ -2,7 +2,7 @@
 
 namespace TundraEngine.Windowing
 {
-    public interface IWindow : IDisposable
+    public interface IWindowProvider : IDisposable
     {
         uint Width { get; }
         uint Height { get; }

@@ -16,8 +16,9 @@
 
     public struct WindowSettings
     {
-        public WindowType WindowType;
+        public WindowType Type;
         public string Name;
+        public int Monitor;
         public int PositionX;
         public int PositionY;
         public int Width;
@@ -25,8 +26,8 @@
         public WindowMode Mode;
         public bool AllowHighDPI;
         public bool AlwaysOnTop;
-        
-        public const int DefaultWidth = 1280;
-        public const int DefaultHeight = 720;
+
+        public const int DefaultPosition = -1;
+        public const int DefaultSize = -1;
     }
 }

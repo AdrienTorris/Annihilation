@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26608.5
+VisualStudioVersion = 15.0.26621.2
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TundraEngine", "TundraEngine\TundraEngine.csproj", "{AA44B57B-B68E-4F83-ACED-16EEA2E8983F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreSDL", "CoreSDL\CoreSDL.csproj", "{BA83D7DE-9AC4-4176-A925-6427F26ADB64}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TundraBreakout", "TundraBreakout\TundraBreakout.csproj", "{6BF05C15-D3C1-4186-90F7-D3E0754BF053}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bomberman", "TundraBreakout\Bomberman.csproj", "{6BF05C15-D3C1-4186-90F7-D3E0754BF053}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TundraEditor", "TundraEditor\TundraEditor.csproj", "{91A9BE61-59B6-445A-AB40-4D7AA63C6F7A}"
 EndProject
@@ -36,5 +36,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {86D4CDF5-3F1F-46A5-B907-8CE91F0FBC5E}
 	EndGlobalSection
 EndGlobal
