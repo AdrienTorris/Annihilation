@@ -16,9 +16,14 @@ namespace TundraEngine.Rendering
         private PhysicalDevice _physicalDevice;
         private Device _device;
         private Swapchain _swapChain;
+#pragma warning disable 0169
         private Extent2D _swapChainExtent;
+#pragma warning restore 0169
         private Image[] _swapChainImages;
         private ImageView[] _swapChainImageViews;
+        private RenderPass _renderPass;
+        private PipelineLayout _pipelineLayout;
+        private Pipeline _graphicsPipeline;
 
         private uint _graphicsQueueFamilyIndex = uint.MaxValue;
         private uint _computeQueueFamilyIndex = uint.MaxValue;
@@ -92,12 +97,17 @@ namespace TundraEngine.Rendering
             if (!_wasDisposed)
             {
                 if (disposing) { }
-                
+
                 for (int i = _swapChainImageViews.Length - 1; i >= 0; --i)
                 {
                     _swapChainImageViews[i].Dispose();
                     _swapChainImageViews[i] = null;
                 }
+
+                _pipelineLayout.Dispose();
+                _pipelineLayout = null;
+                _renderPass.Dispose();
+                _renderPass = null;
                 _swapChain.Dispose();
                 _swapChain = null;
                 _device.Dispose();
@@ -265,7 +275,7 @@ namespace TundraEngine.Rendering
                     _presentQueueFamilyIndex != uint.MaxValue &&
                     _computeQueueFamilyIndex != uint.MaxValue &&
                     _transferQueueFamilyIndex != uint.MaxValue;
-                
+
                 bool AreFeaturesSupported()
                 {
                     bool ok =
@@ -334,7 +344,7 @@ namespace TundraEngine.Rendering
                     ExtensionProperties[] availableExtensions = device.EnumerateDeviceExtensionProperties(null);
 
                     HashSet<string> extensionSet = new HashSet<string>(DeviceExtensions);
-                    
+
                     foreach (var extension in availableExtensions)
                     {
                         extensionSet.Remove(extension.ExtensionName);
@@ -345,7 +355,7 @@ namespace TundraEngine.Rendering
 
                     return ok;
                 }
-                
+
                 bool IsSwapChainSupported()
                 {
                     _surfaceCapabilities = device.GetSurfaceCapabilities(_surface);
@@ -476,6 +486,40 @@ namespace TundraEngine.Rendering
             }
         }
 
+        private void CreateRenderPass()
+        {
+            AttachmentDescription colorAttachment = new AttachmentDescription
+            {
+                Format = SurfaceFormat,
+                Samples = SampleCountFlags.SampleCount1,
+                LoadOp = AttachmentLoadOp.Clear,
+                StoreOp = AttachmentStoreOp.Store,
+                StencilLoadOp = AttachmentLoadOp.DontCare,
+                StencilStoreOp = AttachmentStoreOp.DontCare,
+                InitialLayout = ImageLayout.Undefined,
+                FinalLayout = ImageLayout.PresentSource
+            };
+
+            AttachmentReference colorAttachmentRef = new AttachmentReference
+            {
+                Attachment = 0,
+                Layout = ImageLayout.ColorAttachmentOptimal
+            };
+
+            SubpassDescription subpass = new SubpassDescription
+            {
+                PipelineBindPoint = PipelineBindPoint.Graphics,
+                ColorAttachments = new AttachmentReference[] { colorAttachmentRef }
+            };
+
+            _renderPass = _device.CreateRenderPass(new RenderPassCreateInfo
+            {
+                Attachments = new AttachmentDescription[] { colorAttachment },
+                Subpasses = new SubpassDescription[] { subpass }
+            });
+            Assert.IsNotNull(_renderPass, "Could not create render pass.");
+        }
+
         private void CreateGraphicsPipeline()
         {
             ResourceSystem.LoadBinary("Assets/Shaders/vert.spv", out byte[] vertCode);
@@ -483,7 +527,128 @@ namespace TundraEngine.Rendering
 
             ShaderModule vertShaderModule = CreateShaderModule(vertCode);
             ShaderModule fragShaderModule = CreateShaderModule(fragCode);
-            
+
+            PipelineShaderStageCreateInfo vertStageInfo = new PipelineShaderStageCreateInfo
+            {
+                Stage = ShaderStageFlags.Vertex,
+                Module = vertShaderModule,
+                Name = "main"
+            };
+
+            PipelineShaderStageCreateInfo fragStageInfo = new PipelineShaderStageCreateInfo
+            {
+                Stage = ShaderStageFlags.Fragment,
+                Module = fragShaderModule,
+                Name = "main"
+            };
+
+            PipelineShaderStageCreateInfo[] shaderStages = { vertStageInfo, fragStageInfo };
+
+            PipelineVertexInputStateCreateInfo vertexInputInfo = new PipelineVertexInputStateCreateInfo
+            {
+                VertexBindingDescriptions = null,
+                VertexAttributeDescriptions = null
+            };
+
+            PipelineInputAssemblyStateCreateInfo inputAssembly = new PipelineInputAssemblyStateCreateInfo
+            {
+                Topology = PrimitiveTopology.TriangleList,
+                PrimitiveRestartEnable = false
+            };
+
+            Viewport viewport = new Viewport
+            {
+                X = 0f,
+                Y = 0f,
+                Width = _swapChainExtent.Width,
+                Height = _swapChainExtent.Height,
+                MinDepth = 0f,
+                MaxDepth = 1f
+            };
+
+            Rect2D scissor = new Rect2D
+            {
+                Offset = new Offset2D(0, 0),
+                Extent = _swapChainExtent
+            };
+
+            PipelineViewportStateCreateInfo viewportStateInfo = new PipelineViewportStateCreateInfo
+            {
+                Viewports = new Viewport[] { viewport },
+                Scissors = new Rect2D[] { scissor }
+            };
+
+            PipelineRasterizationStateCreateInfo rasterizerInfo = new PipelineRasterizationStateCreateInfo
+            {
+                DepthClampEnable = false,
+                RasterizerDiscardEnable = false,
+                PolygonMode = PolygonMode.Fill,
+                LineWidth = 1f,
+                CullMode = CullModeFlags.Back,
+                FrontFace = FrontFace.Clockwise,
+                DepthBiasEnable = false,
+                DepthBiasConstantFactor = 0f,
+                DepthBiasClamp = 0f,
+                DepthBiasSlopeFactor = 0f
+            };
+
+            PipelineMultisampleStateCreateInfo multisamplingInfo = new PipelineMultisampleStateCreateInfo
+            {
+                SampleShadingEnable = false,
+                RasterizationSamples = SampleCountFlags.SampleCount1,
+                MinSampleShading = 1f,
+                SampleMask = null,
+                AlphaToCoverageEnable = false,
+                AlphaToOneEnable = false
+            };
+
+            PipelineColorBlendAttachmentState colorBlendAttachment = new PipelineColorBlendAttachmentState
+            {
+                ColorWriteMask = ColorComponentFlags.R | ColorComponentFlags.G | ColorComponentFlags.B | ColorComponentFlags.A,
+                BlendEnable = false,
+                SourceColorBlendFactor = BlendFactor.One,
+                DestinationColorBlendFactor = BlendFactor.Zero,
+                ColorBlendOp = BlendOp.Add,
+                SourceAlphaBlendFactor = BlendFactor.One,
+                DestinationAlphaBlendFactor = BlendFactor.Zero,
+                AlphaBlendOp = BlendOp.Add
+            };
+
+            PipelineColorBlendStateCreateInfo colorBlendInfo = new PipelineColorBlendStateCreateInfo
+            {
+                LogicOpEnable = false,
+                LogicOp = LogicOp.Copy,
+                Attachments = new PipelineColorBlendAttachmentState[] { colorBlendAttachment },
+                BlendConstants = new float[]
+                {
+                    0f, 0f, 0f, 0f
+                }
+            };
+
+            _pipelineLayout = _device.CreatePipelineLayout(new PipelineLayoutCreateInfo
+            {
+                SetLayouts = null,
+                PushConstantRanges = null
+            });
+            Assert.IsNotNull(_pipelineLayout, "Could not create pipeline layout.");
+
+            GraphicsPipelineCreateInfo graphicsPipelineInfo = new GraphicsPipelineCreateInfo
+            {
+                Stages = shaderStages,
+                VertexInputState = vertexInputInfo,
+                InputAssemblyState = inputAssembly,
+                ViewportState = viewportStateInfo,
+                RasterizationState = rasterizerInfo,
+                MultisampleState = multisamplingInfo,
+                DepthStencilState = null,
+                ColorBlendState = colorBlendInfo,
+                DynamicState = null,
+                Layout = _pipelineLayout,
+
+            };
+
+            //_graphicsPipeline = _device.CreateGraphicsPipelines()
+
             vertShaderModule.Destroy();
             fragShaderModule.Destroy();
         }
@@ -508,7 +673,7 @@ namespace TundraEngine.Rendering
             });
             Assert.IsNotNull(commandPool, "Could not create command pool.");
         }
-        
+
         ~RendererVulkan()
         {
             Dispose(false);
