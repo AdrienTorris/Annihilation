@@ -17,6 +17,7 @@ namespace Bomberman
         public static class Context
         {
             public static readonly StringHash32 MainMenu = "MainMenu";
+
             public static readonly StringHash32 Game = "Game";
             public static readonly StringHash32 GameMenu = "GameMenu";
         }
@@ -53,7 +54,7 @@ namespace Bomberman
                 Type = WindowType.SDL,
                 PositionX = 50,
                 PositionY = 50,
-                Width = 1280,
+                Width = 128,
                 Height = 720,
                 Mode = WindowMode.Windowed,
                 AllowHighDPI = false,
@@ -119,12 +120,22 @@ namespace Bomberman
                 }
             };
 
+
+            //using System.Windows.Forms;
+
+
             Game game = new Game(settings, Initialize, null, null);
+
+
+
+
         }
 
         private static void Initialize()
         {
-
+            TileMapLoader loader = new TileMapLoader() ;
+            loader.LoadTileMap();
+           // Console.WriteLine(valueInt);
         }
 
         /*protected override async Task UpdateAsync(double deltaTime)
