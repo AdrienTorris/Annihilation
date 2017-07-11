@@ -63,7 +63,7 @@ namespace Bomberman
 
             settings.RendererSettings = new RendererSettings
             {
-                RendererType = RendererType.Vulkan,
+                RendererType = RendererType.SDL,
                 Width = 1280,
                 Height = 720,
                 SSAA = 8,
@@ -134,7 +134,7 @@ namespace Bomberman
         private static void Initialize()
         {
             TileMapLoader loader = new TileMapLoader() ;
-            loader.LoadTileMap();
+            loader.LoadTileMap(@"D:\Projets\eNGINE\sources\TundraBreakout\Resources\maptest.json");
            // Console.WriteLine(valueInt);
         }
 
