@@ -9,9 +9,8 @@ namespace TundraEngine.Rendering
 
         }
 
-        public Task RenderAsync()
+        public void Render()
         {
-            return null;
         }
     }
 }

@@ -3,8 +3,6 @@
     public enum DebugUIType : byte
     {
         None,
-        Vulkan,
-        BGFX,
         DearIMGUI,
     }
 

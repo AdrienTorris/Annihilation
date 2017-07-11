@@ -63,7 +63,12 @@ namespace Bomberman
 
             settings.RendererSettings = new RendererSettings
             {
-                RendererType = RendererType.Vulkan,
+                VulkanSettings = new VulkanSettings
+                {
+                    EnableValidation = true,
+                    DebugFlags = SharpVk.DebugReportFlags.Error | SharpVk.DebugReportFlags.PerformanceWarning | SharpVk.DebugReportFlags.Warning,
+                    PresentMode = SharpVk.PresentMode.Fifo
+                },
                 Width = 1280,
                 Height = 720,
                 SSAA = 8,
@@ -72,7 +77,7 @@ namespace Bomberman
 
             settings.DebugUISettings = new DebugUISettings
             {
-                DebugUIType = DebugUIType.BGFX
+                DebugUIType = DebugUIType.None
             };
 
             settings.InputSettings = new InputSettings
