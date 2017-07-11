@@ -443,7 +443,7 @@ namespace TundraEngine.Rendering
             }
 
             ChoosePresentMode(out PresentMode presentMode);
-            ChooseExtent(out Extent2D _swapChainExtent);
+            ChooseExtent();
 
             _swapChain = _device.CreateSwapchain(new SwapchainCreateInfo
             {
@@ -465,17 +465,17 @@ namespace TundraEngine.Rendering
 
             _swapChainImages = _swapChain.GetImages();
 
-            void ChooseExtent(out Extent2D extent)
+            void ChooseExtent()
             {
                 if (_surfaceCapabilities.CurrentExtent.Width != uint.MaxValue)
                 {
-                    extent = _surfaceCapabilities.CurrentExtent;
+                    _swapChainExtent = _surfaceCapabilities.CurrentExtent;
                 }
                 else
                 {
-                    extent = new Extent2D(Game.Instance.Window.Width, Game.Instance.Window.Height);
-                    extent.Width = Math.Max(_surfaceCapabilities.MinImageExtent.Width, Math.Min(_surfaceCapabilities.MaxImageExtent.Width, extent.Width));
-                    extent.Height = Math.Max(_surfaceCapabilities.MinImageExtent.Height, Math.Min(_surfaceCapabilities.MaxImageExtent.Height, extent.Height));
+                    _swapChainExtent = new Extent2D(Game.Instance.Window.Width, Game.Instance.Window.Height);
+                    _swapChainExtent.Width = Math.Max(_surfaceCapabilities.MinImageExtent.Width, Math.Min(_surfaceCapabilities.MaxImageExtent.Width, _swapChainExtent.Width));
+                    _swapChainExtent.Height = Math.Max(_surfaceCapabilities.MinImageExtent.Height, Math.Min(_surfaceCapabilities.MaxImageExtent.Height, _swapChainExtent.Height));
                 }
             }
 
