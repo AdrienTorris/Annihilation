@@ -134,7 +134,7 @@ namespace Bomberman
         private static void Initialize()
         {
             TileMapLoader loader = new TileMapLoader();
-            loader.LoadTileMap();
+            loader.LoadTileMap(@"D:\Projets\eNGINE\sources\TundraBreakout\Resources\maptest.json");
             // Console.WriteLine(valueInt);
         }
 
