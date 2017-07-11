@@ -48,7 +48,7 @@ namespace Bomberman
             settings.ResourcePath = GameSettings.DefaultResourcePath;
             settings.MaxResources = GameSettings.DefaultMaxResources;
             settings.MaxEntitiesPerPrefab = GameSettings.DefaultMaxEntitiesPerPrefab;
-            
+
             settings.WindowSettings = new WindowSettings
             {
                 Type = WindowType.SDL,
@@ -133,9 +133,9 @@ namespace Bomberman
 
         private static void Initialize()
         {
-            TileMapLoader loader = new TileMapLoader() ;
+            TileMapLoader loader = new TileMapLoader();
             loader.LoadTileMap();
-           // Console.WriteLine(valueInt);
+            // Console.WriteLine(valueInt);
         }
 
         /*protected override async Task UpdateAsync(double deltaTime)
