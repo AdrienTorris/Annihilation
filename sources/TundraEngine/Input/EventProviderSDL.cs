@@ -168,8 +168,10 @@ namespace TundraEngine.Input
 
         public uint ConnectedControllerCount { get; private set; }
 
-        public void PollEvents()
+        public void PollEvents(out InputEvent inputEvent)
         {
+            inputEvent = new InputEvent();
+
             while (SDL_PollEvent(out SDL_Event sdlEvent) == 1)
             {
                 switch (sdlEvent.Type)
@@ -188,7 +190,7 @@ namespace TundraEngine.Input
                         }
 
                         // Create the event
-                        InputEvent inputEvent = new InputEvent
+                        inputEvent = new InputEvent
                         {
                             Type = InputEventType.Button,
                             ButtonEvent = new ButtonEvent
@@ -212,7 +214,7 @@ namespace TundraEngine.Input
                         button += (byte)(sdlEvent.MouseButton.Clicks - 1);
 
                         // Create the evet
-                        InputEvent inputEvent = new InputEvent
+                        inputEvent = new InputEvent
                         {
                             Type = InputEventType.Button,
                             ButtonEvent = new ButtonEvent

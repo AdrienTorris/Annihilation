@@ -26,7 +26,11 @@ namespace TundraEngine.Input
 
         internal void Update()
         {
-            _eventProvider.PollEvents();
+            _eventProvider.PollEvents(out InputEvent inputEvent);
+
+
         }
+
+
     }
 }

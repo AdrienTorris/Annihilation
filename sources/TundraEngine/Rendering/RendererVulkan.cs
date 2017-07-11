@@ -17,13 +17,18 @@ namespace TundraEngine.Rendering
         private Device _device;
         private Swapchain _swapChain;
 #pragma warning disable 0169
+#pragma warning disable 0649
         private Extent2D _swapChainExtent;
 #pragma warning restore 0169
+#pragma warning restore 0649
         private Image[] _swapChainImages;
         private ImageView[] _swapChainImageViews;
+        private Framebuffer[] _swapChainFramebuffers;
         private RenderPass _renderPass;
         private PipelineLayout _pipelineLayout;
         private Pipeline _graphicsPipeline;
+        private CommandPool _commandPool;
+        private CommandBuffer[] _commandBuffers;
 
         private uint _graphicsQueueFamilyIndex = uint.MaxValue;
         private uint _computeQueueFamilyIndex = uint.MaxValue;
@@ -72,8 +77,7 @@ namespace TundraEngine.Rendering
         };
         private const Format SurfaceFormat = Format.B8G8R8A8UNorm;
         private const ColorSpace SurfaceColorSpace = ColorSpace.SrgbNonlinear;
-        private const Format DepthFormat = Format.D32SFloatS8UInt;
-        private const PresentMode PresentModeType = PresentMode.Mailbox;
+        private const PresentMode PresentModeType = PresentMode.Fifo;
 
         public RendererVulkan()
         {
@@ -86,6 +90,8 @@ namespace TundraEngine.Rendering
             CreateImageViews();
             CreateRenderPass();
             CreateGraphicsPipeline();
+            CreateFramebuffers();
+            CreateCommandPool();
         }
 
         public async Task RenderAsync()
@@ -99,18 +105,24 @@ namespace TundraEngine.Rendering
             {
                 if (disposing) { }
 
-                for (int i = _swapChainImageViews.Length - 1; i >= 0; --i)
+                _commandPool.Dispose();
+                _commandPool = null;
+                for (int i = _swapChainFramebuffers.Length - 1; i >= 0; --i)
                 {
-                    _swapChainImageViews[i].Dispose();
-                    _swapChainImageViews[i] = null;
+                    _swapChainFramebuffers[i].Dispose();
+                    _swapChainFramebuffers[i] = null;
                 }
-
                 _graphicsPipeline.Dispose();
                 _graphicsPipeline = null;
                 _pipelineLayout.Dispose();
                 _pipelineLayout = null;
                 _renderPass.Dispose();
                 _renderPass = null;
+                for (int i = _swapChainImageViews.Length - 1; i >= 0; --i)
+                {
+                    _swapChainImageViews[i].Dispose();
+                    _swapChainImageViews[i] = null;
+                }
                 _swapChain.Dispose();
                 _swapChain = null;
                 _device.Dispose();
@@ -670,30 +682,56 @@ namespace TundraEngine.Rendering
             
             vertShaderModule.Destroy();
             fragShaderModule.Destroy();
+
+            unsafe ShaderModule CreateShaderModule(byte[] code)
+            {
+                // TODO: Use unsafe code to speed this up.
+                uint[] codeUint = new uint[code.Length / 4];
+                System.Buffer.BlockCopy(code, 0, codeUint, 0, code.Length);
+
+                ShaderModule shaderModule = _device.CreateShaderModule(new ShaderModuleCreateInfo
+                {
+                    Code = codeUint,
+                    CodeSize = code.Length
+                });
+                Assert.IsNotNull(shaderModule, "Could not create shader module.");
+                return shaderModule;
+            }
         }
 
-        unsafe private ShaderModule CreateShaderModule(byte[] code)
+        private void CreateFramebuffers()
         {
-            uint[] codeUint = new uint[code.Length / 4];
-            System.Buffer.BlockCopy(code, 0, codeUint, 0, code.Length);
-            
-            ShaderModule shaderModule = _device.CreateShaderModule(new ShaderModuleCreateInfo
+            _swapChainFramebuffers = new Framebuffer[_swapChainImageViews.Length];
+
+            for (int i = 0; i < _swapChainImageViews.Length; ++i)
             {
-                Code = codeUint,
-                CodeSize = code.Length
-            });
-            Assert.IsNotNull(shaderModule, "Could not create shader module.");
-            return shaderModule;
+                ImageView[] attachments = new ImageView[] { _swapChainImageViews[i] };
+
+                _swapChainFramebuffers[i] = _device.CreateFramebuffer(new FramebufferCreateInfo
+                {
+                    RenderPass = _renderPass,
+                    Attachments = attachments,
+                    Width = _swapChainExtent.Width,
+                    Height = _swapChainExtent.Height,
+                    Layers = 1
+                });
+                Assert.IsNotNull(_swapChainFramebuffers[i], "Could not create framebuffer.");
+            }
         }
 
-        private void CreateCommandPool(Device device, uint presentQueueIndex, out CommandPool commandPool)
+        private void CreateCommandPool()
         {
-            commandPool = device.CreateCommandPool(new CommandPoolCreateInfo
+            _commandPool = _device.CreateCommandPool(new CommandPoolCreateInfo
             {
-                Flags = CommandPoolCreateFlags.ResetCommandBuffer,
-                QueueFamilyIndex = presentQueueIndex
+                Flags = CommandPoolCreateFlags.None,
+                QueueFamilyIndex = _graphicsQueueFamilyIndex
             });
-            Assert.IsNotNull(commandPool, "Could not create command pool.");
+            Assert.IsNotNull(_commandPool, "Could not create command pool.");
+        }
+
+        private void CreateCommandBuffers()
+        {
+            //_commandBuffers = new 
         }
 
         ~RendererVulkan()

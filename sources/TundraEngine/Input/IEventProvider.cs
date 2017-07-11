@@ -4,6 +4,6 @@ namespace TundraEngine.Input
 {
     public interface IEventProvider : IDisposable
     {
-        void PollEvents();
+        void PollEvents(out InputEvent inputEvent);
     }
 }
