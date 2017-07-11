@@ -84,6 +84,7 @@ namespace TundraEngine.Rendering
             CreateLogicalDevice();
             CreateSwapChain();
             CreateImageViews();
+            CreateRenderPass();
             CreateGraphicsPipeline();
         }
 
