@@ -731,7 +731,45 @@ namespace TundraEngine.Rendering
 
         private void CreateCommandBuffers()
         {
-            //_commandBuffers = new 
+            _commandBuffers = _device.AllocateCommandBuffers(new CommandBufferAllocateInfo
+            {
+                CommandPool = _commandPool,
+                Level = CommandBufferLevel.Primary,
+                CommandBufferCount = (uint)_swapChainFramebuffers.Length
+            });
+            Assert.IsNotNull(_commandBuffers, "Could not create command buffers.");
+
+            for (int i = 0; i < _commandBuffers.Length; ++i)
+            {
+                _commandBuffers[i].Begin(new CommandBufferBeginInfo
+                {
+                    Flags = CommandBufferUsageFlags.SimultaneousUse,
+                    InheritanceInfo = null
+                });
+
+                _commandBuffers[i].BeginRenderPass(new RenderPassBeginInfo
+                {
+                    RenderPass = _renderPass,
+                    Framebuffer = _swapChainFramebuffers[i],
+                    RenderArea = new Rect2D
+                    {
+                        Offset = new Offset2D(0, 0),
+                        Extent = _swapChainExtent
+                    },
+                    ClearValues = new ClearValue[]
+                    {
+                        new ClearColorValue(0.2f, 0.1f, 0.4f, 1f)
+                    }
+                },
+                SubpassContents.Inline);
+
+                _commandBuffers[i].BindPipeline(PipelineBindPoint.Graphics, _graphicsPipeline);
+
+                _commandBuffers[i].Draw(3, 1, 0, 0);
+
+                _commandBuffers[i].EndRenderPass();
+                _commandBuffers[i].End();
+            }
         }
 
         ~RendererVulkan()

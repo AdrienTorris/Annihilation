@@ -54,7 +54,7 @@ namespace Bomberman
                 Type = WindowType.SDL,
                 PositionX = 50,
                 PositionY = 50,
-                Width = 128,
+                Width = 1280,
                 Height = 720,
                 Mode = WindowMode.Windowed,
                 AllowHighDPI = false,
@@ -134,7 +134,7 @@ namespace Bomberman
         private static void Initialize()
         {
             TileMapLoader loader = new TileMapLoader();
-            loader.LoadTileMap(@"D:\Projets\eNGINE\sources\TundraBreakout\Resources\maptest.json");
+            loader.LoadTileMap("Resources/maptest.json");
             // Console.WriteLine(valueInt);
         }
 
