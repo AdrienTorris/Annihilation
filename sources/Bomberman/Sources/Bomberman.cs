@@ -48,7 +48,7 @@ namespace Bomberman
             settings.ResourcePath = GameSettings.DefaultResourcePath;
             settings.MaxResources = GameSettings.DefaultMaxResources;
             settings.MaxEntitiesPerPrefab = GameSettings.DefaultMaxEntitiesPerPrefab;
-            
+
             settings.WindowSettings = new WindowSettings
             {
                 Type = WindowType.SDL,
@@ -63,7 +63,7 @@ namespace Bomberman
 
             settings.RendererSettings = new RendererSettings
             {
-                RendererType = RendererType.SDL,
+                RendererType = RendererType.Vulkan,
                 Width = 1280,
                 Height = 720,
                 SSAA = 8,
@@ -133,9 +133,9 @@ namespace Bomberman
 
         private static void Initialize()
         {
-            TileMapLoader loader = new TileMapLoader() ;
-            loader.LoadTileMap(@"D:\Projets\eNGINE\sources\TundraBreakout\Resources\maptest.json");
-           // Console.WriteLine(valueInt);
+            TileMapLoader loader = new TileMapLoader();
+            loader.LoadTileMap();
+            // Console.WriteLine(valueInt);
         }
 
         /*protected override async Task UpdateAsync(double deltaTime)

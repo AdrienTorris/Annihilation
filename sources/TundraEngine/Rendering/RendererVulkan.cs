@@ -84,6 +84,7 @@ namespace TundraEngine.Rendering
             CreateLogicalDevice();
             CreateSwapChain();
             CreateImageViews();
+            CreateRenderPass();
             CreateGraphicsPipeline();
         }
 
@@ -104,6 +105,8 @@ namespace TundraEngine.Rendering
                     _swapChainImageViews[i] = null;
                 }
 
+                _graphicsPipeline.Dispose();
+                _graphicsPipeline = null;
                 _pipelineLayout.Dispose();
                 _pipelineLayout = null;
                 _renderPass.Dispose();
@@ -125,11 +128,10 @@ namespace TundraEngine.Rendering
 
 #if DEBUG
         private static readonly SharpVk.Interop.DebugReportCallbackDelegate DebugReportDelegate = DebugCallback;
-
-        // TODO: This doesn't do shit
+        
         private static Bool32 DebugCallback(DebugReportFlags flags, DebugReportObjectType objectType, ulong @object, Size location, int messageCode, string layerPrefix, string message, IntPtr userData)
         {
-            Debug.WriteLine("Validation Layer: " + message);
+            Trace.WriteLine("[Vulkan] " + flags + ": " + message);
 
             return false;
         }
@@ -187,7 +189,7 @@ namespace TundraEngine.Rendering
         {
             _debugCallback = _instance.CreateDebugReportCallback(new DebugReportCallbackCreateInfo
             {
-                Flags = DebugReportFlags.Error | DebugReportFlags.Warning | DebugReportFlags.PerformanceWarning | DebugReportFlags.Debug | DebugReportFlags.Information,
+                Flags = DebugReportFlags.Error | DebugReportFlags.Warning | DebugReportFlags.PerformanceWarning,
                 PfnCallback = DebugReportDelegate
             });
             Assert.IsNotNull(_debugCallback, "Could not create debug callback.");
@@ -246,6 +248,9 @@ namespace TundraEngine.Rendering
                 // The first queue family is the one with graphics + present
                 _graphicsQueueFamilyIndex = 0;
                 _presentQueueFamilyIndex = 0;
+
+                bool isPresentSurpported = device.GetSurfaceSupport(_presentQueueFamilyIndex, _surface);
+                Assert.IsTrue(isPresentSurpported, "Present is not supported on queue family " + _presentQueueFamilyIndex);
 
                 // Compute is in queue family 1 on AMD and 2 on NVIDIA
                 for (uint i = 1; i < queueFamilies.Length; ++i)
@@ -425,6 +430,7 @@ namespace TundraEngine.Rendering
                 imageCount = _surfaceCapabilities.MaxImageCount;
             }
 
+            ChoosePresentMode(out PresentMode presentMode);
             ChooseExtent(out Extent2D _swapChainExtent);
 
             _swapChain = _device.CreateSwapchain(new SwapchainCreateInfo
@@ -439,7 +445,7 @@ namespace TundraEngine.Rendering
                 ImageSharingMode = SharingMode.Exclusive,
                 PreTransform = _surfaceCapabilities.CurrentTransform,
                 CompositeAlpha = CompositeAlphaFlags.Opaque,
-                PresentMode = PresentModeType,
+                PresentMode = presentMode,
                 Clipped = true,
                 OldSwapchain = null,
             });
@@ -459,6 +465,11 @@ namespace TundraEngine.Rendering
                     extent.Width = Math.Max(_surfaceCapabilities.MinImageExtent.Width, Math.Min(_surfaceCapabilities.MaxImageExtent.Width, extent.Width));
                     extent.Height = Math.Max(_surfaceCapabilities.MinImageExtent.Height, Math.Min(_surfaceCapabilities.MaxImageExtent.Height, extent.Height));
                 }
+            }
+
+            void ChoosePresentMode(out PresentMode mode)
+            {
+                mode = PresentMode.Fifo;
             }
         }
 
@@ -499,17 +510,23 @@ namespace TundraEngine.Rendering
                 InitialLayout = ImageLayout.Undefined,
                 FinalLayout = ImageLayout.PresentSource
             };
-
+            
             AttachmentReference colorAttachmentRef = new AttachmentReference
             {
                 Attachment = 0,
                 Layout = ImageLayout.ColorAttachmentOptimal
             };
 
+            AttachmentReference depthAttachmentRef = new AttachmentReference
+            {
+                Attachment = ~0u,
+            };
+
             SubpassDescription subpass = new SubpassDescription
             {
                 PipelineBindPoint = PipelineBindPoint.Graphics,
-                ColorAttachments = new AttachmentReference[] { colorAttachmentRef }
+                ColorAttachments = new AttachmentReference[] { colorAttachmentRef },
+                DepthStencilAttachment = depthAttachmentRef
             };
 
             _renderPass = _device.CreateRenderPass(new RenderPassCreateInfo
@@ -631,8 +648,8 @@ namespace TundraEngine.Rendering
                 PushConstantRanges = null
             });
             Assert.IsNotNull(_pipelineLayout, "Could not create pipeline layout.");
-
-            GraphicsPipelineCreateInfo graphicsPipelineInfo = new GraphicsPipelineCreateInfo
+            
+            _graphicsPipeline = _device.CreateGraphicsPipelines(null, new GraphicsPipelineCreateInfo
             {
                 Stages = shaderStages,
                 VertexInputState = vertexInputInfo,
@@ -644,20 +661,25 @@ namespace TundraEngine.Rendering
                 ColorBlendState = colorBlendInfo,
                 DynamicState = null,
                 Layout = _pipelineLayout,
-
-            };
-
-            //_graphicsPipeline = _device.CreateGraphicsPipelines()
-
+                RenderPass = _renderPass,
+                Subpass = 0,
+                BasePipelineHandle = null,
+                BasePipelineIndex = -1,
+            })[0];
+            Assert.IsNotNull(_graphicsPipeline, "Could not create graphics pipeline.");
+            
             vertShaderModule.Destroy();
             fragShaderModule.Destroy();
         }
 
-        private ShaderModule CreateShaderModule(byte[] code)
+        unsafe private ShaderModule CreateShaderModule(byte[] code)
         {
+            uint[] codeUint = new uint[code.Length / 4];
+            System.Buffer.BlockCopy(code, 0, codeUint, 0, code.Length);
+            
             ShaderModule shaderModule = _device.CreateShaderModule(new ShaderModuleCreateInfo
             {
-                Code = new ByteUintUnion { Bytes = code }.Uints,
+                Code = codeUint,
                 CodeSize = code.Length
             });
             Assert.IsNotNull(shaderModule, "Could not create shader module.");
@@ -685,14 +707,7 @@ namespace TundraEngine.Rendering
             GC.SuppressFinalize(this);
         }
     }
-
-    [StructLayout(LayoutKind.Explicit)]
-    internal struct ByteUintUnion
-    {
-        [FieldOffset(0)] public byte[] Bytes;
-        [FieldOffset(0)] public uint[] Uints;
-    }
-
+    
     internal static class QueueFlagsExtensions
     {
         public static bool Has(this QueueFlags variable, QueueFlags flag)
