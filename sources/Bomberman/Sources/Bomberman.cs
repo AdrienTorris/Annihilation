@@ -14,6 +14,7 @@ namespace Bomberman
 {
     public static class Bomberman
     {
+
         public static class Context
         {
             public static readonly StringHash32 MainMenu = "MainMenu";
@@ -54,8 +55,8 @@ namespace Bomberman
                 Type = WindowType.SDL,
                 PositionX = 50,
                 PositionY = 50,
-                Width = 128,
-                Height = 720,
+                Width = 500,
+                Height = 500,
                 Mode = WindowMode.Windowed,
                 AllowHighDPI = false,
                 AlwaysOnTop = false
@@ -63,7 +64,7 @@ namespace Bomberman
 
             settings.RendererSettings = new RendererSettings
             {
-                RendererType = RendererType.Vulkan,
+                RendererType = RendererType.SDL,
                 Width = 1280,
                 Height = 720,
                 SSAA = 8,
@@ -124,11 +125,23 @@ namespace Bomberman
             //using System.Windows.Forms;
 
 
-            Game game = new Game(settings, Initialize, null, null);
+            Game game = new Game(settings, Initialize, Update, null);
 
 
 
 
+        }
+
+        private static void Update(float obj)
+        {
+            if (InputSystem.GetKeyDown(Button.LeftArrow))
+            {
+                Console.WriteLine("Left Step");
+            }
+            if (InputSystem.GetKey(Button.LeftArrow))
+            {
+                Console.WriteLine("Left");
+            }
         }
 
         private static void Initialize()
@@ -137,6 +150,11 @@ namespace Bomberman
             loader.LoadTileMap();
             // Console.WriteLine(valueInt);
         }
+
+        
+    
+
+
 
         /*protected override async Task UpdateAsync(double deltaTime)
         {
