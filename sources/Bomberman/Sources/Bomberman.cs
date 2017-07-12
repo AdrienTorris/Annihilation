@@ -142,6 +142,13 @@ namespace Bomberman
             {
                 Console.WriteLine("Left");
             }
+
+            if (InputSystem.anyKeyDown())
+            {
+                Console.WriteLine("any");
+            }
+
+            Console.WriteLine(InputSystem.mousePosition());
         }
 
         private static void Initialize()

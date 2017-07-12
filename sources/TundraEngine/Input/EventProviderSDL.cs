@@ -172,7 +172,7 @@ namespace TundraEngine.Input
         {
             inputEvents = new List<InputEvent>();
             //  inputEvent = new InputEvent();
-
+            
             while (SDL_PollEvent(out SDL_Event sdlEvent) == 1)
             {
                 switch (sdlEvent.Type)

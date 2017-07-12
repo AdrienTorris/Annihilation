@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using static TundraEngine.SDL.SDL;
 
 namespace TundraEngine.Input
 {
@@ -32,6 +33,36 @@ namespace TundraEngine.Input
             instance = this;
         }
 
+
+        public static Vector2 mousePosition()
+        {
+            SDL_GetMouseState(out int x, out int y);
+            return new Vector2(x, y);
+        }
+
+        public static bool anyKey()
+        {
+            if (instance.ButtonPressed.Count > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static bool anyKeyDown()
+        {
+            if (instance.ButtonDown.Count > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         public static bool GetKeyDown(Button button)
         {
