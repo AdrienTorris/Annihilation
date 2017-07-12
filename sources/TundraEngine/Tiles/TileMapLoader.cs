@@ -16,7 +16,7 @@ public class TileMapLoader
 
     //"{\"Name\":\"Apple\",\"Price\":3.99,\"Sizes\":[\"Small\",\"Medium\",\"Large\"]}"
     //{"Name":"Apple","Price":3.99,"Sizes":["Small","Medium","Large"]}
-    class TiledMapData
+    class Product
     {
         public string Name;
       // public string Color;
@@ -25,26 +25,84 @@ public class TileMapLoader
         public string[] Sizes;
     }
 
-
-
-    public void LoadTileMap()
+    public class Layer
     {
-        TiledMapData Map = new TiledMapData(); 
-        //maptest.json
-        Map.Name = "Apple";
-       // Map.Color = "Red";
-        //       Map.ExpiryDate = new DateTime(2008, 12, 28);
-        Map.Price = 3.99M;
-        Map.Sizes = new string[] { "Small", "Medium", "Large" };
-     
-        string output = JsonConvert.SerializeObject(Map);
+        public List<int> data { get; set; }
+        public int height { get; set; }
+        public string name { get; set; }
+        public int opacity { get; set; }
+        public string type { get; set; }
+        public bool visible { get; set; }
+        public int width { get; set; }
+        public int x { get; set; }
+        public int y { get; set; }
+        public string draworder { get; set; }
+        public List<object> objects { get; set; }
+    }
 
-        
-        Console.WriteLine(output);
+    public class Tileset
+    {
+        public int firstgid { get; set; }
+        public string source { get; set; }
+    }
 
-        TiledMapData deserializedMap = JsonConvert.DeserializeObject<TiledMapData>(output);
+    public class TileMapData
+    {
+        public int height { get; set; }
+        public List<Layer> layers { get; set; }
+        public int nextobjectid { get; set; }
+        public string orientation { get; set; }
+        public string renderorder { get; set; }
+        public string tiledversion { get; set; }
+        public int tileheight { get; set; }
+        public List<Tileset> tilesets { get; set; }
+        public int tilewidth { get; set; }
+        public string type { get; set; }
+        public int version { get; set; }
+        public int width { get; set; }
 
-        Console.WriteLine("Salut");
+        public int getTile(int layer, int row, int col)
+        {
+            if (layers[layer] != null)
+            {
+                int index = row * width + col ;
+                int val = -1;
+                val = layers[layer].data[index];
+                return val;
+            }
+            else
+            {
+                return -2;
+            }
+            
+        }
+
+
+        public int[,] getMap()
+        {
+            int[,] list = new int[11, 11];
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    list[i, j] = getTile(0, i, j);
+                }
+            }
+            return list;
+        }
+
+    }
+
+    
+
+    public TileMapData LoadTileMap(string file )
+    {
+        string loadedContent = File.ReadAllText(file );
+        TileMapData deserializedMap = JsonConvert.DeserializeObject<TileMapData>(loadedContent);
+
+        int[,] list = deserializedMap.getMap();        
+        Console.WriteLine("map loaded");
+        return deserializedMap;
     }
 }
 

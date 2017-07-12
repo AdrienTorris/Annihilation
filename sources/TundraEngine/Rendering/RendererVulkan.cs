@@ -16,11 +16,7 @@ namespace TundraEngine.Rendering
         private PhysicalDevice _physicalDevice;
         private Device _device;
         private Swapchain _swapChain;
-#pragma warning disable 0169
-#pragma warning disable 0649
         private Extent2D _swapChainExtent;
-#pragma warning restore 0169
-#pragma warning restore 0649
         private Image[] _swapChainImages;
         private ImageView[] _swapChainImageViews;
         private Framebuffer[] _swapChainFramebuffers;
@@ -29,7 +25,10 @@ namespace TundraEngine.Rendering
         private Pipeline _graphicsPipeline;
         private CommandPool _commandPool;
         private CommandBuffer[] _commandBuffers;
+        private Semaphore _imageAvailableSemaphore;
+        private Semaphore _renderFinishedSemaphore;
 
+        private SurfaceCapabilities _surfaceCapabilities;
         private uint _graphicsQueueFamilyIndex = uint.MaxValue;
         private uint _computeQueueFamilyIndex = uint.MaxValue;
         private uint _transferQueueFamilyIndex = uint.MaxValue;
@@ -39,7 +38,6 @@ namespace TundraEngine.Rendering
         private Queue _transferQueue;
         private Queue _presentQueue;
 
-        private SurfaceCapabilities _surfaceCapabilities;
 
         private bool _wasDisposed;
 
@@ -75,6 +73,7 @@ namespace TundraEngine.Rendering
         {
             MultiDrawIndirect = true
         };
+
         private const Format SurfaceFormat = Format.B8G8R8A8UNorm;
         private const ColorSpace SurfaceColorSpace = ColorSpace.SrgbNonlinear;
         private const PresentMode PresentModeType = PresentMode.Fifo;
@@ -92,11 +91,32 @@ namespace TundraEngine.Rendering
             CreateGraphicsPipeline();
             CreateFramebuffers();
             CreateCommandPool();
+            CreateCommandBuffers();
+            CreateSemaphores();
         }
 
-        public async Task RenderAsync()
+        public void Render()
         {
-            await Task.Delay(0);
+            uint imageIndex = _swapChain.AcquireNextImage(ulong.MaxValue, _imageAvailableSemaphore, null);
+            
+            _graphicsQueue.Submit(new SubmitInfo
+            {
+                WaitSemaphores = new Semaphore[] { _imageAvailableSemaphore },
+                WaitDestinationStageMask = new PipelineStageFlags[] { PipelineStageFlags.ColorAttachmentOutput },
+                CommandBuffers = new CommandBuffer[] { _commandBuffers[(int)imageIndex] },
+                SignalSemaphores = new Semaphore[] { _renderFinishedSemaphore }
+            },
+            null);
+
+            _presentQueue.Present(new PresentInfo
+            {
+                WaitSemaphores = new Semaphore[] { _renderFinishedSemaphore },
+                Swapchains = new Swapchain[] { _swapChain },
+                ImageIndices = new uint[] { imageIndex },
+                Results = null
+            });
+
+            _presentQueue.WaitIdle();
         }
 
         private void Dispose(bool disposing)
@@ -105,6 +125,10 @@ namespace TundraEngine.Rendering
             {
                 if (disposing) { }
 
+                _renderFinishedSemaphore.Dispose();
+                _renderFinishedSemaphore = null;
+                _imageAvailableSemaphore.Dispose();
+                _imageAvailableSemaphore = null;
                 _commandPool.Dispose();
                 _commandPool = null;
                 for (int i = _swapChainFramebuffers.Length - 1; i >= 0; --i)
@@ -140,7 +164,7 @@ namespace TundraEngine.Rendering
 
 #if DEBUG
         private static readonly SharpVk.Interop.DebugReportCallbackDelegate DebugReportDelegate = DebugCallback;
-        
+
         private static Bool32 DebugCallback(DebugReportFlags flags, DebugReportObjectType objectType, ulong @object, Size location, int messageCode, string layerPrefix, string message, IntPtr userData)
         {
             Trace.WriteLine("[Vulkan] " + flags + ": " + message);
@@ -443,7 +467,7 @@ namespace TundraEngine.Rendering
             }
 
             ChoosePresentMode(out PresentMode presentMode);
-            ChooseExtent(out Extent2D _swapChainExtent);
+            ChooseExtent();
 
             _swapChain = _device.CreateSwapchain(new SwapchainCreateInfo
             {
@@ -465,17 +489,17 @@ namespace TundraEngine.Rendering
 
             _swapChainImages = _swapChain.GetImages();
 
-            void ChooseExtent(out Extent2D extent)
+            void ChooseExtent()
             {
                 if (_surfaceCapabilities.CurrentExtent.Width != uint.MaxValue)
                 {
-                    extent = _surfaceCapabilities.CurrentExtent;
+                    _swapChainExtent = _surfaceCapabilities.CurrentExtent;
                 }
                 else
                 {
-                    extent = new Extent2D(Game.Instance.Window.Width, Game.Instance.Window.Height);
-                    extent.Width = Math.Max(_surfaceCapabilities.MinImageExtent.Width, Math.Min(_surfaceCapabilities.MaxImageExtent.Width, extent.Width));
-                    extent.Height = Math.Max(_surfaceCapabilities.MinImageExtent.Height, Math.Min(_surfaceCapabilities.MaxImageExtent.Height, extent.Height));
+                    _swapChainExtent = new Extent2D(Game.Instance.Window.Width, Game.Instance.Window.Height);
+                    _swapChainExtent.Width = Math.Max(_surfaceCapabilities.MinImageExtent.Width, Math.Min(_surfaceCapabilities.MaxImageExtent.Width, _swapChainExtent.Width));
+                    _swapChainExtent.Height = Math.Max(_surfaceCapabilities.MinImageExtent.Height, Math.Min(_surfaceCapabilities.MaxImageExtent.Height, _swapChainExtent.Height));
                 }
             }
 
@@ -522,7 +546,7 @@ namespace TundraEngine.Rendering
                 InitialLayout = ImageLayout.Undefined,
                 FinalLayout = ImageLayout.PresentSource
             };
-            
+
             AttachmentReference colorAttachmentRef = new AttachmentReference
             {
                 Attachment = 0,
@@ -531,7 +555,7 @@ namespace TundraEngine.Rendering
 
             AttachmentReference depthAttachmentRef = new AttachmentReference
             {
-                Attachment = ~0u,
+                Attachment = SharpVk.Constants.AttachmentUnused,
             };
 
             SubpassDescription subpass = new SubpassDescription
@@ -541,10 +565,21 @@ namespace TundraEngine.Rendering
                 DepthStencilAttachment = depthAttachmentRef
             };
 
+            SubpassDependency dependency = new SubpassDependency
+            {
+                SourceSubpass = SharpVk.Constants.SubpassExternal,
+                DestinationSubpass = 0,
+                SourceStageMask = PipelineStageFlags.ColorAttachmentOutput,
+                SourceAccessMask = 0,
+                DestinationStageMask = PipelineStageFlags.ColorAttachmentOutput,
+                DestinationAccessMask = AccessFlags.ColorAttachmentRead | AccessFlags.ColorAttachmentWrite
+            };
+
             _renderPass = _device.CreateRenderPass(new RenderPassCreateInfo
             {
                 Attachments = new AttachmentDescription[] { colorAttachment },
-                Subpasses = new SubpassDescription[] { subpass }
+                Subpasses = new SubpassDescription[] { subpass },
+                Dependencies = new SubpassDependency[] { dependency }
             });
             Assert.IsNotNull(_renderPass, "Could not create render pass.");
         }
@@ -660,7 +695,7 @@ namespace TundraEngine.Rendering
                 PushConstantRanges = null
             });
             Assert.IsNotNull(_pipelineLayout, "Could not create pipeline layout.");
-            
+
             _graphicsPipeline = _device.CreateGraphicsPipelines(null, new GraphicsPipelineCreateInfo
             {
                 Stages = shaderStages,
@@ -679,7 +714,7 @@ namespace TundraEngine.Rendering
                 BasePipelineIndex = -1,
             })[0];
             Assert.IsNotNull(_graphicsPipeline, "Could not create graphics pipeline.");
-            
+
             vertShaderModule.Destroy();
             fragShaderModule.Destroy();
 
@@ -731,7 +766,52 @@ namespace TundraEngine.Rendering
 
         private void CreateCommandBuffers()
         {
-            //_commandBuffers = new 
+            _commandBuffers = _device.AllocateCommandBuffers(new CommandBufferAllocateInfo
+            {
+                CommandPool = _commandPool,
+                Level = CommandBufferLevel.Primary,
+                CommandBufferCount = (uint)_swapChainFramebuffers.Length
+            });
+            Assert.IsNotNull(_commandBuffers, "Could not create command buffers.");
+
+            for (int i = 0; i < _commandBuffers.Length; ++i)
+            {
+                _commandBuffers[i].Begin(new CommandBufferBeginInfo
+                {
+                    Flags = CommandBufferUsageFlags.SimultaneousUse,
+                    InheritanceInfo = null
+                });
+
+                _commandBuffers[i].BeginRenderPass(new RenderPassBeginInfo
+                {
+                    RenderPass = _renderPass,
+                    Framebuffer = _swapChainFramebuffers[i],
+                    RenderArea = new Rect2D
+                    {
+                        Offset = new Offset2D(0, 0),
+                        Extent = _swapChainExtent
+                    },
+                    ClearValues = new ClearValue[]
+                    {
+                        new ClearColorValue(0.2f, 0.1f, 0.4f, 1f)
+                    }
+                },
+                SubpassContents.Inline);
+
+                _commandBuffers[i].BindPipeline(PipelineBindPoint.Graphics, _graphicsPipeline);
+
+                _commandBuffers[i].Draw(3, 1, 0, 0);
+
+                _commandBuffers[i].EndRenderPass();
+                _commandBuffers[i].End();
+            }
+        }
+
+        private void CreateSemaphores()
+        {
+            _imageAvailableSemaphore = _device.CreateSemaphore(new SemaphoreCreateInfo());
+            _renderFinishedSemaphore = _device.CreateSemaphore(new SemaphoreCreateInfo());
+            Assert.IsTrue(_imageAvailableSemaphore != null && _renderFinishedSemaphore != null, "Could not create semaphore.");
         }
 
         ~RendererVulkan()
@@ -745,7 +825,7 @@ namespace TundraEngine.Rendering
             GC.SuppressFinalize(this);
         }
     }
-    
+
     internal static class QueueFlagsExtensions
     {
         public static bool Has(this QueueFlags variable, QueueFlags flag)

@@ -14,7 +14,6 @@ namespace Bomberman
 {
     public static class Bomberman
     {
-
         public static class Context
         {
             public static readonly StringHash32 MainMenu = "MainMenu";
@@ -55,8 +54,8 @@ namespace Bomberman
                 Type = WindowType.SDL,
                 PositionX = 50,
                 PositionY = 50,
-                Width = 500,
-                Height = 500,
+                Width = 1280,
+                Height = 720,
                 Mode = WindowMode.Windowed,
                 AllowHighDPI = false,
                 AlwaysOnTop = false
@@ -64,7 +63,12 @@ namespace Bomberman
 
             settings.RendererSettings = new RendererSettings
             {
-                RendererType = RendererType.SDL,
+                VulkanSettings = new VulkanSettings
+                {
+                    EnableValidation = true,
+                    DebugFlags = SharpVk.DebugReportFlags.Error | SharpVk.DebugReportFlags.PerformanceWarning | SharpVk.DebugReportFlags.Warning,
+                    PresentMode = SharpVk.PresentMode.Fifo
+                },
                 Width = 1280,
                 Height = 720,
                 SSAA = 8,
@@ -73,7 +77,7 @@ namespace Bomberman
 
             settings.DebugUISettings = new DebugUISettings
             {
-                DebugUIType = DebugUIType.BGFX
+                DebugUIType = DebugUIType.None
             };
 
             settings.InputSettings = new InputSettings
@@ -125,36 +129,19 @@ namespace Bomberman
             //using System.Windows.Forms;
 
 
-            Game game = new Game(settings, Initialize, Update, null);
+            Game game = new Game(settings, Initialize, null, null);
 
 
 
 
-        }
-
-        private static void Update(float obj)
-        {
-            if (InputSystem.GetKeyDown(Button.LeftArrow))
-            {
-                Console.WriteLine("Left Step");
-            }
-            if (InputSystem.GetKey(Button.LeftArrow))
-            {
-                Console.WriteLine("Left");
-            }
         }
 
         private static void Initialize()
         {
             TileMapLoader loader = new TileMapLoader();
-            loader.LoadTileMap();
+            loader.LoadTileMap("Resources/maptest.json");
             // Console.WriteLine(valueInt);
         }
-
-        
-    
-
-
 
         /*protected override async Task UpdateAsync(double deltaTime)
         {

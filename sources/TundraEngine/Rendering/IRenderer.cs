@@ -5,6 +5,6 @@ namespace TundraEngine.Rendering
 {
     public interface IRenderer : IDisposable
     {
-        Task RenderAsync();
+        void Render();
     }
 }
