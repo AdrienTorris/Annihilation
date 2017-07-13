@@ -168,64 +168,68 @@ namespace TundraEngine.Input
 
         public uint ConnectedControllerCount { get; private set; }
 
-        public void PollEvents(out InputEvent inputEvent)
+        public void PollEvents(out List<InputEvent> inputEvents)
         {
-            inputEvent = new InputEvent();
+            inputEvents = new List<InputEvent>();
+            //  inputEvent = new InputEvent();
 
             while (SDL_PollEvent(out SDL_Event sdlEvent) == 1)
             {
                 switch (sdlEvent.Type)
                 {
                     case SDL_EventType.Quit:
-                    Game.Instance.Quit();
-                    break;
+                        Game.Instance.Quit();
+                        break;
 
                     case SDL_EventType.KeyDown:
                     case SDL_EventType.KeyUp:
-                    {
-                        // Get the pressed or released button
-                        if (_keyboardButtonMap.TryGetValue((int)sdlEvent.Key.KeySym.Sym, out Button button) == false)
                         {
-                            break;
-                        }
-
-                        // Create the event
-                        inputEvent = new InputEvent
-                        {
-                            Type = InputEventType.Button,
-                            ButtonEvent = new ButtonEvent
+                            // Get the pressed or released button
+                            if (_keyboardButtonMap.TryGetValue((int)sdlEvent.Key.KeySym.Sym, out Button button) == false)
                             {
-                                PlayerId = 0,
-                                Button = button,
-                                State = (ButtonState)sdlEvent.Key.State
+                                break;
                             }
-                        };
-                    }
-                    break;
+
+                            // Create the event
+                            InputEvent inputEvent = new InputEvent
+                            {
+                                Type = InputEventType.Button,
+                                ButtonEvent = new ButtonEvent
+                                {
+                                    PlayerId = 0,
+                                    Button = button,
+                                    State = (ButtonState)sdlEvent.Key.State
+                                }
+                            };
+
+                            inputEvents.Add(inputEvent);
+                        }
+                        break;
 
                     case SDL_EventType.MouseButtonDown:
                     case SDL_EventType.MouseButtonUp:
-                    {
-                        // Get the pressed or released button
-                        if (_mouseButtonMap.TryGetValue((byte)sdlEvent.MouseButton.Button, out Button button) == false)
                         {
-                            break;
-                        }
-                        button += (byte)(sdlEvent.MouseButton.Clicks - 1);
-
-                        // Create the evet
-                        inputEvent = new InputEvent
-                        {
-                            Type = InputEventType.Button,
-                            ButtonEvent = new ButtonEvent
+                            // Get the pressed or released button
+                            if (_mouseButtonMap.TryGetValue((byte)sdlEvent.MouseButton.Button, out Button button) == false)
                             {
-                                PlayerId = 0,
-                                Button = button,
-                                State = (ButtonState)sdlEvent.MouseButton.State
+                                break;
                             }
-                        };
-                    }
-                    break;
+                            button += (byte)(sdlEvent.MouseButton.Clicks - 1);
+
+                            // Create the evet
+                            InputEvent inputEvent = new InputEvent
+                            {
+                                Type = InputEventType.Button,
+                                ButtonEvent = new ButtonEvent
+                                {
+                                    PlayerId = 0,
+                                    Button = button,
+                                    State = (ButtonState)sdlEvent.MouseButton.State
+                                }
+                            };
+                            inputEvents.Add(inputEvent);
+                        }
+                        break;
                 }
             }
         }
