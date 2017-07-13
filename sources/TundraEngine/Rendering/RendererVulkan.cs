@@ -26,9 +26,12 @@ namespace TundraEngine.Rendering
         private CommandPool _commandPool;
         private CommandBuffer[] _commandBuffers;
         private Semaphore _imageAvailableSemaphore;
-        private Semaphore _renderFinishedSemaphore;
+        private Semaphore _renderCompleteSemaphore;
 
         private SurfaceCapabilities _surfaceCapabilities;
+        private SurfaceFormat[] _surfaceFormats;
+        private PresentMode[] _surfacePresentModes;
+
         private uint _graphicsQueueFamilyIndex = uint.MaxValue;
         private uint _computeQueueFamilyIndex = uint.MaxValue;
         private uint _transferQueueFamilyIndex = uint.MaxValue;
@@ -38,13 +41,11 @@ namespace TundraEngine.Rendering
         private Queue _transferQueue;
         private Queue _presentQueue;
 
-
         private bool _wasDisposed;
 
 #if DEBUG
         private DebugReportCallback _debugCallback;
 #endif
-
         private const float DefaultQueuePriority = 1f;
 
 #if DEBUG
@@ -60,18 +61,23 @@ namespace TundraEngine.Rendering
                 ? KhrWin32Surface.ExtensionName
                 : Game.Instance.Window.WindowManagerInfo.Type == WindowManagerType.X11
                 ? KhrXcbSurface.ExtensionName
-                : KhrWaylandSurface.ExtensionName,
+                : Game.Instance.Window.WindowManagerInfo.Type == WindowManagerType.Wayland
+                ? KhrWaylandSurface.ExtensionName
+                : string.Empty,
 #if DEBUG
                 ExtDebugReport.ExtensionName
 #endif
         };
+
         private static readonly string[] DeviceExtensions = new string[]
         {
             KhrSwapchain.ExtensionName
         };
+
         private static readonly PhysicalDeviceFeatures DeviceFeatures = new PhysicalDeviceFeatures
         {
-            MultiDrawIndirect = true
+            MultiDrawIndirect = true,
+            FillModeNonSolid = true
         };
 
         private const Format SurfaceFormat = Format.B8G8R8A8UNorm;
@@ -84,7 +90,7 @@ namespace TundraEngine.Rendering
             CreateDebugCallback();
             CreateSurface();
             SelectPhysicalDevice();
-            CreateLogicalDevice();
+            CreateLogicalDeviceAndQueues();
             CreateSwapChain();
             CreateImageViews();
             CreateRenderPass();
@@ -98,19 +104,19 @@ namespace TundraEngine.Rendering
         public void Render()
         {
             uint imageIndex = _swapChain.AcquireNextImage(ulong.MaxValue, _imageAvailableSemaphore, null);
-            
+
             _graphicsQueue.Submit(new SubmitInfo
             {
                 WaitSemaphores = new Semaphore[] { _imageAvailableSemaphore },
                 WaitDestinationStageMask = new PipelineStageFlags[] { PipelineStageFlags.ColorAttachmentOutput },
                 CommandBuffers = new CommandBuffer[] { _commandBuffers[(int)imageIndex] },
-                SignalSemaphores = new Semaphore[] { _renderFinishedSemaphore }
+                SignalSemaphores = new Semaphore[] { _renderCompleteSemaphore }
             },
             null);
 
             _presentQueue.Present(new PresentInfo
             {
-                WaitSemaphores = new Semaphore[] { _renderFinishedSemaphore },
+                WaitSemaphores = new Semaphore[] { _renderCompleteSemaphore },
                 Swapchains = new Swapchain[] { _swapChain },
                 ImageIndices = new uint[] { imageIndex },
                 Results = null
@@ -125,8 +131,8 @@ namespace TundraEngine.Rendering
             {
                 if (disposing) { }
 
-                _renderFinishedSemaphore.Dispose();
-                _renderFinishedSemaphore = null;
+                _renderCompleteSemaphore.Dispose();
+                _renderCompleteSemaphore = null;
                 _imageAvailableSemaphore.Dispose();
                 _imageAvailableSemaphore = null;
                 _commandPool.Dispose();
@@ -210,11 +216,11 @@ namespace TundraEngine.Rendering
                     ApplicationName = Game.Instance.Settings.Name,
                     ApplicationVersion = new SharpVk.Version(version.Major, version.Minor, version.Patch),
                     EngineName = "Tundra Engine",
-                    EngineVersion = new SharpVk.Version(0, 1, 0)
+                    EngineVersion = new SharpVk.Version(1, 0, 0)
                 },
                 EnabledExtensionNames = InstanceExtensions,
 #if DEBUG
-                EnabledLayerNames = InstanceLayers
+                EnabledLayerNames = Game.Instance.Settings.RendererSettings.VulkanSettings.EnableValidation ? InstanceLayers : null
 #endif
             });
             Assert.IsNotNull(_instance, "Could not create Vulkan instance.");
@@ -223,9 +229,14 @@ namespace TundraEngine.Rendering
         [Conditional("DEBUG")]
         private void CreateDebugCallback()
         {
+            if (Game.Instance.Settings.RendererSettings.VulkanSettings.EnableValidation == false)
+            {
+                return;
+            }
+
             _debugCallback = _instance.CreateDebugReportCallback(new DebugReportCallbackCreateInfo
             {
-                Flags = DebugReportFlags.Error | DebugReportFlags.Warning | DebugReportFlags.PerformanceWarning,
+                Flags = Game.Instance.Settings.RendererSettings.VulkanSettings.DebugFlags,
                 PfnCallback = DebugReportDelegate
             });
             Assert.IsNotNull(_debugCallback, "Could not create debug callback.");
@@ -262,39 +273,54 @@ namespace TundraEngine.Rendering
             Assert.IsNotNull(_surface, "Could not create surface.");
         }
 
+        // TODO: Support multiple GPUs (SLI/Crossfire)
         private void SelectPhysicalDevice()
         {
             PhysicalDevice[] physicalDevices = _instance.EnumeratePhysicalDevices();
             Assert.IsTrue(physicalDevices.Length > 0, "No GPU found.");
-            foreach (var device in physicalDevices)
+
+            // Select the first suitable device
+            foreach (var gpu in physicalDevices)
             {
-                if (IsDeviceSuitable(device))
+                if (IsGPUSuitable(gpu))
                 {
-                    _physicalDevice = device;
+                    _physicalDevice = gpu;
                     break;
                 }
             }
             Assert.IsNotNull(_physicalDevice, "Couldn't find a suitable GPU.");
 
-            bool IsDeviceSuitable(PhysicalDevice device)
+            // TODO: Don't assume queue family 0 has graphics, present, compute and transfer
+            bool IsGPUSuitable(PhysicalDevice gpu)
             {
-                PhysicalDeviceFeatures availableFeatures = device.GetFeatures();
-                QueueFamilyProperties[] queueFamilies = device.GetQueueFamilyProperties();
+                if (!AreFeaturesSupported() || !AreExtensionsSupported() || !IsSwapChainSupported())
+                {
+                    return false;
+                }
+
+                QueueFamilyProperties[] queueFamilies = gpu.GetQueueFamilyProperties();
+                Assert.IsTrue(queueFamilies.Length > 0, "No queue families found.");
 
                 // The first queue family is the one with graphics + present
                 _graphicsQueueFamilyIndex = 0;
                 _presentQueueFamilyIndex = 0;
 
-                bool isPresentSurpported = device.GetSurfaceSupport(_presentQueueFamilyIndex, _surface);
+                bool isPresentSurpported = gpu.GetSurfaceSupport(_presentQueueFamilyIndex, _surface);
                 Assert.IsTrue(isPresentSurpported, "Present is not supported on queue family " + _presentQueueFamilyIndex);
 
-                // Compute is in queue family 1 on AMD and 2 on NVIDIA
+                // Pick the first queue family that has compute and is not the graphics one
                 for (uint i = 1; i < queueFamilies.Length; ++i)
                 {
                     if (queueFamilies[i].QueueFlags.Has(QueueFlags.Compute))
                     {
                         _computeQueueFamilyIndex = i;
                     }
+                }
+
+                // If we can't find one (Intel), put compute on first queue family
+                if (_computeQueueFamilyIndex == uint.MaxValue)
+                {
+                    _computeQueueFamilyIndex = 0;
                 }
 
                 // Transfer queue is different from both graphics and compute queue
@@ -308,10 +334,13 @@ namespace TundraEngine.Rendering
                     }
                 }
 
+                // If we can't find one (Intel), put compute on first queue family
+                if (_transferQueueFamilyIndex == uint.MaxValue)
+                {
+                    _transferQueueFamilyIndex = 0;
+                }
+
                 return
-                    AreFeaturesSupported() &&
-                    AreExtensionsSupported() &&
-                    IsSwapChainSupported() &&
                     _graphicsQueueFamilyIndex != uint.MaxValue &&
                     _presentQueueFamilyIndex != uint.MaxValue &&
                     _computeQueueFamilyIndex != uint.MaxValue &&
@@ -319,6 +348,7 @@ namespace TundraEngine.Rendering
 
                 bool AreFeaturesSupported()
                 {
+                    PhysicalDeviceFeatures availableFeatures = gpu.GetFeatures();
                     bool ok =
                         !(DeviceFeatures.AlphaToOne && !availableFeatures.AlphaToOne) &&
                         !(DeviceFeatures.DepthBiasClamp && !availableFeatures.DepthBiasClamp) &&
@@ -382,7 +412,7 @@ namespace TundraEngine.Rendering
 
                 bool AreExtensionsSupported()
                 {
-                    ExtensionProperties[] availableExtensions = device.EnumerateDeviceExtensionProperties(null);
+                    ExtensionProperties[] availableExtensions = gpu.EnumerateDeviceExtensionProperties(null);
 
                     HashSet<string> extensionSet = new HashSet<string>(DeviceExtensions);
 
@@ -393,17 +423,16 @@ namespace TundraEngine.Rendering
 
                     bool ok = extensionSet.Count == 0;
                     Assert.IsTrue(ok, "Device extensions are not supported on this GPU.");
-
                     return ok;
                 }
 
                 bool IsSwapChainSupported()
                 {
-                    _surfaceCapabilities = device.GetSurfaceCapabilities(_surface);
-                    SurfaceFormat[] surfaceFormats = device.GetSurfaceFormats(_surface);
-                    PresentMode[] presentModes = device.GetSurfacePresentModes(_surface);
+                    _surfaceCapabilities = gpu.GetSurfaceCapabilities(_surface);
+                    _surfaceFormats = gpu.GetSurfaceFormats(_surface);
+                    _surfacePresentModes = gpu.GetSurfacePresentModes(_surface);
 
-                    bool ok = surfaceFormats.Length != 0 && presentModes.Length != 0;
+                    bool ok = _surfaceFormats.Length != 0 && _surfacePresentModes.Length != 0;
                     Assert.IsTrue(ok, "Swapchain is not supported.");
 
                     return ok;
@@ -411,20 +440,26 @@ namespace TundraEngine.Rendering
             }
         }
 
-        private void CreateLogicalDevice()
+        private void CreateLogicalDeviceAndQueues()
         {
             // Queue families
             QueueFamilyProperties[] queueFamilyProperties = _physicalDevice.GetQueueFamilyProperties();
             Assert.IsTrue(queueFamilyProperties.Length > 0, "No queue family properties found.");
 
             // Queue infos
-            DeviceQueueCreateInfo[] queueCreateInfos = new DeviceQueueCreateInfo[3]
+            DeviceQueueCreateInfo[] queueCreateInfos = new DeviceQueueCreateInfo[]
             {
-                // Graphics and present queue
+                // Graphics queue
                 new DeviceQueueCreateInfo
                 {
                     QueueFamilyIndex = _graphicsQueueFamilyIndex,
                     QueuePriorities = new float[1] { DefaultQueuePriority }
+                },
+                // Present queue
+                new DeviceQueueCreateInfo
+                {
+                    QueueFamilyIndex = _presentQueueFamilyIndex,
+                    QueuePriorities = new float[1] {DefaultQueuePriority}
                 },
                 // Compute queue
                 new DeviceQueueCreateInfo
@@ -446,7 +481,6 @@ namespace TundraEngine.Rendering
                 QueueCreateInfos = queueCreateInfos,
                 EnabledFeatures = DeviceFeatures,
                 EnabledExtensionNames = DeviceExtensions,
-
             });
             Assert.IsNotNull(_device, "Could not create logical device.");
 
@@ -477,7 +511,7 @@ namespace TundraEngine.Rendering
                 ImageColorSpace = SurfaceColorSpace,
                 ImageExtent = _swapChainExtent,
                 ImageArrayLayers = 1,
-                ImageUsage = ImageUsageFlags.ColorAttachment,
+                ImageUsage = ImageUsageFlags.ColorAttachment | ImageUsageFlags.TransferSource,
                 ImageSharingMode = SharingMode.Exclusive,
                 PreTransform = _surfaceCapabilities.CurrentTransform,
                 CompositeAlpha = CompositeAlphaFlags.Opaque,
@@ -488,6 +522,7 @@ namespace TundraEngine.Rendering
             Assert.IsNotNull(_swapChain, "Could not create swap chain.");
 
             _swapChainImages = _swapChain.GetImages();
+            Assert.IsTrue(_swapChainImages.Length > 0, "Could not get any images from the swap chain.");
 
             void ChooseExtent()
             {
@@ -505,6 +540,14 @@ namespace TundraEngine.Rendering
 
             void ChoosePresentMode(out PresentMode mode)
             {
+                PresentMode desiredMode = Game.Instance.Settings.RendererSettings.VulkanSettings.PresentMode;
+                foreach (var presMode in _surfacePresentModes)
+                {
+                    if (presMode == desiredMode)
+                    {
+                        mode = desiredMode;
+                    }
+                }
                 mode = PresentMode.Fifo;
             }
         }
@@ -586,8 +629,8 @@ namespace TundraEngine.Rendering
 
         private void CreateGraphicsPipeline()
         {
-            ResourceSystem.LoadBinary("Assets/Shaders/vert.spv", out byte[] vertCode);
-            ResourceSystem.LoadBinary("Assets/Shaders/frag.spv", out byte[] fragCode);
+            ResourceSystem.LoadBinary("Compiled/Shaders/vert.spv", out byte[] vertCode);
+            ResourceSystem.LoadBinary("Compiled/Shaders/frag.spv", out byte[] fragCode);
 
             ShaderModule vertShaderModule = CreateShaderModule(vertCode);
             ShaderModule fragShaderModule = CreateShaderModule(fragCode);
@@ -758,7 +801,8 @@ namespace TundraEngine.Rendering
         {
             _commandPool = _device.CreateCommandPool(new CommandPoolCreateInfo
             {
-                Flags = CommandPoolCreateFlags.None,
+                // TODO: Do we need explicit reset?
+                Flags = CommandPoolCreateFlags.ResetCommandBuffer,
                 QueueFamilyIndex = _graphicsQueueFamilyIndex
             });
             Assert.IsNotNull(_commandPool, "Could not create command pool.");
@@ -768,8 +812,8 @@ namespace TundraEngine.Rendering
         {
             _commandBuffers = _device.AllocateCommandBuffers(new CommandBufferAllocateInfo
             {
-                CommandPool = _commandPool,
                 Level = CommandBufferLevel.Primary,
+                CommandPool = _commandPool,
                 CommandBufferCount = (uint)_swapChainFramebuffers.Length
             });
             Assert.IsNotNull(_commandBuffers, "Could not create command buffers.");
@@ -810,8 +854,8 @@ namespace TundraEngine.Rendering
         private void CreateSemaphores()
         {
             _imageAvailableSemaphore = _device.CreateSemaphore(new SemaphoreCreateInfo());
-            _renderFinishedSemaphore = _device.CreateSemaphore(new SemaphoreCreateInfo());
-            Assert.IsTrue(_imageAvailableSemaphore != null && _renderFinishedSemaphore != null, "Could not create semaphore.");
+            _renderCompleteSemaphore = _device.CreateSemaphore(new SemaphoreCreateInfo());
+            Assert.IsTrue(_imageAvailableSemaphore != null && _renderCompleteSemaphore != null, "Could not create semaphore.");
         }
 
         ~RendererVulkan()

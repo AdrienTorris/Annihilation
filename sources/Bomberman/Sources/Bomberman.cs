@@ -38,88 +38,90 @@ namespace Bomberman
 
         static void Main(string[] args)
         {
-            GameSettings settings = new GameSettings();
-            settings.Name = "Bomberman";
-            settings.Version = new TundraEngine.Version(0, 1, 0);
-            settings.CommandLineArgs = args;
-
-            settings.InitialContext = Context.MainMenu;
-
-            settings.ResourcePath = GameSettings.DefaultResourcePath;
-            settings.MaxResources = GameSettings.DefaultMaxResources;
-            settings.MaxEntitiesPerPrefab = GameSettings.DefaultMaxEntitiesPerPrefab;
-
-            settings.WindowSettings = new WindowSettings
+            GameSettings settings = new GameSettings
             {
-                Type = WindowType.SDL,
-                PositionX = 50,
-                PositionY = 50,
-                Width = 1280,
-                Height = 720,
-                Mode = WindowMode.Windowed,
-                AllowHighDPI = false,
-                AlwaysOnTop = false
-            };
+                Name = "Bomberman",
+                Version = new TundraEngine.Version(0, 1, 0),
+                CommandLineArgs = args,
 
-            settings.RendererSettings = new RendererSettings
-            {
-                VulkanSettings = new VulkanSettings
+                InitialContext = Context.MainMenu,
+
+                ResourcePath = GameSettings.DefaultResourcePath,
+                MaxResources = GameSettings.DefaultMaxResources,
+                MaxEntitiesPerPrefab = GameSettings.DefaultMaxEntitiesPerPrefab,
+
+                WindowSettings = new WindowSettings
                 {
-                    EnableValidation = true,
-                    DebugFlags = SharpVk.DebugReportFlags.Error | SharpVk.DebugReportFlags.PerformanceWarning | SharpVk.DebugReportFlags.Warning,
-                    PresentMode = SharpVk.PresentMode.Fifo
+                    Type = WindowType.SDL,
+                    PositionX = 50,
+                    PositionY = 50,
+                    Width = 1280,
+                    Height = 720,
+                    Mode = WindowMode.Windowed,
+                    AllowHighDPI = false,
+                    AlwaysOnTop = false
                 },
-                Width = 1280,
-                Height = 720,
-                SSAA = 8,
-                VSync = false,
-            };
 
-            settings.DebugUISettings = new DebugUISettings
-            {
-                DebugUIType = DebugUIType.None
-            };
-
-            settings.InputSettings = new InputSettings
-            {
-                RepeatInterval = InputSettings.DefaultRepeatInterval,
-                RepeatDelay = InputSettings.DefaultRepeatDelay,
-                ActionMaps = new ActionMap[]
+                RendererSettings = new RendererSettings
                 {
-                    new ActionMap()
+                    VulkanSettings = new VulkanSettings
                     {
-                        Context = Context.Game,
-                        ButtonBindings = new ButtonBinding[]
-                        {
-                            // Keyboard
-                            new ButtonBinding(Button.LeftArrow, Action.MoveLeft),
-                            new ButtonBinding(Button.RightArrow, Action.MoveRight),
-                            new ButtonBinding(Button.W, Action.MoveUp),
-                            new ButtonBinding(Button.S, Action.MoveDown),
-                            new ButtonBinding(Button.A, Action.MoveLeft),
-                            new ButtonBinding(Button.D, Action.MoveRight),
-                            new ButtonBinding(Button.Space, Action.PlaceBomb),
-                            // Gamepad
-                            new ButtonBinding(Button.GamepadA, Action.PlaceBomb)
-                        },
-                        AxisBindings = new AxisBinding[]
-                        {
-                            // Gamepad
-                            new AxisBinding(Axis.GamepadLeftStickX, Action.MoveHorizontal),
-                            new AxisBinding(Axis.GamepadLeftStickY, Action.MoveVertical)
-                        }
+                        EnableValidation = true,
+                        DebugFlags = VulkanSettings.DefaultDebugFlags,
+                        PresentMode = VulkanSettings.DefaultPresentMode
                     },
-                    new ActionMap()
+                    Width = 1280,
+                    Height = 720,
+                    SSAA = 8,
+                    VSync = false,
+                },
+
+                DebugUISettings = new DebugUISettings
+                {
+                    DebugUIType = DebugUIType.None
+                },
+
+                InputSettings = new InputSettings
+                {
+                    RepeatInterval = InputSettings.DefaultRepeatInterval,
+                    RepeatDelay = InputSettings.DefaultRepeatDelay,
+                    ActionMaps = new ActionMap[]
                     {
-                        Context = Context.MainMenu,
-                        ButtonBindings = new ButtonBinding[]
+                        new ActionMap()
                         {
-                            // Keyboard
-                            new ButtonBinding(Button.Return, Action.Accept),
-                            new ButtonBinding(Button.Escape, Action.Cancel),
-                            // Gamepad
-                            new ButtonBinding(Button.GamepadA, Action.Accept),
-                            new ButtonBinding(Button.GamepadB, Action.Cancel)
+                            Context = Context.Game,
+                            ButtonBindings = new ButtonBinding[]
+                            {
+                                // Keyboard
+                                new ButtonBinding(Button.LeftArrow, Action.MoveLeft),
+                                new ButtonBinding(Button.RightArrow, Action.MoveRight),
+                                new ButtonBinding(Button.W, Action.MoveUp),
+                                new ButtonBinding(Button.S, Action.MoveDown),
+                                new ButtonBinding(Button.A, Action.MoveLeft),
+                                new ButtonBinding(Button.D, Action.MoveRight),
+                                new ButtonBinding(Button.Space, Action.PlaceBomb),
+                                // Gamepad
+                                new ButtonBinding(Button.GamepadA, Action.PlaceBomb)
+                            },
+                            AxisBindings = new AxisBinding[]
+                            {
+                                // Gamepad
+                                new AxisBinding(Axis.GamepadLeftStickX, Action.MoveHorizontal),
+                                new AxisBinding(Axis.GamepadLeftStickY, Action.MoveVertical)
+                            }
+                        },
+                        new ActionMap()
+                        {
+                            Context = Context.MainMenu,
+                            ButtonBindings = new ButtonBinding[]
+                            {
+                                // Keyboard
+                                new ButtonBinding(Button.Return, Action.Accept),
+                                new ButtonBinding(Button.Escape, Action.Cancel),
+                                // Gamepad
+                                new ButtonBinding(Button.GamepadA, Action.Accept),
+                                new ButtonBinding(Button.GamepadB, Action.Cancel)
+                            }
                         }
                     }
                 }
