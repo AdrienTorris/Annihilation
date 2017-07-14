@@ -15,6 +15,10 @@ namespace TundraEngine.Rendering
         private Surface _surface;
         private PhysicalDevice _physicalDevice;
         private Device _device;
+        private Queue _graphicsQueue;
+        private Queue _computeQueue;
+        private Queue _transferQueue;
+        private Queue _presentQueue;
         private Swapchain _swapChain;
         private Extent2D _swapChainExtent;
         private Image[] _swapChainImages;
@@ -28,18 +32,16 @@ namespace TundraEngine.Rendering
         private Semaphore _imageAvailableSemaphore;
         private Semaphore _renderCompleteSemaphore;
 
+        // Swapchain details
         private SurfaceCapabilities _surfaceCapabilities;
         private SurfaceFormat[] _surfaceFormats;
         private PresentMode[] _surfacePresentModes;
 
+        // Queue families
         private uint _graphicsQueueFamilyIndex = uint.MaxValue;
         private uint _computeQueueFamilyIndex = uint.MaxValue;
         private uint _transferQueueFamilyIndex = uint.MaxValue;
         private uint _presentQueueFamilyIndex = uint.MaxValue;
-        private Queue _graphicsQueue;
-        private Queue _computeQueue;
-        private Queue _transferQueue;
-        private Queue _presentQueue;
 
         private bool _wasDisposed;
 
@@ -449,17 +451,11 @@ namespace TundraEngine.Rendering
             // Queue infos
             DeviceQueueCreateInfo[] queueCreateInfos = new DeviceQueueCreateInfo[]
             {
-                // Graphics queue
+                // Graphics and present queue
                 new DeviceQueueCreateInfo
                 {
                     QueueFamilyIndex = _graphicsQueueFamilyIndex,
                     QueuePriorities = new float[1] { DefaultQueuePriority }
-                },
-                // Present queue
-                new DeviceQueueCreateInfo
-                {
-                    QueueFamilyIndex = _presentQueueFamilyIndex,
-                    QueuePriorities = new float[1] {DefaultQueuePriority}
                 },
                 // Compute queue
                 new DeviceQueueCreateInfo
@@ -653,8 +649,8 @@ namespace TundraEngine.Rendering
 
             PipelineVertexInputStateCreateInfo vertexInputInfo = new PipelineVertexInputStateCreateInfo
             {
-                VertexBindingDescriptions = null,
-                VertexAttributeDescriptions = null
+                VertexBindingDescriptions = new VertexInputBindingDescription[] { Vertex.BindingDescription },
+                VertexAttributeDescriptions = Vertex.AttributeDescriptions
             };
 
             PipelineInputAssemblyStateCreateInfo inputAssembly = new PipelineInputAssemblyStateCreateInfo
