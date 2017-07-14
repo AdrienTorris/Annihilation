@@ -14,7 +14,6 @@ namespace Bomberman
 {
     public static class Bomberman
     {
-
         public static class Context
         {
             public static readonly StringHash32 MainMenu = "MainMenu";
@@ -39,83 +38,90 @@ namespace Bomberman
 
         static void Main(string[] args)
         {
-            GameSettings settings = new GameSettings();
-            settings.Name = "Bomberman";
-            settings.Version = new TundraEngine.Version(0, 1, 0);
-            settings.CommandLineArgs = args;
-
-            settings.InitialContext = Context.MainMenu;
-
-            settings.ResourcePath = GameSettings.DefaultResourcePath;
-            settings.MaxResources = GameSettings.DefaultMaxResources;
-            settings.MaxEntitiesPerPrefab = GameSettings.DefaultMaxEntitiesPerPrefab;
-
-            settings.WindowSettings = new WindowSettings
+            GameSettings settings = new GameSettings
             {
-                Type = WindowType.SDL,
-                PositionX = 50,
-                PositionY = 50,
-                Width = 500,
-                Height = 500,
-                Mode = WindowMode.Windowed,
-                AllowHighDPI = false,
-                AlwaysOnTop = false
-            };
+                Name = "Bomberman",
+                Version = new TundraEngine.Version(0, 1, 0),
+                CommandLineArgs = args,
 
-            settings.RendererSettings = new RendererSettings
-            {
-                RendererType = RendererType.SDL,
-                Width = 1280,
-                Height = 720,
-                SSAA = 8,
-                VSync = false,
-            };
+                InitialContext = Context.MainMenu,
 
-            settings.DebugUISettings = new DebugUISettings
-            {
-                DebugUIType = DebugUIType.BGFX
-            };
+                ResourcePath = GameSettings.DefaultResourcePath,
+                MaxResources = GameSettings.DefaultMaxResources,
+                MaxEntitiesPerPrefab = GameSettings.DefaultMaxEntitiesPerPrefab,
 
-            settings.InputSettings = new InputSettings
-            {
-                RepeatInterval = InputSettings.DefaultRepeatInterval,
-                RepeatDelay = InputSettings.DefaultRepeatDelay,
-                ActionMaps = new ActionMap[]
+                WindowSettings = new WindowSettings
                 {
-                    new ActionMap()
+                    Type = WindowType.SDL,
+                    PositionX = 50,
+                    PositionY = 50,
+                    Width = 1280,
+                    Height = 720,
+                    Mode = WindowMode.Windowed,
+                    AllowHighDPI = false,
+                    AlwaysOnTop = false
+                },
+
+                RendererSettings = new RendererSettings
+                {
+                    VulkanSettings = new VulkanSettings
                     {
-                        Context = Context.Game,
-                        ButtonBindings = new ButtonBinding[]
-                        {
-                            // Keyboard
-                            new ButtonBinding(Button.LeftArrow, Action.MoveLeft),
-                            new ButtonBinding(Button.RightArrow, Action.MoveRight),
-                            new ButtonBinding(Button.W, Action.MoveUp),
-                            new ButtonBinding(Button.S, Action.MoveDown),
-                            new ButtonBinding(Button.A, Action.MoveLeft),
-                            new ButtonBinding(Button.D, Action.MoveRight),
-                            new ButtonBinding(Button.Space, Action.PlaceBomb),
-                            // Gamepad
-                            new ButtonBinding(Button.GamepadA, Action.PlaceBomb)
-                        },
-                        AxisBindings = new AxisBinding[]
-                        {
-                            // Gamepad
-                            new AxisBinding(Axis.GamepadLeftStickX, Action.MoveHorizontal),
-                            new AxisBinding(Axis.GamepadLeftStickY, Action.MoveVertical)
-                        }
+                        EnableValidation = true,
+                        DebugFlags = VulkanSettings.DefaultDebugFlags,
+                        PresentMode = VulkanSettings.DefaultPresentMode
                     },
-                    new ActionMap()
+                    Width = 1280,
+                    Height = 720,
+                    SSAA = 8,
+                    VSync = false,
+                },
+
+                DebugUISettings = new DebugUISettings
+                {
+                    DebugUIType = DebugUIType.None
+                },
+
+                InputSettings = new InputSettings
+                {
+                    RepeatInterval = InputSettings.DefaultRepeatInterval,
+                    RepeatDelay = InputSettings.DefaultRepeatDelay,
+                    ActionMaps = new ActionMap[]
                     {
-                        Context = Context.MainMenu,
-                        ButtonBindings = new ButtonBinding[]
+                        new ActionMap()
                         {
-                            // Keyboard
-                            new ButtonBinding(Button.Return, Action.Accept),
-                            new ButtonBinding(Button.Escape, Action.Cancel),
-                            // Gamepad
-                            new ButtonBinding(Button.GamepadA, Action.Accept),
-                            new ButtonBinding(Button.GamepadB, Action.Cancel)
+                            Context = Context.Game,
+                            ButtonBindings = new ButtonBinding[]
+                            {
+                                // Keyboard
+                                new ButtonBinding(Button.LeftArrow, Action.MoveLeft),
+                                new ButtonBinding(Button.RightArrow, Action.MoveRight),
+                                new ButtonBinding(Button.W, Action.MoveUp),
+                                new ButtonBinding(Button.S, Action.MoveDown),
+                                new ButtonBinding(Button.A, Action.MoveLeft),
+                                new ButtonBinding(Button.D, Action.MoveRight),
+                                new ButtonBinding(Button.Space, Action.PlaceBomb),
+                                // Gamepad
+                                new ButtonBinding(Button.GamepadA, Action.PlaceBomb)
+                            },
+                            AxisBindings = new AxisBinding[]
+                            {
+                                // Gamepad
+                                new AxisBinding(Axis.GamepadLeftStickX, Action.MoveHorizontal),
+                                new AxisBinding(Axis.GamepadLeftStickY, Action.MoveVertical)
+                            }
+                        },
+                        new ActionMap()
+                        {
+                            Context = Context.MainMenu,
+                            ButtonBindings = new ButtonBinding[]
+                            {
+                                // Keyboard
+                                new ButtonBinding(Button.Return, Action.Accept),
+                                new ButtonBinding(Button.Escape, Action.Cancel),
+                                // Gamepad
+                                new ButtonBinding(Button.GamepadA, Action.Accept),
+                                new ButtonBinding(Button.GamepadB, Action.Cancel)
+                            }
                         }
                     }
                 }
@@ -125,43 +131,19 @@ namespace Bomberman
             //using System.Windows.Forms;
 
 
-            Game game = new Game(settings, Initialize, Update, null);
+            Game game = new Game(settings, Initialize, null, null);
 
 
 
 
-        }
-
-        private static void Update(float obj)
-        {
-            if (InputSystem.GetKeyDown(Button.LeftArrow))
-            {
-                Console.WriteLine("Left Step");
-            }
-            if (InputSystem.GetKey(Button.LeftArrow))
-            {
-                Console.WriteLine("Left");
-            }
-
-            if (InputSystem.anyKeyDown())
-            {
-                Console.WriteLine("any");
-            }
-
-            Console.WriteLine(InputSystem.mousePosition());
         }
 
         private static void Initialize()
         {
             TileMapLoader loader = new TileMapLoader();
-            loader.LoadTileMap();
+            loader.LoadTileMap("Resources/maptest.json");
             // Console.WriteLine(valueInt);
         }
-
-        
-    
-
-
 
         /*protected override async Task UpdateAsync(double deltaTime)
         {
