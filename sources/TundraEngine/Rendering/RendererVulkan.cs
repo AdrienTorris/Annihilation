@@ -89,7 +89,9 @@ namespace TundraEngine.Rendering
         public RendererVulkan()
         {
             CreateInstance();
+#if DEBUG
             CreateDebugCallback();
+#endif
             CreateSurface();
             SelectPhysicalDevice();
             CreateLogicalDeviceAndQueues();
@@ -101,6 +103,14 @@ namespace TundraEngine.Rendering
             CreateCommandPool();
             CreateCommandBuffers();
             CreateSemaphores();
+
+            // Test allocation library
+            MemoryAllocatorNative.CreateAllocator(new AllocatorCreateInfo
+            {
+                PhysicalDevice = _physicalDevice.RawHandle,
+                Device = _device.RawHandle
+            },
+            out IntPtr allocator);
         }
 
         public void Render()
@@ -161,8 +171,10 @@ namespace TundraEngine.Rendering
                 _device = null;
                 _surface.Dispose();
                 _surface = null;
+#if DEBUG
                 _debugCallback.Dispose();
                 _debugCallback = null;
+#endif
                 _instance.Dispose();
                 _instance = null;
 
@@ -228,7 +240,7 @@ namespace TundraEngine.Rendering
             Assert.IsNotNull(_instance, "Could not create Vulkan instance.");
         }
 
-        [Conditional("DEBUG")]
+#if DEBUG
         private void CreateDebugCallback()
         {
             if (Game.Instance.Settings.RendererSettings.VulkanSettings.EnableValidation == false)
@@ -243,6 +255,7 @@ namespace TundraEngine.Rendering
             });
             Assert.IsNotNull(_debugCallback, "Could not create debug callback.");
         }
+#endif
 
         private void CreateSurface()
         {
