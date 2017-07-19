@@ -1,8 +1,6 @@
-﻿using SharpVk;
-
-namespace TundraEngine.Rendering
+﻿namespace TundraEngine.Rendering
 {
-    public struct VulkanSettings
+    /*public struct VulkanSettings
     {
         public bool EnableValidation;
         public DebugReportFlags DebugFlags;
@@ -10,11 +8,11 @@ namespace TundraEngine.Rendering
 
         public const DebugReportFlags DefaultDebugFlags = DebugReportFlags.Error | DebugReportFlags.PerformanceWarning | DebugReportFlags.Warning;
         public const PresentMode DefaultPresentMode = PresentMode.Mailbox;
-    }
+    }*/
     
     public struct RendererSettings
     {
-        public VulkanSettings VulkanSettings;
+        //public VulkanSettings VulkanSettings;
         public int Width;
         public int Height;
         public bool UseDepthBuffer;

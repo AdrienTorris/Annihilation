@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using ZeroFormatter;
 
 namespace TundraEngine
 {
-    [ZeroFormattable]
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
     public struct ObjectHandle<T> : IEquatable<ObjectHandle<T>>
         where T : class
     {
-        [Index(0)] public readonly int Index;
+        public readonly int Index;
 
         private static T[] _objects;
         private static int[] _handles;
