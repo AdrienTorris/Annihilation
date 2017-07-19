@@ -35,6 +35,8 @@
     <IntDir>Temp\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)TundraEngine\</OutDir>
     <TargetExt>.dll</TargetExt>
+    <IncludePath>$(VULKAN_SDK)\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(VULKAN_SDK)\lib\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>

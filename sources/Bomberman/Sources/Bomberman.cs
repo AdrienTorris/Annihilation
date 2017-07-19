@@ -64,12 +64,12 @@ namespace Bomberman
 
                 RendererSettings = new RendererSettings
                 {
-                    VulkanSettings = new VulkanSettings
+                    /*VulkanSettings = new VulkanSettings
                     {
                         EnableValidation = true,
                         DebugFlags = VulkanSettings.DefaultDebugFlags,
                         PresentMode = VulkanSettings.DefaultPresentMode
-                    },
+                    },*/
                     Width = 1280,
                     Height = 720,
                     SSAA = 8,

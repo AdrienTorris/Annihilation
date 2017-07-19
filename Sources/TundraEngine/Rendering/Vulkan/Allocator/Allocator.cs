@@ -23,8 +23,7 @@ namespace TundraEngine.Rendering.Vulkan.Allocator
         {
             UIntPtr allocation = UIntPtr.Zero;
 
-            MemoryAllocatorNative.CreateImage(Handle, createInfo, memoryRequirements, out Image imageRaw, allocation, UIntPtr.Zero);
-            
+            MemoryAllocatorNative.CreateImage(Handle, createInfo, memoryRequirements, out image, allocation, UIntPtr.Zero).CheckError();
         }
     }
 }

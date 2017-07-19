@@ -39,9 +39,15 @@ namespace TundraEngine
             Instance = this;
             Settings = settings;
 
+            RendererCreateInfo rendererCreateInfo = new RendererCreateInfo
+            {
+                ApplicationName = settings.Name,
+                EnableValidation = true
+            };
+
             // Create all engine systems
             using (Window = new WindowProviderSDL())
-            using (Renderer = new RendererVulkan())
+            using (Renderer = new RendererVulkan(ref rendererCreateInfo))
             using (var eventProvider = new EventProviderSDL())
             //using (DebugUI = new DebugUIBGFX())
             {

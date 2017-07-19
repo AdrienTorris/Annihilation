@@ -7,7 +7,7 @@
     {
         /// <summary>
         /// Maximum total numbers of bytes that can be copied while moving allocations to different places.
-        /// <para/> Default is <see cref="SharpVk.Constants.WholeSize"/>, which means no limit.
+        /// <para/> Default is <see cref="Vulkan.WholeSize"/>, which means no limit.
         /// </summary>
         public DeviceSize MaxBytesToMove;
         /// <summary>

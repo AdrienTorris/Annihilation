@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
+using TundraEngine.Rendering.Vulkan;
+using static TundraEngine.Rendering.Vulkan.Vulkan;
+
 namespace TundraEngine.Rendering
 {
     public struct RendererCreateInfo
@@ -65,7 +68,7 @@ namespace TundraEngine.Rendering
                     instanceCreateInfo.EnabledLayerNames = new IntPtr(layersPointer);
                 }
 
-                Vulkan.CreateInstance(ref instanceCreateInfo, null, out instance);
+                CreateInstance(ref instanceCreateInfo, null, out instance);
             }
             
             // Free memory

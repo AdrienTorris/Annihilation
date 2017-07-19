@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Security;
 
-namespace TundraEngine.Rendering
+namespace TundraEngine.Rendering.Vulkan
 {
     [Flags]
     public enum InstanceCreateFlags : uint
