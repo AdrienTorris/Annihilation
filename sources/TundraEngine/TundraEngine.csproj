@@ -11,40 +11,25 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PlatformTarget>x64</PlatformTarget>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <OutputPath>bin\Debug\</OutputPath>
+    <BaseIntermediateOutputPath>..\..\Temp\</BaseIntermediateOutputPath>
+    <BaseOutputPath>..\..\Build\</BaseOutputPath>
     <DocumentationFile></DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <PlatformTarget>x64</PlatformTarget>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <OutputPath>bin\Release\</OutputPath>
+    <BaseIntermediateOutputPath>..\..\Temp\</BaseIntermediateOutputPath>
+    <BaseOutputPath>..\..\Build\</BaseOutputPath>
     <DefineConstants>RELEASE;NETCOREAPP2_0;</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Tiles\Product.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\CoreSDL\CoreSDL.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="VulkanMemoryAllocator.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Update="NativeLibraries\SDL2.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="NativeLibraries\VulkanMemoryAllocator.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

@@ -1,15 +1,7 @@
-﻿
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Runtime.Serialization.Json;
-using System.Text;
-
+﻿using System.Collections.Generic;
 
 public class TileMapLoader
 {
-
     // {"Name":"Apple","Color":"Red","Price":3.99,"Sizes":["Small","Medium","Large"]}
     //"{\"Name\":\"Apple\",\"Color\":\"Red\",\"Price\":3.99,\"Sizes\":[\"Small\",\"Medium\",\"Large\"]}"
 
@@ -19,7 +11,7 @@ public class TileMapLoader
     class Product
     {
         public string Name;
-      // public string Color;
+        // public string Color;
         //        public DateTime ExpiryDate { get; internal set; }
         public decimal Price;
         public string[] Sizes;
@@ -65,7 +57,7 @@ public class TileMapLoader
         {
             if (layers[layer] != null)
             {
-                int index = row * width + col ;
+                int index = row * width + col;
                 int val = -1;
                 val = layers[layer].data[index];
                 return val;
@@ -74,10 +66,9 @@ public class TileMapLoader
             {
                 return -2;
             }
-            
+
         }
-
-
+        
         public int[,] getMap()
         {
             int[,] list = new int[11, 11];
@@ -90,19 +81,10 @@ public class TileMapLoader
             }
             return list;
         }
-
     }
 
-    
-
-    public TileMapData LoadTileMap(string file )
+    public TileMapData LoadTileMap(string file)
     {
-        string loadedContent = File.ReadAllText(file );
-        TileMapData deserializedMap = JsonConvert.DeserializeObject<TileMapData>(loadedContent);
-
-        int[,] list = deserializedMap.getMap();        
-        Console.WriteLine("map loaded");
-        return deserializedMap;
+        return null;
     }
 }
-
