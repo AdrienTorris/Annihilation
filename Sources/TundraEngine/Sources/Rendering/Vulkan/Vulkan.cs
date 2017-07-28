@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Security;
 using System.Runtime.InteropServices;
 
@@ -306,10 +307,82 @@ namespace TundraEngine.Rendering.Vulkan
         IndirectBuffer = 0x00000100
     }
 
+    [Flags]
+    public enum SurfaceTransformFlags : uint
+    {
+        Identity = 0x00000001,
+        Rotate90 = 0x00000002,
+        Rotate180 = 0x00000004,
+        Rotate270 = 0x00000008,
+        HorizontalMirror = 0x00000010,
+        HorizontalMirrorRotate90 = 0x00000020,
+        HorizontalMirrorRotate180 = 0x00000040,
+        HorizontalMirrorRotate270 = 0x00000080,
+        Inherit = 0x00000100,
+    }
+
+    public unsafe struct ExtensionProperties
+    {
+        public fixed byte ExtensionName[(int)Vulkan.MaxExtensionNameSize];
+        public uint SpecVersion;
+    }
+
+    public unsafe struct LayerProperties
+    {
+        public fixed byte LayerName[(int)Vulkan.MaxExtensionNameSize];
+        public uint SpecVersion;
+        public uint ImplementationVersion;
+        public fixed byte Description[(int)Vulkan.MaxDescriptionSize];
+    }
+
+    [StructLayout(LayoutKind.Explicit)]
+    public unsafe struct ClearColorValue
+    {
+        [FieldOffset(0)] public fixed float Float32[4];
+        [FieldOffset(0)] public fixed int Int32[4];
+        [FieldOffset(0)] public fixed uint Uint32[4];
+    }
+
+    public struct ClearDepthStencilValue
+    {
+        public float Depth;
+        public uint Stencil;
+    }
+
+    [StructLayout(LayoutKind.Explicit)]
+    public struct ClearValue
+    {
+        [FieldOffset(0)] public ClearColorValue Color;
+        [FieldOffset(0)] public ClearDepthStencilValue DepthStencil;
+    }
+    
+    public unsafe delegate void* GetInstanceProcAddrDelegate(
+        IntPtr instance,
+        byte* name
+        );
+
+    public unsafe delegate Result EnumerateInstanceExtensionPropertiesDelegate(
+        byte* layerName,
+        uint* propertyCount,
+        ExtensionProperties* properties
+        );
+
+    public unsafe delegate Result EnumerateInstanceLayerPropertiesDelegate(
+        uint* propertyCount,
+        LayerProperties* properties 
+        );
+
+    public unsafe delegate Result CreateInstanceDelegate(
+        InstanceCreateInfo* createInfo,
+        AllocationCallbacks* allocator,
+        Instance* instance
+        );
+
+    [SuppressUnmanagedCodeSecurity]
     public static class Vulkan
     {
+        // Constants
         internal const string LibraryName = "vulkan-1.dll";
-
         public const float LodClampNone = 1000f;
         public const uint RemainingMipLevels = ~0U;
         public const uint RemainingArrayLayers = ~0U;
@@ -324,16 +397,59 @@ namespace TundraEngine.Rendering.Vulkan
         public const uint MaxExtensionNameSize = 256;
         public const uint MaxDescriptionSize = 256;
 
-        public static unsafe void CreateInstance(ref InstanceCreateInfo createInfo, AllocationCallbacks* allocator, out Instance instance)
+        // Exported function
+        //public static readonly GetInstanceProcAddrDelegate GetInstanceProcAddr;
+
+        // Global functions
+        public static readonly EnumerateInstanceExtensionPropertiesDelegate EnumerateInstanceExtensionProperties;
+        public static readonly EnumerateInstanceLayerPropertiesDelegate EnumerateInstanceLayerProperties;
+        public static readonly CreateInstanceDelegate CreateInstance;
+
+        // Instance functions
+
+
+        unsafe static Vulkan()
         {
-            fixed (InstanceCreateInfo* createInfoPointer = &createInfo)
-            fixed (Instance* instancePointer = &instance)
-            {
-                vkCreateInstance(createInfoPointer, allocator, instancePointer).CheckError();
-            }
+            // Global functions
+            EnumerateInstanceExtensionProperties = LoadGlobalFunction<EnumerateInstanceExtensionPropertiesDelegate>();
+            EnumerateInstanceLayerProperties = LoadGlobalFunction<EnumerateInstanceLayerPropertiesDelegate>();
+            CreateInstance = LoadGlobalFunction<CreateInstanceDelegate>();
         }
 
-        [DllImport(LibraryName), SuppressUnmanagedCodeSecurity]
-        internal static extern unsafe Result vkCreateInstance(InstanceCreateInfo* createInfo, AllocationCallbacks* allocator, Instance* instance);
+        [DllImport(LibraryName, CallingConvention = CallingConvention.StdCall)]
+        private static extern unsafe IntPtr vkGetInstanceProcAddr(Instance instance, byte* name);
+
+        [DllImport(LibraryName, CallingConvention = CallingConvention.StdCall)]
+        private static extern unsafe IntPtr vkGetInstanceProcAddr(IntPtr instance, byte* name);
+
+        public unsafe static T LoadGlobalFunction<T>()
+        {
+            IntPtr function = IntPtr.Zero;
+            string name = typeof(T).Name;
+            name = ("vk" + name).Replace("Delegate", string.Empty);
+            byte[] nameBytes = Encoding.UTF8.GetBytes(name);
+            fixed (byte* namePtr = &nameBytes[0])
+            {
+                function = vkGetInstanceProcAddr(IntPtr.Zero, namePtr);
+            }
+            Assert.IsTrue(function != IntPtr.Zero, "Could not load function " + name);
+
+            return Marshal.GetDelegateForFunctionPointer<T>(function);
+        }
+
+        public unsafe static T LoadInstanceFunction<T>(Instance instance)
+        {
+            IntPtr function = IntPtr.Zero;
+            string name = typeof(T).Name;
+            name = ("vk" + name).Replace("Delegate", string.Empty);
+            byte[] nameBytes = Encoding.UTF8.GetBytes(name);
+            fixed (byte* namePtr = &nameBytes[0])
+            {
+                function = vkGetInstanceProcAddr(instance, namePtr);
+            }
+            Assert.IsTrue(function != IntPtr.Zero, "Could not load function " + name);
+
+            return Marshal.GetDelegateForFunctionPointer<T>(function);
+        }
     }
 }

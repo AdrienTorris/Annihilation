@@ -4,7 +4,7 @@ using static TundraEngine.SDL.SDL;
 
 namespace TundraEngine.Windowing
 {
-    internal class WindowProviderSDL : LibrarySystem<LibSDL>, IWindowProvider
+    internal class WindowSDL : LibrarySystem<LibSDL>, IWindowProvider
     {
         public WindowManagerInfo WindowManagerInfo { get; set; }
         public int UndefinedPosition => SDL_WindowPositionUndefined;
@@ -30,7 +30,7 @@ namespace TundraEngine.Windowing
             }
         }
 
-        public WindowProviderSDL()
+        public WindowSDL()
         {
             WindowSettings settings = Game.Instance.Settings.WindowSettings;
 

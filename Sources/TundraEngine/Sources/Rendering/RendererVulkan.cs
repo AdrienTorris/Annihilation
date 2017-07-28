@@ -68,7 +68,12 @@ namespace TundraEngine.Rendering
                     instanceCreateInfo.EnabledLayerNames = new IntPtr(layersPointer);
                 }
 
-                CreateInstance(ref instanceCreateInfo, null, out instance);
+                instance = new Instance(ref instanceCreateInfo, null);
+            }
+
+            if (createInfo.EnableValidation)
+            {
+
             }
             
             // Free memory

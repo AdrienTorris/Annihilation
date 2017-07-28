@@ -7,7 +7,7 @@ namespace TundraEngine.Rendering
     public struct Vertex
     {
         public Vector2 Position;
-        public Vector3 Color;
+        public Vector4 Color;
 
         public static readonly VertexInputBindingDescription BindingDescription = new VertexInputBindingDescription
         {

@@ -10,9 +10,9 @@ using TundraEngine.Mathematics;
 using TundraEngine.EntityComponent;
 using TundraEngine.IMGUI;
 
-namespace Bomberman
+namespace TundraTest
 {
-    public static class Bomberman
+    class Program
     {
         public static class Context
         {
@@ -126,31 +126,8 @@ namespace Bomberman
                     }
                 }
             };
-
-
-            //using System.Windows.Forms;
-
-
-            Game game = new Game(settings, Initialize, null, null);
-
-
-
-
+            
+            Game game = new Game(settings, null, null, null);
         }
-
-        private static void Initialize()
-        {
-            TileMapLoader loader = new TileMapLoader();
-            loader.LoadTileMap("Resources/maptest.json");
-            // Console.WriteLine(valueInt);
-        }
-
-        /*protected override async Task UpdateAsync(double deltaTime)
-        {
-            DebugUI.Clear();
-            DebugUI.Text(DateTime.Now.Second, 0, "Allo?");
-
-            await Task.Delay(TimeSpan.FromMilliseconds(Constants.TargetFrameStepTime));
-        }*/
     }
 }

@@ -46,7 +46,7 @@ namespace TundraEngine
             };
 
             // Create all engine systems
-            using (Window = new WindowProviderSDL())
+            using (Window = new WindowSDL())
             using (Renderer = new RendererVulkan(ref rendererCreateInfo))
             using (var eventProvider = new EventProviderSDL())
             //using (DebugUI = new DebugUIBGFX())

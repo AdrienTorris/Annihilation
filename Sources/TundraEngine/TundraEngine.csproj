@@ -6,6 +6,15 @@
     <ApplicationIcon />
     <StartupObject />
     <Platforms>x64</Platforms>
+    <PackageId>TundraEngine.JeremieStAmand</PackageId>
+    <PackageVersion>0.1.0</PackageVersion>
+    <Authors>Jérémie St-Amand</Authors>
+    <Description>.Net Core game engine with Vulkan graphics</Description>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes>Prerelease</PackageReleaseNotes>
+    <Copyright>Copyright 2017 Jérémie St-Amand. All rights reserved.</Copyright>
+    <PackageTags>game engine vulkan</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -23,6 +32,12 @@
     <BaseOutputPath>..\..\Build\</BaseOutputPath>
     <DefineConstants>RELEASE;NETCOREAPP2_0;</DefineConstants>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Update="NativeLibraries\SDL2.dll">

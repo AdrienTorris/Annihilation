@@ -5,8 +5,10 @@ using System.Runtime.InteropServices;
 
 namespace TundraEngine.SDL
 {
+    // TODO: Put all global funcs here (like Vulkan)
+    // TODO: Use pointers
     [SuppressUnmanagedCodeSecurity]
-    public static partial class SDL
+    public static unsafe partial class SDL
     {
         public const string LibName = "SDL2.dll";
         
@@ -74,5 +76,16 @@ namespace TundraEngine.SDL
         /// </summary>
         [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void SDL_Quit ();
+
+        // SDL_loadso.h
+
+        [DllImport(LibName)]
+        public extern static void* SDL_LoadObject(byte* file);
+
+        [DllImport(LibName)]
+        public extern static void* SDL_LoadFunction(void* handle, byte* name);
+
+        [DllImport(LibName)]
+        public extern static void SDL_UnloadObject(void* handle);
     }
 }
