@@ -111,64 +111,12 @@ namespace TundraEngine.Rendering.Vulkan
         public DebugReportCallbackDelegate Callback;
         public void* UserData;
     }
-
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public unsafe delegate void DestroyInstanceDelegate(
-        Instance instance,
-        AllocationCallbacks* allocator
-        );
-
-    public unsafe delegate Result EnumeratePhysicalDevicesDelegate(
-        Instance instance,
-        uint* physicalDeviceCount,
-        PhysicalDevice* physicalDevices
-        );
-
-    public unsafe delegate Result CreateDebugReportCallbackDelegate(
-        Instance instance,
-        IntPtr createInfo,
-        AllocationCallbacks* allocator,
-        IntPtr callback
-        );
-
-    public unsafe delegate void DestroyDebugReportCallbackDelegate(
-        Instance instance,
-        DebugReportCallbackDelegate callback,
-        AllocationCallbacks* allocator
-        );
-
-    public unsafe delegate void DebugReportMessageDelegate(
-        Instance instance,
-        DebugReportFlags flags,
-        DebugReportObjectType objectType,
-        ulong objectHandle,
-        ulong location,
-        int messageCode,
-        byte* layerPrefix,
-        byte* message
-        );
-
-    public unsafe delegate Result CreateWin32SurfaceDelegate(
-        Instance instance,
-        Win32SurfaceCreateInfo* createInfo,
-        AllocationCallbacks* allocator,
-        Surface* surface
-        );
-
-    public unsafe delegate Result CreateDisplayPlaneSurfaceDelegate(
-        Instance instance,
-        DisplaySurfaceCreateInfo* createInfo,
-        AllocationCallbacks* allocator,
-        Surface* surface
-        );
     
     public struct Instance : IEquatable<Instance>
     {
         public readonly static Instance Null = new Instance();
 
         public IntPtr NativeHandle;
-
-        public readonly DestroyInstanceDelegate DestroyInstance;
 
         public unsafe Instance(ref InstanceCreateInfo createInfo, AllocationCallbacks* allocator)
         {

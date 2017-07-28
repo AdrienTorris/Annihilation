@@ -377,6 +377,55 @@ namespace TundraEngine.Rendering.Vulkan
         AllocationCallbacks* allocator,
         Instance* instance
         );
+    
+    public unsafe delegate void DestroyInstanceDelegate(
+        Instance instance,
+        AllocationCallbacks* allocator
+        );
+
+    public unsafe delegate Result EnumeratePhysicalDevicesDelegate(
+        Instance instance,
+        uint* physicalDeviceCount,
+        PhysicalDevice* physicalDevices
+        );
+
+    public unsafe delegate Result CreateDebugReportCallbackDelegate(
+        Instance instance,
+        IntPtr createInfo,
+        AllocationCallbacks* allocator,
+        IntPtr callback
+        );
+
+    public unsafe delegate void DestroyDebugReportCallbackDelegate(
+        Instance instance,
+        DebugReportCallbackDelegate callback,
+        AllocationCallbacks* allocator
+        );
+
+    public unsafe delegate void DebugReportMessageDelegate(
+        Instance instance,
+        DebugReportFlags flags,
+        DebugReportObjectType objectType,
+        ulong objectHandle,
+        ulong location,
+        int messageCode,
+        byte* layerPrefix,
+        byte* message
+        );
+
+    public unsafe delegate Result CreateWin32SurfaceDelegate(
+        Instance instance,
+        Win32SurfaceCreateInfo* createInfo,
+        AllocationCallbacks* allocator,
+        Surface* surface
+        );
+
+    public unsafe delegate Result CreateDisplayPlaneSurfaceDelegate(
+        Instance instance,
+        DisplaySurfaceCreateInfo* createInfo,
+        AllocationCallbacks* allocator,
+        Surface* surface
+        );
 
     [SuppressUnmanagedCodeSecurity]
     public static class Vulkan
@@ -396,24 +445,26 @@ namespace TundraEngine.Rendering.Vulkan
         public const uint MaxMemoryHeaps = 16;
         public const uint MaxExtensionNameSize = 256;
         public const uint MaxDescriptionSize = 256;
-
-        // Exported function
-        //public static readonly GetInstanceProcAddrDelegate GetInstanceProcAddr;
-
+        
         // Global functions
         public static readonly EnumerateInstanceExtensionPropertiesDelegate EnumerateInstanceExtensionProperties;
         public static readonly EnumerateInstanceLayerPropertiesDelegate EnumerateInstanceLayerProperties;
         public static readonly CreateInstanceDelegate CreateInstance;
 
         // Instance functions
-
-
+        public static readonly DestroyInstanceDelegate DestroyInstance;
+        
         unsafe static Vulkan()
         {
             // Global functions
             EnumerateInstanceExtensionProperties = LoadGlobalFunction<EnumerateInstanceExtensionPropertiesDelegate>();
             EnumerateInstanceLayerProperties = LoadGlobalFunction<EnumerateInstanceLayerPropertiesDelegate>();
             CreateInstance = LoadGlobalFunction<CreateInstanceDelegate>();
+
+            // Create instance
+
+            // Instance functions
+            DestroyInstance = LoadInstanceFunction<DestroyInstanceDelegate>();
         }
 
         [DllImport(LibraryName, CallingConvention = CallingConvention.StdCall)]
