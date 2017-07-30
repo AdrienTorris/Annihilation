@@ -63,46 +63,46 @@ namespace TundraEngine.SDL
             NumLogPriorities
         }
         
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void SDL_LogSetAllPriority (SDL_LogPriority priority);
 
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void SDL_LogSetPriority (SDL_LogCategory category, SDL_LogPriority priority);
 
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static SDL_LogPriority SDL_LogGetPriority (SDL_LogCategory category);
 
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void SDL_LogResetPriorities ();
 
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void SDL_Log (string fmt, params object[] objects);
         
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void SDL_LogVerbose (SDL_LogCategory category, string fmt, params object[] objects);
         
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void SDL_LogDebug (SDL_LogCategory category, string fmt, params object[] objects);
         
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void SDL_LogInfo (SDL_LogCategory category, string fmt, params object[] objects);
         
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void SDL_LogWarn (SDL_LogCategory category, string fmt, params object[] objects);
         
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void SDL_LogError (SDL_LogCategory category, string fmt, params object[] objects);
         
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void SDL_LogCritical (SDL_LogCategory category, string fmt, params object[] objects);
         
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void SDL_LogMessage (SDL_LogCategory category, SDL_LogPriority priority, string fmt, params object[] objects);
         
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void SDL_LogGetOutputFunction (LogOutputFunction callback, IntPtr userData);
 
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void SDL_LogSetOutputFunction (LogOutputFunction callback, IntPtr userData);
     }
 }

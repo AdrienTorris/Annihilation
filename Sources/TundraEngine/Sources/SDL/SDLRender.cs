@@ -59,7 +59,7 @@ namespace TundraEngine.SDL
          *  \sa SDL_GetRenderDriverInfo()
          *  \sa SDL_CreateRenderer()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_GetNumRenderDrivers();
 
         /**
@@ -74,7 +74,7 @@ namespace TundraEngine.SDL
          *
          *  \sa SDL_CreateRenderer()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_GetRenderDriverInfo(int index, out SDL_RendererInfo info);
 
         /**
@@ -88,9 +88,9 @@ namespace TundraEngine.SDL
          *
          *  \return 0 on success, or -1 on error
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_CreateWindowAndRenderer(
-                                        int width, int height, SDL_WindowFlags window_flags,
+                                        int width, int height, WindowFlags window_flags,
                                         out IntPtr window, out IntPtr renderer);
 
 
@@ -108,7 +108,7 @@ namespace TundraEngine.SDL
          *  \sa SDL_GetRendererInfo()
          *  \sa SDL_DestroyRenderer()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static IntPtr SDL_CreateRenderer(IntPtr window,
                                                        int index, SDL_RendererFlags flags);
 
@@ -122,26 +122,26 @@ namespace TundraEngine.SDL
          *  \sa SDL_CreateRenderer()
          *  \sa SDL_DestroyRenderer()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static IntPtr SDL_CreateSoftwareRenderer(IntPtr surface);
 
         /**
          *  \brief Get the renderer associated with a window.
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static IntPtr SDL_GetRenderer(IntPtr window);
 
         /**
          *  \brief Get information about a rendering context.
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_GetRendererInfo(IntPtr renderer,
                                                         out SDL_RendererInfo info);
 
         /**
          *  \brief Get the output size in pixels of a rendering context.
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_GetRendererOutputSize(IntPtr renderer,
                                                              out int w, out int h);
 
@@ -162,7 +162,7 @@ namespace TundraEngine.SDL
          *  \sa SDL_UpdateTexture()
          *  \sa SDL_DestroyTexture()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static IntPtr SDL_CreateTexture(IntPtr renderer,
                                                                 uint format,
                                                                 int access, int w,
@@ -181,7 +181,7 @@ namespace TundraEngine.SDL
          *  \sa SDL_QueryTexture()
          *  \sa SDL_DestroyTexture()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static IntPtr SDL_CreateTextureFromSurface(IntPtr renderer, IntPtr surface);
 
         /**
@@ -197,7 +197,7 @@ namespace TundraEngine.SDL
          *
          *  \return 0 on success, or -1 if the texture is not valid.
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_QueryTexture(IntPtr texture,
                                                     out uint format, out int access,
                                                     out int w, out int h);
@@ -215,7 +215,7 @@ namespace TundraEngine.SDL
          *
          *  \sa SDL_GetTextureColorMod()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_SetTextureColorMod(IntPtr texture,
                                                            byte r, byte g, byte b);
 
@@ -232,7 +232,7 @@ namespace TundraEngine.SDL
          *
          *  \sa SDL_SetTextureColorMod()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_GetTextureColorMod(IntPtr texture,
                                                           out byte r, out byte g,
                                                           out byte b);
@@ -248,7 +248,7 @@ namespace TundraEngine.SDL
          *
          *  \sa SDL_GetTextureAlphaMod()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_SetTextureAlphaMod(IntPtr texture,
                                                            byte alpha);
 
@@ -262,7 +262,7 @@ namespace TundraEngine.SDL
          *
          *  \sa SDL_SetTextureAlphaMod()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_GetTextureAlphaMod(IntPtr texture,
                                                           out byte alpha);
 
@@ -280,7 +280,7 @@ namespace TundraEngine.SDL
          *
          *  \sa SDL_GetTextureBlendMode()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_SetTextureBlendMode(IntPtr texture,
                                                             SDL_BlendMode blendMode);
 
@@ -294,7 +294,7 @@ namespace TundraEngine.SDL
          *
          *  \sa SDL_SetTextureBlendMode()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_GetTextureBlendMode(IntPtr texture,
                                                            out SDL_BlendMode blendMode);
 
@@ -311,7 +311,7 @@ namespace TundraEngine.SDL
          *
          *  \note This is a fairly slow function.
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_UpdateTexture(
             IntPtr texture,
             ref SDL_Rect rect,
@@ -320,7 +320,7 @@ namespace TundraEngine.SDL
         );
 
         /* texture refers to an SDL_Texture* */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_UpdateTexture(
             IntPtr texture,
             IntPtr rect,
@@ -369,7 +369,7 @@ namespace TundraEngine.SDL
          *
          *  \sa SDL_UnlockTexture()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_LockTexture(
             IntPtr texture,
             ref SDL_Rect rect,
@@ -390,7 +390,7 @@ namespace TundraEngine.SDL
         /// <param name="pitch">this is filled in with the pitch of the locked pixels </param>
         /// <returns>Returns 0 on success or a negative error code if the texture is not valid or
         /// was not created with SDL_TEXTUREACCESS_STREAMING; call <see cref="SDL_GetError()"/> for more information. </returns>
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_LockTexture(
             IntPtr texture,
             IntPtr rect,
@@ -403,7 +403,7 @@ namespace TundraEngine.SDL
          *
          *  \sa SDL_LockTexture()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static void SDL_UnlockTexture(IntPtr texture);
 
         /**
@@ -413,7 +413,7 @@ namespace TundraEngine.SDL
          *
          * \return SDL_TRUE if supported, SDL_FALSE if not.
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static bool SDL_RenderTargetSupported(IntPtr renderer);
 
         /**
@@ -426,7 +426,7 @@ namespace TundraEngine.SDL
          *
          *  \sa SDL_GetRenderTarget()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_SetRenderTarget(IntPtr renderer,
                                                         IntPtr texture);
 
@@ -437,7 +437,7 @@ namespace TundraEngine.SDL
          *
          *  \sa SDL_SetRenderTarget()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static IntPtr SDL_GetRenderTarget(IntPtr renderer);
 
         /**
@@ -463,7 +463,7 @@ namespace TundraEngine.SDL
          *  \sa SDL_RenderSetScale()
          *  \sa SDL_RenderSetViewport()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_RenderSetLogicalSize(IntPtr renderer, int w, int h);
 
         /**
@@ -475,7 +475,7 @@ namespace TundraEngine.SDL
          *
          *  \sa SDL_RenderSetLogicalSize()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static void SDL_RenderGetLogicalSize(IntPtr renderer, out int w, out int h);
 
         /**
@@ -490,7 +490,7 @@ namespace TundraEngine.SDL
          *
          *  \sa SDL_RenderSetLogicalSize()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_RenderSetIntegerScale(IntPtr renderer,
                                                               bool enable);
 
@@ -501,7 +501,7 @@ namespace TundraEngine.SDL
          *
          *  \sa SDL_RenderSetIntegerScale()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static bool SDL_RenderGetIntegerScale(IntPtr renderer);
 
         /**
@@ -519,7 +519,7 @@ namespace TundraEngine.SDL
          *  \sa SDL_RenderGetViewport()
          *  \sa SDL_RenderSetLogicalSize()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_RenderSetViewport(IntPtr renderer,
                                                   ref SDL_Rect rect);
 
@@ -528,7 +528,7 @@ namespace TundraEngine.SDL
          *
          *  \sa SDL_RenderSetViewport()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static void SDL_RenderGetViewport(IntPtr renderer,
                                                           out SDL_Rect rect);
 
@@ -543,7 +543,7 @@ namespace TundraEngine.SDL
          *
          *  \sa SDL_RenderGetClipRect()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_RenderSetClipRect(IntPtr renderer,
                                                   ref SDL_Rect rect);
 
@@ -556,7 +556,7 @@ namespace TundraEngine.SDL
          *
          *  \sa SDL_RenderSetClipRect()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static void SDL_RenderGetClipRect(IntPtr renderer,
                                                          out SDL_Rect rect);
 
@@ -567,7 +567,7 @@ namespace TundraEngine.SDL
          *
          *  \sa SDL_RenderGetClipRect()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static bool SDL_RenderIsClipEnabled(IntPtr renderer);
 
 
@@ -589,7 +589,7 @@ namespace TundraEngine.SDL
          *  \sa SDL_RenderGetScale()
          *  \sa SDL_RenderSetLogicalSize()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_RenderSetScale(IntPtr renderer,
                                                        float scaleX, float scaleY);
 
@@ -602,7 +602,7 @@ namespace TundraEngine.SDL
          *
          *  \sa SDL_RenderSetScale()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static void SDL_RenderGetScale(IntPtr renderer,
                                                       out float scaleX, out float scaleY);
 
@@ -618,7 +618,7 @@ namespace TundraEngine.SDL
          *
          *  \return 0 on success, or -1 on error
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_SetRenderDrawColor(IntPtr renderer,
                                                    byte r, byte g, byte b,
                                                    byte a);
@@ -635,7 +635,7 @@ namespace TundraEngine.SDL
          *
          *  \return 0 on success, or -1 on error
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_GetRenderDrawColor(IntPtr renderer,
                                                   out byte r, out byte g, out byte b,
                                                   out byte a);
@@ -653,7 +653,7 @@ namespace TundraEngine.SDL
          *
          *  \sa SDL_GetRenderDrawBlendMode()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_SetRenderDrawBlendMode(IntPtr renderer,
                                                                SDL_BlendMode blendMode);
 
@@ -667,7 +667,7 @@ namespace TundraEngine.SDL
          *
          *  \sa SDL_SetRenderDrawBlendMode()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_GetRenderDrawBlendMode(IntPtr renderer,
                                                               out SDL_BlendMode blendMode);
 
@@ -679,7 +679,7 @@ namespace TundraEngine.SDL
          *
          *  \return 0 on success, or -1 on error
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_RenderClear(IntPtr renderer);
 
         /**
@@ -691,7 +691,7 @@ namespace TundraEngine.SDL
          *
          *  \return 0 on success, or -1 on error
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_RenderDrawPoint(IntPtr renderer,
                                                         int x, int y);
 
@@ -704,7 +704,7 @@ namespace TundraEngine.SDL
          *
          *  \return 0 on success, or -1 on error
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_RenderDrawPoints(
             IntPtr renderer,
             [In()] [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.Struct, SizeParamIndex = 2)]
@@ -723,7 +723,7 @@ namespace TundraEngine.SDL
          *
          *  \return 0 on success, or -1 on error
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_RenderDrawLine(IntPtr renderer,
                                                        int x1, int y1, int x2, int y2);
 
@@ -736,7 +736,7 @@ namespace TundraEngine.SDL
          *
          *  \return 0 on success, or -1 on error
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_RenderDrawLines(
             IntPtr renderer,
             [In()] [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.Struct, SizeParamIndex = 2)]
@@ -752,7 +752,7 @@ namespace TundraEngine.SDL
          *
          *  \return 0 on success, or -1 on error
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_RenderDrawRect(
             IntPtr renderer,
             ref SDL_Rect rect
@@ -761,7 +761,7 @@ namespace TundraEngine.SDL
         /* renderer refers to an SDL_Renderer*, rect to an SDL_Rect*.
 		 * This overload allows for IntPtr.Zero (null) to be passed for rect.
 		 */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_RenderDrawRect(
             IntPtr renderer,
             IntPtr rect
@@ -776,7 +776,7 @@ namespace TundraEngine.SDL
          *
          *  \return 0 on success, or -1 on error
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_RenderDrawRects(
             IntPtr renderer,
             [In()] [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.Struct, SizeParamIndex = 2)]
@@ -793,7 +793,7 @@ namespace TundraEngine.SDL
          *
          *  \return 0 on success, or -1 on error
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_RenderFillRect(
             IntPtr renderer,
             ref SDL_Rect rect
@@ -802,7 +802,7 @@ namespace TundraEngine.SDL
         /* renderer refers to an SDL_Renderer*, rect to an SDL_Rect*.
 		 * This overload allows for IntPtr.Zero (null) to be passed for rect.
 		 */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_RenderFillRect(
             IntPtr renderer,
             IntPtr rect
@@ -817,7 +817,7 @@ namespace TundraEngine.SDL
          *
          *  \return 0 on success, or -1 on error
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_RenderFillRects(
             IntPtr renderer,
             [In()] [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.Struct, SizeParamIndex = 2)]
@@ -826,7 +826,7 @@ namespace TundraEngine.SDL
         );
 
         /* renderer refers to an SDL_Renderer*, texture to an SDL_Texture* */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_RenderCopy(
             IntPtr renderer,
             IntPtr texture,
@@ -839,7 +839,7 @@ namespace TundraEngine.SDL
 		 * source and destination rectangles are passed as NULL.
 		 * This overload allows for IntPtr.Zero (null) to be passed for srcrect.
 		 */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_RenderCopy(
             IntPtr renderer,
             IntPtr texture,
@@ -852,7 +852,7 @@ namespace TundraEngine.SDL
 		 * source and destination rectangles are passed as NULL.
 		 * This overload allows for IntPtr.Zero (null) to be passed for dstrect.
 		 */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_RenderCopy(
             IntPtr renderer,
             IntPtr texture,
@@ -860,7 +860,7 @@ namespace TundraEngine.SDL
             IntPtr dstrect
         );
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_RenderCopy(
             IntPtr renderer,
             IntPtr texture,
@@ -883,7 +883,7 @@ namespace TundraEngine.SDL
          *
          *  \return 0 on success, or -1 on error
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_RenderCopyEx(
             IntPtr renderer,
             IntPtr texture,
@@ -899,7 +899,7 @@ namespace TundraEngine.SDL
 		 * source, destination, and/or center are passed as NULL.
 		 * This overload allows for IntPtr.Zero (null) to be passed for srcrect.
 		 */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_RenderCopyEx(
             IntPtr renderer,
             IntPtr texture,
@@ -925,13 +925,13 @@ namespace TundraEngine.SDL
          *
          *  \warning This is a very slow operation, and should not be used frequently.
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_RenderReadPixels(IntPtr renderer, ref SDL_Rect rect, uint format, IntPtr pixels, int pitch);
 
         /**
          *  \brief Update the screen with rendering performed.
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static void SDL_RenderPresent(IntPtr renderer);
 
         /**
@@ -940,7 +940,7 @@ namespace TundraEngine.SDL
          *  \sa SDL_CreateTexture()
          *  \sa SDL_CreateTextureFromSurface()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static void SDL_DestroyTexture(IntPtr texture);
 
         /**
@@ -949,7 +949,7 @@ namespace TundraEngine.SDL
          *
          *  \sa SDL_CreateRenderer()
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static void SDL_DestroyRenderer(IntPtr renderer);
 
 
@@ -963,7 +963,7 @@ namespace TundraEngine.SDL
          *
          *  \return 0 on success, or -1 if the operation is not supported
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_GL_BindTexture(IntPtr texture, out float texw, out float texh);
 
         /**
@@ -973,7 +973,7 @@ namespace TundraEngine.SDL
          *
          *  \return 0 on success, or -1 if the operation is not supported
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_GL_UnbindTexture(IntPtr texture);
     }
 }

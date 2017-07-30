@@ -188,7 +188,7 @@ namespace TundraEngine.SDL
         /// <param name="window"> The window about which information is being requested </param>
         /// <param name="info"> This structure must be initialized with the SDL version, and is then filled in with information about the given window. </param>
         /// <returns> True if the function is implemented and the version member of the <paramref name="info"/> struct is valid, false otherwise. </returns>
-        [DllImport (LibName, EntryPoint = "SDL_GetWindowWMInfo", CallingConvention = CallingConvention.Cdecl)]
-        public extern static bool GetWindowWMInfo (IntPtr window, ref SysWMInfo info);
+        [DllImport (LibraryName)]
+        public extern static bool SDL_GetWindowWMInfo(Window window, ref SysWMInfo info);
     }
 }

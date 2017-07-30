@@ -7,7 +7,7 @@ namespace TundraEngine.SDL
     [SuppressUnmanagedCodeSecurity]
     public static partial class SDL
     {
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         unsafe private extern static IntPtr SDL_GetBasePath ();
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace TundraEngine.SDL
             return GetString(SDL_GetBasePath ());
         }
 
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         unsafe private extern static IntPtr SDL_GetPrefPath (string org, string app);
 
         /// <summary>

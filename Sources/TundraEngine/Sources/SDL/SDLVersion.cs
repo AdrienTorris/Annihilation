@@ -39,10 +39,10 @@ namespace TundraEngine.SDL
         /// Get the version of SDL that is linked against your program.
         /// <para/> This function may be called safely at any time, even before SDL_Init().
         /// </summary>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void SDL_GetVersion (out SDL_Version version);
 
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         unsafe private extern static IntPtr SDL_GetRevision ();
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace TundraEngine.SDL
         /// Get the revision number of SDL that is linked against your program.
         /// <para /> Returns a number uniquely identifying the exact revision of the SDL library in use.It is an incrementing number based on commits to hg.libsdl.org
         /// </summary>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static int SDL_GetRevisionNumber ();
     }
 }

@@ -49,82 +49,82 @@ namespace TundraEngine.SDL
             Flipped
         }
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static IntPtr SDL_GetMouseFocus();
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static SDL_MouseButtonState SDL_GetMouseState(out int x, out int y);
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static SDL_MouseButtonState SDL_GetMouseState(out int x, IntPtr y);
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static SDL_MouseButtonState SDL_GetMouseState(IntPtr x, out int y);
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static SDL_MouseButtonState SDL_GetMouseState(IntPtr x, IntPtr y);
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static SDL_MouseButtonState SDL_GetGlobalMouseState(out int x, out int y);
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static SDL_MouseButtonState SDL_GetGlobalMouseState(out int x, IntPtr y);
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static SDL_MouseButtonState SDL_GetGlobalMouseState(IntPtr x, out int y);
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static SDL_MouseButtonState SDL_GetGlobalMouseState(IntPtr x, IntPtr y);
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static SDL_MouseButtonState SDL_GetRelativeMouseState(out int x, out int y);
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static SDL_MouseButtonState SDL_GetRelativeMouseState(out int x, IntPtr y);
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static SDL_MouseButtonState SDL_GetRelativeMouseState(IntPtr x, out int y);
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static SDL_MouseButtonState SDL_GetRelativeMouseState(IntPtr x, IntPtr y);
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static void SDL_WarpMouseInWindow(IntPtr window, int x, int y);
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_WarpMouseGlobal(int x, int y);
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_SetRelativeMouseMode(bool enabled);
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_CaptureMouse(bool enabled);
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static bool SDL_GetRelativeMouseMode();
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static IntPtr SDL_CreateCursor(byte[] data, byte[] mask, int w, int h, int hot_x, int hot_y);
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static IntPtr SDL_CreateColorCursor(IntPtr surface, int hot_x, int hot_y);
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static IntPtr SDL_CreateSystemCursor(SDL_SystemCursor id);
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static void SDL_SetCursor(IntPtr cursor);
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static IntPtr SDL_GetCursor();
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static IntPtr SDL_GetDefaultCursor();
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static void SDL_FreeCursor(IntPtr cursor);
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public extern static int SDL_ShowCursor(int toggle);
     }
 }

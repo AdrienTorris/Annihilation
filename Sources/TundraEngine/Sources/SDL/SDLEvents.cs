@@ -1037,7 +1037,7 @@ namespace TundraEngine.SDL
         /// <para> This function updates the event queue and Native input device state. </para>
         /// <para> This should only be run in the thread that sets the video mode. </para>
         /// </summary>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void SDL_PumpEvents ();
 
         /// <summary>
@@ -1050,7 +1050,7 @@ namespace TundraEngine.SDL
         /// <returns>
         /// The number of events actually stored, or -1 if there was an error.
         /// </returns>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static int SDL_PeepEvents (
             [Out(), MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)]
             SDL_Event[] events,
@@ -1062,27 +1062,27 @@ namespace TundraEngine.SDL
         /// <summary>
         /// Checks to see if certain event types are in the event queue.
         /// </summary>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static bool SDL_HasEvent (SDL_EventType type);
 
         /// <summary>
         /// Checks to see if certain event types are in the event queue.
         /// </summary>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static bool SDL_HasEvents (SDL_EventType minType, SDL_EventType maxType);
 
         /// <summary>
         /// This function clears events from the event queue.
         /// <para> This function only affects currently queued events. If you want to make sure that all pending OS events are flushed, you can call PumpEvents() on the main thread immediately before the flush call. </para>
         /// </summary>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void SDL_FlushEvent (SDL_EventType type);
 
         /// <summary>
         /// This function clears events from the event queue.
         /// <para> This function only affects currently queued events. If you want to make sure that all pending OS events are flushed, you can call PumpEvents() on the main thread immediately before the flush call. </para>
         /// </summary>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void SDL_FlushEvents (SDL_EventType minType, SDL_EventType maxType);
 
         /// <summary>
@@ -1090,7 +1090,7 @@ namespace TundraEngine.SDL
         /// </summary>
         /// <returns> 1 if there are any pending events, or 0 if there are none available. </returns>
         /// <param name="sdlEvent"> If not NULL, the next event is removed from the queue and stored in that area. </param>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static int SDL_PollEvent (out SDL_Event sdlEvent);
 
         /// <summary>
@@ -1098,7 +1098,7 @@ namespace TundraEngine.SDL
         /// </summary>
         /// <returns> 1, or 0 if there was an error while waiting for events. </returns>
         /// <param name="sdlEvent"> If not NULL, the next event is removed from the queue and stored in that area. </param>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static int SDL_WaitEvent (out SDL_Event sdlEvent);
 
         /// <summary>
@@ -1107,14 +1107,14 @@ namespace TundraEngine.SDL
         /// <returns> 1, or 0 if there was an error while waiting for events. </returns>
         /// <param name="sdlEvent"> If not NULL, the next event is removed from the queue and stored in that area. </param>
         /// <param name="timeout"> The timeout (in milliseconds) to wait for next event. </param>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static int SDL_WaitEventTimeout (out SDL_Event sdlEvent, int timeout);
 
         /// <summary>
         /// Add an event to the event queue.
         /// </summary>
         /// <returns> 1 on success, 0 if the event was filtered, or -1 if the event queue was full or there was some other error. </returns>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static int SDL_PushEvent (ref SDL_Event sdlEvent);
 
         /// <summary>
@@ -1127,32 +1127,32 @@ namespace TundraEngine.SDL
         /// <para> There is one caveat when dealing with the ::QuitEvent event type.  The event filter is only called when the window manager desires to close the application window.  If the event filter returns 1, then the window will be closed, otherwise the window will remain open if possible. </para>
         /// <para> If the quit event is generated by an interrupt signal, it will bypass the Native queue and be delivered to the application at the next event poll. </para>
         /// </summary>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void SDL_SetEventFilter (EventFilter filter, IntPtr userData);
 
         /// <summary>
         /// Return the current event filter - can be used to "chain" filters.
         /// If there is no event filter set, this function returns FALSE.
         /// </summary>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static bool SDL_GetEventFilter (out EventFilter filter, IntPtr userData);
 
         /// <summary>
         /// Add a function which is called when an event is added to the queue.
         /// </summary>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void SDL_AddEventWatch (EventFilter filter, IntPtr userData);
 
         /// <summary>
         /// Remove an event watch function added with AddEventWatch().
         /// </summary>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void SDL_DelEventWatch (EventFilter filter, IntPtr userData);
 
         /// <summary>
         /// Run the filter function on the current event queue, removing any events for which the filter returns 0.
         /// </summary>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void SDL_FilterEvents (EventFilter filter, IntPtr userData);
 
         /// <summary>
@@ -1161,7 +1161,7 @@ namespace TundraEngine.SDL
         /// - If <paramref name="state"/> is set to EventState.Enable, that event will be processed normally.
         /// - If <paramref name="state"/> is set to EventState.Query, EventState() will return the current processing state of the specified event.
         /// </summary>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static byte SDL_EventState (SDL_EventType type, SDL_EventStateEnum state);
 
         public static byte SDL_EventState (SDL_EventType type)
@@ -1173,7 +1173,7 @@ namespace TundraEngine.SDL
         /// This function allocates a set of user-defined events, and returns the beginning event number for that set of events.
         /// <para> If there aren't enough user-defined events left, this function returns (uint)-1 </para>
         /// </summary>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static uint SDL_RegisterEvents (int numEvents);
     }
 }

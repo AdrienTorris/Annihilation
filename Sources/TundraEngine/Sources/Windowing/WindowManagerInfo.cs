@@ -8,7 +8,10 @@ namespace TundraEngine.Windowing
         None,
         Windows,
         X11,
-        Wayland
+        Wayland,
+        PS4,
+        XboxOne,
+        Switch
     }
 
     [StructLayout(LayoutKind.Explicit, Pack = 1)]

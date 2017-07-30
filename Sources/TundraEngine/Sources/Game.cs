@@ -27,14 +27,14 @@ namespace TundraEngine
         /// </summary>
         public string[] Args { get; private set; }
         
-        public IWindowProvider Window { get; private set; }
+        public IWindow Window { get; private set; }
         public IRenderer Renderer { get; private set; }
         public InputSystem InputSystem { get; private set; }
         public IDebugUI DebugUI { get; private set; }
 
         public static Game Instance { get; private set; }
 
-        public Game(GameSettings settings, Action initialize, Action<float> update, Action shutdown)
+        public Game(GameSettings settings, Action initialize, Action<double> update, Action shutdown)
         {
             Instance = this;
             Settings = settings;
@@ -49,7 +49,6 @@ namespace TundraEngine
             using (Window = new WindowSDL())
             using (Renderer = new RendererVulkan(ref rendererCreateInfo))
             using (var eventProvider = new EventProviderSDL())
-            //using (DebugUI = new DebugUIBGFX())
             {
                 // Create systems
                 InputSystem = new InputSystem(eventProvider);

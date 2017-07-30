@@ -43,7 +43,7 @@ namespace TundraEngine.SDL
         }
 
         /* src and dst refer to an SDL_Surface* */
-        [DllImport(LibName, EntryPoint = "SDL_UpperBlit")]
+        [DllImport(LibraryName, EntryPoint = "SDL_UpperBlit")]
         public static extern int SDL_BlitSurface(
             IntPtr src,
             ref SDL_Rect srcrect,
@@ -56,7 +56,7 @@ namespace TundraEngine.SDL
 		 * source and destination rectangles are passed as NULL.
 		 * This overload allows for IntPtr.Zero (null) to be passed for srcrect.
 		 */
-        [DllImport(LibName, EntryPoint = "SDL_UpperBlit")]
+        [DllImport(LibraryName, EntryPoint = "SDL_UpperBlit")]
         public static extern int SDL_BlitSurface(
             IntPtr src,
             IntPtr srcrect,
@@ -69,7 +69,7 @@ namespace TundraEngine.SDL
 		 * source and destination rectangles are passed as NULL.
 		 * This overload allows for IntPtr.Zero (null) to be passed for dstrect.
 		 */
-        [DllImport(LibName, EntryPoint = "SDL_UpperBlit")]
+        [DllImport(LibraryName, EntryPoint = "SDL_UpperBlit")]
         public static extern int SDL_BlitSurface(
             IntPtr src,
             ref SDL_Rect srcrect,
@@ -82,7 +82,7 @@ namespace TundraEngine.SDL
 		 * source and destination rectangles are passed as NULL.
 		 * This overload allows for IntPtr.Zero (null) to be passed for both SDL_Rects.
 		 */
-        [DllImport(LibName, EntryPoint = "SDL_UpperBlit")]
+        [DllImport(LibraryName, EntryPoint = "SDL_UpperBlit")]
         public static extern int SDL_BlitSurface(
             IntPtr src,
             IntPtr srcrect,
@@ -91,7 +91,7 @@ namespace TundraEngine.SDL
         );
 
         /* src and dst refer to an SDL_Surface* */
-        [DllImport(LibName, EntryPoint = "SDL_UpperBlitScaled")]
+        [DllImport(LibraryName, EntryPoint = "SDL_UpperBlitScaled")]
         public static extern int SDL_BlitScaled(
             IntPtr src,
             ref SDL_Rect srcrect,
@@ -104,7 +104,7 @@ namespace TundraEngine.SDL
 		 * source and destination rectangles are passed as NULL.
 		 * This overload allows for IntPtr.Zero (null) to be passed for srcrect.
 		 */
-        [DllImport(LibName, EntryPoint = "SDL_UpperBlitScaled")]
+        [DllImport(LibraryName, EntryPoint = "SDL_UpperBlitScaled")]
         public static extern int SDL_BlitScaled(
             IntPtr src,
             IntPtr srcrect,
@@ -117,7 +117,7 @@ namespace TundraEngine.SDL
 		 * source and destination rectangles are passed as NULL.
 		 * This overload allows for IntPtr.Zero (null) to be passed for dstrect.
 		 */
-        [DllImport(LibName, EntryPoint = "SDL_UpperBlitScaled")]
+        [DllImport(LibraryName, EntryPoint = "SDL_UpperBlitScaled")]
         public static extern int SDL_BlitScaled(
             IntPtr src,
             ref SDL_Rect srcrect,
@@ -130,7 +130,7 @@ namespace TundraEngine.SDL
 		 * source and destination rectangles are passed as NULL.
 		 * This overload allows for IntPtr.Zero (null) to be passed for both SDL_Rects.
 		 */
-        [DllImport(LibName, EntryPoint = "SDL_UpperBlitScaled")]
+        [DllImport(LibraryName, EntryPoint = "SDL_UpperBlitScaled")]
         public static extern int SDL_BlitScaled(
             IntPtr src,
             IntPtr srcrect,
@@ -139,7 +139,7 @@ namespace TundraEngine.SDL
         );
 
         /* src and dst are void* pointers */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_ConvertPixels(
             int width,
             int height,
@@ -155,7 +155,7 @@ namespace TundraEngine.SDL
 		 * src refers to an SDL_Surface*
 		 * fmt refers to an SDL_PixelFormat*
 		 */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern IntPtr SDL_ConvertSurface(
             IntPtr src,
             IntPtr fmt,
@@ -163,7 +163,7 @@ namespace TundraEngine.SDL
         );
 
         /* IntPtr refers to an SDL_Surface*, src to an SDL_Surface* */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern IntPtr SDL_ConvertSurfaceFormat(
             IntPtr src,
             uint pixel_format,
@@ -171,7 +171,7 @@ namespace TundraEngine.SDL
         );
 
         /* IntPtr refers to an SDL_Surface* */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern IntPtr SDL_CreateRGBSurface(
             uint flags,
             int width,
@@ -184,7 +184,7 @@ namespace TundraEngine.SDL
         );
 
         /* IntPtr refers to an SDL_Surface*, pixels to a void* */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern IntPtr SDL_CreateRGBSurfaceFrom(
             IntPtr pixels,
             int width,
@@ -199,7 +199,7 @@ namespace TundraEngine.SDL
 
         /* IntPtr refers to an SDL_Surface* */
         /* Available in 2.0.5 or higher */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern IntPtr SDL_CreateRGBSurfaceWithFormat(
             uint flags,
             int width,
@@ -210,7 +210,7 @@ namespace TundraEngine.SDL
 
         /* IntPtr refers to an SDL_Surface*, pixels to a void* */
         /* Available in 2.0.5 or higher */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern IntPtr SDL_CreateRGBSurfaceWithFormatFrom(
             IntPtr pixels,
             int width,
@@ -221,7 +221,7 @@ namespace TundraEngine.SDL
         );
 
         /* dst refers to an SDL_Surface* */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_FillRect(
             IntPtr dst,
             ref SDL_Rect rect,
@@ -231,7 +231,7 @@ namespace TundraEngine.SDL
         /* dst refers to an SDL_Surface*.
 		 * This overload allows passing NULL to rect.
 		 */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_FillRect(
             IntPtr dst,
             IntPtr rect,
@@ -239,7 +239,7 @@ namespace TundraEngine.SDL
         );
 
         /* dst refers to an SDL_Surface* */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_FillRects(
             IntPtr dst,
             [In()] [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.Struct, SizeParamIndex = 2)]
@@ -249,39 +249,39 @@ namespace TundraEngine.SDL
         );
 
         /* surface refers to an SDL_Surface* */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern void SDL_FreeSurface(IntPtr surface);
 
         /* surface refers to an SDL_Surface* */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern void SDL_GetClipRect(
             IntPtr surface,
             out SDL_Rect rect
         );
 
         /* surface refers to an SDL_Surface* */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_GetColorKey(
             IntPtr surface,
             out uint key
         );
 
         /* surface refers to an SDL_Surface* */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_GetSurfaceAlphaMod(
             IntPtr surface,
             out byte alpha
         );
 
         /* surface refers to an SDL_Surface* */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_GetSurfaceBlendMode(
             IntPtr surface,
             out SDL_BlendMode blendMode
         );
 
         /* surface refers to an SDL_Surface* */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_GetSurfaceColorMod(
             IntPtr surface,
             out byte r,
@@ -292,7 +292,7 @@ namespace TundraEngine.SDL
         /* These are for SDL_LoadBMP, which is a macro in the SDL headers. */
         /* IntPtr refers to an SDL_Surface* */
         /* THIS IS AN RWops FUNCTION! */
-        [DllImport(LibName, EntryPoint = "SDL_LoadBMP_RW")]
+        [DllImport(LibraryName, EntryPoint = "SDL_LoadBMP_RW")]
         private static extern IntPtr SDL_LoadBMP_RW(
             IntPtr src,
             int freesrc
@@ -304,11 +304,11 @@ namespace TundraEngine.SDL
         }
 
         /* surface refers to an SDL_Surface* */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_LockSurface(IntPtr surface);
 
         /* src and dst refer to an SDL_Surface* */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_LowerBlit(
             IntPtr src,
             ref SDL_Rect srcrect,
@@ -317,7 +317,7 @@ namespace TundraEngine.SDL
         );
 
         /* src and dst refer to an SDL_Surface* */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_LowerBlitScaled(
             IntPtr src,
             ref SDL_Rect srcrect,
@@ -328,7 +328,7 @@ namespace TundraEngine.SDL
         /* These are for SDL_SaveBMP, which is a macro in the SDL headers. */
         /* IntPtr refers to an SDL_Surface* */
         /* THIS IS AN RWops FUNCTION! */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         private static extern int SDL_SaveBMP_RW(
             IntPtr surface,
             IntPtr src,
@@ -341,14 +341,14 @@ namespace TundraEngine.SDL
         }
 
         /* surface refers to an SDL_Surface* */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern bool SDL_SetClipRect(
             IntPtr surface,
             ref SDL_Rect rect
         );
 
         /* surface refers to an SDL_Surface* */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_SetColorKey(
             IntPtr surface,
             int flag,
@@ -356,21 +356,21 @@ namespace TundraEngine.SDL
         );
 
         /* surface refers to an SDL_Surface* */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_SetSurfaceAlphaMod(
             IntPtr surface,
             byte alpha
         );
 
         /* surface refers to an SDL_Surface* */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_SetSurfaceBlendMode(
             IntPtr surface,
             SDL_BlendMode blendMode
         );
 
         /* surface refers to an SDL_Surface* */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_SetSurfaceColorMod(
             IntPtr surface,
             byte r,
@@ -379,21 +379,21 @@ namespace TundraEngine.SDL
         );
 
         /* surface refers to an SDL_Surface*, palette to an SDL_Palette* */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_SetSurfacePalette(
             IntPtr surface,
             IntPtr palette
         );
 
         /* surface refers to an SDL_Surface* */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_SetSurfaceRLE(
             IntPtr surface,
             int flag
         );
 
         /* src and dst refer to an SDL_Surface* */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_SoftStretch(
             IntPtr src,
             ref SDL_Rect srcrect,
@@ -402,11 +402,11 @@ namespace TundraEngine.SDL
         );
 
         /* surface refers to an SDL_Surface* */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern void SDL_UnlockSurface(IntPtr surface);
 
         /* src and dst refer to an SDL_Surface* */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_UpperBlit(
             IntPtr src,
             ref SDL_Rect srcrect,
@@ -415,7 +415,7 @@ namespace TundraEngine.SDL
         );
 
         /* src and dst refer to an SDL_Surface* */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_UpperBlitScaled(
             IntPtr src,
             ref SDL_Rect srcrect,

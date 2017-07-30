@@ -7,96 +7,6 @@ namespace TundraEngine.SDL
     [SuppressUnmanagedCodeSecurity]
     public static partial class SDL
     {
-        /// <summary>
-        /// The flags on a window.
-        /// </summary>
-        /// <seealso cref="GetWindowFlags"/>
-        [Flags]
-        public enum SDL_WindowFlags : uint
-        {
-            /// <summary>
-            /// Fullscreen window
-            /// </summary>
-            Fullscreen = 1 << 0,
-            /// <summary>
-            /// Window usable with OpenGL context
-            /// </summary>
-            OpenGL = 1 << 1,
-            /// <summary>
-            /// Window is visible
-            /// </summary>
-            Shown = 1 << 2,
-            /// <summary>
-            /// Window is not visible
-            /// </summary>
-            Hidden = 1 << 3,
-            /// <summary>
-            /// No window decoration
-            /// </summary>
-            Borderless = 1 << 4,
-            /// <summary>
-            /// Window can be resized
-            /// </summary>
-            Resizable = 1 << 5,
-            /// <summary>
-            /// Window is minimized
-            /// </summary>
-            Minimized = 1 << 6,
-            /// <summary>
-            /// Window is maximized
-            /// </summary>
-            Maximized = 1 << 7,
-            /// <summary>
-            /// Window has grabbed input focus
-            /// </summary>
-            InputGrabbed = 1 << 8,
-            /// <summary>
-            /// Window has input focus
-            /// </summary>
-            InputFocus = 1 << 9,
-            /// <summary>
-            /// Window has mouse focus
-            /// </summary>
-            MouseFocus = 1 << 10,
-            FullscreenDeskTop = (Fullscreen | 1 << 12),
-            /// <summary>
-            /// Window not created by SDL
-            /// </summary>
-            Foreign = 1 << 11,
-            /// <summary>
-            /// Window should be created in high-DPI mode if supported
-            /// </summary>
-            AllowHighDPI = 1 << 13,
-            /// <summary>
-            /// Window has mouse captured (unrelated to <see cref="InputGrabbed"/>)
-            /// </summary>
-            MouseCapture = 1 << 14,
-            /// <summary>
-            /// Window should always be above others
-            /// </summary>
-            AlwaysOnTop = 1 << 15,
-            /// <summary>
-            /// Window should not be added to the taskbar
-            /// </summary>
-            SkipTaskbar = 1 << 16,
-            /// <summary>
-            /// Window should be treated as a utility window
-            /// </summary>
-            Utility = 1 << 17,
-            /// <summary>
-            /// Window should be treated as a tooltip
-            /// </summary>
-            Tooltip = 1 << 18,
-            /// <summary>
-            /// Window should be treated as a popup menu
-            /// </summary>
-            PopupMenu = 1 << 19,
-            /// <summary>
-            /// Window usable for Vulkan surface
-            /// </summary>
-            Vulkan = 1 << 20,
-        }
-
         public enum SDL_WindowEventID
         {
             /// <summary>
@@ -173,27 +83,6 @@ namespace TundraEngine.SDL
             HitTest
         }
 
-        /// <summary> Possible return values from the <see cref="HitTest"/> callback. </summary>
-        /// <seealso cref="HitTest"/>
-        public enum SDL_HitTestResult
-        {
-            /// <summary>
-            /// Region is normal. No special properties.
-            /// </summary>
-            Normal,
-            /// <summary>
-            /// Region can drag entire window.
-            /// </summary>
-            Draggable,
-            ResizeTopLeft,
-            ResizeTop,
-            ResizeTopRight,
-            ResizeRight,
-            ResizeBottomRight,
-            ResizeBottom,
-            ResizeBottomLeft,
-            ResizeLeft
-        }
 
         [Flags]
         public enum SDL_BlendMode
@@ -203,64 +92,15 @@ namespace TundraEngine.SDL
             Add = 1 << 1,
             Mod = 1 << 2
         }
-
-        /// <summary>
-		/// A structure that describes a display mode.
-		/// </summary>
-		[StructLayout (LayoutKind.Sequential)]
-        public struct SDL_DisplayMode
-        {
-            public readonly uint Format;
-            public readonly int Width;
-            public readonly int Height;
-            public readonly int RefreshRate;
-            public readonly IntPtr DriverData; // void*
-        }
-
-        /// <summary>
-        /// Used to indicate that you don't care what the window position is.
-        /// </summary>
-        public const uint SDL_WindowPositionUndefinedMask = 0x1FFF0000u;
-        public const int SDL_WindowPositionUndefined = (int)SDL_WindowPositionUndefinedMask;
-
-        /// <summary>
-        /// Used to indicate that the window position should be centered.
-        /// </summary>
-        public const uint SDL_WindowPositionCenteredMask = 0x2FFF0000u;
-        public const int SDL_WindowPositionCentered = (int)SDL_WindowPositionCenteredMask;
-
-        /// <summary> Callback used for hit-testing. </summary>
-        /// <seealso cref="SetWindowHitTest(IntPtr, HitTest, IntPtr)"/>
-        public delegate SDL_HitTestResult HitTest (IntPtr win, IntPtr area, IntPtr data);
-
-        public static uint SDL_WindowPositionUndefinedDisplay (uint x)
-        {
-            return SDL_WindowPositionUndefinedMask | x;
-        }
-
-        public static bool SDL_IsWindowPositionUndefined (int x)
-        {
-            return (x & 0xFFFF0000) == SDL_WindowPositionUndefinedMask;
-        }
-
-        public static uint SDL_WindowPositionCenteredDisplay (uint x)
-        {
-            return SDL_WindowPositionCenteredMask | x;
-        }
-
-        public static bool SDL_IsWindowPositionCentered (int x)
-        {
-            return (x & 0xFFFF0000) == SDL_WindowPositionCenteredMask;
-        }
-
+        
         /// <summary>
         /// Get the number of video drivers compiled into SDL
         /// </summary>
         /// <seealso cref="GetVideoDriver"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName)]
         public extern static int SDL_GetNumVideoDrivers ();
 
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName)]
         private extern static IntPtr SDL_GetVideoDriver (int index);
 
         /// <summary>
@@ -282,7 +122,7 @@ namespace TundraEngine.SDL
         ///  and pixel formats, but does not initialize a window or graphics mode.
         /// </remarks>
         /// <seealso cref="VideoQuit"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName)]
         public static extern int SDL_VideoInit (IntPtr driver_name);
 
         /// <summary> 
@@ -291,31 +131,31 @@ namespace TundraEngine.SDL
         /// This function closes all windows, and restores the original video mode.
         /// </summary>
         /// <seealso cref="VideoInit"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName)]
         public static extern void SDL_VideoQuit ();
 
         /// <summary> Returns the name of the currently initialized video driver. </summary>
         /// <returns> The name of the current video driver or <see cref="IntPtr.Zero"/> if no driver has been initialized. </returns>
         /// <seealso cref="GetNumVideoDrivers"/>
         /// <seealso cref="GetVideoDriver"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName)]
         public static extern IntPtr SDL_GetCurrentVideoDriver ();
 
         /// <summary> Returns the number of available video displays. </summary>
         /// <seealso cref="GetDisplayBounds"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName)]
         public static extern int SDL_GetNumVideoDisplays ();
 
         /// <summary> Get the name of a display in UTF-8 encodin.g </summary>
         /// <returns> The name of a display, or <see cref="IntPtr.Zero"/> for an invalid display index. </returns>
         /// <seealso cref="GetNumVideoDisplays"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName)]
         public static extern IntPtr SDL_GetDisplayName (int displayIndex);
 
         /// <summary> Get the deskTop area represented by a display, with the primary display located at 0,0 </summary>
         /// <returns> 0 on success, or -1 if the index is out of range. </returns>
         /// <seealso cref="GetNumVideoDisplays"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName)]
         public static extern int SDL_GetDisplayBounds (int displayIndex, out SDL_Rect rectangle);
 
         /// <summary> Get the dots/pixels-per-inch for a display </summary>
@@ -324,7 +164,7 @@ namespace TundraEngine.SDL
         /// </remarks>
         /// <returns> 0 on success, or -1 if no DPI information is available or the index is out of range. </returns>
         /// <seealso cref="GetNumVideoDisplays"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName)]
         public static extern int SDL_GetDisplayDPI (int displayIndex, out float ddpi, out float hdpi, out float vdpi);
 
         /// <summary> 
@@ -340,12 +180,12 @@ namespace TundraEngine.SDL
         /// <returns> 0 on success, or -1 if the index is out of range. </returns>
         /// <seealso cref="GetDisplayBounds"/>
         /// <seealso cref="GetNumVideoDisplays"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName)]
         public static extern int SDL_GetDisplayUsableBounds (int displayIndex, out SDL_Rect rectangle);
 
         /// <summary> Returns the number of available display modes. </summary>
         /// <seealso cref="GetDisplayMode"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName)]
         public static extern int SDL_GetNumDisplayModes (int displayIndex);
 
         /// <summary> Fill in information about a specific display mode. </summary>
@@ -359,15 +199,15 @@ namespace TundraEngine.SDL
         /// </list>
         /// </remarks>
         /// <seealso cref="GetNumDisplayModes"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName)]
         public static extern int SDL_GetDisplayMode (int displayIndex, int modeIndex, out SDL_DisplayMode mode);
 
         /// <summary> Fill in information about the deskTop display mode. </summary>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName)]
         public static extern int SDL_GetDeskTopDisplayMode (int displayIndex, out SDL_DisplayMode mode);
 
         /// <summary> Fill in information about the current display mode. </summary>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName)]
         public static extern int SDL_GetCurrentDisplayMode (int displayIndex, out SDL_DisplayMode mode);
 
         /// <summary> Get the closest match to the requested display mode. </summary>
@@ -385,14 +225,14 @@ namespace TundraEngine.SDL
         /// </remarks>
         /// <seealso cref="GetNumDisplayModes"/>
         /// <seealso cref="GetDisplayMode"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName)]
         [return: MarshalAs (UnmanagedType.LPStruct)]
         public static extern SDL_DisplayMode SDL_GetClosestDisplayMode (int displayIndex, ref SDL_DisplayMode mode, out SDL_DisplayMode closest);
 
         /// <summary> Get the display index associated with a window. </summary>
         /// <returns> the display index of the display containing the center of the window, or -1 on error. </returns>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int SDL_GetWindowDisplayIndex (IntPtr window);
+        [DllImport (LibraryName)]
+        public static extern int SDL_GetWindowDisplayIndex (Window window);
 
         /// <summary> Set the display mode used when a fullscreen window is visible.
         /// <para/>
@@ -404,18 +244,18 @@ namespace TundraEngine.SDL
         /// <returns> 0 on success, or -1 if setting the display mode failed. </returns>
         /// <seealso cref="GetWindowDisplayMode"/>
         /// <seealso cref="SetWindowFullscreen"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int SDL_SetWindowDisplayMode (IntPtr window, ref SDL_DisplayMode mode);
+        [DllImport (LibraryName)]
+        public static extern int SDL_SetWindowDisplayMode (Window window, ref SDL_DisplayMode mode);
 
         /// <summary> Fill in information about the display mode used when a fullscreen window is visible. </summary>
         /// <seealso cref="SetWindowDisplayMode"/>
         /// <seealso cref="SetWindowFullscreen"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int SDL_GetWindowDisplayMode (IntPtr window, out SDL_DisplayMode mode);
+        [DllImport (LibraryName)]
+        public static extern int SDL_GetWindowDisplayMode (Window window, out SDL_DisplayMode mode);
 
         /// <summary> Get the pixel format associated with the window. </summary>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern uint SDL_GetWindowPixelFormat (IntPtr window);
+        [DllImport (LibraryName)]
+        public static extern uint SDL_GetWindowPixelFormat (Window window);
 
         /// <summary> Create a window with the specified position, dimensions, and flags. </summary>
         /// <param name="title"> The title of the window, in UTF-8 encoding. </param>
@@ -433,43 +273,43 @@ namespace TundraEngine.SDL
         ///  or GetRendererOutputSize"/> to query the drawable size in pixels.
         /// </remarks>
         /// <seealso cref="DestroyWindow"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr SDL_CreateWindow (string title, int x, int y, int width, int height, SDL_WindowFlags flags);
+        [DllImport (LibraryName)]
+        public static extern Window SDL_CreateWindow (string title, int x, int y, int width, int height, WindowFlags flags);
         
         /// <summary> Create an SDL window from an existing native window. </summary>
         /// <param name="data"> A pointer to driver-dependent window creation data. </param>
         /// <returns> The created window, or <see cref="IntPtr.Zero"/> if window creation failed. </returns>
         /// <seealso cref="DestroyWindow"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr SDL_CreateWindowFrom (IntPtr data);
+        [DllImport (LibraryName)]
+        public static extern Window SDL_CreateWindowFrom (IntPtr data);
 
         /// <summary> Get the numeric ID of a window, for logging purposes. </summary>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern uint SDL_GetWindowID (IntPtr window);
+        [DllImport (LibraryName)]
+        public static extern uint SDL_GetWindowID (Window window);
 
         /// <summary> Get a window from a stored ID, or <see cref="IntPtr.Zero"/> if it doesn't exist. </summary>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr SDL_GetWindowFromID (uint id);
+        [DllImport (LibraryName)]
+        public static extern Window SDL_GetWindowFromID (uint id);
 
         /// <summary> Get the window flags. </summary>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern uint SDL_GetWindowFlags (IntPtr window);
+        [DllImport (LibraryName)]
+        public static extern WindowFlags SDL_GetWindowFlags (Window window);
 
         /// <summary> Set the title of a window, in UTF-8 format. </summary>
         /// <seealso cref="GetWindowTitle"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SDL_GetVideoDriver (IntPtr window, IntPtr title);
+        [DllImport (LibraryName)]
+        public static extern void SDL_GetVideoDriver (Window window, IntPtr title);
 
         /// <summary> Get the title of a window, in UTF-8 format. </summary>
         /// <seealso cref="SetWindowTitle"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr SDL_GetWindowTitle (IntPtr window);
+        [DllImport (LibraryName)]
+        public static extern IntPtr SDL_GetWindowTitle (Window window);
 
         /// <summary> Set the icon for a window. </summary>
         /// <param name="window"> The window for which the icon should be set. </param>
         /// <param name="icon"> icon The icon for the window. </param>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SDL_SetWindowIcon (IntPtr window, IntPtr icon);
+        [DllImport (LibraryName)]
+        public static extern void SDL_SetWindowIcon (Window window, IntPtr icon);
 
         /// <summary> Associate an arbitrary named pointer with a window. </summary>
         /// <param name="window"> The window to associate with the pointer. </param>
@@ -478,16 +318,16 @@ namespace TundraEngine.SDL
         /// <returns> The previous value associated with 'name' </returns>
         /// <remarks> The name is case-sensitive. </remarks>
         /// <seealso cref="GetWindowData"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr SDL_SetWindowData (IntPtr window, IntPtr name, IntPtr userData);
+        [DllImport (LibraryName)]
+        public static extern IntPtr SDL_SetWindowData (Window window, IntPtr name, IntPtr userData);
 
         /// <summary> Retrieve the data pointer associated with a window. </summary>
         /// <param name="window"> The window to query. </param>
         /// <param name="name"> The name of the pointer. </param>
         /// <returns> The value associated with 'name' </returns>
         /// <seealso cref="SetWindowData"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr SDL_GetWindowData (IntPtr window, IntPtr name);
+        [DllImport (LibraryName)]
+        public static extern IntPtr SDL_GetWindowData (Window window, IntPtr name);
 
         /// <summary> Set the position of a window. </summary>
         /// <param name="window"> The window to reposition. </param>
@@ -495,16 +335,16 @@ namespace TundraEngine.SDL
         /// <param name="y"> The y coordinate of the window in screen coordinates, or <see cref="SDL_WindowPositionCentered"/> or <see cref="SDL_WindowPositionUndefined"/>. </param>
         /// <remarks> The window coordinate origin is the upper Left of the display. </remarks>
         /// <seealso cref="GetWindowPosition"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SDL_SetWindowPosition (IntPtr window, int x, int y);
+        [DllImport (LibraryName)]
+        public static extern void SDL_SetWindowPosition (Window window, int x, int y);
 
         /// <summary> Get the position of a window. </summary>
         /// <param name="window"> The window to query. </param>
         /// <param name="x"> Pointer to variable for storing the x position, in screen coordinates. May be <see cref="IntPtr.Zero"/>. </param>
         /// <param name="y"> Pointer to variable for storing the y position, in screen coordinates. May be <see cref="IntPtr.Zero"/>. </param>
         /// <seealso cref="SetWindowPosition"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SDL_GetWindowPosition (IntPtr window, out int x, out int y);
+        [DllImport (LibraryName)]
+        public static extern void SDL_GetWindowPosition (Window window, out int x, out int y);
 
         /// <summary> Set the size of a window's client area. </summary>
         /// <param name="window"> The window to resize. </param>
@@ -519,8 +359,8 @@ namespace TundraEngine.SDL
         ///  GetRendererOutputSize"/> to get the real client area size in pixels.
         /// </remarks>
         /// <seealso cref="GetWindowSize"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SDL_SetWindowSize (IntPtr window, int width, int height);
+        [DllImport (LibraryName)]
+        public static extern void SDL_SetWindowSize (Window window, int width, int height);
 
         /// <summary> Get the size of a window's client area. </summary>
         /// <param name="window"> The window to query. </param>
@@ -533,8 +373,8 @@ namespace TundraEngine.SDL
         ///  GetRendererOutputSize"/> to get the real client area size in pixels.
         /// </remarks>
         /// <seealso cref="SetWindowSize"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SDL_GetWindowSize (IntPtr window, out int width, out int height);
+        [DllImport (LibraryName)]
+        public static extern void SDL_GetWindowSize (Window window, out int width, out int height);
 
         /// <summary> Get the size of a window's borders (decorations) around the client area. </summary>
         /// <param name="window"> The window to query. </param>
@@ -546,8 +386,8 @@ namespace TundraEngine.SDL
         /// <remarks>
         /// If this function fails (returns -1), the size values will be initialized to 0, 0, 0, 0 (if a non-<see cref="IntPtr.Zero"/> pointer is provided), as if the window in question was borderless.
         /// </remarks>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int SDL_GetWindowBordersSize (IntPtr window, out int top, out int left, out int bottom, out int right);
+        [DllImport (LibraryName)]
+        public static extern int SDL_GetWindowBordersSize (Window window, out int top, out int left, out int bottom, out int right);
 
         /// <summary> Set the minimum size of a window's client area. </summary>
         /// <param name="window"> The window to set a new minimum size. </param>
@@ -556,8 +396,8 @@ namespace TundraEngine.SDL
         /// <remarks> You can't change the minimum size of a fullscreen window, it automatically matches the size of the display mode. </remarks>
         /// <seealso cref="GetWindowMinimumSize"/>
         /// <seealso cref="SetWindowMaximumSize"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SDL_SetWindowMinimumSize (IntPtr window, int minwidth, int minHeight);
+        [DllImport (LibraryName)]
+        public static extern void SDL_SetWindowMinimumSize (Window window, int minwidth, int minHeight);
 
         /// <summary> Get the minimum size of a window's client area. </summary>
         /// <param name="window"/> The window to query.
@@ -565,8 +405,8 @@ namespace TundraEngine.SDL
         /// <param name="height"/> Pointer to variable for storing the minimum height, may be <see cref="IntPtr.Zero"/>
         /// <seealso cref="GetWindowMaximumSize"/>
         /// <seealso cref="SetWindowMinimumSize"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SDL_GetWindowMinimumSize (IntPtr window, out int width, out int height);
+        [DllImport (LibraryName)]
+        public static extern void SDL_GetWindowMinimumSize (Window window, out int width, out int height);
 
         /// <summary> Set the maximum size of a window's client area. </summary>
         /// <param name="window"/> The window to set a new maximum size.
@@ -575,8 +415,8 @@ namespace TundraEngine.SDL
         /// <remarks/> You can't change the maximum size of a fullscreen window, it automatically matches the size of the display mode.
         /// <seealso cref="GetWindowMaximumSize"/>
         /// <seealso cref="SetWindowMinimumSize"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SDL_SetWindowMaximumSize (IntPtr window, int maxWidth, int maxHeight);
+        [DllImport (LibraryName)]
+        public static extern void SDL_SetWindowMaximumSize (Window window, int maxWidth, int maxHeight);
 
         /// <summary> Get the maximum size of a window's client area. </summary>
         /// <param name="window"/> The window to query.
@@ -584,8 +424,8 @@ namespace TundraEngine.SDL
         /// <param name="height"/> Pointer to variable for storing the maximum height, may be <see cref="IntPtr.Zero"/>
         /// <seealso cref="GetWindowMinimumSize"/>
         /// <seealso cref="SetWindowMaximumSize"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SDL_GetWindowMaximumSize (IntPtr window, out int width, out int height);
+        [DllImport (LibraryName)]
+        public static extern void SDL_GetWindowMaximumSize (Window window, out int width, out int height);
 
         /// <summary> 
         /// Set the border state of a window.
@@ -598,8 +438,8 @@ namespace TundraEngine.SDL
         /// <param name="bordered"/> FALSE to remove border, TRUE to add border.
         /// <remarks/> You can't change the border state of a fullscreen window.
         /// <seealso cref="GetWindowFlags"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SDL_SetWindowBordered (IntPtr window, bool bordered);
+        [DllImport (LibraryName)]
+        public static extern void SDL_SetWindowBordered (Window window, bool bordered);
 
         /// <summary>
         /// Set the user-resizable state of a window.
@@ -612,45 +452,45 @@ namespace TundraEngine.SDL
         /// <param name="resizable"/> TRUE to allow resizing, FALSE to disallow.
         /// <remarks> You can't change the resizable state of a fullscreen window. </remarks>
         /// <seealso cref="GetWindowFlags"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SDL_SetWindowResizable (IntPtr window, bool resizable);
+        [DllImport (LibraryName)]
+        public static extern void SDL_SetWindowResizable (Window window, bool resizable);
 
         /// <summary> Show a window. </summary>
         /// <seealso cref="HideWindow"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SDL_ShowWindow (IntPtr window);
+        [DllImport (LibraryName)]
+        public static extern void SDL_ShowWindow (Window window);
 
         /// <summary> Hide a window. </summary>
         /// <seealso cref="ShowWindow"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SDL_HideWindow (IntPtr window);
+        [DllImport (LibraryName)]
+        public static extern void SDL_HideWindow (Window window);
 
         /// <summary> Raise a window above other windows and set the input focus. </summary>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SDL_RaiseWindow (IntPtr window);
+        [DllImport (LibraryName)]
+        public static extern void SDL_RaiseWindow (Window window);
 
         /// <summary> Make a window as large as possible. </summary>
         /// <seealso cref="RestoreWindow"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SDL_MaximizeWindow (IntPtr window);
+        [DllImport (LibraryName)]
+        public static extern void SDL_MaximizeWindow (Window window);
 
         /// <summary> Minimize a window to an iconic representation. </summary>
         /// <seealso cref="RestoreWindow"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SDL_MinimizeWindow (IntPtr window);
+        [DllImport (LibraryName)]
+        public static extern void SDL_MinimizeWindow (Window window);
 
         /// <summary> Restore the size and position of a minimized or maximized window. </summary>
         /// <seealso cref="MaximizeWindow"/>
         /// <seealso cref="MinimizeWindow"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SDL_RestoreWindow (IntPtr window);
+        [DllImport (LibraryName)]
+        public static extern void SDL_RestoreWindow (Window window);
 
         /// <summary> Set a window's fullscreen state. </summary>
         /// <returns> 0 on success, or -1 if setting the display mode failed. </returns>
         /// <seealso cref="SetWindowDisplayMode"/>
         /// <seealso cref="GetWindowDisplayMode"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int SDL_SetWindowFullscreen (IntPtr window, SDL_WindowFlags flags);
+        [DllImport (LibraryName)]
+        public static extern int SDL_SetWindowFullscreen (Window window, WindowFlags flags);
 
         /// <summary> Get the SDL surface associated with the window. </summary>
         /// <returns> The window's framebuffer surface, or <see cref="IntPtr.Zero"/> on error. </returns>
@@ -662,23 +502,23 @@ namespace TundraEngine.SDL
         /// </remarks>
         /// <seealso cref="UpdateWindowSurface"/>
         /// <seealso cref="UpdateWindowSurfaceRects"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr SDL_GetWindowSurface (IntPtr window);
+        [DllImport (LibraryName)]
+        public static extern IntPtr SDL_GetWindowSurface (Window window);
 
         /// <summary> Copy the window surface to the screen. </summary>
         /// <returns> 0 on success, or -1 on error. </returns>
         /// <seealso cref="GetWindowSurface"/>
         /// <seealso cref="UpdateWindowSurfaceRects"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int SDL_UpdateWindowSurface (IntPtr window);
+        [DllImport (LibraryName)]
+        public static extern int SDL_UpdateWindowSurface (Window window);
 
         /// <summary> Copy a number of rectangles on the window surface to the screen. </summary>
         /// <returns> 0 on success, or -1 on error. </returns>
         /// <seealso cref="GetWindowSurface"/>
         /// <seealso cref="UpdateWindowSurface"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName)]
         public static extern int SDL_UpdateWindowSurfaceRects (
-            IntPtr window,
+            Window window,
             [In(), MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 2)]
             SDL_Rect[] rectangles,
             int numRectangles);
@@ -691,41 +531,41 @@ namespace TundraEngine.SDL
         ///  the other window loses its grab in favor of the caller's window.
         /// </remarks>
         /// <seealso cref="GetWindowGrab"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SDL_SetWindowGrab (IntPtr window, bool grabbed);
+        [DllImport (LibraryName)]
+        public static extern void SDL_SetWindowGrab (Window window, bool grabbed);
 
         /// <summary> Get a window's input grab mode. </summary>
         /// <returns> This returns TRUE if input is grabbed, and FALSE otherwise. </returns>
         /// <seealso cref="SetWindowGrab"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern bool SDL_GetWindowGrab (IntPtr window);
+        [DllImport (LibraryName)]
+        public static extern bool SDL_GetWindowGrab (Window window);
 
         /// <summary> Get the window that currently has an input grab enabled. </summary>
         /// <returns> This returns the window if input is grabbed, and <see cref="IntPtr.Zero"/> otherwise. </returns>
         /// <seealso cref="SetWindowGrab"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName)]
         public static extern IntPtr SDL_GetGrabbedWindow ();
 
         /// <summary> Set the bRightness (gamma correction) for a window. </summary>
         /// <returns> 0 on success, or -1 if setting the bRightness isn't supported. </returns>
         /// <seealso cref="GetWindowBRightness"/>
         /// <seealso cref="SetWindowGammaRamp"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int SDL_SetWindowBRightness (IntPtr window, float brightness);
+        [DllImport (LibraryName)]
+        public static extern int SDL_SetWindowBRightness (Window window, float brightness);
 
         /// <summary> Get the bRightness (gamma correction) for a window. </summary>
         /// <returns> The last bRightness value passed to SetWindowBRightness"/> </returns>
         /// <seealso cref="SetWindowBRightness"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern float SDL_GetWindowBRightness (IntPtr window);
+        [DllImport (LibraryName)]
+        public static extern float SDL_GetWindowBRightness (Window window);
 
         /// <summary> Set the opacity for a window </summary>
         /// <param name="window"/> The window which will be made transparent or opaque
         /// <param name="opacity"/> Opacity (0.0f - transparent, 1.0f - opaque) This will be clamped Natively between 0.0f and 1.0f.
         /// <returns> 0 on success, or -1 if setting the opacity isn't supported. </returns>
         /// <seealso cref="GetWindowOpacity"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int SDL_SetWindowOpacity (IntPtr window, float opacity);
+        [DllImport (LibraryName)]
+        public static extern int SDL_SetWindowOpacity (Window window, float opacity);
 
         /// <summary> 
         /// Get the opacity of a window.
@@ -737,14 +577,14 @@ namespace TundraEngine.SDL
         /// <param name="outOpacity"/> Opacity (0.0f - transparent, 1.0f - opaque)
         /// <returns> 0 on success, or -1 on error (invalid window, etc). </returns>
         /// <seealso cref="SetWindowOpacity"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int SDL_GetWindowOpacity (IntPtr window, out float outOpacity);
+        [DllImport (LibraryName)]
+        public static extern int SDL_GetWindowOpacity (Window window, out float outOpacity);
 
         /// <summary> Sets the window as a modal for another window (TODO: reconsider this function and/or its name) </summary>
         /// <param name="modalWindow"> The window that should be modal </param>
         /// <param name="parentWindow"> The parent window </param>
         /// <returns> 0 on success, or -1 otherwise. </returns>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName)]
         public static extern int SDL_SetWindowModalFor (IntPtr modalWindow, IntPtr parentWindow);
 
         /// <summary> 
@@ -757,8 +597,8 @@ namespace TundraEngine.SDL
         /// <param name="window"> The window that should get the input focus. </param>
         /// <returns> 0 on success, or -1 otherwise. </returns>
         /// <seealso cref="RaiseWindow"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int SDL_SetWindowInputFocus (IntPtr window);
+        [DllImport (LibraryName)]
+        public static extern int SDL_SetWindowInputFocus (Window window);
 
 
         /// <summary> Set the gamma ramp for a window. </summary>
@@ -775,9 +615,9 @@ namespace TundraEngine.SDL
         ///  gamma value at that index, scaled to the output color precision.
         /// </remarks>
         /// <seealso cref="GetWindowGammaRamp"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName)]
         public static extern int SDL_SetWindowGammaRamp (
-            IntPtr window,
+            Window window,
             [In(), MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U2, SizeConst = 256)]
             ushort[] red,
             [In(), MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U2, SizeConst = 256)]
@@ -793,9 +633,9 @@ namespace TundraEngine.SDL
         /// <param name="blue"/> A pointer to a 256 element array of 16-bit quantities to hold the translation table for the blue channel, or <see cref="IntPtr.Zero"/>.
         /// <returns> 0 on success, or -1 if gamma ramps are unsupported. </returns>
         /// <seealso cref="SetWindowGammaRamp"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName)]
         public static extern int SDL_GetWindowGammaRamp (
-            IntPtr window,
+            Window window,
             [Out(), MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U2, SizeConst = 256)]
             ushort[] red,
             [Out(), MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U2, SizeConst = 256)]
@@ -839,29 +679,29 @@ namespace TundraEngine.SDL
         /// <paramref name="callback"/> The callback to call when doing a hit-test.
         /// <paramref name="callbackData"/> An app-defined void pointer passed to the callback.
         /// <returns> 0 on success, -1 on error (including unsupported). </returns>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int SDL_SetWindowHitTest (IntPtr window, HitTest callback, IntPtr callbackData);
+        [DllImport (LibraryName)]
+        public static extern int SDL_SetWindowHitTest (Window window, HitTest callback, IntPtr callbackData);
 
         /// <summary> Destroy a window. </summary>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SDL_DestroyWindow (IntPtr window);
+        [DllImport (LibraryName)]
+        public static extern void SDL_DestroyWindow (Window window);
 
         /// <summary> Returns whether the screensaver is currently enabled (default off). </summary>
         /// <seealso cref="EnableScreenSaver"/>
         /// <seealso cref="DisableScreenSaver"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName)]
         public static extern bool SDL_IsScreenSaverEnabled ();
 
         /// <summary> Allow the screen to be blanked by a screensaver. </summary>
         /// <seealso cref="IsScreenSaverEnabled"/>
         /// <seealso cref="DisableScreenSaver"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName)]
         public static extern void SDL_EnableScreenSaver ();
 
         /// <summary> Prevent the screen from being blanked by a screensaver. </summary>
         /// <seealso cref="IsScreenSaverEnabled"/>
         /// <seealso cref="EnableScreenSaver"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName)]
         public static extern void SDL_DisableScreenSaver ();
     }
 }

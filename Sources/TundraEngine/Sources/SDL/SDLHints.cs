@@ -49,17 +49,17 @@ namespace TundraEngine.SDL
         /// <para /> The priority controls the behavior when setting a hint that already has a value.Hints will replace existing hints of their priority and lower.Environment variables are considered to have override priority.
         /// </summary>
         /// <returns> True if the hint was set, false otherwise </returns>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static bool SDL_SetHintWithPriority (string name, string value, HintPriority priority);
 
         /// <summary>
         /// Set a hint with normal priority.
         /// </summary>
         /// <returns> True if the hint was set, false otherwise </returns>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static bool SDL_SetHint (string name, string value);
         
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         private extern static IntPtr SDL_GetHint (string name);
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace TundraEngine.SDL
         /// Get a hint.
         /// </summary>
         /// <returns> The boolean value of a hint variable. </returns>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static bool SDL_GetHintBoolean (string name, bool defaultValue);
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace TundraEngine.SDL
         /// <param name="name"> The hint to watch </param>
         /// <param name="callback"> The function to call when the hint value changes </param>
         /// <param name="userData"> A pointer to pass to the callback function </param>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void SDL_AddHintCallback (string name, HintCallback callback, IntPtr userData);
 
         /// <summary>
@@ -93,14 +93,14 @@ namespace TundraEngine.SDL
         /// <param name="name"> The hint to watch </param>
         /// <param name="callback"> The function to call when the hint value changes </param>
         /// <param name="userData"> A pointer to pass to the callback function </param>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void SDL_DelHintCallback (string name, HintCallback callback, IntPtr userData);
         
         /// <summary>
         /// Clear all hints.
         /// <para /> This function is called during <see cref="Quit"/> to free stored hints.
         /// </summary>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void SDL_ClearHints ();
     }
 }

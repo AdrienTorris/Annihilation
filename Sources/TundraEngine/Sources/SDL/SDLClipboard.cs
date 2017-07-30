@@ -11,10 +11,10 @@ namespace TundraEngine.SDL
         /// Put UTF-8 text into the clipboard
         /// </summary>
         /// <seealso cref="GetText"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         unsafe public extern static int SDL_SetClipboardText (string text);
         
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         unsafe private extern static IntPtr SDL_GetClipboardText ();
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace TundraEngine.SDL
         /// Returns a flag indicating whether the clipboard exists and contains a text string that is non-empty
         /// </summary>
         /// <seealso cref="GetText"/>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static bool SDL_HasClipboardText ();
     }
 }

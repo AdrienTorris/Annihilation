@@ -64,7 +64,7 @@ namespace TundraEngine.SDL
             [FieldOffset(4)] public readonly SDL_Hat Hat;
         }
 
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         private static extern int SDL_GameControllerAddMappingsFromRW(IntPtr rwOps, int freeRW);
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace TundraEngine.SDL
          *
          * \return 1 if mapping is added, 0 if updated, -1 on error
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_GameControllerAddMapping(string mappingString);
 
         /**
@@ -92,7 +92,7 @@ namespace TundraEngine.SDL
          *
          *  \return the number of mappings
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_GameControllerNumMappings();
 
         /**
@@ -100,7 +100,7 @@ namespace TundraEngine.SDL
          *
          *  \return the mapping string.  Must be freed with SDL_free().  Returns NULL if the index is out of range.
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern IntPtr SDL_GameControllerMappingForIndex(int mapping_index);
 
         /**
@@ -108,7 +108,7 @@ namespace TundraEngine.SDL
          *
          *  \return the mapping string.  Must be freed with SDL_free().  Returns NULL if no mapping is available
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern IntPtr SDL_GameControllerMappingForGUID(Guid guid);
 
         /**
@@ -116,13 +116,13 @@ namespace TundraEngine.SDL
          *
          *  \return the mapping string.  Must be freed with SDL_free().  Returns NULL if no mapping is available
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern IntPtr SDL_GameControllerMapping(IntPtr gamecontroller);
 
         /**
          *  Is the joystick on this index supported by the game controller interface?
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern bool SDL_IsGameController(int joystick_index);
 
         /**
@@ -130,7 +130,7 @@ namespace TundraEngine.SDL
          *  This can be called before any controllers are opened.
          *  If no name can be found, this function returns NULL.
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern string SDL_GameControllerNameForIndex(int joystick_index);
 
         /**
@@ -142,53 +142,53 @@ namespace TundraEngine.SDL
          *
          *  \return A controller identifier, or NULL if an error occurred.
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern IntPtr SDL_GameControllerOpen(int joystick_index);
 
         /**
          * Return the SDL_GameController associated with an instance id.
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern IntPtr SDL_GameControllerFromInstanceID(int joyid);
 
         /**
          *  Return the name for this currently opened controller
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern string SDL_GameControllerName(IntPtr gamecontroller);
 
         /**
          *  Get the USB vendor ID of an opened controller, if available.
          *  If the vendor ID isn't available this function returns 0.
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern ushort SDL_GameControllerGetVendor(IntPtr gamecontroller);
 
         /**
          *  Get the USB product ID of an opened controller, if available.
          *  If the product ID isn't available this function returns 0.
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern ushort SDL_GameControllerGetProduct(IntPtr gamecontroller);
 
         /**
          *  Get the product version of an opened controller, if available.
          *  If the product version isn't available this function returns 0.
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern ushort SDL_GameControllerGetProductVersion(IntPtr gamecontroller);
 
         /**
          *  Returns SDL_TRUE if the controller has been opened and currently connected,
          *  or SDL_FALSE if it has not.
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern bool SDL_GameControllerGetAttached(IntPtr gamecontroller);
 
         /**
          *  Get the underlying joystick object used by a controller
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern IntPtr SDL_GameControllerGetJoystick(IntPtr gamecontroller);
 
         /**
@@ -200,7 +200,7 @@ namespace TundraEngine.SDL
          *
          *  The state can be one of ::SDL_QUERY, ::SDL_ENABLE or ::SDL_IGNORE.
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern int SDL_GameControllerEventState(int state);
 
         /**
@@ -209,25 +209,25 @@ namespace TundraEngine.SDL
          *  This is called automatically by the event loop if any game controller
          *  events are enabled.
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern void SDL_GameControllerUpdate();
 
         /**
          *  turn this string into a axis mapping
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern SDL_GameControllerAxis SDL_GameControllerGetAxisFromString(string pchString);
 
         /**
          *  turn this axis enum into a string mapping
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern string SDL_GameControllerGetStringForAxis(SDL_GameControllerAxis axis);
 
         /**
          *  Get the SDL joystick layer binding for this controller button mapping
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern SDL_GameControllerButtonBind
         SDL_GameControllerGetBindForAxis(IntPtr gamecontroller,
                                          SDL_GameControllerAxis axis);
@@ -240,7 +240,7 @@ namespace TundraEngine.SDL
          *
          *  The axis indices start at index 0.
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern short
         SDL_GameControllerGetAxis(IntPtr gamecontroller,
                                   SDL_GameControllerAxis axis);
@@ -248,19 +248,19 @@ namespace TundraEngine.SDL
         /**
          *  turn this string into a button mapping
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern SDL_GameControllerButton SDL_GameControllerGetButtonFromString(string pchString);
 
         /**
          *  turn this button enum into a string mapping
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern string SDL_GameControllerGetStringForButton(SDL_GameControllerButton button);
 
         /**
          *  Get the SDL joystick layer binding for this controller button mapping
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern SDL_GameControllerButtonBind
         SDL_GameControllerGetBindForButton(IntPtr gamecontroller,
                                            SDL_GameControllerButton button);
@@ -271,14 +271,14 @@ namespace TundraEngine.SDL
          *
          *  The button indices start at index 0.
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern byte SDL_GameControllerGetButton(IntPtr gamecontroller,
                                                                   SDL_GameControllerButton button);
 
         /**
          *  Close a controller previously opened with SDL_GameControllerOpen().
          */
-        [DllImport(LibName)]
+        [DllImport(LibraryName)]
         public static extern void SDL_GameControllerClose(IntPtr gamecontroller);
     }
 }

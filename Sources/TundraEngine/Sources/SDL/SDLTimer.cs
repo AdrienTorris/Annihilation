@@ -30,7 +30,7 @@ namespace TundraEngine.SDL
         /// Get the number of milliseconds since the SDL library initialization.
         /// </summary>
         /// <remarks> This value wraps if the program runs for more than ~49 days. </remarks>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static uint SDL_GetTicks ();
         
         /// <summary>
@@ -50,26 +50,26 @@ namespace TundraEngine.SDL
         /// <summary>
         /// Get the current value of the high resolution counter
         /// </summary>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static ulong SDL_GetPerformanceCounter ();
         
         /// <summary>
         /// Get the count per second of the high resolution counter
         /// </summary>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static ulong SDL_GetPerformanceFrequency ();
 
         /// <summary>
         /// Wait a specified number of milliseconds before returning.
         /// </summary>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void SDL_Delay (uint ms);
         
         /// <summary>
         /// Add a new timer to the pool of timers already running.
         /// </summary>
         /// <returns> A timer ID, or 0 when an error occurs. </returns>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static SDL_TimerID SDL_AddTimer (uint interval,
                                                        SDL_TimerCallback callback,
                                                        IntPtr param);
@@ -79,7 +79,7 @@ namespace TundraEngine.SDL
         /// </summary>
         /// <remarks> It is not safe to remove a timer multiple times. </remarks>
         /// <returns> A boolean value indicating success or failure. </returns>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static bool SDL_RemoveTimer (SDL_TimerID id);
     }
 }

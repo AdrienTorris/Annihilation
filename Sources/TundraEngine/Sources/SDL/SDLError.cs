@@ -14,10 +14,10 @@ namespace TundraEngine.SDL
         /// <param name="fmt"> A printf() style message format string </param>
         /// <param name="objects"> Additional parameters matching % tokens in the fmt string, if any </param>
         /// <remarks> Calling this function will replace any previous error message that was set. </remarks>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         unsafe public extern static int SDL_SetError (string fmt, params object[] objects);
         
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         unsafe private extern static IntPtr SDL_GetError ();
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace TundraEngine.SDL
         /// <summary>
         /// Use this function to clear any previous error message.
         /// </summary>
-        [DllImport (LibName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
         public extern static void SDL_ClearError ();
     }
 }

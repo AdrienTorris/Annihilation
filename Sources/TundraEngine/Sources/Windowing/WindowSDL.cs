@@ -1,66 +1,97 @@
 ﻿using System;
 
+using TundraEngine.SDL;
 using static TundraEngine.SDL.SDL;
 
 namespace TundraEngine.Windowing
 {
-    internal class WindowSDL : LibrarySystem<LibSDL>, IWindowProvider
+    internal class WindowSDL : IWindow
     {
         public WindowManagerInfo WindowManagerInfo { get; set; }
-        public int UndefinedPosition => SDL_WindowPositionUndefined;
         
-        private IntPtr _window;
-
-        // TODO: This is ugly. Store width and height and change on resize event
-        public uint Width
+        internal Window Window;
+        internal SysWMInfo SysWMInfo;
+        
+        public WindowSDL(ref WindowSettings settings)
         {
-            get
+            int previousDisplay = -1;
+
+            // Init video subsystem
+            int result = SDL_InitSubSystem(SDL_InitFlags.Video);
+            Assert.IsTrue(result >= 0, "Could not initialize SDL video: " + SDL_GetErrorString());
+            
+            // Get desktop display mode
+            result = SDL_GetDeskTopDisplayMode(settings.Monitor, out SDL_DisplayMode displayMode);
+            Assert.IsTrue(result == 0, "Could not get desktop display mode: " + SDL_GetErrorString());
+
+            // Create the window if needed, hidden
+            if (Window.IsNull)
             {
-                SDL_GetWindowSize(_window, out int width, out int height);
-                return (uint)width;
-            }
-        }
+                WindowFlags flags = WindowFlags.Hidden;
+                if (settings.Mode == WindowMode.BorderlessWindow)
+                {
+                    flags |= WindowFlags.Borderless;
+                }
 
-        public uint Height
-        {
-            get
+                Window = SDL_CreateWindow(settings.Name, SDL_WindowPositionUndefined, SDL_WindowPositionUndefined, settings.Width, settings.Height, flags);
+                Assert.IsTrue(Window.IsNull == false, "Could not create SDL window: " + SDL_GetErrorString());
+
+                SDL_GetVersion(out SysWMInfo.Version);
+                bool success = SDL_GetWindowWMInfo(Window, ref SysWMInfo);
+                Assert.IsTrue(success, "Could not get window manager info: " + SDL_GetErrorString());
+            }
+            else
             {
-                SDL_GetWindowSize(_window, out int width, out int height);
-                return (uint)height;
+                previousDisplay = SDL_GetWindowDisplayIndex(Window);
             }
-        }
 
-        public WindowSDL()
-        {
-            WindowSettings settings = Game.Instance.Settings.WindowSettings;
+            // Ensure the window is not fullscreen
+            if (SDL_GetWindowFlags(Window).Has(WindowFlags.Fullscreen))
+            {
+                result = SDL_SetWindowFullscreen(Window, 0);
+                Assert.IsTrue(result == 0, "Could not set fullscreen state mode: " + SDL_GetErrorString());
+            }
+
+            // Set window size and display mode
+            SDL_SetWindowSize(Window, settings.Width, settings.Height);
+            if (previousDisplay >= 0)
+            {
+                SDL_SetWindowPosition(Window, (int)SDL_WindowPositionCenteredDisplay((uint)previousDisplay), (int)SDL_WindowPositionCenteredDisplay((uint)previousDisplay));
+            }
+            else
+            {
+                SDL_SetWindowPosition(Window, SDL_WindowPositionCentered, SDL_WindowPositionCentered);
+            }
+            SDL_SetWindowDisplayMode(Window, );
+            SDL_SetWindowBordered
 
             // Window
-            SDL_WindowFlags windowFlags = SDL_WindowFlags.Shown | SDL_WindowFlags.Vulkan;
-            if (settings.AllowHighDPI) windowFlags |= SDL_WindowFlags.AllowHighDPI;
-            if (settings.AlwaysOnTop) windowFlags |= SDL_WindowFlags.AlwaysOnTop;
+            WindowFlags windowFlags = WindowFlags.Shown | WindowFlags.Vulkan;
+            if (settings.AllowHighDPI) windowFlags |= WindowFlags.AllowHighDPI;
+            if (settings.AlwaysOnTop) windowFlags |= WindowFlags.AlwaysOnTop;
             switch (settings.Mode)
             {
                 case WindowMode.Fullscreen:
-                    windowFlags |= SDL_WindowFlags.Fullscreen;
+                    windowFlags |= WindowFlags.Fullscreen;
                     break;
                 case WindowMode.FullscreenDesktop:
-                    windowFlags |= SDL_WindowFlags.FullscreenDeskTop;
+                    windowFlags |= WindowFlags.FullscreenDeskTop;
                     break;
             }
 
-            _window = SDL_CreateWindow(
+            Window = SDL_CreateWindow(
                 settings.Name,
                 settings.PositionX,
                 settings.PositionY,
                 settings.Width,
                 settings.Height,
                 windowFlags);
-            Assert.IsTrue(_window != IntPtr.Zero, "Could not create SDL window.");
+            Assert.IsTrue(Window != IntPtr.Zero, "Could not create SDL window.");
 
             // Window manager
             SysWMInfo wmInfo = new SysWMInfo();
             FillVersion(out wmInfo.Version);
-            GetWindowWMInfo(_window, ref wmInfo);
+            SDL_GetWindowWMInfo(Window, ref wmInfo);
             
             switch (wmInfo.SubSystem)
             {
@@ -106,25 +137,35 @@ namespace TundraEngine.Windowing
             }
         }
 
-        public void DestroyWindow()
+        private void SetWindowMode(int width, int height, bool fullscreen)
         {
-            SDL_DestroyWindow(_window);
+
         }
 
-        protected override void DisposeUnmanaged()
-        {
-            SDL_DestroyWindow(_window);
-            _window = IntPtr.Zero;
-        }
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
 
-        protected override void InitializeLibrary()
+        protected virtual void DisposeUnmanaged()
         {
-            LibraryUtility.InitializeSDL();
-        }
+            if (!disposedValue)
+            {
+                SDL_DestroyWindow(Window);
+                Window = IntPtr.Zero;
 
-        protected override void ShutdownLibrary()
-        {
-            SDL_Quit();
+                disposedValue = true;
+            }
         }
+        
+        ~WindowSDL()
+        {
+            DisposeUnmanaged();
+        }
+        
+        public void Dispose()
+        {
+            DisposeUnmanaged();
+            GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }

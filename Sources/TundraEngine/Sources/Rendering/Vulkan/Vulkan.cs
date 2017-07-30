@@ -447,22 +447,15 @@ namespace TundraEngine.Rendering.Vulkan
         public const uint MaxDescriptionSize = 256;
         
         // Global functions
-        public static readonly EnumerateInstanceExtensionPropertiesDelegate EnumerateInstanceExtensionProperties;
-        public static readonly EnumerateInstanceLayerPropertiesDelegate EnumerateInstanceLayerProperties;
-        public static readonly CreateInstanceDelegate CreateInstance;
+        public static readonly EnumerateInstanceExtensionPropertiesDelegate EnumerateInstanceExtensionProperties = LoadGlobalFunction<EnumerateInstanceExtensionPropertiesDelegate>();
+        public static readonly EnumerateInstanceLayerPropertiesDelegate EnumerateInstanceLayerProperties = LoadGlobalFunction<EnumerateInstanceLayerPropertiesDelegate>();
+        public static readonly CreateInstanceDelegate CreateInstance = LoadGlobalFunction<CreateInstanceDelegate>();
 
         // Instance functions
-        public static readonly DestroyInstanceDelegate DestroyInstance;
+        public static readonly DestroyInstanceDelegate DestroyInstance = LoadInstanceFunction<DestroyInstanceDelegate>(Windowing.Window);
         
-        unsafe static Vulkan()
+        public static unsafe void Initialize()
         {
-            // Global functions
-            EnumerateInstanceExtensionProperties = LoadGlobalFunction<EnumerateInstanceExtensionPropertiesDelegate>();
-            EnumerateInstanceLayerProperties = LoadGlobalFunction<EnumerateInstanceLayerPropertiesDelegate>();
-            CreateInstance = LoadGlobalFunction<CreateInstanceDelegate>();
-
-            // Create instance
-
             // Instance functions
             DestroyInstance = LoadInstanceFunction<DestroyInstanceDelegate>();
         }
