@@ -84,19 +84,25 @@ namespace TundraEngine.SDL
             Everything = Timer | Audio | Video | Joystick | Haptic | GameController | Events
         }
 
-        unsafe private static string GetString (IntPtr handle)
+        unsafe internal static string GetString (IntPtr handle)
         {
             if (handle == IntPtr.Zero)
                 return string.Empty;
 
             var ptr = (byte*)handle;
-            while (*ptr != 0)
-                ptr++;
+            return GetString(ptr);
+        }
 
-            var bytes = new byte[ptr - (byte*)handle];
-            Marshal.Copy (handle, bytes, 0, bytes.Length);
+        internal static unsafe string GetString(byte* ptr)
+        {
+            byte* counter = ptr;
+            while (*counter != 0)
+            {
+                counter++;
+            }
+            int count = (int)(counter - ptr);
 
-            return Encoding.UTF8.GetString (bytes);
+            return Encoding.UTF8.GetString(ptr, count);
         }
 
         public static uint FourCharacterCode(byte a, byte b, byte c, byte d)

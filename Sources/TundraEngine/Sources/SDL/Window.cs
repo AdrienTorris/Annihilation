@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Security;
+using System.Text;
 using System.Runtime.InteropServices;
 
 using static TundraEngine.SDL.SDL;
@@ -8,7 +8,7 @@ namespace TundraEngine.SDL
 {
     /// <summary> Possible return values from the <see cref="HitTest"/> callback. </summary>
     /// <seealso cref="HitTest"/>
-    public enum SDL_HitTestResult
+    public enum HitTestResult
     {
         /// <summary> Region is normal. No special properties. </summary>
         Normal,
@@ -69,14 +69,16 @@ namespace TundraEngine.SDL
         /// <summary> Window usable for Vulkan surface </summary>
         Vulkan = 1 << 20,
     }
-    
+
     /// <summary> Callback used for hit-testing. </summary>
     /// <seealso cref="SetWindowHitTest(IntPtr, HitTest, IntPtr)"/>
-    public delegate SDL_HitTestResult HitTest(IntPtr win, IntPtr area, IntPtr data);
+    public delegate HitTestResult HitTest(IntPtr win, IntPtr area, IntPtr data);
 
     public struct Window
     {
         internal IntPtr NativeHandle;
+
+        public static readonly Window Null = new Window();
 
         /// <summary> Used to indicate that you don't care what the window position is. </summary>
         public const uint PositionUndefinedMask = 0x1FFF0000u;
@@ -87,6 +89,42 @@ namespace TundraEngine.SDL
         public const int PositionCentered = (int)PositionCenteredMask;
 
         public bool IsNull { get { return NativeHandle == IntPtr.Zero; } }
+
+        /// <summary> Create a window with the specified position, dimensions, and flags. </summary>
+        /// <param name="title"> The title of the window, in UTF-8 encoding. </param>
+        /// <param name="x"> The x position of the window, <see cref="SDL_WindowPositionCentered"/>, or <see cref="SDL_WindowPositionUndefined"/>. </param>
+        /// <param name="y"> The y position of the window, <see cref="SDL_WindowPositionCentered"/>, or<see cref="SDL_WindowPositionUndefined"/>. </param>
+        /// <param name="width"> The width of the window, in screen coordinates. </param>
+        /// <param name="height"> The height of the window, in screen coordinates. </param>
+        /// <param name="flags"> The flags for the window </param>
+        /// <remarks>
+        ///  If the window is created with the WINDOW_ALLOW_HIGHDPI flag, its size
+        ///  in pixels may differ from its size in screen coordinates on platforms with
+        ///  high-DPI support (e.g. iOS and Mac OS X). Use GetWindowSize"/> to query
+        ///  the client area's size in screen coordinates, and GL_GetDrawableSize"/>
+        ///  or GetRendererOutputSize"/> to query the drawable size in pixels.
+        /// </remarks>
+        /// <seealso cref="DestroyWindow"/>
+        public unsafe Window(string title, int x, int y, int w, int h, WindowFlags flags)
+        {
+            this = SDL_CreateWindow(title.ToAddress(), x, y, w, h, flags);
+            Assert.IsTrue(NativeHandle != IntPtr.Zero, "Could not create SDL window: " + SDL_GetErrorString());
+        }
+
+        /// <summary> Create an SDL window from an existing native window. </summary>
+        /// <param name="data"> A pointer to driver-dependent window creation data. </param>
+        /// <seealso cref="DestroyWindow"/>
+        public unsafe Window(void* data)
+        {
+            this = SDL_CreateWindowFrom(data);
+            Assert.IsTrue(NativeHandle != IntPtr.Zero, "Could not create SDL window: " + SDL_GetErrorString());
+        }
+
+        /// <summary> Get a window from a stored ID, or <see cref="Null"/> if it doesn't exist. </summary>
+        public Window(uint id)
+        {
+            this = SDL_GetWindowFromID(id);
+        }
 
         public static uint PositionUndefinedDisplay(uint x)
         {
@@ -110,14 +148,249 @@ namespace TundraEngine.SDL
 
         /// <summary> Get the display index associated with a window. </summary>
         /// <returns> The display index of the display containing the center of the window, or -1 on error. </returns>
-        public int GetDisplayIndex()
+        public int DisplayIndex
         {
-            return SDL_GetWindowDisplayIndex(this);
+            get
+            {
+                int result = SDL_GetWindowDisplayIndex(this);
+                Assert.IsTrue(result >= 0, "Could not get display index on SDL window: " + SDL_GetErrorString());
+                return result;
+            }
         }
 
-        public int SetDisplayMode()
+        /// <summary> Set the display mode used when a fullscreen window is visible. </summary>
+        /// <param name="mode"/> The mode to use.
+        public void SetDisplayMode(ref DisplayMode mode)
+        {
+            int result = SDL_SetWindowDisplayMode(this, ref mode);
+            Assert.IsTrue(result == 0, "Could not set display mode on SDL window: " + SDL_GetErrorString());
+        }
+
+        /// <summary> Set the display mode used when a fullscreen window is visible.
+        /// <para/>
+        ///  By default the window's dimensions and the deskTop format and refresh rate
+        ///  are used.
+        /// </summary>
+        public void SetDefaultDisplayMode()
+        {
+            int result = SDL_SetWindowDisplayMode(this, IntPtr.Zero);
+            Assert.IsTrue(result == 0, "Could not set display mode on SDL window: " + SDL_GetErrorString());
+        }
+
+        /// <summary> Fill in information about the display mode used when a fullscreen window is visible. </summary>
+        public void GetDisplayMode(out DisplayMode mode)
+        {
+            int result = SDL_GetWindowDisplayMode(this, out mode);
+            Assert.IsTrue(result == 0, "Could not get display mode on SDL window: " + SDL_GetErrorString());
+        }
+
+        /// <summary> Get the pixel format associated with the window. </summary>
+        public uint PixelFormat
+        {
+            get
+            {
+                uint result = SDL_GetWindowPixelFormat(this);
+                Assert.IsTrue(result != PixelFormatUnknown, "Could not get pixel format on SDL window: " + SDL_GetErrorString());
+                return result;
+            }
+        }
+
+        /// <summary> Get the numeric ID of a window, for logging purposes. </summary>
+        public uint ID
+        {
+            get
+            {
+                uint result = SDL_GetWindowID(this);
+                Assert.IsTrue(result != 0, "Could not get ID for SDL window: " + SDL_GetErrorString());
+                return result;
+            }
+        }
+
+        /// <summary> Get the window flags. </summary>
+        public WindowFlags GetFlags => SDL_GetWindowFlags(this);
+
+        /// <summary> The title of a window. </summary>
+        public unsafe string Title
+        {
+            get
+            {
+                byte* ptr = SDL_GetWindowTitle(this);
+                return GetString(ptr);
+            }
+            set
+            {
+                SDL_SetWindowTitle(this, value.ToAddress());
+            }
+        }
+
+        /// <summary> Set the icon for a window. </summary>
+        public void SetIcon(Surface icon)
+        {
+            SDL_SetWindowIcon(this, icon);
+        }
+
+        /// <summary> Associate an arbitrary named pointer with a window. </summary>
+        /// <param name="name"> The name of the pointer. </param>
+        /// <param name="userData"> The associated pointer. </param>
+        /// <returns> The previous value associated with 'name' </returns>
+        /// <remarks> The name is case-sensitive. </remarks>
+        /// <seealso cref="GetData(string)"/>
+        public unsafe void* SetData(string name, void* data)
+        {
+            return SDL_SetWindowData(this, name.ToAddress(), data);
+        }
+
+        /// <summary> Retrieve the data pointer associated with a window. </summary>
+        /// <param name="name"> The name of the pointer. </param>
+        /// <returns> The value associated with 'name' </returns>
+        /// <seealso cref="SetData(string, void*)"/>
+        public unsafe void* GetData(string name)
+        {
+            return SDL_GetWindowData(this, name.ToAddress());
+        }
+
+        /// <summary> Set the position of a window. </summary>
+        /// <param name="x"> The x coordinate of the window in screen coordinates, or <see cref=PositionCentered"/> or <see cref="PositionUndefined"/>. </param>
+        /// <param name="y"> The y coordinate of the window in screen coordinates, or <see cref="PositionCentered"/> or <see cref="PositionUndefined"/>. </param>
+        /// <remarks> The window coordinate origin is the upper Left of the display. </remarks>
+        /// <seealso cref="GetPosition(out int, out int)"/>
+        public void SetPosition(int x, int y)
+        {
+            SDL_SetWindowPosition(this, x, y);
+        }
+
+        /// <summary> Get the position of a window. </summary>
+        /// <param name="x"> Variable for storing the x position, in screen coordinates. </param>
+        /// <param name="y"> Variable for storing the y position, in screen coordinates. </param>
+        /// <seealso cref="SetPosition(int, int)"/>
+        public void GetPosition(out int x, out int y)
+        {
+            SDL_GetWindowPosition(this, out x, out y);
+        }
+
+        /// <summary> Get the X position of a window. </summary>
+        /// <param name="x"> Variable for storing the x position, in screen coordinates. </param>
+        /// <seealso cref="SetPosition(int, int)"/>
+        public void GetPositionX(out int x)
+        {
+            SDL_GetWindowPosition(this, out x, IntPtr.Zero);
+        }
+
+        /// <summary> Get the Y position of a window. </summary>
+        /// <param name="y"> Variable for storing the y position, in screen coordinates. </param>
+        /// <seealso cref="SetPosition(int, int)"/>
+        public void GetPositionY(out int y)
+        {
+            SDL_GetWindowPosition(this, IntPtr.Zero, out y);
+        }
+
+        public void SetSize()
+        {
+
+        }
+
+        public void GetSize()
+        {
+
+        }
+
+        public void GetSizeX()
+        {
+
+        }
+
+        public void GetSizeY()
+        {
+
+        }
+
+        public void GetBorderSize()
+        {
+
+        }
+
+        public void GetBorderSizeTop()
+        {
+
+        }
+
+        public void GetBorderSizeBottom()
+        {
+
+        }
+
+        public void GetBorderSizeLeft()
+        {
+
+        }
+
+        public void GetBorderSizeRight()
+        {
+
+        }
+
+        public void SetMinimumSize(int minW, int minH)
+        {
+
+        }
+
+        public void GetMinimumSize(out int w, out int h)
+        {
+
+        }
+
+        public void GetMinimumSizeW(out int w)
+        {
+
+        }
+
+        public void GetMinimumSizeH(out int h)
+        {
+
+        }
+
+        public void SetMaximumSize(int maxW, int maxH)
+        {
+
+        }
+
+        public void GetMaximumSize(out int w, out int h)
+        {
+
+        }
+
+        public void GetMaximumSizeW(out int w)
+        {
+
+        }
+
+        public void GetMaximumSizeH(out int h)
+        {
+
+        }
+
+        public void SetBordered(bool bordered) => SDL_SetWindowBordered(this, bordered);
+
+        public void SetResizable(bool resizable) => SDL_SetWindowResizable(this, resizable);
+
+        public void Show() => SDL_ShowWindow(this);
+
+        public void Hide() => SDL_HideWindow(this);
+
+        public void Raise() => SDL_RaiseWindow(this);
+
+        public void Maximize() => SDL_MaximizeWindow(this);
+
+        public void Minimize() => SDL_MinimizeWindow(this);
+
+        public void Restore() => SDL_RestoreWindow(this);
+
+        public void SetFullscreen(WindowFlags flags)
+        {
+
+        }
     }
-    
+
     internal static class WindowFlagsExtensions
     {
         public static bool Has(this WindowFlags variable, WindowFlags flag)

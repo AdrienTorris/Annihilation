@@ -21,7 +21,7 @@ namespace TundraEngine.Windowing
             Assert.IsTrue(result >= 0, "Could not initialize SDL video: " + SDL_GetErrorString());
             
             // Get desktop display mode
-            result = SDL_GetDeskTopDisplayMode(settings.Monitor, out SDL_DisplayMode displayMode);
+            result = SDL_GetDeskTopDisplayMode(settings.Monitor, out DisplayMode displayMode);
             Assert.IsTrue(result == 0, "Could not get desktop display mode: " + SDL_GetErrorString());
 
             // Create the window if needed, hidden
@@ -64,36 +64,9 @@ namespace TundraEngine.Windowing
             }
             SDL_SetWindowDisplayMode(Window, );
             SDL_SetWindowBordered
-
-            // Window
-            WindowFlags windowFlags = WindowFlags.Shown | WindowFlags.Vulkan;
-            if (settings.AllowHighDPI) windowFlags |= WindowFlags.AllowHighDPI;
-            if (settings.AlwaysOnTop) windowFlags |= WindowFlags.AlwaysOnTop;
-            switch (settings.Mode)
-            {
-                case WindowMode.Fullscreen:
-                    windowFlags |= WindowFlags.Fullscreen;
-                    break;
-                case WindowMode.FullscreenDesktop:
-                    windowFlags |= WindowFlags.FullscreenDeskTop;
-                    break;
-            }
-
-            Window = SDL_CreateWindow(
-                settings.Name,
-                settings.PositionX,
-                settings.PositionY,
-                settings.Width,
-                settings.Height,
-                windowFlags);
-            Assert.IsTrue(Window != IntPtr.Zero, "Could not create SDL window.");
-
+                
             // Window manager
-            SysWMInfo wmInfo = new SysWMInfo();
-            FillVersion(out wmInfo.Version);
-            SDL_GetWindowWMInfo(Window, ref wmInfo);
-            
-            switch (wmInfo.SubSystem)
+            switch (SysWMInfo.SubSystem)
             {
                 case SysWMType.Windows:
                     WindowManagerInfo = new WindowManagerInfo
@@ -101,8 +74,8 @@ namespace TundraEngine.Windowing
                         Type = WindowManagerType.Windows,
                         Windows = new WindowManagerInfo.WindowsInfo
                         {
-                            HWindow = wmInfo.Info.Windows.Window,
-                            HInstance = wmInfo.Info.Windows.HInstance
+                            HWindow = SysWMInfo.Info.Windows.Window,
+                            HInstance = SysWMInfo.Info.Windows.HInstance
                         }
                     };
                     break;
@@ -112,8 +85,8 @@ namespace TundraEngine.Windowing
                         Type = WindowManagerType.X11,
                         X11 = new WindowManagerInfo.X11Info
                         {
-                            Window = wmInfo.Info.X11.Window,
-                            Connection = wmInfo.Info.X11.Display
+                            Window = SysWMInfo.Info.X11.Window,
+                            Connection = SysWMInfo.Info.X11.Display
                         }
                     };
                     break;
@@ -123,8 +96,8 @@ namespace TundraEngine.Windowing
                         Type = WindowManagerType.Wayland,
                         Wayland = new WindowManagerInfo.WaylandInfo
                         {
-                            Surface = wmInfo.Info.Wayland.Surface,
-                            Display = wmInfo.Info.Wayland.Display
+                            Surface = SysWMInfo.Info.Wayland.Surface,
+                            Display = SysWMInfo.Info.Wayland.Display
                         }
                     };
                     break;
@@ -150,7 +123,7 @@ namespace TundraEngine.Windowing
             if (!disposedValue)
             {
                 SDL_DestroyWindow(Window);
-                Window = IntPtr.Zero;
+                Window.NativeHandle = IntPtr.Zero;
 
                 disposedValue = true;
             }

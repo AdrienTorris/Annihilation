@@ -3,10 +3,10 @@
 namespace TundraEngine.SDL
 {
     /// <summary> The structure that defines a display mode. </summary>
-    public unsafe struct SDL_DisplayMode
+    public unsafe struct DisplayMode
     {
         /// <summary> Pixel format </summary>
-        public PixelFormat Format;
+        public uint Format;
         public int Width;
         public int Height;
         public int RefreshRate;

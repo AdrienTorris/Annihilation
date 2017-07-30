@@ -1,4 +1,6 @@
-﻿namespace TundraEngine
+﻿using System.Text;
+
+namespace TundraEngine
 {
     public static class StringExtensions
     {
