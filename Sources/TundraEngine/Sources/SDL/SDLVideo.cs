@@ -316,6 +316,12 @@ namespace TundraEngine.SDL
         [DllImport(LibraryName)]
         public static extern void SDL_GetWindowSize(Window window, out int width, out int height);
 
+        [DllImport(LibraryName)]
+        public static extern void SDL_GetWindowSize(Window window, out int width, IntPtr height);
+
+        [DllImport(LibraryName)]
+        public static extern void SDL_GetWindowSize(Window window, IntPtr width, out int height);
+
         /// <summary> Get the size of a window's borders (decorations) around the client area. </summary>
         /// <param name="window"> The window to query. </param>
         /// <param name="top"> Pointer to variable for storing the size of the Top border. <see cref="IntPtr.Zero"/> is permitted. </param>
@@ -432,18 +438,8 @@ namespace TundraEngine.SDL
         [DllImport(LibraryName)]
         public static extern int SDL_SetWindowFullscreen(Window window, WindowFlags flags);
 
-        /// <summary> Get the SDL surface associated with the window. </summary>
-        /// <returns> The window's framebuffer surface, or <see cref="IntPtr.Zero"/> on error. </returns>
-        /// <remarks>
-        ///  A new surface will be created with the optimal format for the window,
-        ///  if necessary. This surface will be freed when the window is destroyed.
-        /// <para/>
-        ///  You may not combine this with 3D or the rendering API on this window.
-        /// </remarks>
-        /// <seealso cref="UpdateWindowSurface"/>
-        /// <seealso cref="UpdateWindowSurfaceRects"/>
         [DllImport(LibraryName)]
-        public static extern IntPtr SDL_GetWindowSurface(Window window);
+        public static unsafe extern Surface* SDL_GetWindowSurface(Window window);
 
         /// <summary> Copy the window surface to the screen. </summary>
         /// <returns> 0 on success, or -1 on error. </returns>
@@ -457,10 +453,9 @@ namespace TundraEngine.SDL
         /// <seealso cref="GetWindowSurface"/>
         /// <seealso cref="UpdateWindowSurface"/>
         [DllImport(LibraryName)]
-        public static extern int SDL_UpdateWindowSurfaceRects(
+        public static unsafe extern int SDL_UpdateWindowSurfaceRects(
             Window window,
-            [In(), MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 2)]
-            SDL_Rect[] rectangles,
+            Rect* rectangles,
             int numRectangles);
 
         /// <summary> Set a window's input grab mode. </summary>
@@ -484,20 +479,20 @@ namespace TundraEngine.SDL
         /// <returns> This returns the window if input is grabbed, and <see cref="IntPtr.Zero"/> otherwise. </returns>
         /// <seealso cref="SetWindowGrab"/>
         [DllImport(LibraryName)]
-        public static extern IntPtr SDL_GetGrabbedWindow();
+        public static extern Window SDL_GetGrabbedWindow();
 
         /// <summary> Set the bRightness (gamma correction) for a window. </summary>
         /// <returns> 0 on success, or -1 if setting the bRightness isn't supported. </returns>
         /// <seealso cref="GetWindowBRightness"/>
         /// <seealso cref="SetWindowGammaRamp"/>
         [DllImport(LibraryName)]
-        public static extern int SDL_SetWindowBRightness(Window window, float brightness);
+        public static extern int SDL_SetWindowBrightness(Window window, float brightness);
 
         /// <summary> Get the bRightness (gamma correction) for a window. </summary>
         /// <returns> The last bRightness value passed to SetWindowBRightness"/> </returns>
         /// <seealso cref="SetWindowBRightness"/>
         [DllImport(LibraryName)]
-        public static extern float SDL_GetWindowBRightness(Window window);
+        public static extern float SDL_GetWindowBrightness(Window window);
 
         /// <summary> Set the opacity for a window </summary>
         /// <param name="window"/> The window which will be made transparent or opaque
@@ -525,7 +520,7 @@ namespace TundraEngine.SDL
         /// <param name="parentWindow"> The parent window </param>
         /// <returns> 0 on success, or -1 otherwise. </returns>
         [DllImport(LibraryName)]
-        public static extern int SDL_SetWindowModalFor(IntPtr modalWindow, IntPtr parentWindow);
+        public static extern int SDL_SetWindowModalFor(Window modalWindow, Window parentWindow);
 
         /// <summary> 
         /// Explicitly sets input focus to the window.
@@ -556,14 +551,11 @@ namespace TundraEngine.SDL
         /// </remarks>
         /// <seealso cref="GetWindowGammaRamp"/>
         [DllImport(LibraryName)]
-        public static extern int SDL_SetWindowGammaRamp(
+        public static unsafe extern int SDL_SetWindowGammaRamp(
             Window window,
-            [In(), MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U2, SizeConst = 256)]
-            ushort[] red,
-            [In(), MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U2, SizeConst = 256)]
-            ushort[] green,
-            [In(), MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U2, SizeConst = 256)]
-            ushort[] blue);
+            ushort* red,
+            ushort* green,
+            ushort* blue);
 
 
         /// <summary> Get the gamma ramp for a window. </summary>
@@ -574,14 +566,11 @@ namespace TundraEngine.SDL
         /// <returns> 0 on success, or -1 if gamma ramps are unsupported. </returns>
         /// <seealso cref="SetWindowGammaRamp"/>
         [DllImport(LibraryName)]
-        public static extern int SDL_GetWindowGammaRamp(
+        public static unsafe extern int SDL_GetWindowGammaRamp(
             Window window,
-            [Out(), MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U2, SizeConst = 256)]
-            ushort[] red,
-            [Out(), MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U2, SizeConst = 256)]
-            ushort[] green,
-            [Out(), MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U2, SizeConst = 256)]
-            ushort[] blue);
+            ushort* red,
+            ushort* green,
+            ushort* blue);
 
         /// <summary> 
         /// Provide a callback that decides if a window region has special properties.
@@ -620,7 +609,7 @@ namespace TundraEngine.SDL
         /// <paramref name="callbackData"/> An app-defined void pointer passed to the callback.
         /// <returns> 0 on success, -1 on error (including unsupported). </returns>
         [DllImport(LibraryName)]
-        public static extern int SDL_SetWindowHitTest(Window window, HitTest callback, IntPtr callbackData);
+        public static unsafe extern int SDL_SetWindowHitTest(Window window, HitTest callback, void* callbackData);
 
         /// <summary> Destroy a window. </summary>
         [DllImport(LibraryName)]

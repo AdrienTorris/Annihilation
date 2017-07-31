@@ -18,11 +18,11 @@ namespace TundraEngine.Windowing
 
             // Init video subsystem
             int result = SDL_InitSubSystem(SDL_InitFlags.Video);
-            Assert.IsTrue(result >= 0, "Could not initialize SDL video: " + SDL_GetErrorString());
+            Assert.IsTrue(result >= 0, "Could not initialize SDL video: " + GetError());
             
             // Get desktop display mode
             result = SDL_GetDeskTopDisplayMode(settings.Monitor, out DisplayMode displayMode);
-            Assert.IsTrue(result == 0, "Could not get desktop display mode: " + SDL_GetErrorString());
+            Assert.IsTrue(result == 0, "Could not get desktop display mode: " + GetError());
 
             // Create the window if needed, hidden
             if (Window.IsNull)
@@ -34,11 +34,11 @@ namespace TundraEngine.Windowing
                 }
 
                 Window = SDL_CreateWindow(settings.Name, SDL_WindowPositionUndefined, SDL_WindowPositionUndefined, settings.Width, settings.Height, flags);
-                Assert.IsTrue(Window.IsNull == false, "Could not create SDL window: " + SDL_GetErrorString());
+                Assert.IsTrue(Window.IsNull == false, "Could not create SDL window: " + GetError());
 
                 SDL_GetVersion(out SysWMInfo.Version);
                 bool success = SDL_GetWindowWMInfo(Window, ref SysWMInfo);
-                Assert.IsTrue(success, "Could not get window manager info: " + SDL_GetErrorString());
+                Assert.IsTrue(success, "Could not get window manager info: " + GetError());
             }
             else
             {
@@ -49,7 +49,7 @@ namespace TundraEngine.Windowing
             if (SDL_GetWindowFlags(Window).Has(WindowFlags.Fullscreen))
             {
                 result = SDL_SetWindowFullscreen(Window, 0);
-                Assert.IsTrue(result == 0, "Could not set fullscreen state mode: " + SDL_GetErrorString());
+                Assert.IsTrue(result == 0, "Could not set fullscreen state mode: " + GetError());
             }
 
             // Set window size and display mode

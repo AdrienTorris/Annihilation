@@ -72,7 +72,8 @@ namespace TundraEngine.SDL
 
     /// <summary> Callback used for hit-testing. </summary>
     /// <seealso cref="SetWindowHitTest(IntPtr, HitTest, IntPtr)"/>
-    public delegate HitTestResult HitTest(IntPtr win, IntPtr area, IntPtr data);
+    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+    public unsafe delegate HitTestResult HitTest(Window win, Point* area, void* data);
 
     public struct Window
     {
@@ -108,7 +109,7 @@ namespace TundraEngine.SDL
         public unsafe Window(string title, int x, int y, int w, int h, WindowFlags flags)
         {
             this = SDL_CreateWindow(title.ToAddress(), x, y, w, h, flags);
-            Assert.IsTrue(NativeHandle != IntPtr.Zero, "Could not create SDL window: " + SDL_GetErrorString());
+            Assert.IsTrue(NativeHandle != IntPtr.Zero, "Could not create SDL window: " + GetError());
         }
 
         /// <summary> Create an SDL window from an existing native window. </summary>
@@ -117,13 +118,19 @@ namespace TundraEngine.SDL
         public unsafe Window(void* data)
         {
             this = SDL_CreateWindowFrom(data);
-            Assert.IsTrue(NativeHandle != IntPtr.Zero, "Could not create SDL window: " + SDL_GetErrorString());
+            Assert.IsTrue(NativeHandle != IntPtr.Zero, "Could not create SDL window: " + GetError());
         }
 
         /// <summary> Get a window from a stored ID, or <see cref="Null"/> if it doesn't exist. </summary>
         public Window(uint id)
         {
             this = SDL_GetWindowFromID(id);
+            NativeHandle = IntPtr.Zero;
+        }
+
+        public void Destroy()
+        {
+            SDL_DestroyWindow(this);
         }
 
         public static uint PositionUndefinedDisplay(uint x)
@@ -153,7 +160,7 @@ namespace TundraEngine.SDL
             get
             {
                 int result = SDL_GetWindowDisplayIndex(this);
-                Assert.IsTrue(result >= 0, "Could not get display index on SDL window: " + SDL_GetErrorString());
+                Assert.IsTrue(result >= 0, "Could not get display index on SDL window: " + GetError());
                 return result;
             }
         }
@@ -163,7 +170,7 @@ namespace TundraEngine.SDL
         public void SetDisplayMode(ref DisplayMode mode)
         {
             int result = SDL_SetWindowDisplayMode(this, ref mode);
-            Assert.IsTrue(result == 0, "Could not set display mode on SDL window: " + SDL_GetErrorString());
+            Assert.IsTrue(result == 0, "Could not set display mode on SDL window: " + GetError());
         }
 
         /// <summary> Set the display mode used when a fullscreen window is visible.
@@ -174,14 +181,14 @@ namespace TundraEngine.SDL
         public void SetDefaultDisplayMode()
         {
             int result = SDL_SetWindowDisplayMode(this, IntPtr.Zero);
-            Assert.IsTrue(result == 0, "Could not set display mode on SDL window: " + SDL_GetErrorString());
+            Assert.IsTrue(result == 0, "Could not set display mode on SDL window: " + GetError());
         }
 
         /// <summary> Fill in information about the display mode used when a fullscreen window is visible. </summary>
         public void GetDisplayMode(out DisplayMode mode)
         {
             int result = SDL_GetWindowDisplayMode(this, out mode);
-            Assert.IsTrue(result == 0, "Could not get display mode on SDL window: " + SDL_GetErrorString());
+            Assert.IsTrue(result == 0, "Could not get display mode on SDL window: " + GetError());
         }
 
         /// <summary> Get the pixel format associated with the window. </summary>
@@ -190,7 +197,7 @@ namespace TundraEngine.SDL
             get
             {
                 uint result = SDL_GetWindowPixelFormat(this);
-                Assert.IsTrue(result != PixelFormatUnknown, "Could not get pixel format on SDL window: " + SDL_GetErrorString());
+                Assert.IsTrue(result != PixelFormatUnknown, "Could not get pixel format on SDL window: " + GetError());
                 return result;
             }
         }
@@ -201,7 +208,7 @@ namespace TundraEngine.SDL
             get
             {
                 uint result = SDL_GetWindowID(this);
-                Assert.IsTrue(result != 0, "Could not get ID for SDL window: " + SDL_GetErrorString());
+                Assert.IsTrue(result != 0, "Could not get ID for SDL window: " + GetError());
                 return result;
             }
         }
@@ -224,10 +231,7 @@ namespace TundraEngine.SDL
         }
 
         /// <summary> Set the icon for a window. </summary>
-        public void SetIcon(Surface icon)
-        {
-            SDL_SetWindowIcon(this, icon);
-        }
+        public void SetIcon(Surface icon) => SDL_SetWindowIcon(this, icon);
 
         /// <summary> Associate an arbitrary named pointer with a window. </summary>
         /// <param name="name"> The name of the pointer. </param>
@@ -235,140 +239,55 @@ namespace TundraEngine.SDL
         /// <returns> The previous value associated with 'name' </returns>
         /// <remarks> The name is case-sensitive. </remarks>
         /// <seealso cref="GetData(string)"/>
-        public unsafe void* SetData(string name, void* data)
-        {
-            return SDL_SetWindowData(this, name.ToAddress(), data);
-        }
+        public unsafe void* SetData(string name, void* data) => SDL_SetWindowData(this, name.ToAddress(), data);
 
         /// <summary> Retrieve the data pointer associated with a window. </summary>
         /// <param name="name"> The name of the pointer. </param>
         /// <returns> The value associated with 'name' </returns>
         /// <seealso cref="SetData(string, void*)"/>
-        public unsafe void* GetData(string name)
-        {
-            return SDL_GetWindowData(this, name.ToAddress());
-        }
+        public unsafe void* GetData(string name) => SDL_GetWindowData(this, name.ToAddress());
 
         /// <summary> Set the position of a window. </summary>
         /// <param name="x"> The x coordinate of the window in screen coordinates, or <see cref=PositionCentered"/> or <see cref="PositionUndefined"/>. </param>
         /// <param name="y"> The y coordinate of the window in screen coordinates, or <see cref="PositionCentered"/> or <see cref="PositionUndefined"/>. </param>
         /// <remarks> The window coordinate origin is the upper Left of the display. </remarks>
         /// <seealso cref="GetPosition(out int, out int)"/>
-        public void SetPosition(int x, int y)
-        {
-            SDL_SetWindowPosition(this, x, y);
-        }
+        public void SetPosition(int x, int y) => SDL_SetWindowPosition(this, x, y);
 
         /// <summary> Get the position of a window. </summary>
         /// <param name="x"> Variable for storing the x position, in screen coordinates. </param>
         /// <param name="y"> Variable for storing the y position, in screen coordinates. </param>
         /// <seealso cref="SetPosition(int, int)"/>
-        public void GetPosition(out int x, out int y)
-        {
-            SDL_GetWindowPosition(this, out x, out y);
-        }
+        public void GetPosition(out int x, out int y) => SDL_GetWindowPosition(this, out x, out y);
 
         /// <summary> Get the X position of a window. </summary>
         /// <param name="x"> Variable for storing the x position, in screen coordinates. </param>
         /// <seealso cref="SetPosition(int, int)"/>
-        public void GetPositionX(out int x)
-        {
-            SDL_GetWindowPosition(this, out x, IntPtr.Zero);
-        }
+        public void GetPositionX(out int x) => SDL_GetWindowPosition(this, out x, IntPtr.Zero);
 
         /// <summary> Get the Y position of a window. </summary>
         /// <param name="y"> Variable for storing the y position, in screen coordinates. </param>
         /// <seealso cref="SetPosition(int, int)"/>
-        public void GetPositionY(out int y)
-        {
-            SDL_GetWindowPosition(this, IntPtr.Zero, out y);
-        }
+        public void GetPositionY(out int y) => SDL_GetWindowPosition(this, IntPtr.Zero, out y);
 
-        public void SetSize()
-        {
+        public void SetSize(int w, int h) => SDL_SetWindowSize(this, w, h);
 
-        }
+        public void GetSize(out int w, out int h) => SDL_GetWindowSize(this, out w, out h);
 
-        public void GetSize()
-        {
+        public void GetWidth(out int w) => SDL_GetWindowSize(this, out w, IntPtr.Zero);
 
-        }
+        public void GetHeight(out int h) => SDL_GetWindowSize(this, IntPtr.Zero, out h);
 
-        public void GetSizeX()
-        {
+        public void GetBorderSize(out int top, out int left, out int bottom, out int right) => SDL_GetWindowBordersSize(this, out top, out left, out bottom, out right);
 
-        }
+        public void SetMinimumSize(int minW, int minH) => SDL_SetWindowMinimumSize(this, minW, minH);
 
-        public void GetSizeY()
-        {
+        public void GetMinimumSize(out int w, out int h) => SDL_GetWindowMinimumSize(this, out w, out h);
 
-        }
+        public void SetMaximumSize(int maxW, int maxH) => SDL_SetWindowMaximumSize(this, maxW, maxH);
 
-        public void GetBorderSize()
-        {
-
-        }
-
-        public void GetBorderSizeTop()
-        {
-
-        }
-
-        public void GetBorderSizeBottom()
-        {
-
-        }
-
-        public void GetBorderSizeLeft()
-        {
-
-        }
-
-        public void GetBorderSizeRight()
-        {
-
-        }
-
-        public void SetMinimumSize(int minW, int minH)
-        {
-
-        }
-
-        public void GetMinimumSize(out int w, out int h)
-        {
-
-        }
-
-        public void GetMinimumSizeW(out int w)
-        {
-
-        }
-
-        public void GetMinimumSizeH(out int h)
-        {
-
-        }
-
-        public void SetMaximumSize(int maxW, int maxH)
-        {
-
-        }
-
-        public void GetMaximumSize(out int w, out int h)
-        {
-
-        }
-
-        public void GetMaximumSizeW(out int w)
-        {
-
-        }
-
-        public void GetMaximumSizeH(out int h)
-        {
-
-        }
-
+        public void GetMaximumSize(out int w, out int h) => SDL_GetWindowMaximumSize(this, out w, out h);
+        
         public void SetBordered(bool bordered) => SDL_SetWindowBordered(this, bordered);
 
         public void SetResizable(bool resizable) => SDL_SetWindowResizable(this, resizable);
@@ -387,7 +306,109 @@ namespace TundraEngine.SDL
 
         public void SetFullscreen(WindowFlags flags)
         {
+            int result = SDL_SetWindowFullscreen(this, flags);
+            Assert.IsTrue(result == 0, "Could not set fullscreen mode for SDL window: " + GetError());
+        }
 
+        public unsafe Surface* GetSurface()
+        {
+            Surface* surface = SDL_GetWindowSurface(this);
+            Assert.IsTrue(surface != null, "Could not get surface for SDL window: " + GetError());
+            return surface;
+        }
+
+        public void UpdateSurface()
+        {
+            int result = SDL_UpdateWindowSurface(this);
+            Assert.IsTrue(result == 0, "Could not update surface for SDL window: " + GetError());
+        }
+
+        public unsafe void UpdateSurfaceRects(Rect[] rects, int numRects)
+        {
+            fixed (Rect* ptr = &rects[0])
+            {
+                int result = SDL_UpdateWindowSurfaceRects(this, ptr, numRects);
+                Assert.IsTrue(result == 0, "Could not update surface rects for SDL window: " + GetError());
+            }
+        }
+
+        public bool Grab
+        {
+            get { return SDL_GetWindowGrab(this); }
+            set { SDL_SetWindowGrab(this, value); }
+        }
+
+        public static Window GetGrabbedWindow()
+        {
+            return SDL_GetGrabbedWindow();
+        }
+
+        public float Brightness
+        {
+            get
+            {
+                return SDL_GetWindowBrightness(this);
+            }
+            set
+            {
+                int result = SDL_SetWindowBrightness(this, value);
+                Assert.IsTrue(result == 0, "Could not set brightness for SDL window: " + GetError());
+            }
+        }
+
+        public float Opacity
+        {
+            get
+            {
+                int result = SDL_GetWindowOpacity(this, out float opacity);
+                Assert.IsTrue(result == 0, "Could not get opacity for SDL window: " + GetError());
+                return opacity;
+            }
+            set
+            {
+                int result = SDL_SetWindowOpacity(this, value);
+                Assert.IsTrue(result == 0, "Could not set opacity for SDL window: " + GetError());
+            }
+        }
+
+        public void SetModalFor(Window parentWindow)
+        {
+            int result = SDL_SetWindowModalFor(this, parentWindow);
+            Assert.IsTrue(result == 0, "Could not set SDL window modal: " + GetError());
+        }
+
+        public void SetInputFocus()
+        {
+            int result = SDL_SetWindowInputFocus(this);
+            Assert.IsTrue(result == 0, "Could not set input focus for SDL window: " + GetError());
+        }
+
+        public unsafe void SetGammaRamp(ushort[] red, ushort[] green, ushort[] blue)
+        {
+            fixed (ushort* redPtr = &red[0])
+            fixed (ushort* greenPtr = &green[0])
+            fixed (ushort* bluePtr = &blue[0])
+            {
+                int result = SDL_SetWindowGammaRamp(this, redPtr, greenPtr, bluePtr);
+                Assert.IsTrue(result == 0, "Could not set gamma ramp for SDL window: " + GetError());
+            }
+        }
+
+        public unsafe void GetGammaRamp(ushort[] red, ushort[] green, ushort[] blue)
+        {
+            fixed (ushort* redPtr = &red[0])
+            fixed (ushort* greenPtr = &green[0])
+            fixed (ushort* bluePtr = &blue[0])
+            {
+                int result = SDL_GetWindowGammaRamp(this, redPtr, greenPtr, bluePtr);
+                Assert.IsTrue(result == 0, "Could not get gamma ramp for SDL window: " + GetError());
+            }
+        }
+
+        public unsafe void SetHitTest(HitTest callback, void* callbackData)
+        {
+            int result = SDL_SetWindowHitTest(this, callback, callbackData);
+            Assert.IsTrue(result == 0, "Could not set hit test callback for SDL window: " + GetError());
         }
     }
 

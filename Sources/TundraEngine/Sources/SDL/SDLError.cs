@@ -14,11 +14,11 @@ namespace TundraEngine.SDL
         /// <param name="fmt"> A printf() style message format string </param>
         /// <param name="objects"> Additional parameters matching % tokens in the fmt string, if any </param>
         /// <remarks> Calling this function will replace any previous error message that was set. </remarks>
-        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName)]
         unsafe public extern static int SDL_SetError (string fmt, params object[] objects);
         
-        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
-        unsafe private extern static IntPtr SDL_GetError ();
+        [DllImport (LibraryName)]
+        unsafe private extern static byte* SDL_GetError ();
 
         /// <summary>
         /// Use this function to retrieve a message about the last error that occurred.
@@ -28,7 +28,7 @@ namespace TundraEngine.SDL
         /// It is possible for multiple errors to occur before calling <see cref="Get"/>. Only the last error is returned. 
         /// <para /> The returned string is statically allocated and must not be freed by the application.
         /// </remarks>
-        unsafe public static string SDL_GetErrorString ()
+        unsafe public static string GetError ()
         {
             return GetString(SDL_GetError ());
         }
@@ -36,7 +36,7 @@ namespace TundraEngine.SDL
         /// <summary>
         /// Use this function to clear any previous error message.
         /// </summary>
-        [DllImport (LibraryName, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport (LibraryName)]
         public extern static void SDL_ClearError ();
     }
 }
