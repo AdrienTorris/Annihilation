@@ -122,7 +122,7 @@ namespace TundraEngine.SDL
         /// <para /> If a subsystem is already loaded then this call will increase the ref-count and return.
         /// </summary>
         [DllImport (LibraryName)]
-        public extern static int SDL_InitSubSystem (SDL_InitFlags flags);
+        internal extern static int SDL_InitSubSystem (SDL_InitFlags flags);
 
         /// <summary>
         /// This function cleans up specific SDL subsystems

@@ -410,6 +410,12 @@ namespace TundraEngine.SDL
             int result = SDL_SetWindowHitTest(this, callback, callbackData);
             Assert.IsTrue(result == 0, "Could not set hit test callback for SDL window: " + GetError());
         }
+
+        public void GetWMInfo(ref SysWMInfo sysWMInfo)
+        {
+            bool result = SDL_GetWindowWMInfo(this, ref sysWMInfo);
+            Assert.IsTrue(result, "Could not get sys WM info for SDL window: " + GetError());
+        }
     }
 
     internal static class WindowFlagsExtensions

@@ -33,12 +33,10 @@ namespace TundraEngine.Windowing
                     flags |= WindowFlags.Borderless;
                 }
 
-                Window = SDL_CreateWindow(settings.Name, SDL_WindowPositionUndefined, SDL_WindowPositionUndefined, settings.Width, settings.Height, flags);
-                Assert.IsTrue(Window.IsNull == false, "Could not create SDL window: " + GetError());
+                Window = new Window(settings.Name, Window.PositionUndefined, Window.PositionUndefined, settings.Width, settings.Height, flags);
 
                 SDL_GetVersion(out SysWMInfo.Version);
-                bool success = SDL_GetWindowWMInfo(Window, ref SysWMInfo);
-                Assert.IsTrue(success, "Could not get window manager info: " + GetError());
+                Window.GetWMInfo(ref SysWMInfo);
             }
             else
             {
@@ -53,17 +51,17 @@ namespace TundraEngine.Windowing
             }
 
             // Set window size and display mode
-            SDL_SetWindowSize(Window, settings.Width, settings.Height);
+            Window.SetSize(settings.Width, settings.Height);
             if (previousDisplay >= 0)
             {
-                SDL_SetWindowPosition(Window, (int)SDL_WindowPositionCenteredDisplay((uint)previousDisplay), (int)SDL_WindowPositionCenteredDisplay((uint)previousDisplay));
+                Window.SetPosition((int)Window.PositionCenteredDisplay((uint)previousDisplay), (int)Window.PositionCenteredDisplay((uint)previousDisplay));
             }
             else
             {
-                SDL_SetWindowPosition(Window, SDL_WindowPositionCentered, SDL_WindowPositionCentered);
+                Window.SetPosition(Window.PositionCentered, Window.PositionCentered);
             }
-            SDL_SetWindowDisplayMode(Window, );
-            SDL_SetWindowBordered
+            Window.SetDefaultDisplayMode();
+            Window.SetBordered(false);
                 
             // Window manager
             switch (SysWMInfo.SubSystem)
