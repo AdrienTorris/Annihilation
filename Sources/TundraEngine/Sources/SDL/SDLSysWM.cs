@@ -177,7 +177,7 @@ namespace TundraEngine.SDL
                 [FieldOffset (0)] public readonly VivanteInfo Vivante;
             }
 
-            public SDL_Version Version;
+            public Version Version;
             public readonly SysWMType SubSystem;
             public readonly InfoUnion Info;
         }

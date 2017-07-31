@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TundraEngine.SDL
+﻿namespace TundraEngine.SDL
 {
     /// <summary> The structure that defines a display mode. </summary>
     public unsafe struct DisplayMode

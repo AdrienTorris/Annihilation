@@ -17,7 +17,7 @@ namespace TundraEngine.Windowing
             int previousDisplay = -1;
 
             // Init video subsystem
-            int result = SDL_InitSubSystem(SDL_InitFlags.Video);
+            int result = SDL_InitSubSystem(InitFlags.Video);
             Assert.IsTrue(result >= 0, "Could not initialize SDL video: " + GetError());
             
             // Get desktop display mode

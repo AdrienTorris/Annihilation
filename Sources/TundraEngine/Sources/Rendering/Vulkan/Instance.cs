@@ -126,14 +126,10 @@ namespace TundraEngine.Rendering.Vulkan
                 Vulkan.CreateInstance(createInfoPtr, allocator, instancePtr).CheckError();
             }
             Assert.IsTrue(NativeHandle != IntPtr.Zero, "Could not assign instance native handle.");
-
-            // Load functions
-            DestroyInstance = Vulkan.LoadInstanceFunction<DestroyInstanceDelegate>(this);
         }
 
         public unsafe void Destroy()
         {
-            DestroyInstance(this, null);
         }
 
         public override bool Equals(object obj)
