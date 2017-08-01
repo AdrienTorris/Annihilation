@@ -3,7 +3,7 @@
 namespace TundraEngine.SDL
 {
     [Flags]
-    public enum SDL_SurfaceFlags : uint
+    public enum SurfaceFlags : uint
     {
         Software = 0,
         PreAllocated = 1 << 0,

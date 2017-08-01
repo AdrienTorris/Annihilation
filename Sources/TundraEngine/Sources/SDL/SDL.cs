@@ -2,7 +2,6 @@
 using System.Text;
 using System.Security;
 using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
 
 namespace TundraEngine.SDL
 {
@@ -151,6 +150,91 @@ namespace TundraEngine.SDL
         Png = 0x00000002,
         Tif = 0x00000004,
         Webp = 0x00000008
+    }
+
+    public enum WindowEventID
+    {
+        /// <summary>
+        /// Never used
+        /// </summary>
+        None,
+        /// <summary>
+        /// Window has been shown
+        /// </summary>
+        Shown,
+        /// <summary>
+        /// Window has been hidden
+        /// </summary>
+        Hidden,
+        /// <summary>
+        /// Window has been exposed and should be redrawn
+        /// </summary>
+        Exposed,
+
+        /// <summary>
+        /// Window has been moved to data1, data2
+        /// </summary>
+        Moved,
+
+        /// <summary>
+        /// Window has been resized to data1 x data2
+        /// </summary>
+        Resized,
+        /// <summary>
+        /// The window size has changed, either as a result of an API call or through the system or user changing the window size
+        /// </summary>
+        SizeChanged,
+
+        /// <summary>
+        /// Window has been minimized
+        /// </summary>
+        Minimized,
+        /// <summary>
+        /// Window has been maximized
+        /// </summary>
+        Maximized,
+        /// <summary>
+        /// Window has been restored to normal size and position
+        /// </summary>
+        Restored,
+
+        /// <summary>
+        /// Window has gained mouse focus
+        /// </summary>
+        Enter,
+        /// <summary>
+        /// Window has lost mouse focus
+        /// </summary>
+        Leave,
+        /// <summary>
+        /// Window has gained keyboard focus
+        /// </summary>
+        FocusGained,
+        /// <summary>
+        /// Window has lost keyboard focus
+        /// </summary>
+        FocusLost,
+        /// <summary>
+        /// The window manager requests that the window be closed
+        /// </summary>
+        Close,
+        /// <summary>
+        /// Window is being offered a focus (should <see cref="SetWindowInputFocus"/> on itself or a subwindow, or ignore)
+        /// </summary>
+        TakeFocus,
+        /// <summary>
+        /// Window had a hit test that wasn't <see cref="HitTestNormal"/>
+        /// </summary>
+        HitTest
+    }
+    
+    [Flags]
+    public enum SDL_BlendMode
+    {
+        None = 0,
+        Blend = 1 << 0,
+        Add = 1 << 1,
+        Mod = 1 << 2
     }
 
     /// <summary>
@@ -1003,13 +1087,17 @@ namespace TundraEngine.SDL
             [DllImport(LibraryName)]
             public extern static long SDL_RWsize(IntPtr context);
 
+            //---------------------------------------------------------------------
+            // SDL_surface.h
+            //---------------------------------------------------------------------
+
             [DllImport(LibraryName)]
             public static extern int SDL_UpperBlit(
-        IntPtr src,
-        ref Rect srcrect,
-        IntPtr dst,
-        ref Rect dstrect
-    );
+                IntPtr src,
+                ref Rect srcrect,
+                IntPtr dst,
+                ref Rect dstrect
+            );
 
             [DllImport(LibraryName)]
             public static extern int SDL_UpperBlit(
@@ -1284,6 +1372,40 @@ namespace TundraEngine.SDL
             public static extern void SDL_UnlockSurface(IntPtr surface);
 
             //---------------------------------------------------------------------
+            // SDL_syswm.h
+            //---------------------------------------------------------------------
+
+            [DllImport(LibraryName)]
+            public extern static bool SDL_GetWindowWMInfo(Window window, ref SysWMInfo info);
+
+            //---------------------------------------------------------------------
+            // SDL_timer.h
+            //---------------------------------------------------------------------
+
+            [DllImport(LibraryName)]
+            public extern static uint SDL_GetTicks();
+
+            public static bool SDL_TicksPassed(uint a, uint b)
+            {
+                return ((int)(b - a) <= 0);
+            }
+
+            [DllImport(LibraryName)]
+            public extern static ulong SDL_GetPerformanceCounter();
+
+            [DllImport(LibraryName)]
+            public extern static ulong SDL_GetPerformanceFrequency();
+
+            [DllImport(LibraryName)]
+            public extern static void SDL_Delay(uint ms);
+
+            [DllImport(LibraryName)]
+            public extern static TimerID SDL_AddTimer(uint interval, TimerCallback callback, IntPtr param);
+
+            [DllImport(LibraryName)]
+            public extern static bool SDL_RemoveTimer(TimerID id);
+
+            //---------------------------------------------------------------------
             // SDL_version.h
             //---------------------------------------------------------------------
 
@@ -1295,6 +1417,235 @@ namespace TundraEngine.SDL
 
             [DllImport(LibraryName)]
             public extern static int SDL_GetRevisionNumber();
+
+            //---------------------------------------------------------------------
+            // SDL_video.h
+            //---------------------------------------------------------------------
+
+            [DllImport(LibraryName)]
+            public extern static int SDL_GetNumVideoDrivers();
+
+            [DllImport(LibraryName)]
+            private extern static IntPtr SDL_GetVideoDriver(int index);
+            
+            [DllImport(LibraryName)]
+            public static extern int SDL_VideoInit(IntPtr driver_name);
+            
+            [DllImport(LibraryName)]
+            public static extern void SDL_VideoQuit();
+            
+            [DllImport(LibraryName)]
+            public static extern IntPtr SDL_GetCurrentVideoDriver();
+            
+            [DllImport(LibraryName)]
+            public static extern int SDL_GetNumVideoDisplays();
+            
+            [DllImport(LibraryName)]
+            public static extern IntPtr SDL_GetDisplayName(int displayIndex);
+            
+            [DllImport(LibraryName)]
+            public static extern int SDL_GetDisplayBounds(int displayIndex, out Rect rectangle);
+            
+            [DllImport(LibraryName)]
+            public static extern int SDL_GetDisplayDPI(int displayIndex, out float ddpi, out float hdpi, out float vdpi);
+            
+            [DllImport(LibraryName)]
+            public static extern int SDL_GetDisplayUsableBounds(int displayIndex, out Rect rectangle);
+            
+            [DllImport(LibraryName)]
+            public static extern int SDL_GetNumDisplayModes(int displayIndex);
+            
+            [DllImport(LibraryName)]
+            public static extern int SDL_GetDisplayMode(int displayIndex, int modeIndex, out DisplayMode mode);
+            
+            [DllImport(LibraryName)]
+            public static extern int SDL_GetDeskTopDisplayMode(int displayIndex, out DisplayMode mode);
+            
+            [DllImport(LibraryName)]
+            public static extern int SDL_GetCurrentDisplayMode(int displayIndex, out DisplayMode mode);
+            
+            [DllImport(LibraryName)]
+            [return: MarshalAs(UnmanagedType.LPStruct)]
+            public static extern DisplayMode SDL_GetClosestDisplayMode(int displayIndex, ref DisplayMode mode, out DisplayMode closest);
+
+            [DllImport(LibraryName)]
+            public static extern int SDL_GetWindowDisplayIndex(Window window);
+
+            [DllImport(LibraryName)]
+            public static extern int SDL_SetWindowDisplayMode(Window window, ref DisplayMode mode);
+
+            [DllImport(LibraryName)]
+            public static extern int SDL_SetWindowDisplayMode(Window window, IntPtr mode);
+
+            [DllImport(LibraryName)]
+            public static extern int SDL_GetWindowDisplayMode(Window window, out DisplayMode mode);
+
+            [DllImport(LibraryName)]
+            public static extern uint SDL_GetWindowPixelFormat(Window window);
+
+            [DllImport(LibraryName)]
+            public static unsafe extern Window SDL_CreateWindow(byte* title, int x, int y, int width, int height, WindowFlags flags);
+
+            [DllImport(LibraryName)]
+            public static unsafe extern Window SDL_CreateWindowFrom(void* data);
+
+            [DllImport(LibraryName)]
+            public static extern uint SDL_GetWindowID(Window window);
+
+            [DllImport(LibraryName)]
+            public static extern Window SDL_GetWindowFromID(uint id);
+
+            [DllImport(LibraryName)]
+            public static extern WindowFlags SDL_GetWindowFlags(Window window);
+
+            [DllImport(LibraryName)]
+            public static unsafe extern void SDL_SetWindowTitle(Window window, byte* title);
+
+            [DllImport(LibraryName)]
+            public static unsafe extern byte* SDL_GetWindowTitle(Window window);
+
+            [DllImport(LibraryName)]
+            public static extern void SDL_SetWindowIcon(Window window, Surface icon);
+
+            [DllImport(LibraryName)]
+            public static unsafe extern void* SDL_SetWindowData(Window window, byte* name, void* userData);
+
+            [DllImport(LibraryName)]
+            public static unsafe extern void* SDL_GetWindowData(Window window, byte* name);
+
+            [DllImport(LibraryName)]
+            public static extern void SDL_SetWindowPosition(Window window, int x, int y);
+
+            [DllImport(LibraryName)]
+            public static extern void SDL_GetWindowPosition(Window window, out int x, out int y);
+
+            [DllImport(LibraryName)]
+            public static extern void SDL_GetWindowPosition(Window window, out int x, IntPtr y);
+
+            [DllImport(LibraryName)]
+            public static extern void SDL_GetWindowPosition(Window window, IntPtr x, out int y);
+            
+            [DllImport(LibraryName)]
+            public static extern void SDL_SetWindowSize(Window window, int width, int height);
+            
+            [DllImport(LibraryName)]
+            public static extern void SDL_GetWindowSize(Window window, out int width, out int height);
+
+            [DllImport(LibraryName)]
+            public static extern void SDL_GetWindowSize(Window window, out int width, IntPtr height);
+
+            [DllImport(LibraryName)]
+            public static extern void SDL_GetWindowSize(Window window, IntPtr width, out int height);
+            
+            [DllImport(LibraryName)]
+            public static extern int SDL_GetWindowBordersSize(Window window, out int top, out int left, out int bottom, out int right);
+            
+            [DllImport(LibraryName)]
+            public static extern void SDL_SetWindowMinimumSize(Window window, int minwidth, int minHeight);
+            
+            [DllImport(LibraryName)]
+            public static extern void SDL_GetWindowMinimumSize(Window window, out int width, out int height);
+            
+            [DllImport(LibraryName)]
+            public static extern void SDL_SetWindowMaximumSize(Window window, int maxWidth, int maxHeight);
+            
+            [DllImport(LibraryName)]
+            public static extern void SDL_GetWindowMaximumSize(Window window, out int width, out int height);
+            
+            [DllImport(LibraryName)]
+            public static extern void SDL_SetWindowBordered(Window window, bool bordered);
+            
+            [DllImport(LibraryName)]
+            public static extern void SDL_SetWindowResizable(Window window, bool resizable);
+            
+            [DllImport(LibraryName)]
+            public static extern void SDL_ShowWindow(Window window);
+            
+            [DllImport(LibraryName)]
+            public static extern void SDL_HideWindow(Window window);
+            
+            [DllImport(LibraryName)]
+            public static extern void SDL_RaiseWindow(Window window);
+            
+            [DllImport(LibraryName)]
+            public static extern void SDL_MaximizeWindow(Window window);
+            
+            [DllImport(LibraryName)]
+            public static extern void SDL_MinimizeWindow(Window window);
+            
+            [DllImport(LibraryName)]
+            public static extern void SDL_RestoreWindow(Window window);
+            
+            [DllImport(LibraryName)]
+            public static extern int SDL_SetWindowFullscreen(Window window, WindowFlags flags);
+
+            [DllImport(LibraryName)]
+            public static unsafe extern Surface* SDL_GetWindowSurface(Window window);
+            
+            [DllImport(LibraryName)]
+            public static extern int SDL_UpdateWindowSurface(Window window);
+            
+            [DllImport(LibraryName)]
+            public static unsafe extern int SDL_UpdateWindowSurfaceRects(
+                Window window,
+                Rect* rectangles,
+                int numRectangles);
+            
+            [DllImport(LibraryName)]
+            public static extern void SDL_SetWindowGrab(Window window, bool grabbed);
+            
+            [DllImport(LibraryName)]
+            public static extern bool SDL_GetWindowGrab(Window window);
+            
+            [DllImport(LibraryName)]
+            public static extern Window SDL_GetGrabbedWindow();
+
+            [DllImport(LibraryName)]
+            public static extern int SDL_SetWindowBrightness(Window window, float brightness);
+            
+            [DllImport(LibraryName)]
+            public static extern float SDL_GetWindowBrightness(Window window);
+            
+            [DllImport(LibraryName)]
+            public static extern int SDL_SetWindowOpacity(Window window, float opacity);
+            
+            [DllImport(LibraryName)]
+            public static extern int SDL_GetWindowOpacity(Window window, out float outOpacity);
+            
+            [DllImport(LibraryName)]
+            public static extern int SDL_SetWindowModalFor(Window modalWindow, Window parentWindow);
+            
+            [DllImport(LibraryName)]
+            public static extern int SDL_SetWindowInputFocus(Window window);
+            
+            [DllImport(LibraryName)]
+            public static unsafe extern int SDL_SetWindowGammaRamp(
+                Window window,
+                ushort* red,
+                ushort* green,
+                ushort* blue);
+            
+            [DllImport(LibraryName)]
+            public static unsafe extern int SDL_GetWindowGammaRamp(
+                Window window,
+                ushort* red,
+                ushort* green,
+                ushort* blue);
+            
+            [DllImport(LibraryName)]
+            public static unsafe extern int SDL_SetWindowHitTest(Window window, HitTest callback, void* callbackData);
+            
+            [DllImport(LibraryName)]
+            public static extern void SDL_DestroyWindow(Window window);
+            
+            [DllImport(LibraryName)]
+            public static extern bool SDL_IsScreenSaverEnabled();
+            
+            [DllImport(LibraryName)]
+            public static extern void SDL_EnableScreenSaver();
+            
+            [DllImport(LibraryName)]
+            public static extern void SDL_DisableScreenSaver();
         }
 
         [SuppressUnmanagedCodeSecurity]
@@ -1537,6 +1888,24 @@ namespace TundraEngine.SDL
         }
 
         //---------------------------------------------------------------------
+        // SDL_version.h
+        //---------------------------------------------------------------------
+
+        public static void GetVersion(out Version version)
+        {
+            Native.SDL_GetVersion(out version);
+        }
+
+        //---------------------------------------------------------------------
+        // SDL_video.h
+        //---------------------------------------------------------------------
+
+        public static void GetDesktopDisplayMode(int displayIndex, out DisplayMode displayMode)
+        {
+            Native.SDL_GetDeskTopDisplayMode(displayIndex, out displayMode).CheckError("Could not get dekstop display mode");
+        }
+
+        //---------------------------------------------------------------------
         // Utility methods
         //---------------------------------------------------------------------
 
@@ -1559,14 +1928,6 @@ namespace TundraEngine.SDL
             int count = (int)(counter - ptr);
 
             return Encoding.UTF8.GetString(ptr, count);
-        }
-    }
-
-    internal static class IntExtensions
-    {
-        public static void CheckError(this int result, string message)
-        {
-            Assert.IsTrue(result == 0, "[SDL] " + message + ": " + SDL.GetError());
         }
     }
 }

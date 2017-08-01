@@ -17,12 +17,10 @@ namespace TundraEngine.Windowing
             int previousDisplay = -1;
 
             // Init video subsystem
-            int result = SDL_InitSubSystem(InitFlags.Video);
-            Assert.IsTrue(result >= 0, "Could not initialize SDL video: " + GetError());
+            InitSubSystem(InitFlags.Video);
             
             // Get desktop display mode
-            result = SDL_GetDeskTopDisplayMode(settings.Monitor, out DisplayMode displayMode);
-            Assert.IsTrue(result == 0, "Could not get desktop display mode: " + GetError());
+            GetDesktopDisplayMode(settings.Monitor, out DisplayMode displayMode);
 
             // Create the window if needed, hidden
             if (Window.IsNull)
@@ -35,19 +33,18 @@ namespace TundraEngine.Windowing
 
                 Window = new Window(settings.Name, Window.PositionUndefined, Window.PositionUndefined, settings.Width, settings.Height, flags);
 
-                SDL_GetVersion(out SysWMInfo.Version);
+                GetVersion(out SysWMInfo.Version);
                 Window.GetWMInfo(ref SysWMInfo);
             }
             else
             {
-                previousDisplay = SDL_GetWindowDisplayIndex(Window);
+                previousDisplay = Window.DisplayIndex;
             }
 
             // Ensure the window is not fullscreen
-            if (SDL_GetWindowFlags(Window).Has(WindowFlags.Fullscreen))
+            if (Window.Flags.Has(WindowFlags.Fullscreen))
             {
-                result = SDL_SetWindowFullscreen(Window, 0);
-                Assert.IsTrue(result == 0, "Could not set fullscreen state mode: " + GetError());
+                Window.SetFullscreen(0);
             }
 
             // Set window size and display mode
@@ -120,8 +117,7 @@ namespace TundraEngine.Windowing
         {
             if (!disposedValue)
             {
-                SDL_DestroyWindow(Window);
-                Window.NativeHandle = IntPtr.Zero;
+                Window.Destroy();
 
                 disposedValue = true;
             }
