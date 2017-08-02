@@ -1,5 +1,6 @@
 ﻿using System;
 
+using TundraEngine.Vulkan;
 using TundraEngine.SDL;
 using static TundraEngine.SDL.SDL;
 
@@ -9,9 +10,42 @@ namespace TundraEngine.Windowing
     {
         public WindowManagerInfo WindowManagerInfo { get; set; }
         
-        internal Window Window;
-        internal SysWMInfo SysWMInfo;
-        
+        // SDL
+        private Window _window;
+        private SysWMInfo _sysWMInfo;
+
+        // Vulkan
+        private Instance _instance;
+        private PhysicalDevice _physicalDevice;
+        private PhysicalDeviceFeatures _physicalDeviceFeatures;
+        private Vulkan.Surface _surface;
+        private SurfaceCapabilities _surfaceCapabilities;
+        private Swapchain _swapchain;
+        private uint _numSwapChainImages;
+        private uint _currentCommandBuffer;
+        private CommandPool _commandPool;
+        private CommandPool _transientCommandPool;
+        private CommandBuffer[] _commandBuffers;
+        private Fence[] _commandBufferFences;
+        private bool[] _commandBufferSubmitted;
+        private Framebuffer[] _mainFramebuffers;
+        private Semaphore[] _drawCompleteSemaphores;
+        private Framebuffer[] _uiFramebuffers;
+        private Image[] _swapchainImages;
+        private ImageView[] _swapchainImageViews;
+        private Semaphore[] _imageAcquiredSemaphores;
+        private DeviceMemory[] _colorBuffersMemory;
+        private ImageView[] _colorBuffersView;
+        private Image _msaaColorBuffer;
+        private DeviceMemory _msaaColorBufferMemory;
+        private ImageView _msaaColorBufferView;
+        private DescriptorSet _postprocessDescriptorSet;
+#if USE_DEPTH
+        private Image _depthBuffer;
+        private DeviceMemory _depthBufferMemory;
+        private ImageView _depthBufferView;
+#endif
+
         public WindowSDL(ref WindowSettings settings)
         {
             int previousDisplay = -1;
@@ -20,10 +54,10 @@ namespace TundraEngine.Windowing
             InitSubSystem(InitFlags.Video);
             
             // Get desktop display mode
-            GetDesktopDisplayMode(settings.Monitor, out DisplayMode displayMode);
+            GetDesktopDisplayMode(settings.Monitor, out SDL.DisplayMode displayMode);
 
             // Create the window if needed, hidden
-            if (Window.IsNull)
+            if (_window.IsNull)
             {
                 WindowFlags flags = WindowFlags.Hidden;
                 if (settings.Mode == WindowMode.BorderlessWindow)
@@ -31,37 +65,37 @@ namespace TundraEngine.Windowing
                     flags |= WindowFlags.Borderless;
                 }
 
-                Window = new Window(settings.Name, Window.PositionUndefined, Window.PositionUndefined, settings.Width, settings.Height, flags);
+                _window = new Window(settings.Name, Window.PositionUndefined, Window.PositionUndefined, settings.Width, settings.Height, flags);
 
-                GetVersion(out SysWMInfo.Version);
-                Window.GetWMInfo(ref SysWMInfo);
+                GetVersion(out _sysWMInfo.Version);
+                _window.GetWMInfo(ref _sysWMInfo);
             }
             else
             {
-                previousDisplay = Window.DisplayIndex;
+                previousDisplay = _window.DisplayIndex;
             }
 
             // Ensure the window is not fullscreen
-            if (Window.Flags.Has(WindowFlags.Fullscreen))
+            if (_window.Flags.Has(WindowFlags.Fullscreen))
             {
-                Window.SetFullscreen(0);
+                _window.SetFullscreen(0);
             }
 
             // Set window size and display mode
-            Window.SetSize(settings.Width, settings.Height);
+            _window.SetSize(settings.Width, settings.Height);
             if (previousDisplay >= 0)
             {
-                Window.SetPosition((int)Window.PositionCenteredDisplay((uint)previousDisplay), (int)Window.PositionCenteredDisplay((uint)previousDisplay));
+                _window.SetPosition((int)Window.PositionCenteredDisplay((uint)previousDisplay), (int)Window.PositionCenteredDisplay((uint)previousDisplay));
             }
             else
             {
-                Window.SetPosition(Window.PositionCentered, Window.PositionCentered);
+                _window.SetPosition(Window.PositionCentered, Window.PositionCentered);
             }
-            Window.SetDefaultDisplayMode();
-            Window.SetBordered(false);
+            _window.SetDefaultDisplayMode();
+            _window.SetBordered(false);
                 
             // Window manager
-            switch (SysWMInfo.SubSystem)
+            switch (_sysWMInfo.SubSystem)
             {
                 case SysWMType.Windows:
                     WindowManagerInfo = new WindowManagerInfo
@@ -69,8 +103,8 @@ namespace TundraEngine.Windowing
                         Type = WindowManagerType.Windows,
                         Windows = new WindowManagerInfo.WindowsInfo
                         {
-                            HWindow = SysWMInfo.Info.Windows.Window,
-                            HInstance = SysWMInfo.Info.Windows.HInstance
+                            HWindow = _sysWMInfo.Info.Windows.Window,
+                            HInstance = _sysWMInfo.Info.Windows.HInstance
                         }
                     };
                     break;
@@ -80,8 +114,8 @@ namespace TundraEngine.Windowing
                         Type = WindowManagerType.X11,
                         X11 = new WindowManagerInfo.X11Info
                         {
-                            Window = SysWMInfo.Info.X11.Window,
-                            Connection = SysWMInfo.Info.X11.Display
+                            Window = _sysWMInfo.Info.X11.Window,
+                            Connection = _sysWMInfo.Info.X11.Display
                         }
                     };
                     break;
@@ -91,8 +125,8 @@ namespace TundraEngine.Windowing
                         Type = WindowManagerType.Wayland,
                         Wayland = new WindowManagerInfo.WaylandInfo
                         {
-                            Surface = SysWMInfo.Info.Wayland.Surface,
-                            Display = SysWMInfo.Info.Wayland.Display
+                            Surface = _sysWMInfo.Info.Wayland.Surface,
+                            Display = _sysWMInfo.Info.Wayland.Display
                         }
                     };
                     break;
@@ -110,14 +144,14 @@ namespace TundraEngine.Windowing
 
         }
 
-        #region IDisposable Support
+#region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
 
         protected virtual void DisposeUnmanaged()
         {
             if (!disposedValue)
             {
-                Window.Destroy();
+                _window.Destroy();
 
                 disposedValue = true;
             }
@@ -133,6 +167,6 @@ namespace TundraEngine.Windowing
             DisposeUnmanaged();
             GC.SuppressFinalize(this);
         }
-        #endregion
+#endregion
     }
 }

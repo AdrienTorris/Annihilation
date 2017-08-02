@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-using TundraEngine.Rendering.Vulkan;
+using TundraEngine.Vulkan;
 
 namespace TundraEngine.Rendering
 {
