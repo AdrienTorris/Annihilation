@@ -5,12 +5,8 @@ using System.Threading.Tasks;
 using Engine;
 using Engine.Input;
 using Engine.Rendering;
-using Engine.Windowing;
-using Engine.Mathematics;
-using Engine.EntityComponent;
-using Engine.IMGUI;
 
-namespace TundraTest
+namespace Game
 {
     class Program
     {
