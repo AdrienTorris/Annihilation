@@ -592,6 +592,21 @@ namespace Engine.SDL
             [DllImport(LibraryName)]
             public static extern short SDL_JoystickGetAxis(Joystick joystick, JoystickAxis axis);
 
+            [DllImport(LibraryName)]
+            public static extern JoystickHat SDL_JoystickGetHat(Joystick joystick, int hat);
+
+            [DllImport(LibraryName)]
+            public static extern unsafe int SDL_JoystickGetBall(Joystick joystick, int ball, int* dx, int* dy);
+
+            [DllImport(LibraryName)]
+            public static extern byte SDL_JoystickGetButton(Joystick joystick, int button);
+
+            [DllImport(LibraryName)]
+            public static extern void SDL_JoystickClose(Joystick joystick);
+
+            [DllImport(LibraryName)]
+            public static extern JoystickPowerLevel SDL_JoystickCurrentPowerLevel(Joystick joystick);
+
             //
             // SDL_keyboard.h
             //
