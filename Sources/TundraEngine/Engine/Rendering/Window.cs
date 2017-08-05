@@ -51,7 +51,7 @@ namespace Engine.Rendering
             GetDesktopDisplayMode(settings.Monitor, out SDL.DisplayMode displayMode);
 
             // Create the window if needed, hidden
-            if (_window.IsNull)
+            if (_window == SDL.Window.Null)
             {
                 WindowFlags flags = WindowFlags.Hidden;
                 if (settings.Mode == WindowMode.BorderlessWindow)
@@ -66,7 +66,7 @@ namespace Engine.Rendering
             }
             else
             {
-                previousDisplay = _window.DisplayIndex;
+                previousDisplay = _window.GetDisplayIndex;
             }
 
             // Ensure the window is not fullscreen

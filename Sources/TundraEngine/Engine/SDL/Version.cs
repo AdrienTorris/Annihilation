@@ -2,10 +2,6 @@
 
 namespace Engine.SDL
 {
-    /// <summary>
-    /// Information the version of SDL in use.
-    /// <para/> Represents the library's version as three levels: major revision (increments with massive changes, additions, and enhancements), minor revision (increments with backwards-compatible changes to the major revision), and patchlevel (increments with fixes to the minor revision).
-    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct Version
     {

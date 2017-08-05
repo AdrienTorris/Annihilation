@@ -33,12 +33,4 @@ namespace Engine.SDL
             return NativeHandle.GetHashCode();
         }
     }
-
-    public static class RendererExtensions
-    {
-        public static void CheckError(this Renderer renderer, string message)
-        {
-            Assert.IsTrue(renderer != Renderer.Null, "[SDL] " + message + ": " + SDL.GetError());
-        }
-    }
 }

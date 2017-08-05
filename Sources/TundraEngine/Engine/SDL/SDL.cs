@@ -2,12 +2,10 @@
 using System.Text;
 using System.Security;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace Engine.SDL
 {
-    /// <summary>
-    /// An enumeration of hint priorities
-    /// </summary>
     public enum HintPriority
     {
         Default,
@@ -15,7 +13,6 @@ namespace Engine.SDL
         Override
     }
 
-    /// <summary> Pixel type. </summary>
     public enum PixelType : uint
     {
         Unknown,
@@ -34,11 +31,10 @@ namespace Engine.SDL
 
     public enum PixelOrder : uint
     {
-        // Bitmap order
         BitmapNone = 0,
         Bitmap4321,
         Bitmap1234,
-        // Packed order
+
         PackedNone = 0,
         PackedXRGB,
         PackedRGBX,
@@ -48,7 +44,7 @@ namespace Engine.SDL
         PackedBGRX,
         PackedABGR,
         PackedBGRA,
-        // Array order
+
         ArrayNone = 0,
         ArrayRGB,
         ArrayRGBA,
@@ -58,7 +54,6 @@ namespace Engine.SDL
         ArrayABGR
     }
 
-    /// <summary> Packed component layout. </summary>
     public enum PackedLayout : uint
     {
         None,
@@ -72,10 +67,6 @@ namespace Engine.SDL
         Layout1010102
     }
 
-    /// <summary>
-    /// The predefined log categories
-    /// <para /> By default the application category is enabled at the INFO level, the assert category is enabled at the WARN level, test is enabled at the VERBOSE level and all other categories are enabled at the CRITICAL level.
-    /// </summary>
     public enum LogCategory
     {
         Application,
@@ -88,7 +79,6 @@ namespace Engine.SDL
         Input,
         Test,
 
-        /* Reserved for future SDL library use */
         Reserved1,
         Reserved2,
         Reserved3,
@@ -100,20 +90,9 @@ namespace Engine.SDL
         Reserved9,
         Reserved10,
 
-        /* Beyond this point is reserved for application use, e.g.
-            enum {
-                MYAPP_CATEGORY_AWESOME1 = SDL_LOG_CATEGORY_CUSTOM,
-                MYAPP_CATEGORY_AWESOME2,
-                MYAPP_CATEGORY_AWESOME3,
-                ...
-            };
-        */
         Custom,
     }
 
-    /// <summary>
-    /// The predefined log priorities
-    /// </summary>
     public enum LogPriority
     {
         Verbose = 1,
@@ -126,9 +105,6 @@ namespace Engine.SDL
         NumLogPriorities
     }
 
-    /// <summary>
-    /// These are the flags which may be passed to SDL_Init(). You should specify the subsystems which you will be using in your application.
-    /// </summary>
     [Flags]
     public enum InitFlags : uint
     {
@@ -154,82 +130,27 @@ namespace Engine.SDL
 
     public enum WindowEventID
     {
-        /// <summary>
-        /// Never used
-        /// </summary>
         None,
-        /// <summary>
-        /// Window has been shown
-        /// </summary>
         Shown,
-        /// <summary>
-        /// Window has been hidden
-        /// </summary>
         Hidden,
-        /// <summary>
-        /// Window has been exposed and should be redrawn
-        /// </summary>
         Exposed,
-
-        /// <summary>
-        /// Window has been moved to data1, data2
-        /// </summary>
         Moved,
-
-        /// <summary>
-        /// Window has been resized to data1 x data2
-        /// </summary>
         Resized,
-        /// <summary>
-        /// The window size has changed, either as a result of an API call or through the system or user changing the window size
-        /// </summary>
         SizeChanged,
-
-        /// <summary>
-        /// Window has been minimized
-        /// </summary>
         Minimized,
-        /// <summary>
-        /// Window has been maximized
-        /// </summary>
         Maximized,
-        /// <summary>
-        /// Window has been restored to normal size and position
-        /// </summary>
         Restored,
-
-        /// <summary>
-        /// Window has gained mouse focus
-        /// </summary>
         Enter,
-        /// <summary>
-        /// Window has lost mouse focus
-        /// </summary>
         Leave,
-        /// <summary>
-        /// Window has gained keyboard focus
-        /// </summary>
         FocusGained,
-        /// <summary>
-        /// Window has lost keyboard focus
-        /// </summary>
         FocusLost,
-        /// <summary>
-        /// The window manager requests that the window be closed
-        /// </summary>
         Close,
-        /// <summary>
-        /// Window is being offered a focus (should <see cref="SetWindowInputFocus"/> on itself or a subwindow, or ignore)
-        /// </summary>
         TakeFocus,
-        /// <summary>
-        /// Window had a hit test that wasn't <see cref="HitTestNormal"/>
-        /// </summary>
         HitTest
     }
 
     [Flags]
-    public enum SDL_BlendMode
+    public enum BlendMode
     {
         None = 0,
         Blend = 1 << 0,
@@ -237,9 +158,6 @@ namespace Engine.SDL
         Mod = 1 << 2
     }
 
-    /// <summary>
-    /// Type definition of the hint callback function.
-    /// </summary>
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     public delegate void HintCallback(IntPtr userData, IntPtr name, IntPtr oldValue, IntPtr newValue);
 
@@ -254,7 +172,6 @@ namespace Engine.SDL
             //
             // SDL.h
             //
-
             [DllImport(LibraryName)]
             public extern static int SDL_Init(InitFlags flags);
 
@@ -271,9 +188,125 @@ namespace Engine.SDL
             public extern static void SDL_Quit();
 
             //
+            // SDL_atomics.h
+            //
+            [DllImport(LibraryName)]
+            public extern static bool SDL_AtomicTryLock(Spinlock spinlock);
+
+            [DllImport(LibraryName)]
+            public extern static void SDL_AtomicLock(Spinlock spinlock);
+
+            [DllImport(LibraryName)]
+            public extern static void SDL_AtomicUnlock(Spinlock spinlock);
+
+            [DllImport(LibraryName)]
+            public extern static bool SDL_AtomicCAS(Atomic atomic, int oldVal, int newVal);
+
+            [DllImport(LibraryName)]
+            public extern static int SDL_AtomicSet(Atomic atomic, int value);
+
+            [DllImport(LibraryName)]
+            public extern static int SDL_AtomicGet(Atomic atomic);
+
+            [DllImport(LibraryName)]
+            public extern static int SDL_AtomicAdd(Atomic atomic, int value);
+
+            [DllImport(LibraryName)]
+            public extern static unsafe bool SDL_AtomicCASPtr(void** atomic, void* oldVal, void* newVal);
+
+            [DllImport(LibraryName)]
+            public extern static unsafe void* SDL_AtomicSetPtr(void** atomic, void* value);
+
+            [DllImport(LibraryName)]
+            public extern static unsafe void* SDL_AtomicGetPtr(void** atomic);
+
+            //
+            // SDL_audio.h
+            //
+            [DllImport(LibraryName)]
+            public extern static int SDL_GetNumAudioDrivers();
+
+            [DllImport(LibraryName)]
+            public extern static unsafe byte* SDL_GetAudioDriver(int index);
+
+            [DllImport(LibraryName)]
+            public extern static unsafe int SDL_AudioInit(byte* driverName);
+
+            [DllImport(LibraryName)]
+            public extern static void SDL_AudioQuit();
+
+            [DllImport(LibraryName)]
+            public extern static unsafe byte* SDL_GetCurrentAudioDriver();
+
+            [DllImport(LibraryName)]
+            public extern static unsafe int SDL_OpenAudio(AudioSpec* desired, AudioSpec* obtained);
+
+            [DllImport(LibraryName)]
+            public extern static int SDL_GetNumAudioDevices(int isCapture);
+
+            [DllImport(LibraryName)]
+            public extern static unsafe byte* SDL_GetAudioDeviceName(int index, int isCapture);
+
+            [DllImport(LibraryName)]
+            public extern static unsafe AudioDeviceID SDL_OpenAudioDevice(byte* device, int isCapture, AudioSpec* desired, AudioSpec* obtained, int allowedChanges);
+
+            [DllImport(LibraryName)]
+            public extern static void SDL_PauseAudio(int pauseOn);
+
+            [DllImport(LibraryName)]
+            public extern static void SDL_PauseAudioDevice(AudioDeviceID device, int pauseOn);
+
+            [DllImport(LibraryName)]
+            public extern static unsafe AudioSpec* SDL_LoadWAV_RW(RWops* src, int freeSrc, AudioSpec* spec, byte** audioBuffer, uint* audioLength);
+
+            [DllImport(LibraryName)]
+            public extern static unsafe void SDL_FreeWAV(byte* audioBuffer);
+
+            [DllImport(LibraryName)]
+            public extern static unsafe int SDL_BuildAudioCVT(AudioCVT* cvt, AudioFormat srcFormat, byte srcChannels, int srcRate, AudioFormat dstFormat, byte dstChannels, int dstRate);
+
+            [DllImport(LibraryName)]
+            public extern static unsafe int SDL_ConvertAudio(AudioCVT* cvt);
+
+            [DllImport(LibraryName)]
+            public extern static unsafe void SDL_MixAudio(byte* dst, byte* src, uint length, int volume);
+
+            [DllImport(LibraryName)]
+            public extern static unsafe void SDL_MixAudioFormat(byte* dst, byte* src, AudioFormat format, uint length, int volume);
+
+            [DllImport(LibraryName)]
+            public extern static unsafe int SDL_QueueAudio(AudioDeviceID device, void* data, uint length);
+
+            [DllImport(LibraryName)]
+            public extern static unsafe uint SDL_DequeueAudio(AudioDeviceID device, void* data, uint length);
+
+            [DllImport(LibraryName)]
+            public extern static uint SDL_GetQueueAudioSize(AudioDeviceID device);
+
+            [DllImport(LibraryName)]
+            public extern static void SDL_ClearQueueAudio(AudioDeviceID device);
+
+            [DllImport(LibraryName)]
+            public extern static void SDL_LockAudio();
+
+            [DllImport(LibraryName)]
+            public extern static void SDL_LockAudioDevice(AudioDeviceID device);
+
+            [DllImport(LibraryName)]
+            public extern static void SDL_UnlockAudio();
+
+            [DllImport(LibraryName)]
+            public extern static void SDL_UnlockAudioDevice(AudioDeviceID device);
+
+            [DllImport(LibraryName)]
+            public extern static void SDL_CloseAudio();
+
+            [DllImport(LibraryName)]
+            public extern static void SDL_CloseAudioDevice(AudioDeviceID device);
+
+            //
             // SDL_clipboard.h
             //
-
             [DllImport(LibraryName)]
             public extern static unsafe int SDL_SetClipboardText(byte* text);
 
@@ -286,7 +319,6 @@ namespace Engine.SDL
             //
             // SDL_cpuinfo.h
             //
-
             [DllImport(LibraryName)]
             public extern static int SDL_GetCPUCount();
 
@@ -335,9 +367,8 @@ namespace Engine.SDL
             //
             // SDL_error.h
             //
-
             [DllImport(LibraryName)]
-            public extern static unsafe int SDL_SetError(byte* fmt, params object[] objects);
+            public extern static unsafe int SDL_SetError(byte* format, params object[] objects);
 
             [DllImport(LibraryName)]
             public extern static unsafe byte* SDL_GetError();
@@ -348,18 +379,11 @@ namespace Engine.SDL
             //
             // SDL_events.h
             //
-
             [DllImport(LibraryName)]
             public extern static void SDL_PumpEvents();
 
             [DllImport(LibraryName)]
-            public extern static int SDL_PeepEvents(
-                [Out(), MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)]
-            Event[] events,
-                int numevents,
-                EventAction action,
-                EventType minType,
-                EventType maxType);
+            public extern static unsafe int SDL_PeepEvents(Event* events, int numEvents, EventAction action, EventType minType, EventType maxType);
 
             [DllImport(LibraryName)]
             public extern static bool SDL_HasEvent(EventType type);
@@ -386,19 +410,19 @@ namespace Engine.SDL
             public extern static int SDL_PushEvent(ref Event sdlEvent);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_SetEventFilter(EventFilter filter, IntPtr userData);
+            public extern static unsafe void SDL_SetEventFilter(EventFilter filter, void* userData);
 
             [DllImport(LibraryName)]
-            public extern static bool SDL_GetEventFilter(out EventFilter filter, IntPtr userData);
+            public extern static unsafe bool SDL_GetEventFilter(out EventFilter filter, void* userData);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_AddEventWatch(EventFilter filter, IntPtr userData);
+            public extern static unsafe void SDL_AddEventWatch(EventFilter filter, void* userData);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_DelEventWatch(EventFilter filter, IntPtr userData);
+            public extern static unsafe void SDL_DelEventWatch(EventFilter filter, void* userData);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_FilterEvents(EventFilter filter, IntPtr userData);
+            public extern static unsafe void SDL_FilterEvents(EventFilter filter, void* userData);
 
             [DllImport(LibraryName)]
             public extern static byte SDL_EventState(EventType type, EventState state);
@@ -409,7 +433,6 @@ namespace Engine.SDL
             //
             // SDL_filesystem.h
             //
-
             [DllImport(LibraryName)]
             public extern static unsafe byte* SDL_GetBasePath();
 
@@ -419,117 +442,159 @@ namespace Engine.SDL
             //
             // SDL_gamecontroller.h
             //
+            [DllImport(LibraryName)]
+            public extern static int SDL_GameControllerAddMappingsFromRW(RWops rwOps, int freeRW);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_GameControllerAddMappingsFromRW(IntPtr rwOps, int freeRW);
-
-            [DllImport(LibraryName)]
-            public static extern int SDL_GameControllerAddMapping(string mappingString);
+            public static extern unsafe int SDL_GameControllerAddMapping(byte* mappingString);
 
             [DllImport(LibraryName)]
             public static extern int SDL_GameControllerNumMappings();
+            
+            [DllImport(LibraryName)]
+            public static extern unsafe byte* SDL_GameControllerMappingForGUID(Guid guid);
 
             [DllImport(LibraryName)]
-            public static extern IntPtr SDL_GameControllerMappingForIndex(int mapping_index);
+            public static extern unsafe byte* SDL_GameControllerMapping(GameController gameController);
 
             [DllImport(LibraryName)]
-            public static extern IntPtr SDL_GameControllerMappingForGUID(Guid guid);
+            public static extern bool SDL_IsGameController(int joystickIndex);
 
             [DllImport(LibraryName)]
-            public static extern IntPtr SDL_GameControllerMapping(IntPtr gamecontroller);
+            public static extern unsafe byte* SDL_GameControllerNameForIndex(int joystickIndex);
 
             [DllImport(LibraryName)]
-            public static extern bool SDL_IsGameController(int joystick_index);
+            public static extern GameController SDL_GameControllerOpen(int joystickIndex);
 
             [DllImport(LibraryName)]
-            public static extern string SDL_GameControllerNameForIndex(int joystick_index);
+            public static extern GameController SDL_GameControllerFromInstanceID(JoystickID joyid);
 
             [DllImport(LibraryName)]
-            public static extern IntPtr SDL_GameControllerOpen(int joystick_index);
+            public static extern unsafe byte* SDL_GameControllerName(GameController gamecontroller);
+            
+            [DllImport(LibraryName)]
+            public static extern bool SDL_GameControllerGetAttached(GameController gamecontroller);
 
             [DllImport(LibraryName)]
-            public static extern IntPtr SDL_GameControllerFromInstanceID(int joyid);
+            public static extern Joystick SDL_GameControllerGetJoystick(GameController gamecontroller);
 
             [DllImport(LibraryName)]
-            public static extern string SDL_GameControllerName(IntPtr gamecontroller);
-
-            [DllImport(LibraryName)]
-            public static extern ushort SDL_GameControllerGetVendor(IntPtr gamecontroller);
-
-            [DllImport(LibraryName)]
-            public static extern ushort SDL_GameControllerGetProduct(IntPtr gamecontroller);
-
-            [DllImport(LibraryName)]
-            public static extern ushort SDL_GameControllerGetProductVersion(IntPtr gamecontroller);
-
-            [DllImport(LibraryName)]
-            public static extern bool SDL_GameControllerGetAttached(IntPtr gamecontroller);
-
-            [DllImport(LibraryName)]
-            public static extern IntPtr SDL_GameControllerGetJoystick(IntPtr gamecontroller);
-
-            [DllImport(LibraryName)]
-            public static extern int SDL_GameControllerEventState(int state);
+            public static extern int SDL_GameControllerEventState(EventState state);
 
             [DllImport(LibraryName)]
             public static extern void SDL_GameControllerUpdate();
 
             [DllImport(LibraryName)]
-            public static extern GameControllerAxis SDL_GameControllerGetAxisFromString(string pchString);
+            public static extern unsafe GameControllerAxis SDL_GameControllerGetAxisFromString(byte* pchString);
 
             [DllImport(LibraryName)]
-            public static extern string SDL_GameControllerGetStringForAxis(GameControllerAxis axis);
+            public static extern unsafe byte* SDL_GameControllerGetStringForAxis(GameControllerAxis axis);
 
             [DllImport(LibraryName)]
-            public static extern GameControllerButtonBind SDL_GameControllerGetBindForAxis(IntPtr gamecontroller, GameControllerAxis axis);
+            public static extern GameControllerButtonBind SDL_GameControllerGetBindForAxis(GameController gamecontroller, GameControllerAxis axis);
 
             [DllImport(LibraryName)]
-            public static extern short SDL_GameControllerGetAxis(IntPtr gamecontroller, GameControllerAxis axis);
+            public static extern short SDL_GameControllerGetAxis(GameController gamecontroller, GameControllerAxis axis);
 
             [DllImport(LibraryName)]
-            public static extern GameControllerButton SDL_GameControllerGetButtonFromString(string pchString);
+            public static extern unsafe GameControllerButton SDL_GameControllerGetButtonFromString(byte* pchString);
 
             [DllImport(LibraryName)]
-            public static extern string SDL_GameControllerGetStringForButton(GameControllerButton button);
+            public static extern unsafe byte* SDL_GameControllerGetStringForButton(GameControllerButton button);
 
             [DllImport(LibraryName)]
-            public static extern GameControllerButtonBind SDL_GameControllerGetBindForButton(IntPtr gamecontroller, GameControllerButton button);
+            public static extern GameControllerButtonBind SDL_GameControllerGetBindForButton(GameController gamecontroller, GameControllerButton button);
 
             [DllImport(LibraryName)]
-            public static extern byte SDL_GameControllerGetButton(IntPtr gamecontroller, GameControllerButton button);
+            public static extern byte SDL_GameControllerGetButton(GameController gamecontroller, GameControllerButton button);
 
             [DllImport(LibraryName)]
-            public static extern void SDL_GameControllerClose(IntPtr gamecontroller);
+            public static extern void SDL_GameControllerClose(GameController gamecontroller);
 
             //
             // SDL_hints.h
             //
+            [DllImport(LibraryName)]
+            public extern static unsafe bool SDL_SetHintWithPriority(byte* name, byte* value, HintPriority priority);
 
             [DllImport(LibraryName)]
-            public extern static bool SDL_SetHintWithPriority(string name, string value, HintPriority priority);
+            public extern static unsafe bool SDL_SetHint(byte* name, byte* value);
 
             [DllImport(LibraryName)]
-            public extern static bool SDL_SetHint(string name, string value);
+            private extern static unsafe IntPtr SDL_GetHint(byte* name);
 
             [DllImport(LibraryName)]
-            private extern static IntPtr SDL_GetHint(string name);
+            public extern static unsafe bool SDL_GetHintBoolean(byte* name, bool defaultValue);
 
             [DllImport(LibraryName)]
-            public extern static bool SDL_GetHintBoolean(string name, bool defaultValue);
+            public extern static unsafe void SDL_AddHintCallback(byte* name, HintCallback callback, void* userData);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_AddHintCallback(string name, HintCallback callback, IntPtr userData);
-
-            [DllImport(LibraryName)]
-            public extern static void SDL_DelHintCallback(string name, HintCallback callback, IntPtr userData);
+            public extern static unsafe void SDL_DelHintCallback(byte* name, HintCallback callback, void* userData);
 
             [DllImport(LibraryName)]
             public extern static void SDL_ClearHints();
 
             //
+            // SDL_joystick.h
+            //
+            [DllImport(LibraryName)]
+            public extern static int SDL_NumJoysticks();
+
+            [DllImport(LibraryName)]
+            public static extern unsafe byte* SDL_JoystickNameForIndex(int deviceIndex);
+
+            [DllImport(LibraryName)]
+            public static extern Joystick SDL_JoystickOpen(int deviceIndex);
+
+            [DllImport(LibraryName)]
+            public static extern Joystick SDL_JoystickFromInstanceID(JoystickID joystickID);
+
+            [DllImport(LibraryName)]
+            public static extern unsafe byte* SDL_JoystickName(Joystick joystick);
+
+            [DllImport(LibraryName)]
+            public static extern Guid SDL_JoystickGetDeviceGUID(int deviceIndex);
+
+            [DllImport(LibraryName)]
+            public static extern Guid SDL_JoystickGetGUID(Joystick joystick);
+
+            [DllImport(LibraryName)]
+            public static extern unsafe void SDL_JoystickGetGUIDString(Guid guid, byte* pszGUID, int cbGUID);
+
+            [DllImport(LibraryName)]
+            public static extern unsafe Guid SDL_JoystickGetGUIDFromString(byte* pchGUID);
+
+            [DllImport(LibraryName)]
+            public static extern bool SDL_JoystickGetAttached(Joystick joystick);
+
+            [DllImport(LibraryName)]
+            public static extern JoystickID SDL_JoystickInstanceID(Joystick joystick);
+
+            [DllImport(LibraryName)]
+            public static extern int SDL_JoystickNumAxes(Joystick joystick);
+
+            [DllImport(LibraryName)]
+            public static extern int SDL_JoystickNumBalls(Joystick joystick);
+
+            [DllImport(LibraryName)]
+            public static extern int SDL_JoystickNumHats(Joystick joystick);
+
+            [DllImport(LibraryName)]
+            public static extern int SDL_JoystickNumButtons(Joystick joystick);
+
+            [DllImport(LibraryName)]
+            public static extern void SDL_JoystickUpdate();
+
+            [DllImport(LibraryName)]
+            public static extern int SDL_JoystickEventState(EventState state);
+
+            [DllImport(LibraryName)]
+            public static extern short SDL_JoystickGetAxis(Joystick joystick, JoystickAxis axis);
+
+            //
             // SDL_keyboard.h
             //
-
             [DllImport(LibraryName)]
             public extern static IntPtr SDL_GetKeyboardFocus();
 
@@ -581,7 +646,6 @@ namespace Engine.SDL
             //
             // SDL_loadso.h
             //
-
             [DllImport(LibraryName)]
             public extern static unsafe void* SDL_LoadObject(byte* file);
 
@@ -594,7 +658,6 @@ namespace Engine.SDL
             //
             // SDL_log.h
             //
-
             [DllImport(LibraryName)]
             public extern static void SDL_LogSetAllPriority(LogPriority priority);
 
@@ -640,7 +703,6 @@ namespace Engine.SDL
             //
             // SDL_mouse.h
             //
-
             [DllImport(LibraryName)]
             public extern static IntPtr SDL_GetMouseFocus();
 
@@ -722,7 +784,6 @@ namespace Engine.SDL
             //
             // Rect.h
             //
-
             [DllImport(LibraryName)]
             public extern static bool PointInRect(ref Point point, ref Rect rectangle);
 
@@ -760,7 +821,6 @@ namespace Engine.SDL
             //
             // SDL_render.h
             //
-
             [DllImport(LibraryName)]
             public extern static int SDL_GetNumRenderDrivers();
 
@@ -820,11 +880,11 @@ namespace Engine.SDL
 
             [DllImport(LibraryName)]
             public extern static int SDL_SetTextureBlendMode(IntPtr texture,
-                                                                SDL_BlendMode blendMode);
+                                                                BlendMode blendMode);
 
             [DllImport(LibraryName)]
             public extern static int SDL_GetTextureBlendMode(IntPtr texture,
-                                                               out SDL_BlendMode blendMode);
+                                                               out BlendMode blendMode);
 
             [DllImport(LibraryName)]
             public static extern int SDL_UpdateTexture(
@@ -923,11 +983,11 @@ namespace Engine.SDL
 
             [DllImport(LibraryName)]
             public extern static int SDL_SetRenderDrawBlendMode(IntPtr renderer,
-                                                                   SDL_BlendMode blendMode);
+                                                                   BlendMode blendMode);
 
             [DllImport(LibraryName)]
             public extern static int SDL_GetRenderDrawBlendMode(IntPtr renderer,
-                                                                  out SDL_BlendMode blendMode);
+                                                                  out BlendMode blendMode);
 
             [DllImport(LibraryName)]
             public extern static int SDL_RenderClear(IntPtr renderer);
@@ -1071,7 +1131,6 @@ namespace Engine.SDL
             //
             // SDL_rwops.h
             //
-
             [DllImport(LibraryName)]
             public extern static IntPtr SDL_RWFromFile(string file, string mode);
 
@@ -1087,7 +1146,6 @@ namespace Engine.SDL
             //
             // SDL_shape.h
             //
-
             [DllImport(LibraryName)]
             public static extern unsafe Window SDL_CreateShapedWindow(byte title, uint x, uint y, uint w, uint h, WindowFlags flags);
 
@@ -1101,9 +1159,32 @@ namespace Engine.SDL
             public static extern unsafe int SDL_GetShapedWindowMode(Window window, out WindowShape shapeMode);
 
             //
+            // SDL_stdinc.h
+            //
+            [DllImport(LibraryName)]
+            public static extern unsafe void* SDL_malloc(Size size);
+
+            [DllImport(LibraryName)]
+            public static extern unsafe void* SDL_calloc(Size nmemb, Size size);
+
+            [DllImport(LibraryName)]
+            public static extern unsafe void* SDL_realloc(void* mem, Size size);
+
+            [DllImport(LibraryName)]
+            public static extern unsafe void SDL_free(void* mem);
+
+            [DllImport(LibraryName)]
+            public static extern unsafe byte* SDL_getenv(byte* name);
+
+            [DllImport(LibraryName)]
+            public static extern unsafe int SDL_setenv(byte* name, byte* value, int overwrite);
+
+            [DllImport(LibraryName)]
+            public static extern unsafe void SDL_qsort(void* buffer, Size nmemb, Size size, IntPtr compare);
+
+            //
             // SDL_surface.h
             //
-
             [DllImport(LibraryName)]
             public static extern int SDL_UpperBlit(
                 IntPtr src,
@@ -1285,7 +1366,7 @@ namespace Engine.SDL
             [DllImport(LibraryName)]
             public static extern int SDL_GetSurfaceBlendMode(
                 IntPtr surface,
-                out SDL_BlendMode blendMode
+                out BlendMode blendMode
             );
 
             [DllImport(LibraryName)]
@@ -1350,7 +1431,7 @@ namespace Engine.SDL
             [DllImport(LibraryName)]
             public static extern int SDL_SetSurfaceBlendMode(
                 IntPtr surface,
-                SDL_BlendMode blendMode
+                BlendMode blendMode
             );
 
             [DllImport(LibraryName)]
@@ -1387,14 +1468,12 @@ namespace Engine.SDL
             //
             // SDL_syswm.h
             //
-
             [DllImport(LibraryName)]
             public extern static bool SDL_GetWindowWMInfo(Window window, ref SysWMInfo info);
 
             //
             // SDL_timer.h
             //
-
             [DllImport(LibraryName)]
             public extern static uint SDL_GetTicks();
 
@@ -1421,7 +1500,6 @@ namespace Engine.SDL
             //
             // SDL_version.h
             //
-
             [DllImport(LibraryName)]
             public extern static void SDL_GetVersion(out Version version);
 
@@ -1434,7 +1512,6 @@ namespace Engine.SDL
             //
             // SDL_video.h
             //
-
             [DllImport(LibraryName)]
             public extern static int SDL_GetNumVideoDrivers();
 
@@ -1753,186 +1830,165 @@ namespace Engine.SDL
             public static extern int IMG_SavePNG_RW(IntPtr surface, IntPtr dst, int freedst);
         }
 
+        public static class Hints
+        {
+            public const string FrameBufferAcceleration = "SDL_FRAMEBUFFER_ACCELERATION";
+            public const string RenderDriver = "SDL_RENDER_DRIVER";
+            public const string RenderOpenglShaders = "SDL_RENDER_OPENGL_SHADERS";
+            public const string RenderDirect3DThreadsafe = "SDL_RENDER_DIRECT3D_THREADSAFE";
+            public const string RenderDirect3D11Debug = "SDL_RENDER_DIRECT3D11_DEBUG";
+            public const string RenderScaleQuality = "SDL_RENDER_SCALE_QUALITY";
+            public const string RenderVsync = "SDL_RENDER_VSYNC";
+            public const string VideoAllowScreensave = "SDL_VIDEO_ALLOW_SCREENSAVER";
+            public const string VideoX11XvidMode = "SDL_VIDEO_X11_XVIDMODE";
+            public const string VideoX11Xinerama = "SDL_VIDEO_X11_XINERAMA";
+            public const string VideoX11XRandR = "SDL_VIDEO_X11_XRANDR";
+            public const string VideoX11NetWMPing = "SDL_VIDEO_X11_NET_WM_PING";
+            public const string WindowFrameUsableWhileCursorHidden = "SDL_WINDOW_FRAME_USABLE_WHILE_CURSOR_HIDDEN";
+            public const string WindowsEnableMessageLoop = "SDL_WINDOWS_ENABLE_MESSAGELOOP";
+            public const string GrabKeyboard = "SDL_GRAB_KEYBOARD";
+            public const string MouseRelativeModeWarp = "SDL_MOUSE_RELATIVE_MODE_WARP";
+            public const string MouseFocusClickThrough = "SDL_MOUSE_FOCUS_CLICKTHROUGH";
+            public const string VideoMinimizeOnFocusLoss = "SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS";
+            public const string IdleTimerDisabled = "SDL_IOS_IDLE_TIMER_DISABLED";
+            public const string Orientations = "SDL_IOS_ORIENTATIONS";
+            public const string AppleTVControllerUIEvents = "SDL_APPLE_TV_CONTROLLER_UI_EVENTS";
+            public const string AppleTVRemoteAllowRotation = "SDL_APPLE_TV_REMOTE_ALLOW_ROTATION";
+            public const string AccelerometerAsJoystick = "SDL_ACCELEROMETER_AS_JOYSTICK";
+            public const string XInputEnabled = "SDL_XINPUT_ENABLED";
+            public const string XInputUseOldJoystickMapping = "SDL_XINPUT_USE_OLD_JOYSTICK_MAPPING";
+            public const string GameControllerConfig = "SDL_GAMECONTROLLERCONFIG";
+            public const string JoystickAllowBackgroundEvents = "SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS";
+            public const string AllowTopmost = "SDL_ALLOW_TOPMOST";
+            public const string TimerResolution = "SDL_TIMER_RESOLUTION";
+            public const string ThreadStackSize = "SDL_THREAD_STACK_SIZE";
+            public const string VideoHighDPIDisabled = "SDL_VIDEO_HIGHDPI_DISABLED";
+            public const string MacCtrlClickEmulateRightClick = "SDL_MAC_CTRL_CLICK_EMULATE_RIGHT_CLICK";
+            public const string VideoWinD3DCompiler = "SDL_VIDEO_WIN_D3DCOMPILER";
+            public const string VideoWindowSharePixelFormat = "SDL_VIDEO_WINDOW_SHARE_PIXEL_FORMAT";
+            public const string WinRTPrivacyPolicyURL = "SDL_WINRT_PRIVACY_POLICY_URL";
+            public const string WinRTPrivacyPolicyLabel = "SDL_WINRT_PRIVACY_POLICY_LABEL";
+            public const string WinRTHandleBackButton = "SDL_WINRT_HANDLE_BACK_BUTTON";
+            public const string VideoMacFullscreenSpaces = "SDL_VIDEO_MAC_FULLSCREEN_SPACES";
+            public const string MacBackgroundApp = "SDL_MAC_BACKGROUND_APP";
+            public const string AndroidAPKExpansionMainFileVersion = "SDL_ANDROID_APK_EXPANSION_MAIN_FILE_VERSION";
+            public const string AndroidAPKExpansionPatchFileVersion = "SDL_ANDROID_APK_EXPANSION_PATCH_FILE_VERSION";
+            public const string IMEInternalEditing = "SDL_IME_INTERNAL_EDITING";
+            public const string AndroidSeparateMouseAndTouch = "SDL_ANDROID_SEPARATE_MOUSE_AND_TOUCH";
+            public const string EmscriptenKeyboardElement = "SDL_EMSCRIPTEN_KEYBOARD_ELEMENT";
+            public const string NoSignalHandlers = "SDL_NO_SIGNAL_HANDLERS";
+            public const string WindowsNoCloseOnAltF4 = "SDL_WINDOWS_NO_CLOSE_ON_ALT_F4";
+            public const string BMPSaveLegacyFormat = "SDL_BMP_SAVE_LEGACY_FORMAT";
+            public const string WindowsDisableThreadWarning = "SDL_WINDOWS_DISABLE_THREAD_NAMING";
+            public const string RPIVideoLayer = "SDL_RPI_VIDEO_LAYER";
+        }
+
+        public static class PixelFormats
+        {
+            public static readonly uint Unknown = 0;
+            public static readonly uint Index1LSB = DefinePixelFormat(PixelType.Index1, PixelOrder.Bitmap4321, 0, 1, 0);
+            public static readonly uint Index1MSB = DefinePixelFormat(PixelType.Index1, PixelOrder.Bitmap1234, 0, 1, 0);
+            public static readonly uint Index4LSB = DefinePixelFormat(PixelType.Index4, PixelOrder.Bitmap4321, 0, 4, 0);
+            public static readonly uint Index4MSB = DefinePixelFormat(PixelType.Index4, PixelOrder.Bitmap1234, 0, 4, 0);
+            public static readonly uint Index8 = DefinePixelFormat(PixelType.Index8, 0, 0, 8, 1);
+            public static readonly uint RGB332 = DefinePixelFormat(PixelType.Packed8, PixelOrder.PackedXRGB, PackedLayout.Layout332, 8, 1);
+            public static readonly uint RGB444 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedXRGB, PackedLayout.Layout4444, 12, 2);
+            public static readonly uint RGB555 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedXRGB, PackedLayout.Layout1555, 15, 2);
+            public static readonly uint BGR555 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedXBGR, PackedLayout.Layout1555, 15, 2);
+            public static readonly uint ARGB4444 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedARGB, PackedLayout.Layout4444, 16, 2);
+            public static readonly uint RGBA4444 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedRGBA, PackedLayout.Layout4444, 16, 2);
+            public static readonly uint ABGR4444 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedABGR, PackedLayout.Layout4444, 16, 2);
+            public static readonly uint BGRA4444 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedBGRA, PackedLayout.Layout4444, 16, 2);
+            public static readonly uint ARGB1555 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedARGB, PackedLayout.Layout1555, 16, 2);
+            public static readonly uint RGBA5551 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedRGBA, PackedLayout.Layout5551, 16, 2);
+            public static readonly uint ABGR1555 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedABGR, PackedLayout.Layout1555, 16, 2);
+            public static readonly uint BGRA5551 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedBGRA, PackedLayout.Layout5551, 16, 2);
+            public static readonly uint RGB565 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedXRGB, PackedLayout.Layout565, 16, 2);
+            public static readonly uint BGR565 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedXBGR, PackedLayout.Layout565, 16, 2);
+            public static readonly uint RGB24 = DefinePixelFormat(PixelType.ArrayU8, PixelOrder.ArrayRGB, 0, 24, 3);
+            public static readonly uint BGR24 = DefinePixelFormat(PixelType.ArrayU8, PixelOrder.ArrayBGR, 0, 24, 3);
+            public static readonly uint RGB888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedXRGB, PackedLayout.Layout8888, 24, 4);
+            public static readonly uint RGBX8888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedRGBX, PackedLayout.Layout8888, 24, 4);
+            public static readonly uint BGR888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedXBGR, PackedLayout.Layout8888, 24, 4);
+            public static readonly uint BGRX8888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedBGRX, PackedLayout.Layout8888, 24, 4);
+            public static readonly uint ARGB8888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedARGB, PackedLayout.Layout8888, 32, 4);
+            public static readonly uint RGBA8888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedARGB, PackedLayout.Layout8888, 32, 4);
+            public static readonly uint ABGR8888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedABGR, PackedLayout.Layout8888, 32, 4);
+            public static readonly uint BGRA8888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedBGRA, PackedLayout.Layout8888, 32, 4);
+            public static readonly uint ARGB2101010 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedARGB, 0, 32, 4);
+            public static readonly uint YV12 = FourCharacterCode((byte)'Y', (byte)'V', (byte)'1', (byte)'2');
+            public static readonly uint IYUV = FourCharacterCode((byte)'I', (byte)'Y', (byte)'U', (byte)'V');
+            public static readonly uint YUY2 = FourCharacterCode((byte)'Y', (byte)'U', (byte)'Y', (byte)'2');
+            public static readonly uint UYVY = FourCharacterCode((byte)'U', (byte)'Y', (byte)'V', (byte)'Y');
+            public static readonly uint YVYU = FourCharacterCode((byte)'Y', (byte)'V', (byte)'Y', (byte)'U');
+            public static readonly uint NV12 = FourCharacterCode((byte)'N', (byte)'V', (byte)'1', (byte)'2');
+            public static readonly uint NV21 = FourCharacterCode((byte)'N', (byte)'V', (byte)'2', (byte)'1');
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static uint FourCharacterCode(byte a, byte b, byte c, byte d) => (uint)(a | (b << 8) | (c << 16) | (d << 24));
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static uint DefinePixelFormat(PixelType type, PixelOrder order, PackedLayout layout, byte bits, byte bytes) => (uint)((1 << 28) | ((byte)type << 24) | ((byte)order << 20) | ((byte)layout << 16) | (bits << 8) | bytes);
+        }
+
         public const string LibraryName = "SDL2.dll";
         public const string ImageLibraryName = "SDL2_image.dll";
         public const int ScanCodeMask = (1 << 30);
-        /// <summary>
-        /// A variable controlling how 3D acceleration is used to accelerate the SDL screen surface.
-        /// <para /> SDL can try to accelerate the SDL screen surface by using streaming textures with a 3D rendering engine.This variable controls whether and how this is done.
-        /// <para /> This variable can be set to the following values:
-        /// "0"       - Disable 3D acceleration
-        /// "1"       - Enable 3D acceleration, using the default renderer.
-        /// "X"       - Enable 3D acceleration, using X where X is one of the valid rendering drivers.  (e.g. "direct3d", "opengl", etc.)
-        /// <para /> By default SDL tries to make a best guess for each platform whether to use acceleration or not.
-        /// </summary>
-        public const string HintFrameBufferAcceleration = "SDL_FRAMEBUFFER_ACCELERATION";
-        /// <summary>
-        /// A variable controlling the scaling policy for <see cref="RenderSetLogicalSize"/>.
-        /// <para /> This variable can be set to the following values:
-        /// "0" or "letterbox" - Uses letterbox/sidebars to fit the entire rendering on screen
-        /// "1" or "overscan"  - Will zoom the rendering so it fills the entire screen, allowing edges to be drawn offscreen
-        /// <para /> By default letterbox is used
-        /// </summary>
-        public const string HintRenderLogicalSizeMode = "SDL_HINT_RENDER_LOGICAL_SIZE_MODE";
-
-        public static readonly uint PixelFormatUnknown = 0;
-        public static readonly uint PixelFormatIndex1LSB = DefinePixelFormat(PixelType.Index1, PixelOrder.Bitmap4321, 0, 1, 0);
-        public static readonly uint PixelFormatIndex1MSB = DefinePixelFormat(PixelType.Index1, PixelOrder.Bitmap1234, 0, 1, 0);
-        public static readonly uint PixelFormatIndex4LSB = DefinePixelFormat(PixelType.Index4, PixelOrder.Bitmap4321, 0, 4, 0);
-        public static readonly uint PixelFormatIndex4MSB = DefinePixelFormat(PixelType.Index4, PixelOrder.Bitmap1234, 0, 4, 0);
-        public static readonly uint PixelFormatIndex8 = DefinePixelFormat(PixelType.Index8, 0, 0, 8, 1);
-        public static readonly uint PixelFormatRGB332 = DefinePixelFormat(PixelType.Packed8, PixelOrder.PackedXRGB, PackedLayout.Layout332, 8, 1);
-        public static readonly uint PixelFormatRGB444 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedXRGB, PackedLayout.Layout4444, 12, 2);
-        public static readonly uint PixelFormatRGB555 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedXRGB, PackedLayout.Layout1555, 15, 2);
-        public static readonly uint PixelFormatBGR555 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedXBGR, PackedLayout.Layout1555, 15, 2);
-        public static readonly uint PixelFormatARGB4444 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedARGB, PackedLayout.Layout4444, 16, 2);
-        public static readonly uint PixelFormatRGBA4444 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedRGBA, PackedLayout.Layout4444, 16, 2);
-        public static readonly uint PixelFormatABGR4444 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedABGR, PackedLayout.Layout4444, 16, 2);
-        public static readonly uint PixelFormatBGRA4444 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedBGRA, PackedLayout.Layout4444, 16, 2);
-        public static readonly uint PixelFormatARGB1555 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedARGB, PackedLayout.Layout1555, 16, 2);
-        public static readonly uint PixelFormatRGBA5551 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedRGBA, PackedLayout.Layout5551, 16, 2);
-        public static readonly uint PixelFormatABGR1555 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedABGR, PackedLayout.Layout1555, 16, 2);
-        public static readonly uint PixelFormatBGRA5551 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedBGRA, PackedLayout.Layout5551, 16, 2);
-        public static readonly uint PixelFormatRGB565 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedXRGB, PackedLayout.Layout565, 16, 2);
-        public static readonly uint PixelFormatBGR565 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedXBGR, PackedLayout.Layout565, 16, 2);
-        public static readonly uint PixelFormatRGB24 = DefinePixelFormat(PixelType.ArrayU8, PixelOrder.ArrayRGB, 0, 24, 3);
-        public static readonly uint PixelFormatBGR24 = DefinePixelFormat(PixelType.ArrayU8, PixelOrder.ArrayBGR, 0, 24, 3);
-        public static readonly uint PixelFormatRGB888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedXRGB, PackedLayout.Layout8888, 24, 4);
-        public static readonly uint PixelFormatRGBX8888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedRGBX, PackedLayout.Layout8888, 24, 4);
-        public static readonly uint PixelFormatBGR888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedXBGR, PackedLayout.Layout8888, 24, 4);
-        public static readonly uint PixelFormatBGRX8888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedBGRX, PackedLayout.Layout8888, 24, 4);
-        public static readonly uint PixelFormatARGB8888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedARGB, PackedLayout.Layout8888, 32, 4);
-        public static readonly uint PixelFormatRGBA8888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedARGB, PackedLayout.Layout8888, 32, 4);
-        public static readonly uint PixelFormatABGR8888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedABGR, PackedLayout.Layout8888, 32, 4);
-        public static readonly uint PixelFormatBGRA8888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedBGRA, PackedLayout.Layout8888, 32, 4);
-        public static readonly uint PixelFormatARGB2101010 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedARGB, 0, 32, 4);
-        public static readonly uint PixelFormatYV12 = FourCharacterCode((byte)'Y', (byte)'V', (byte)'1', (byte)'2');
-        public static readonly uint PixelFormatIYUV = FourCharacterCode((byte)'I', (byte)'Y', (byte)'U', (byte)'V');
-        public static readonly uint PixelFormatYUY2 = FourCharacterCode((byte)'Y', (byte)'U', (byte)'Y', (byte)'2');
-        public static readonly uint PixelFormatUYVY = FourCharacterCode((byte)'U', (byte)'Y', (byte)'V', (byte)'Y');
-        public static readonly uint PixelFormatYVYU = FourCharacterCode((byte)'Y', (byte)'V', (byte)'Y', (byte)'U');
-        public static readonly uint PixelFormatNV12 = FourCharacterCode((byte)'N', (byte)'V', (byte)'1', (byte)'2');
-        public static readonly uint PixelFormatNV21 = FourCharacterCode((byte)'N', (byte)'V', (byte)'2', (byte)'1');
 
         //
         // SDL.h
         //
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Init(InitFlags flags) => Native.SDL_Init(flags).CheckError("Could not initialize SDL with " + flags);
 
-        /// <summary>
-        /// This function initializes the subsystems specified by <paramref name="flags"/>
-        /// </summary>
-        public static void Init(InitFlags flags)
-        {
-            Native.SDL_Init(flags).CheckError("Could not initialize SDL with " + flags);
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void InitSubSystem(InitFlags flags) => Native.SDL_InitSubSystem(flags).CheckError("Could not initialize SDL subsystem " + flags);
 
-        /// <summary>
-        /// This function initializes specific SDL subsystems
-        /// <para /> Subsystem initialization is ref-counted, you must call <see cref="QuitSubSystem(InitFlags)"/> for each <see cref="InitSubSystem(InitFlags)"/> to correctly shutdown a subsystem manually (or call <see cref="Quit"/> to force shutdown).
-        /// <para /> If a subsystem is already loaded then this call will increase the ref-count and return.
-        /// </summary>
-        public static void InitSubSystem(InitFlags flags)
-        {
-            Native.SDL_InitSubSystem(flags).CheckError("Could not initialize SDL subsystem " + flags);
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void QuitSubSystem(InitFlags flags) => Native.SDL_QuitSubSystem(flags);
 
-        /// <summary>
-        /// This function cleans up specific SDL subsystems
-        /// </summary>
-        public static void QuitSubSystem(InitFlags flags)
-        {
-            Native.SDL_QuitSubSystem(flags);
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static InitFlags WasInit(InitFlags flags) => Native.SDL_WasInit(flags);
 
-        /// <summary>
-        /// This function returns a mask of the specified subsystems which have previously been initialized.
-        /// <para /> If <paramref name="flags"/> is 0, it returns a mask of all initialized subsystems.
-        /// </summary>
-        public static InitFlags WasInit(InitFlags flags)
-        {
-            return Native.SDL_WasInit(flags);
-        }
-
-        /// <summary>
-        /// This function cleans up all initialized subsystems. You should call it upon all exit conditions.
-        /// </summary>
-        public static void Quit()
-        {
-            Native.SDL_Quit();
-        }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Quit() => Native.SDL_Quit();
+        
         //
         // SDL_error.h
         //
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe string GetError() => GetString(Native.SDL_GetError());
 
-        /// <summary>
-        /// Use this function to retrieve a message about the last error that occurred.
-        /// </summary>
-        /// <returns> Returns a message with information about the specific error that occurred, or an empty string if there hasn't been an error message set since the last call to <see cref="ClearError"/>. The message is only applicable when an SDL function has signaled an error. You must check the return values of SDL function calls to determine when to appropriately call <see cref="Get"/>. </returns>
-        /// <remarks> 
-        /// It is possible for multiple errors to occur before calling <see cref="GetError"/>. Only the last error is returned. 
-        /// <para /> The returned string is statically allocated and must not be freed by the application.
-        /// </remarks>
-        public static unsafe string GetError()
-        {
-            return GetString(Native.SDL_GetError());
-        }
-
-        /// <summary>
-        /// Use this function to clear any previous error message.
-        /// </summary>
-        public static void ClearError()
-        {
-            Native.SDL_ClearError();
-        }
-
-        //
-        // SDL_pixels.h
-        //
-
-        public static uint FourCharacterCode(byte a, byte b, byte c, byte d)
-        {
-            return (uint)(a | (b << 8) | (c << 16) | (d << 24));
-        }
-
-        public static uint DefinePixelFormat(PixelType type, PixelOrder order, PackedLayout layout, byte bits, byte bytes)
-        {
-            return (uint)((1 << 28) | ((byte)type << 24) | ((byte)order << 20) | ((byte)layout << 16) | (bits << 8) | bytes);
-        }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void ClearError() => Native.SDL_ClearError();
+        
         //
         // SDL_version.h
         //
-
-        public static void GetVersion(out Version version)
-        {
-            Native.SDL_GetVersion(out version);
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void GetVersion(out Version version) => Native.SDL_GetVersion(out version);
 
         //
         // SDL_video.h
         //
-
-        public static void GetDesktopDisplayMode(int displayIndex, out DisplayMode displayMode)
-        {
-            Native.SDL_GetDeskTopDisplayMode(displayIndex, out displayMode).CheckError("Could not get dekstop display mode");
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void GetDesktopDisplayMode(int displayIndex, out DisplayMode displayMode) => Native.SDL_GetDeskTopDisplayMode(displayIndex, out displayMode).CheckError("Could not get dekstop display mode");
 
         //
         // Utility methods
         //
-
         public static unsafe string GetString(IntPtr handle)
         {
-            if (handle == IntPtr.Zero)
-                return string.Empty;
+            Assert.IsTrue(handle != IntPtr.Zero, "[SDL] String is null: " + GetError());
 
-            var ptr = (byte*)handle;
+            byte* ptr = (byte*)handle;
             return GetString(ptr);
         }
 
         public static unsafe string GetString(byte* ptr)
         {
+            Assert.IsTrue(ptr != null, "[SDL] String is null: " + GetError());
+
             byte* counter = ptr;
             while (*counter != 0)
             {
