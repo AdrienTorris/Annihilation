@@ -611,10 +611,10 @@ namespace Engine.SDL
             // SDL_keyboard.h
             //
             [DllImport(LibraryName)]
-            public extern static IntPtr SDL_GetKeyboardFocus();
+            public extern static Window SDL_GetKeyboardFocus();
 
             [DllImport(LibraryName)]
-            public extern static IntPtr SDL_GetKeyboardState(out int numkeys);
+            public extern static unsafe byte* SDL_GetKeyboardState(out int numkeys);
 
             [DllImport(LibraryName)]
             public extern static KeyMod SDL_GetModState();
@@ -629,16 +629,16 @@ namespace Engine.SDL
             public extern static ScanCode SDL_GetScancodeFromKey(KeyCode key);
 
             [DllImport(LibraryName)]
-            public extern static IntPtr SDL_GetScancodeName(ScanCode scanCode);
+            public extern static unsafe byte* SDL_GetScancodeName(ScanCode scanCode);
 
             [DllImport(LibraryName)]
             public extern static ScanCode SDL_GetScancodeFromName(string name);
 
             [DllImport(LibraryName)]
-            public extern static IntPtr SDL_GetKeyName(KeyCode key);
+            public extern static unsafe byte* SDL_GetKeyName(KeyCode key);
 
             [DllImport(LibraryName)]
-            public extern static KeyCode SDL_GetKeyFromName(string name);
+            public extern static unsafe KeyCode SDL_GetKeyFromName(byte* name);
 
             [DllImport(LibraryName)]
             public extern static void SDL_StartTextInput();
