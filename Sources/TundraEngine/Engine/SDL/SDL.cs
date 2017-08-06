@@ -158,6 +158,15 @@ namespace Engine.SDL
         Mod = 1 << 2
     }
 
+    public enum PowerState
+    {
+        Unknown,
+        OnBattery,
+        NoBattery,
+        Charging,
+        Charged
+    }
+
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     public delegate void HintCallback(IntPtr userData, IntPtr name, IntPtr oldValue, IntPtr newValue);
 
@@ -450,7 +459,7 @@ namespace Engine.SDL
 
             [DllImport(LibraryName)]
             public static extern int SDL_GameControllerNumMappings();
-            
+
             [DllImport(LibraryName)]
             public static extern unsafe byte* SDL_GameControllerMappingForGUID(Guid guid);
 
@@ -471,7 +480,7 @@ namespace Engine.SDL
 
             [DllImport(LibraryName)]
             public static extern unsafe byte* SDL_GameControllerName(GameController gamecontroller);
-            
+
             [DllImport(LibraryName)]
             public static extern bool SDL_GameControllerGetAttached(GameController gamecontroller);
 
@@ -738,7 +747,7 @@ namespace Engine.SDL
 
             [DllImport(LibraryName)]
             public extern static MouseButtonState SDL_GetMouseState(IntPtr x, out int y);
-            
+
             [DllImport(LibraryName)]
             public extern static MouseButtonState SDL_GetGlobalMouseState(out int x, out int y);
 
@@ -747,7 +756,7 @@ namespace Engine.SDL
 
             [DllImport(LibraryName)]
             public extern static MouseButtonState SDL_GetGlobalMouseState(IntPtr x, out int y);
-            
+
             [DllImport(LibraryName)]
             public extern static MouseButtonState SDL_GetRelativeMouseState(out int x, out int y);
 
@@ -756,7 +765,7 @@ namespace Engine.SDL
 
             [DllImport(LibraryName)]
             public extern static MouseButtonState SDL_GetRelativeMouseState(IntPtr x, out int y);
-            
+
             [DllImport(LibraryName)]
             public extern static void SDL_WarpMouseInWindow(Window window, int x, int y);
 
@@ -856,17 +865,63 @@ namespace Engine.SDL
             //
             // SDL_pixels.h
             //
+            [DllImport(LibraryName)]
+            public extern static unsafe Text SDL_GetPixelFormatName(uint format);
 
+            [DllImport(LibraryName)]
+            public extern static unsafe bool SDL_PixelFormatEnumToMasks(uint format, out int bpp, out uint rMask, out uint gMask, out uint bMask, out uint aMask);
+
+            [DllImport(LibraryName)]
+            public extern static uint SDL_MasksToPixelFormatEnum(int bpp, uint rMask, uint gMask, uint bMask, uint aMask);
+
+            [DllImport(LibraryName)]
+            public extern static unsafe PixelFormat* SDL_AllocFormat(uint pixelFormat);
+
+            [DllImport(LibraryName)]
+            public extern static void SDL_FreeFormat(ref PixelFormat pixelFormat);
+
+            [DllImport(LibraryName)]
+            public extern static unsafe Palette SDL_AllocPalette(int numColors);
+
+            [DllImport(LibraryName)]
+            public extern static int SDL_SetPixelFormatPalette(ref PixelFormat format, ref Palette palette);
+
+            [DllImport(LibraryName)]
+            public extern static int SDL_SetPaletteColors(Palette palette, Color[] colors, int firstColor, int numColors);
+
+            [DllImport(LibraryName)]
+            public extern static void SDL_FreePalette(Palette palette);
+
+            [DllImport(LibraryName)]
+            public extern static uint SDL_MapRGB(ref PixelFormat format, byte r, byte g, byte b);
+
+            [DllImport(LibraryName)]
+            public extern static uint SDL_MapRGBA(ref PixelFormat format, byte r, byte g, byte b, byte a);
+
+            [DllImport(LibraryName)]
+            public extern static void SDL_GetRGB(uint pixel, ref PixelFormat format, out byte r, out byte g, out byte b);
+
+            [DllImport(LibraryName)]
+            public extern static void SDL_GetRGBA(uint pixel, ref PixelFormat format, out byte r, out byte g, out byte b, out byte a);
+
+            [DllImport(LibraryName)]
+            public extern static void SDL_CalculateGammaRamp(float gamma, out ushort[] ramp);
+
+            //
+            // SDL_platform.h
+            //
+            [DllImport(LibraryName)]
+            public extern static unsafe Text SDL_GetPlatform();
+
+            //
+            // SDL_power.h
+            //
+            [DllImport(LibraryName)]
+            public extern static PowerState SDL_GetPowerInfo(out int seconds, out int percentage);
 
             //
             // SDL_rect.h
             //
-            [DllImport(LibraryName)]
-            public extern static bool PointInRect(ref Point point, ref Rect rectangle);
-
-            [DllImport(LibraryName)]
-            public static extern bool RectEmpty(ref Rect rectangle);
-
             [DllImport(LibraryName)]
             public static extern bool SDL_HasIntersection(ref Rect a, ref Rect b);
 
@@ -877,21 +932,8 @@ namespace Engine.SDL
             public static extern void SDL_UnionRect(ref Rect a, ref Rect b, out Rect result);
 
             [DllImport(LibraryName)]
-            public static extern bool SDL_EnclosePoints(
-                [In (), MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)]
-                Point[] points,
-                int count,
-                ref Rect clip,
-                out Rect result);
-
-            [DllImport(LibraryName)]
-            public static extern bool SDL_EnclosePoints(
-                [In (), MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)]
-                Point[] points,
-                int count,
-                IntPtr clip,
-                out Rect result);
-
+            public static extern bool SDL_EnclosePoints(Point[] points, int count, ref Rect clip, out Rect result);
+            
             [DllImport(LibraryName)]
             public static extern bool SDL_IntersectRectAndLine(ref Rect rectangle, ref int x1, ref int y1, ref int x2, ref int y2);
 
@@ -2029,7 +2071,7 @@ namespace Engine.SDL
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Quit() => Native.SDL_Quit();
-        
+
         //
         // SDL_error.h
         //
@@ -2038,7 +2080,7 @@ namespace Engine.SDL
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ClearError() => Native.SDL_ClearError();
-        
+
         //
         // SDL_version.h
         //

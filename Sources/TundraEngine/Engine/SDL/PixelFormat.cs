@@ -1,4 +1,6 @@
-﻿namespace Engine.SDL
+﻿using System;
+
+namespace Engine.SDL
 {
     public struct Color
     {
@@ -8,18 +10,19 @@
         public byte A;
     }
 
-    public unsafe struct Palette
+    public struct Palette
     {
-        public int NumColors;
+        internal IntPtr NativeHandle;
+        /*public int NumColors;
         public Color* Colors;
         public uint Version;
-        public int RefCount;
+        public int RefCount;*/
     }
 
     public unsafe struct PixelFormat
     {
         public readonly uint Format;
-        public readonly Palette* Palette;
+        public readonly Palette Palette;
         public readonly byte BitsPerPixel;
         public readonly byte BytesPerPixel;
         public fixed byte Padding[2];
