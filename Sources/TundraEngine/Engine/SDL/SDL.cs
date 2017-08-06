@@ -686,40 +686,49 @@ namespace Engine.SDL
             public extern static void SDL_LogResetPriorities();
 
             [DllImport(LibraryName)]
-            public extern static void SDL_Log(string fmt, params object[] objects);
+            public extern static unsafe void SDL_Log(byte* fmt, params object[] objects);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_LogVerbose(LogCategory category, string fmt, params object[] objects);
+            public extern static unsafe void SDL_LogVerbose(LogCategory category, byte* fmt, params object[] objects);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_LogDebug(LogCategory category, string fmt, params object[] objects);
+            public extern static unsafe void SDL_LogDebug(LogCategory category, byte* fmt, params object[] objects);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_LogInfo(LogCategory category, string fmt, params object[] objects);
+            public extern static unsafe void SDL_LogInfo(LogCategory category, byte* fmt, params object[] objects);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_LogWarn(LogCategory category, string fmt, params object[] objects);
+            public extern static unsafe void SDL_LogWarn(LogCategory category, byte* fmt, params object[] objects);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_LogError(LogCategory category, string fmt, params object[] objects);
+            public extern static unsafe void SDL_LogError(LogCategory category, byte* fmt, params object[] objects);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_LogCritical(LogCategory category, string fmt, params object[] objects);
+            public extern static unsafe void SDL_LogCritical(LogCategory category, byte* fmt, params object[] objects);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_LogMessage(LogCategory category, LogPriority priority, string fmt, params object[] objects);
+            public extern static unsafe void SDL_LogMessage(LogCategory category, LogPriority priority, byte* fmt, params object[] objects);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_LogGetOutputFunction(LogOutputFunction callback, IntPtr userData);
+            public extern static unsafe void SDL_LogGetOutputFunction(LogOutputFunction callback, void* userData);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_LogSetOutputFunction(LogOutputFunction callback, IntPtr userData);
+            public extern static unsafe void SDL_LogSetOutputFunction(LogOutputFunction callback, void* userData);
+
+            //
+            // SDL_messagebox.h
+            //
+            [DllImport(LibraryName)]
+            public extern static unsafe int SDL_ShowMessageBox(MessageBoxData* messageBoxData, out int buttonID);
+
+            [DllImport(LibraryName)]
+            public extern static unsafe int SDL_ShowSimpleMessageBox(MessageBoxFlags flags, Text title, Text message, Window window);
 
             //
             // SDL_mouse.h
             //
             [DllImport(LibraryName)]
-            public extern static IntPtr SDL_GetMouseFocus();
+            public extern static Window SDL_GetMouseFocus();
 
             [DllImport(LibraryName)]
             public extern static MouseButtonState SDL_GetMouseState(out int x, out int y);
@@ -729,10 +738,7 @@ namespace Engine.SDL
 
             [DllImport(LibraryName)]
             public extern static MouseButtonState SDL_GetMouseState(IntPtr x, out int y);
-
-            [DllImport(LibraryName)]
-            public extern static MouseButtonState SDL_GetMouseState(IntPtr x, IntPtr y);
-
+            
             [DllImport(LibraryName)]
             public extern static MouseButtonState SDL_GetGlobalMouseState(out int x, out int y);
 
@@ -741,10 +747,7 @@ namespace Engine.SDL
 
             [DllImport(LibraryName)]
             public extern static MouseButtonState SDL_GetGlobalMouseState(IntPtr x, out int y);
-
-            [DllImport(LibraryName)]
-            public extern static MouseButtonState SDL_GetGlobalMouseState(IntPtr x, IntPtr y);
-
+            
             [DllImport(LibraryName)]
             public extern static MouseButtonState SDL_GetRelativeMouseState(out int x, out int y);
 
@@ -753,10 +756,7 @@ namespace Engine.SDL
 
             [DllImport(LibraryName)]
             public extern static MouseButtonState SDL_GetRelativeMouseState(IntPtr x, out int y);
-
-            [DllImport(LibraryName)]
-            public extern static MouseButtonState SDL_GetRelativeMouseState(IntPtr x, IntPtr y);
-
+            
             [DllImport(LibraryName)]
             public extern static void SDL_WarpMouseInWindow(Window window, int x, int y);
 
@@ -773,31 +773,93 @@ namespace Engine.SDL
             public extern static bool SDL_GetRelativeMouseMode();
 
             [DllImport(LibraryName)]
-            public extern static IntPtr SDL_CreateCursor(byte[] data, byte[] mask, int w, int h, int hot_x, int hot_y);
+            public extern static Cursor SDL_CreateCursor(byte[] data, byte[] mask, int w, int h, int hotX, int hotY);
 
             [DllImport(LibraryName)]
-            public extern static IntPtr SDL_CreateColorCursor(IntPtr surface, int hot_x, int hot_y);
+            public extern static Cursor SDL_CreateColorCursor(Surface surface, int hotX, int hotY);
 
             [DllImport(LibraryName)]
-            public extern static IntPtr SDL_CreateSystemCursor(SystemCursor id);
+            public extern static Cursor SDL_CreateSystemCursor(SystemCursor id);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_SetCursor(IntPtr cursor);
+            public extern static void SDL_SetCursor(Cursor cursor);
 
             [DllImport(LibraryName)]
-            public extern static IntPtr SDL_GetCursor();
+            public extern static Cursor SDL_GetCursor();
 
             [DllImport(LibraryName)]
-            public extern static IntPtr SDL_GetDefaultCursor();
+            public extern static Cursor SDL_GetDefaultCursor();
 
             [DllImport(LibraryName)]
-            public extern static void SDL_FreeCursor(IntPtr cursor);
+            public extern static void SDL_FreeCursor(Cursor cursor);
 
             [DllImport(LibraryName)]
             public extern static int SDL_ShowCursor(int toggle);
 
             //
-            // Rect.h
+            // SDL_mutex.h
+            //
+            [DllImport(LibraryName)]
+            public extern static Mutex SDL_CreateMutex();
+
+            [DllImport(LibraryName)]
+            public extern static int SDL_LockMutex(Mutex mutex);
+
+            [DllImport(LibraryName)]
+            public extern static int SDL_TryLockMutex(Mutex mutex);
+
+            [DllImport(LibraryName)]
+            public extern static int SDL_UnlockMutex(Mutex mutex);
+
+            [DllImport(LibraryName)]
+            public extern static void SDL_DestroyMutex(Mutex mutex);
+
+            [DllImport(LibraryName)]
+            public extern static Semaphore SDL_CreateSemaphore(uint initialValue);
+
+            [DllImport(LibraryName)]
+            public extern static void SDL_DestroySemaphore(Semaphore semaphore);
+
+            [DllImport(LibraryName)]
+            public extern static int SDL_SemWait(Semaphore semaphore);
+
+            [DllImport(LibraryName)]
+            public extern static int SDL_SemTryWait(Semaphore semaphore);
+
+            [DllImport(LibraryName)]
+            public extern static int SDL_SemWaitTimeout(Semaphore semaphore, uint ms);
+
+            [DllImport(LibraryName)]
+            public extern static int SDL_SemPost(Semaphore semaphore);
+
+            [DllImport(LibraryName)]
+            public extern static uint SDL_SemValue(Semaphore semaphore);
+
+            [DllImport(LibraryName)]
+            public extern static Condition SDL_CreateCond();
+
+            [DllImport(LibraryName)]
+            public extern static void SDL_DestroyCond(Condition condition);
+
+            [DllImport(LibraryName)]
+            public extern static int SDL_CondSignal(Condition condition);
+
+            [DllImport(LibraryName)]
+            public extern static int SDL_CondBroadcast(Condition condition);
+
+            [DllImport(LibraryName)]
+            public extern static int SDL_CondWait(Condition condition, Mutex mutex);
+
+            [DllImport(LibraryName)]
+            public extern static int SDL_CondWaitTimeout(Condition condition, Mutex mutex, uint ms);
+
+            //
+            // SDL_pixels.h
+            //
+
+
+            //
+            // SDL_rect.h
             //
             [DllImport(LibraryName)]
             public extern static bool PointInRect(ref Point point, ref Rect rectangle);
