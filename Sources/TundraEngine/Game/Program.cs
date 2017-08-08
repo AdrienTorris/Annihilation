@@ -48,7 +48,6 @@ namespace Game
 
                 WindowSettings = new WindowSettings
                 {
-                    Type = WindowType.SDL,
                     PositionX = 50,
                     PositionY = 50,
                     Width = 1280,
@@ -57,7 +56,6 @@ namespace Game
                     AllowHighDPI = false,
                     AlwaysOnTop = false
                 },
-
                 RendererSettings = new RendererSettings
                 {
                     UseDepthBuffer = false,
@@ -66,12 +64,6 @@ namespace Game
                     SSAA = 8,
                     VSync = false,
                 },
-
-                DebugUISettings = new DebugUISettings
-                {
-                    DebugUIType = DebugUIType.None
-                },
-
                 InputSettings = new InputSettings
                 {
                     RepeatInterval = InputSettings.DefaultRepeatInterval,

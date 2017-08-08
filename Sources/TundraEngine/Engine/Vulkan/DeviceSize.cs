@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Engine.Rendering
+namespace Engine.Vulkan
 {
     [StructLayout(LayoutKind.Sequential, Size = 8)]
     public struct DeviceSize : IEquatable<DeviceSize>
@@ -27,7 +27,7 @@ namespace Engine.Rendering
 
         public override int GetHashCode()
         {
-            return (int)this.value;
+            return (int)value;
         }
         
         public static bool operator ==(DeviceSize left, DeviceSize right)
