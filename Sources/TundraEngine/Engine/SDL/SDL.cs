@@ -101,8 +101,6 @@ namespace Engine.SDL
         Warn,
         Error,
         Critical,
-
-        NumLogPriorities
     }
 
     [Flags]
@@ -168,309 +166,196 @@ namespace Engine.SDL
     }
 
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    public delegate void HintCallback(IntPtr userData, IntPtr name, IntPtr oldValue, IntPtr newValue);
+    public unsafe delegate void HintCallback(void* userData, Text name, Text oldValue, Text newValue);
 
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    public delegate void LogOutputFunction(IntPtr userData, LogCategory category, LogPriority priority, IntPtr message);
+    public unsafe delegate void LogOutputFunction(void* userData, LogCategory category, LogPriority priority, Text message);
 
     public static class SDL
     {
+        public const string LibraryName = "SDL2.dll";
+        public const string ImageLibraryName = "SDL2_image.dll";
+        public const int ScanCodeMask = (1 << 30);
+
         [SuppressUnmanagedCodeSecurity]
-        public class Native
+        public unsafe class Native
         {
             //
             // SDL.h
             //
             [DllImport(LibraryName)]
-            public extern static int SDL_Init(InitFlags flags);
+            public static extern int SDL_Init(InitFlags flags);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_InitSubSystem(InitFlags flags);
+            public static extern int SDL_InitSubSystem(InitFlags flags);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_QuitSubSystem(InitFlags flags);
+            public static extern void SDL_QuitSubSystem(InitFlags flags);
 
             [DllImport(LibraryName)]
-            public extern static InitFlags SDL_WasInit(InitFlags flags);
+            public static extern InitFlags SDL_WasInit(InitFlags flags);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_Quit();
-
-            //
-            // SDL_atomics.h
-            //
-            [DllImport(LibraryName)]
-            public extern static bool SDL_AtomicTryLock(Spinlock spinlock);
-
-            [DllImport(LibraryName)]
-            public extern static void SDL_AtomicLock(Spinlock spinlock);
-
-            [DllImport(LibraryName)]
-            public extern static void SDL_AtomicUnlock(Spinlock spinlock);
-
-            [DllImport(LibraryName)]
-            public extern static bool SDL_AtomicCAS(Atomic atomic, int oldVal, int newVal);
-
-            [DllImport(LibraryName)]
-            public extern static int SDL_AtomicSet(Atomic atomic, int value);
-
-            [DllImport(LibraryName)]
-            public extern static int SDL_AtomicGet(Atomic atomic);
-
-            [DllImport(LibraryName)]
-            public extern static int SDL_AtomicAdd(Atomic atomic, int value);
-
-            [DllImport(LibraryName)]
-            public extern static unsafe bool SDL_AtomicCASPtr(void** atomic, void* oldVal, void* newVal);
-
-            [DllImport(LibraryName)]
-            public extern static unsafe void* SDL_AtomicSetPtr(void** atomic, void* value);
-
-            [DllImport(LibraryName)]
-            public extern static unsafe void* SDL_AtomicGetPtr(void** atomic);
-
-            //
-            // SDL_audio.h
-            //
-            [DllImport(LibraryName)]
-            public extern static int SDL_GetNumAudioDrivers();
-
-            [DllImport(LibraryName)]
-            public extern static unsafe byte* SDL_GetAudioDriver(int index);
-
-            [DllImport(LibraryName)]
-            public extern static unsafe int SDL_AudioInit(byte* driverName);
-
-            [DllImport(LibraryName)]
-            public extern static void SDL_AudioQuit();
-
-            [DllImport(LibraryName)]
-            public extern static unsafe byte* SDL_GetCurrentAudioDriver();
-
-            [DllImport(LibraryName)]
-            public extern static unsafe int SDL_OpenAudio(AudioSpec* desired, AudioSpec* obtained);
-
-            [DllImport(LibraryName)]
-            public extern static int SDL_GetNumAudioDevices(int isCapture);
-
-            [DllImport(LibraryName)]
-            public extern static unsafe byte* SDL_GetAudioDeviceName(int index, int isCapture);
-
-            [DllImport(LibraryName)]
-            public extern static unsafe AudioDeviceID SDL_OpenAudioDevice(byte* device, int isCapture, AudioSpec* desired, AudioSpec* obtained, int allowedChanges);
-
-            [DllImport(LibraryName)]
-            public extern static void SDL_PauseAudio(int pauseOn);
-
-            [DllImport(LibraryName)]
-            public extern static void SDL_PauseAudioDevice(AudioDeviceID device, int pauseOn);
-
-            [DllImport(LibraryName)]
-            public extern static unsafe AudioSpec* SDL_LoadWAV_RW(RWops* src, int freeSrc, AudioSpec* spec, byte** audioBuffer, uint* audioLength);
-
-            [DllImport(LibraryName)]
-            public extern static unsafe void SDL_FreeWAV(byte* audioBuffer);
-
-            [DllImport(LibraryName)]
-            public extern static unsafe int SDL_BuildAudioCVT(AudioCVT* cvt, AudioFormat srcFormat, byte srcChannels, int srcRate, AudioFormat dstFormat, byte dstChannels, int dstRate);
-
-            [DllImport(LibraryName)]
-            public extern static unsafe int SDL_ConvertAudio(AudioCVT* cvt);
-
-            [DllImport(LibraryName)]
-            public extern static unsafe void SDL_MixAudio(byte* dst, byte* src, uint length, int volume);
-
-            [DllImport(LibraryName)]
-            public extern static unsafe void SDL_MixAudioFormat(byte* dst, byte* src, AudioFormat format, uint length, int volume);
-
-            [DllImport(LibraryName)]
-            public extern static unsafe int SDL_QueueAudio(AudioDeviceID device, void* data, uint length);
-
-            [DllImport(LibraryName)]
-            public extern static unsafe uint SDL_DequeueAudio(AudioDeviceID device, void* data, uint length);
-
-            [DllImport(LibraryName)]
-            public extern static uint SDL_GetQueueAudioSize(AudioDeviceID device);
-
-            [DllImport(LibraryName)]
-            public extern static void SDL_ClearQueueAudio(AudioDeviceID device);
-
-            [DllImport(LibraryName)]
-            public extern static void SDL_LockAudio();
-
-            [DllImport(LibraryName)]
-            public extern static void SDL_LockAudioDevice(AudioDeviceID device);
-
-            [DllImport(LibraryName)]
-            public extern static void SDL_UnlockAudio();
-
-            [DllImport(LibraryName)]
-            public extern static void SDL_UnlockAudioDevice(AudioDeviceID device);
-
-            [DllImport(LibraryName)]
-            public extern static void SDL_CloseAudio();
-
-            [DllImport(LibraryName)]
-            public extern static void SDL_CloseAudioDevice(AudioDeviceID device);
-
+            public static extern void SDL_Quit();
+            
             //
             // SDL_clipboard.h
             //
             [DllImport(LibraryName)]
-            public extern static unsafe int SDL_SetClipboardText(byte* text);
+            public static extern int SDL_SetClipboardText(Text text);
 
             [DllImport(LibraryName)]
-            public extern static unsafe byte* SDL_GetClipboardText();
+            public static extern Text SDL_GetClipboardText();
 
             [DllImport(LibraryName)]
-            public extern static bool SDL_HasClipboardText();
+            public static extern bool SDL_HasClipboardText();
 
             //
             // SDL_cpuinfo.h
             //
             [DllImport(LibraryName)]
-            public extern static int SDL_GetCPUCount();
+            public static extern int SDL_GetCPUCount();
 
             [DllImport(LibraryName)]
-            public extern static int SDL_GetCPUCacheLineSize();
+            public static extern int SDL_GetCPUCacheLineSize();
 
             [DllImport(LibraryName)]
-            public extern static bool SDL_HasRDTSC();
+            public static extern bool SDL_HasRDTSC();
 
             [DllImport(LibraryName)]
-            public extern static bool SDL_HasAltiVec();
+            public static extern bool SDL_HasAltiVec();
 
             [DllImport(LibraryName)]
-            public extern static bool SDL_HasMMX();
+            public static extern bool SDL_HasMMX();
 
             [DllImport(LibraryName)]
-            public extern static bool SDL_Has3DNow();
+            public static extern bool SDL_Has3DNow();
 
             [DllImport(LibraryName)]
-            public extern static bool SDL_HasSSE();
+            public static extern bool SDL_HasSSE();
 
             [DllImport(LibraryName)]
-            public extern static bool SDL_HasSSE2();
+            public static extern bool SDL_HasSSE2();
 
             [DllImport(LibraryName)]
-            public extern static bool SDL_HasSSE3();
+            public static extern bool SDL_HasSSE3();
 
             [DllImport(LibraryName)]
-            public extern static bool SDL_HasSSE41();
+            public static extern bool SDL_HasSSE41();
 
             [DllImport(LibraryName)]
-            public extern static bool SDL_HasSSE42();
+            public static extern bool SDL_HasSSE42();
 
             [DllImport(LibraryName)]
-            public extern static bool SDL_HasAVX();
+            public static extern bool SDL_HasAVX();
 
             [DllImport(LibraryName)]
-            public extern static bool SDL_HasAVX2();
+            public static extern bool SDL_HasAVX2();
 
             [DllImport(LibraryName)]
-            public extern static bool SDL_HasNEON();
+            public static extern bool SDL_HasNEON();
 
             [DllImport(LibraryName)]
-            public extern static int SDL_GetSystemRAM();
+            public static extern int SDL_GetSystemRAM();
 
             //
             // SDL_error.h
             //
             [DllImport(LibraryName)]
-            public extern static unsafe int SDL_SetError(byte* format, params object[] objects);
+            public static extern int SDL_SetError(Text format, params object[] objects);
 
             [DllImport(LibraryName)]
-            public extern static unsafe byte* SDL_GetError();
+            public static extern Text SDL_GetError();
 
             [DllImport(LibraryName)]
-            public extern static void SDL_ClearError();
+            public static extern void SDL_ClearError();
 
             //
             // SDL_events.h
             //
             [DllImport(LibraryName)]
-            public extern static void SDL_PumpEvents();
+            public static extern void SDL_PumpEvents();
 
             [DllImport(LibraryName)]
-            public extern static unsafe int SDL_PeepEvents(Event* events, int numEvents, EventAction action, EventType minType, EventType maxType);
+            public static extern int SDL_PeepEvents(Event[] events, int numEvents, EventAction action, EventType minType, EventType maxType);
 
             [DllImport(LibraryName)]
-            public extern static bool SDL_HasEvent(EventType type);
+            public static extern bool SDL_HasEvent(EventType type);
 
             [DllImport(LibraryName)]
-            public extern static bool SDL_HasEvents(EventType minType, EventType maxType);
+            public static extern bool SDL_HasEvents(EventType minType, EventType maxType);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_FlushEvent(EventType type);
+            public static extern void SDL_FlushEvent(EventType type);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_FlushEvents(EventType minType, EventType maxType);
+            public static extern void SDL_FlushEvents(EventType minType, EventType maxType);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_PollEvent(out Event sdlEvent);
+            public static extern int SDL_PollEvent(out Event sdlEvent);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_WaitEvent(out Event sdlEvent);
+            public static extern int SDL_WaitEvent(out Event sdlEvent);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_WaitEventTimeout(out Event sdlEvent, int timeout);
+            public static extern int SDL_WaitEventTimeout(out Event sdlEvent, int timeout);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_PushEvent(ref Event sdlEvent);
+            public static extern int SDL_PushEvent(ref Event sdlEvent);
 
             [DllImport(LibraryName)]
-            public extern static unsafe void SDL_SetEventFilter(EventFilter filter, void* userData);
+            public static extern void SDL_SetEventFilter(EventFilter filter, void* userData);
 
             [DllImport(LibraryName)]
-            public extern static unsafe bool SDL_GetEventFilter(out EventFilter filter, void* userData);
+            public static extern bool SDL_GetEventFilter(out EventFilter filter, void* userData);
 
             [DllImport(LibraryName)]
-            public extern static unsafe void SDL_AddEventWatch(EventFilter filter, void* userData);
+            public static extern void SDL_AddEventWatch(EventFilter filter, void* userData);
 
             [DllImport(LibraryName)]
-            public extern static unsafe void SDL_DelEventWatch(EventFilter filter, void* userData);
+            public static extern void SDL_DelEventWatch(EventFilter filter, void* userData);
 
             [DllImport(LibraryName)]
-            public extern static unsafe void SDL_FilterEvents(EventFilter filter, void* userData);
+            public static extern void SDL_FilterEvents(EventFilter filter, void* userData);
 
             [DllImport(LibraryName)]
-            public extern static byte SDL_EventState(EventType type, EventState state);
+            public static extern byte SDL_EventState(EventType type, EventState state);
 
             [DllImport(LibraryName)]
-            public extern static uint SDL_RegisterEvents(int numEvents);
+            public static extern uint SDL_RegisterEvents(int numEvents);
 
             //
             // SDL_filesystem.h
             //
             [DllImport(LibraryName)]
-            public extern static unsafe byte* SDL_GetBasePath();
+            public static extern Text SDL_GetBasePath();
 
             [DllImport(LibraryName)]
-            public extern static unsafe byte* SDL_GetPrefPath(byte* org, byte* app);
+            public static extern Text SDL_GetPrefPath(Text org, Text app);
 
             //
             // SDL_gamecontroller.h
             //
             [DllImport(LibraryName)]
-            public extern static int SDL_GameControllerAddMappingsFromRW(RWops rwOps, int freeRW);
+            public static extern int SDL_GameControllerAddMappingsFromRW(RWops rwOps, int freeRW);
 
             [DllImport(LibraryName)]
-            public static extern unsafe int SDL_GameControllerAddMapping(byte* mappingString);
+            public static extern int SDL_GameControllerAddMapping(Text mappingString);
 
             [DllImport(LibraryName)]
             public static extern int SDL_GameControllerNumMappings();
 
             [DllImport(LibraryName)]
-            public static extern unsafe byte* SDL_GameControllerMappingForGUID(Guid guid);
+            public static extern Text SDL_GameControllerMappingForGUID(Guid guid);
 
             [DllImport(LibraryName)]
-            public static extern unsafe byte* SDL_GameControllerMapping(GameController gameController);
+            public static extern Text SDL_GameControllerMapping(GameController gameController);
 
             [DllImport(LibraryName)]
             public static extern bool SDL_IsGameController(int joystickIndex);
 
             [DllImport(LibraryName)]
-            public static extern unsafe byte* SDL_GameControllerNameForIndex(int joystickIndex);
+            public static extern Text SDL_GameControllerNameForIndex(int joystickIndex);
 
             [DllImport(LibraryName)]
             public static extern GameController SDL_GameControllerOpen(int joystickIndex);
@@ -479,7 +364,7 @@ namespace Engine.SDL
             public static extern GameController SDL_GameControllerFromInstanceID(JoystickID joyid);
 
             [DllImport(LibraryName)]
-            public static extern unsafe byte* SDL_GameControllerName(GameController gamecontroller);
+            public static extern Text SDL_GameControllerName(GameController gamecontroller);
 
             [DllImport(LibraryName)]
             public static extern bool SDL_GameControllerGetAttached(GameController gamecontroller);
@@ -494,10 +379,10 @@ namespace Engine.SDL
             public static extern void SDL_GameControllerUpdate();
 
             [DllImport(LibraryName)]
-            public static extern unsafe GameControllerAxis SDL_GameControllerGetAxisFromString(byte* pchString);
+            public static extern GameControllerAxis SDL_GameControllerGetAxisFromString(Text pchString);
 
             [DllImport(LibraryName)]
-            public static extern unsafe byte* SDL_GameControllerGetStringForAxis(GameControllerAxis axis);
+            public static extern Text SDL_GameControllerGetStringForAxis(GameControllerAxis axis);
 
             [DllImport(LibraryName)]
             public static extern GameControllerButtonBind SDL_GameControllerGetBindForAxis(GameController gamecontroller, GameControllerAxis axis);
@@ -506,10 +391,10 @@ namespace Engine.SDL
             public static extern short SDL_GameControllerGetAxis(GameController gamecontroller, GameControllerAxis axis);
 
             [DllImport(LibraryName)]
-            public static extern unsafe GameControllerButton SDL_GameControllerGetButtonFromString(byte* pchString);
+            public static extern GameControllerButton SDL_GameControllerGetButtonFromString(Text pchString);
 
             [DllImport(LibraryName)]
-            public static extern unsafe byte* SDL_GameControllerGetStringForButton(GameControllerButton button);
+            public static extern Text SDL_GameControllerGetStringForButton(GameControllerButton button);
 
             [DllImport(LibraryName)]
             public static extern GameControllerButtonBind SDL_GameControllerGetBindForButton(GameController gamecontroller, GameControllerButton button);
@@ -524,34 +409,34 @@ namespace Engine.SDL
             // SDL_hints.h
             //
             [DllImport(LibraryName)]
-            public extern static unsafe bool SDL_SetHintWithPriority(byte* name, byte* value, HintPriority priority);
+            public static extern bool SDL_SetHintWithPriority(Text name, Text value, HintPriority priority);
 
             [DllImport(LibraryName)]
-            public extern static unsafe bool SDL_SetHint(byte* name, byte* value);
+            public static extern bool SDL_SetHint(Text name, Text value);
 
             [DllImport(LibraryName)]
-            private extern static unsafe IntPtr SDL_GetHint(byte* name);
+            private static extern Text SDL_GetHint(Text name);
 
             [DllImport(LibraryName)]
-            public extern static unsafe bool SDL_GetHintBoolean(byte* name, bool defaultValue);
+            public static extern bool SDL_GetHintBoolean(Text name, bool defaultValue);
 
             [DllImport(LibraryName)]
-            public extern static unsafe void SDL_AddHintCallback(byte* name, HintCallback callback, void* userData);
+            public static extern void SDL_AddHintCallback(Text name, HintCallback callback, void* userData);
 
             [DllImport(LibraryName)]
-            public extern static unsafe void SDL_DelHintCallback(byte* name, HintCallback callback, void* userData);
+            public static extern void SDL_DelHintCallback(Text name, HintCallback callback, void* userData);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_ClearHints();
+            public static extern void SDL_ClearHints();
 
             //
             // SDL_joystick.h
             //
             [DllImport(LibraryName)]
-            public extern static int SDL_NumJoysticks();
+            public static extern int SDL_NumJoysticks();
 
             [DllImport(LibraryName)]
-            public static extern unsafe byte* SDL_JoystickNameForIndex(int deviceIndex);
+            public static extern Text SDL_JoystickNameForIndex(int deviceIndex);
 
             [DllImport(LibraryName)]
             public static extern Joystick SDL_JoystickOpen(int deviceIndex);
@@ -560,7 +445,7 @@ namespace Engine.SDL
             public static extern Joystick SDL_JoystickFromInstanceID(JoystickID joystickID);
 
             [DllImport(LibraryName)]
-            public static extern unsafe byte* SDL_JoystickName(Joystick joystick);
+            public static extern Text SDL_JoystickName(Joystick joystick);
 
             [DllImport(LibraryName)]
             public static extern Guid SDL_JoystickGetDeviceGUID(int deviceIndex);
@@ -569,10 +454,10 @@ namespace Engine.SDL
             public static extern Guid SDL_JoystickGetGUID(Joystick joystick);
 
             [DllImport(LibraryName)]
-            public static extern unsafe void SDL_JoystickGetGUIDString(Guid guid, byte* pszGUID, int cbGUID);
+            public static extern void SDL_JoystickGetGUIDString(Guid guid, Text pszGUID, int cbGUID);
 
             [DllImport(LibraryName)]
-            public static extern unsafe Guid SDL_JoystickGetGUIDFromString(byte* pchGUID);
+            public static extern Guid SDL_JoystickGetGUIDFromString(Text pchGUID);
 
             [DllImport(LibraryName)]
             public static extern bool SDL_JoystickGetAttached(Joystick joystick);
@@ -605,7 +490,7 @@ namespace Engine.SDL
             public static extern JoystickHat SDL_JoystickGetHat(Joystick joystick, int hat);
 
             [DllImport(LibraryName)]
-            public static extern unsafe int SDL_JoystickGetBall(Joystick joystick, int ball, int* dx, int* dy);
+            public static extern int SDL_JoystickGetBall(Joystick joystick, int ball, out int dx, out int dy);
 
             [DllImport(LibraryName)]
             public static extern byte SDL_JoystickGetButton(Joystick joystick, int button);
@@ -620,304 +505,244 @@ namespace Engine.SDL
             // SDL_keyboard.h
             //
             [DllImport(LibraryName)]
-            public extern static Window SDL_GetKeyboardFocus();
+            public static extern Window SDL_GetKeyboardFocus();
 
             [DllImport(LibraryName)]
-            public extern static unsafe byte* SDL_GetKeyboardState(out int numkeys);
+            public static extern Text SDL_GetKeyboardState(out int numkeys);
 
             [DllImport(LibraryName)]
-            public extern static KeyMod SDL_GetModState();
+            public static extern KeyMod SDL_GetModState();
 
             [DllImport(LibraryName)]
-            public extern static void SDL_SetModState(KeyMod modstate);
+            public static extern void SDL_SetModState(KeyMod modstate);
 
             [DllImport(LibraryName)]
-            public extern static KeyCode SDL_GetKeyFromScancode(ScanCode scanCode);
+            public static extern KeyCode SDL_GetKeyFromScancode(ScanCode scanCode);
 
             [DllImport(LibraryName)]
-            public extern static ScanCode SDL_GetScancodeFromKey(KeyCode key);
+            public static extern ScanCode SDL_GetScancodeFromKey(KeyCode key);
 
             [DllImport(LibraryName)]
-            public extern static unsafe byte* SDL_GetScancodeName(ScanCode scanCode);
+            public static extern Text SDL_GetScancodeName(ScanCode scanCode);
 
             [DllImport(LibraryName)]
-            public extern static ScanCode SDL_GetScancodeFromName(string name);
+            public static extern ScanCode SDL_GetScancodeFromName(string name);
 
             [DllImport(LibraryName)]
-            public extern static unsafe byte* SDL_GetKeyName(KeyCode key);
+            public static extern Text SDL_GetKeyName(KeyCode key);
 
             [DllImport(LibraryName)]
-            public extern static unsafe KeyCode SDL_GetKeyFromName(byte* name);
+            public static extern KeyCode SDL_GetKeyFromName(Text name);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_StartTextInput();
+            public static extern void SDL_StartTextInput();
 
             [DllImport(LibraryName)]
-            public extern static bool SDL_IsTextInputActive();
+            public static extern bool SDL_IsTextInputActive();
 
             [DllImport(LibraryName)]
-            public extern static void SDL_StopTextInput();
+            public static extern void SDL_StopTextInput();
 
             [DllImport(LibraryName)]
-            public extern static void SDL_SetTextInputRect(out Rect rectangle);
+            public static extern void SDL_SetTextInputRect(ref Rect rectangle);
 
             [DllImport(LibraryName)]
-            public extern static bool SDL_HasScreenKeyboardSupport();
+            public static extern bool SDL_HasScreenKeyboardSupport();
 
             [DllImport(LibraryName)]
-            public extern static bool SDL_IsScreenKeyboardShown(Window window);
-
-            //
-            // SDL_loadso.h
-            //
-            [DllImport(LibraryName)]
-            public extern static unsafe void* SDL_LoadObject(byte* file);
-
-            [DllImport(LibraryName)]
-            public extern static unsafe void* SDL_LoadFunction(void* handle, byte* name);
-
-            [DllImport(LibraryName)]
-            public extern static unsafe void SDL_UnloadObject(void* handle);
-
+            public static extern bool SDL_IsScreenKeyboardShown(Window window);
+            
             //
             // SDL_log.h
             //
             [DllImport(LibraryName)]
-            public extern static void SDL_LogSetAllPriority(LogPriority priority);
+            public static extern void SDL_LogSetAllPriority(LogPriority priority);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_LogSetPriority(LogCategory category, LogPriority priority);
+            public static extern void SDL_LogSetPriority(LogCategory category, LogPriority priority);
 
             [DllImport(LibraryName)]
-            public extern static LogPriority SDL_LogGetPriority(LogCategory category);
+            public static extern LogPriority SDL_LogGetPriority(LogCategory category);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_LogResetPriorities();
+            public static extern void SDL_LogResetPriorities();
 
             [DllImport(LibraryName)]
-            public extern static unsafe void SDL_Log(byte* fmt, params object[] objects);
+            public static extern void SDL_Log(Text fmt, params object[] objects);
 
             [DllImport(LibraryName)]
-            public extern static unsafe void SDL_LogVerbose(LogCategory category, byte* fmt, params object[] objects);
+            public static extern void SDL_LogVerbose(LogCategory category, Text fmt, params object[] objects);
 
             [DllImport(LibraryName)]
-            public extern static unsafe void SDL_LogDebug(LogCategory category, byte* fmt, params object[] objects);
+            public static extern void SDL_LogDebug(LogCategory category, Text fmt, params object[] objects);
 
             [DllImport(LibraryName)]
-            public extern static unsafe void SDL_LogInfo(LogCategory category, byte* fmt, params object[] objects);
+            public static extern void SDL_LogInfo(LogCategory category, Text fmt, params object[] objects);
 
             [DllImport(LibraryName)]
-            public extern static unsafe void SDL_LogWarn(LogCategory category, byte* fmt, params object[] objects);
+            public static extern void SDL_LogWarn(LogCategory category, Text fmt, params object[] objects);
 
             [DllImport(LibraryName)]
-            public extern static unsafe void SDL_LogError(LogCategory category, byte* fmt, params object[] objects);
+            public static extern void SDL_LogError(LogCategory category, Text fmt, params object[] objects);
 
             [DllImport(LibraryName)]
-            public extern static unsafe void SDL_LogCritical(LogCategory category, byte* fmt, params object[] objects);
+            public static extern void SDL_LogCritical(LogCategory category, Text fmt, params object[] objects);
 
             [DllImport(LibraryName)]
-            public extern static unsafe void SDL_LogMessage(LogCategory category, LogPriority priority, byte* fmt, params object[] objects);
+            public static extern void SDL_LogMessage(LogCategory category, LogPriority priority, Text fmt, params object[] objects);
 
             [DllImport(LibraryName)]
-            public extern static unsafe void SDL_LogGetOutputFunction(LogOutputFunction callback, void* userData);
+            public static extern void SDL_LogGetOutputFunction(LogOutputFunction callback, void* userData);
 
             [DllImport(LibraryName)]
-            public extern static unsafe void SDL_LogSetOutputFunction(LogOutputFunction callback, void* userData);
+            public static extern void SDL_LogSetOutputFunction(LogOutputFunction callback, void* userData);
 
             //
             // SDL_messagebox.h
             //
             [DllImport(LibraryName)]
-            public extern static unsafe int SDL_ShowMessageBox(MessageBoxData* messageBoxData, out int buttonID);
+            public static extern int SDL_ShowMessageBox(ref MessageBoxData messageBoxData, out int buttonID);
 
             [DllImport(LibraryName)]
-            public extern static unsafe int SDL_ShowSimpleMessageBox(MessageBoxFlags flags, Text title, Text message, Window window);
+            public static extern int SDL_ShowSimpleMessageBox(MessageBoxFlags flags, Text title, Text message, Window window);
 
             //
             // SDL_mouse.h
             //
             [DllImport(LibraryName)]
-            public extern static Window SDL_GetMouseFocus();
+            public static extern Window SDL_GetMouseFocus();
 
             [DllImport(LibraryName)]
-            public extern static MouseButtonState SDL_GetMouseState(out int x, out int y);
+            public static extern MouseButtonState SDL_GetMouseState(out int x, out int y);
 
             [DllImport(LibraryName)]
-            public extern static MouseButtonState SDL_GetMouseState(out int x, IntPtr y);
+            public static extern MouseButtonState SDL_GetMouseState(out int x, int* y);
 
             [DllImport(LibraryName)]
-            public extern static MouseButtonState SDL_GetMouseState(IntPtr x, out int y);
+            public static extern MouseButtonState SDL_GetMouseState(int* x, out int y);
 
             [DllImport(LibraryName)]
-            public extern static MouseButtonState SDL_GetGlobalMouseState(out int x, out int y);
+            public static extern MouseButtonState SDL_GetMouseState(int* x, int* y);
 
             [DllImport(LibraryName)]
-            public extern static MouseButtonState SDL_GetGlobalMouseState(out int x, IntPtr y);
+            public static extern MouseButtonState SDL_GetGlobalMouseState(out int x, out int y);
 
             [DllImport(LibraryName)]
-            public extern static MouseButtonState SDL_GetGlobalMouseState(IntPtr x, out int y);
+            public static extern MouseButtonState SDL_GetGlobalMouseState(out int x, int* y);
 
             [DllImport(LibraryName)]
-            public extern static MouseButtonState SDL_GetRelativeMouseState(out int x, out int y);
+            public static extern MouseButtonState SDL_GetGlobalMouseState(int* x, out int y);
 
             [DllImport(LibraryName)]
-            public extern static MouseButtonState SDL_GetRelativeMouseState(out int x, IntPtr y);
+            public static extern MouseButtonState SDL_GetGlobalMouseState(int* x, int* y);
 
             [DllImport(LibraryName)]
-            public extern static MouseButtonState SDL_GetRelativeMouseState(IntPtr x, out int y);
+            public static extern MouseButtonState SDL_GetRelativeMouseState(out int x, out int y);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_WarpMouseInWindow(Window window, int x, int y);
+            public static extern MouseButtonState SDL_GetRelativeMouseState(out int x, int* y);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_WarpMouseGlobal(int x, int y);
+            public static extern MouseButtonState SDL_GetRelativeMouseState(int* x, out int y);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_SetRelativeMouseMode(bool enabled);
+            public static extern MouseButtonState SDL_GetRelativeMouseState(int* x, int* y);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_CaptureMouse(bool enabled);
+            public static extern void SDL_WarpMouseInWindow(Window window, int x, int y);
 
             [DllImport(LibraryName)]
-            public extern static bool SDL_GetRelativeMouseMode();
+            public static extern int SDL_WarpMouseGlobal(int x, int y);
 
             [DllImport(LibraryName)]
-            public extern static Cursor SDL_CreateCursor(byte[] data, byte[] mask, int w, int h, int hotX, int hotY);
+            public static extern int SDL_SetRelativeMouseMode(bool enabled);
 
             [DllImport(LibraryName)]
-            public extern static Cursor SDL_CreateColorCursor(Surface surface, int hotX, int hotY);
+            public static extern int SDL_CaptureMouse(bool enabled);
 
             [DllImport(LibraryName)]
-            public extern static Cursor SDL_CreateSystemCursor(SystemCursor id);
+            public static extern bool SDL_GetRelativeMouseMode();
 
             [DllImport(LibraryName)]
-            public extern static void SDL_SetCursor(Cursor cursor);
+            public static extern Cursor SDL_CreateCursor(byte[] data, byte[] mask, int w, int h, int hotX, int hotY);
 
             [DllImport(LibraryName)]
-            public extern static Cursor SDL_GetCursor();
+            public static extern Cursor SDL_CreateColorCursor(Surface surface, int hotX, int hotY);
 
             [DllImport(LibraryName)]
-            public extern static Cursor SDL_GetDefaultCursor();
+            public static extern Cursor SDL_CreateSystemCursor(SystemCursor id);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_FreeCursor(Cursor cursor);
+            public static extern void SDL_SetCursor(Cursor cursor);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_ShowCursor(int toggle);
-
-            //
-            // SDL_mutex.h
-            //
-            [DllImport(LibraryName)]
-            public extern static Mutex SDL_CreateMutex();
+            public static extern Cursor SDL_GetCursor();
 
             [DllImport(LibraryName)]
-            public extern static int SDL_LockMutex(Mutex mutex);
+            public static extern Cursor SDL_GetDefaultCursor();
 
             [DllImport(LibraryName)]
-            public extern static int SDL_TryLockMutex(Mutex mutex);
+            public static extern void SDL_FreeCursor(Cursor cursor);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_UnlockMutex(Mutex mutex);
-
-            [DllImport(LibraryName)]
-            public extern static void SDL_DestroyMutex(Mutex mutex);
-
-            [DllImport(LibraryName)]
-            public extern static Semaphore SDL_CreateSemaphore(uint initialValue);
-
-            [DllImport(LibraryName)]
-            public extern static void SDL_DestroySemaphore(Semaphore semaphore);
-
-            [DllImport(LibraryName)]
-            public extern static int SDL_SemWait(Semaphore semaphore);
-
-            [DllImport(LibraryName)]
-            public extern static int SDL_SemTryWait(Semaphore semaphore);
-
-            [DllImport(LibraryName)]
-            public extern static int SDL_SemWaitTimeout(Semaphore semaphore, uint ms);
-
-            [DllImport(LibraryName)]
-            public extern static int SDL_SemPost(Semaphore semaphore);
-
-            [DllImport(LibraryName)]
-            public extern static uint SDL_SemValue(Semaphore semaphore);
-
-            [DllImport(LibraryName)]
-            public extern static Condition SDL_CreateCond();
-
-            [DllImport(LibraryName)]
-            public extern static void SDL_DestroyCond(Condition condition);
-
-            [DllImport(LibraryName)]
-            public extern static int SDL_CondSignal(Condition condition);
-
-            [DllImport(LibraryName)]
-            public extern static int SDL_CondBroadcast(Condition condition);
-
-            [DllImport(LibraryName)]
-            public extern static int SDL_CondWait(Condition condition, Mutex mutex);
-
-            [DllImport(LibraryName)]
-            public extern static int SDL_CondWaitTimeout(Condition condition, Mutex mutex, uint ms);
-
+            public static extern int SDL_ShowCursor(int toggle);
+            
             //
             // SDL_pixels.h
             //
             [DllImport(LibraryName)]
-            public extern static unsafe Text SDL_GetPixelFormatName(uint format);
+            public static extern Text SDL_GetPixelFormatName(uint format);
 
             [DllImport(LibraryName)]
-            public extern static unsafe bool SDL_PixelFormatEnumToMasks(uint format, out int bpp, out uint rMask, out uint gMask, out uint bMask, out uint aMask);
+            public static extern bool SDL_PixelFormatEnumToMasks(uint format, out int bpp, out uint rMask, out uint gMask, out uint bMask, out uint aMask);
 
             [DllImport(LibraryName)]
-            public extern static uint SDL_MasksToPixelFormatEnum(int bpp, uint rMask, uint gMask, uint bMask, uint aMask);
+            public static extern uint SDL_MasksToPixelFormatEnum(int bpp, uint rMask, uint gMask, uint bMask, uint aMask);
 
             [DllImport(LibraryName)]
-            public extern static unsafe PixelFormat* SDL_AllocFormat(uint pixelFormat);
+            public static extern PixelFormat* SDL_AllocFormat(uint pixelFormat);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_FreeFormat(ref PixelFormat pixelFormat);
+            public static extern void SDL_FreeFormat(ref PixelFormat pixelFormat);
 
             [DllImport(LibraryName)]
-            public extern static unsafe Palette SDL_AllocPalette(int numColors);
+            public static extern Palette SDL_AllocPalette(int numColors);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_SetPixelFormatPalette(ref PixelFormat format, ref Palette palette);
+            public static extern int SDL_SetPixelFormatPalette(ref PixelFormat format, ref Palette palette);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_SetPaletteColors(Palette palette, Color[] colors, int firstColor, int numColors);
+            public static extern int SDL_SetPaletteColors(Palette palette, Color[] colors, int firstColor, int numColors);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_FreePalette(Palette palette);
+            public static extern void SDL_FreePalette(Palette palette);
 
             [DllImport(LibraryName)]
-            public extern static uint SDL_MapRGB(ref PixelFormat format, byte r, byte g, byte b);
+            public static extern uint SDL_MapRGB(ref PixelFormat format, byte r, byte g, byte b);
 
             [DllImport(LibraryName)]
-            public extern static uint SDL_MapRGBA(ref PixelFormat format, byte r, byte g, byte b, byte a);
+            public static extern uint SDL_MapRGBA(ref PixelFormat format, byte r, byte g, byte b, byte a);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_GetRGB(uint pixel, ref PixelFormat format, out byte r, out byte g, out byte b);
+            public static extern void SDL_GetRGB(uint pixel, ref PixelFormat format, out byte r, out byte g, out byte b);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_GetRGBA(uint pixel, ref PixelFormat format, out byte r, out byte g, out byte b, out byte a);
+            public static extern void SDL_GetRGBA(uint pixel, ref PixelFormat format, out byte r, out byte g, out byte b, out byte a);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_CalculateGammaRamp(float gamma, out ushort[] ramp);
+            public static extern void SDL_CalculateGammaRamp(float gamma, out ushort[] ramp);
 
             //
             // SDL_platform.h
             //
             [DllImport(LibraryName)]
-            public extern static unsafe Text SDL_GetPlatform();
+            public static extern Text SDL_GetPlatform();
 
             //
             // SDL_power.h
             //
             [DllImport(LibraryName)]
-            public extern static PowerState SDL_GetPowerInfo(out int seconds, out int percentage);
+            public static extern PowerState SDL_GetPowerInfo(out int seconds, out int percentage);
 
             //
             // SDL_rect.h
@@ -941,68 +766,68 @@ namespace Engine.SDL
             // SDL_render.h
             //
             [DllImport(LibraryName)]
-            public extern static int SDL_GetNumRenderDrivers();
+            public static extern int SDL_GetNumRenderDrivers();
 
             [DllImport(LibraryName)]
-            public extern static int SDL_GetRenderDriverInfo(int index, out RendererInfo info);
+            public static extern int SDL_GetRenderDriverInfo(int index, out RendererInfo info);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_CreateWindowAndRenderer(int width, int height, WindowFlags windowFlags, out Window window, out Renderer renderer);
+            public static extern int SDL_CreateWindowAndRenderer(int width, int height, WindowFlags windowFlags, out Window window, out Renderer renderer);
 
             [DllImport(LibraryName)]
-            public extern static Renderer SDL_CreateRenderer(Window window, int index, RendererFlags flags);
+            public static extern Renderer SDL_CreateRenderer(Window window, int index, RendererFlags flags);
 
             [DllImport(LibraryName)]
-            public extern static IntPtr SDL_CreateSoftwareRenderer(IntPtr surface);
+            public static extern IntPtr SDL_CreateSoftwareRenderer(IntPtr surface);
 
             [DllImport(LibraryName)]
-            public extern static Renderer SDL_GetRenderer(Window window);
+            public static extern Renderer SDL_GetRenderer(Window window);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_GetRendererInfo(IntPtr renderer,
+            public static extern int SDL_GetRendererInfo(IntPtr renderer,
                                                             out RendererInfo info);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_GetRendererOutputSize(IntPtr renderer,
+            public static extern int SDL_GetRendererOutputSize(IntPtr renderer,
                                                                  out int w, out int h);
 
             [DllImport(LibraryName)]
-            public extern static IntPtr SDL_CreateTexture(IntPtr renderer,
+            public static extern IntPtr SDL_CreateTexture(IntPtr renderer,
                                                                     uint format,
                                                                     int access, int w,
                                                                     int h);
 
             [DllImport(LibraryName)]
-            public extern static IntPtr SDL_CreateTextureFromSurface(IntPtr renderer, IntPtr surface);
+            public static extern IntPtr SDL_CreateTextureFromSurface(IntPtr renderer, IntPtr surface);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_QueryTexture(IntPtr texture,
+            public static extern int SDL_QueryTexture(IntPtr texture,
                                                         out uint format, out int access,
                                                         out int w, out int h);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_SetTextureColorMod(IntPtr texture,
+            public static extern int SDL_SetTextureColorMod(IntPtr texture,
                                                                byte r, byte g, byte b);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_GetTextureColorMod(IntPtr texture,
+            public static extern int SDL_GetTextureColorMod(IntPtr texture,
                                                               out byte r, out byte g,
                                                               out byte b);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_SetTextureAlphaMod(IntPtr texture,
+            public static extern int SDL_SetTextureAlphaMod(IntPtr texture,
                                                                byte alpha);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_GetTextureAlphaMod(IntPtr texture,
+            public static extern int SDL_GetTextureAlphaMod(IntPtr texture,
                                                               out byte alpha);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_SetTextureBlendMode(IntPtr texture,
+            public static extern int SDL_SetTextureBlendMode(IntPtr texture,
                                                                 BlendMode blendMode);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_GetTextureBlendMode(IntPtr texture,
+            public static extern int SDL_GetTextureBlendMode(IntPtr texture,
                                                                out BlendMode blendMode);
 
             [DllImport(LibraryName)]
@@ -1038,81 +863,81 @@ namespace Engine.SDL
             );
 
             [DllImport(LibraryName)]
-            public extern static void SDL_UnlockTexture(IntPtr texture);
+            public static extern void SDL_UnlockTexture(IntPtr texture);
 
             [DllImport(LibraryName)]
-            public extern static bool SDL_RenderTargetSupported(IntPtr renderer);
+            public static extern bool SDL_RenderTargetSupported(IntPtr renderer);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_SetRenderTarget(IntPtr renderer,
+            public static extern int SDL_SetRenderTarget(IntPtr renderer,
                                                             IntPtr texture);
 
             [DllImport(LibraryName)]
-            public extern static IntPtr SDL_GetRenderTarget(IntPtr renderer);
+            public static extern IntPtr SDL_GetRenderTarget(IntPtr renderer);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_RenderSetLogicalSize(IntPtr renderer, int w, int h);
+            public static extern int SDL_RenderSetLogicalSize(IntPtr renderer, int w, int h);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_RenderGetLogicalSize(IntPtr renderer, out int w, out int h);
+            public static extern void SDL_RenderGetLogicalSize(IntPtr renderer, out int w, out int h);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_RenderSetIntegerScale(IntPtr renderer,
+            public static extern int SDL_RenderSetIntegerScale(IntPtr renderer,
                                                                   bool enable);
 
             [DllImport(LibraryName)]
-            public extern static bool SDL_RenderGetIntegerScale(IntPtr renderer);
+            public static extern bool SDL_RenderGetIntegerScale(IntPtr renderer);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_RenderSetViewport(IntPtr renderer,
+            public static extern int SDL_RenderSetViewport(IntPtr renderer,
                                                       ref Rect rect);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_RenderGetViewport(IntPtr renderer,
+            public static extern void SDL_RenderGetViewport(IntPtr renderer,
                                                               out Rect rect);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_RenderSetClipRect(IntPtr renderer,
+            public static extern int SDL_RenderSetClipRect(IntPtr renderer,
                                                       ref Rect rect);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_RenderGetClipRect(IntPtr renderer,
+            public static extern void SDL_RenderGetClipRect(IntPtr renderer,
                                                              out Rect rect);
 
             [DllImport(LibraryName)]
-            public extern static bool SDL_RenderIsClipEnabled(IntPtr renderer);
+            public static extern bool SDL_RenderIsClipEnabled(IntPtr renderer);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_RenderSetScale(IntPtr renderer,
+            public static extern int SDL_RenderSetScale(IntPtr renderer,
                                                            float scaleX, float scaleY);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_RenderGetScale(IntPtr renderer,
+            public static extern void SDL_RenderGetScale(IntPtr renderer,
                                                           out float scaleX, out float scaleY);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_SetRenderDrawColor(IntPtr renderer,
+            public static extern int SDL_SetRenderDrawColor(IntPtr renderer,
                                                        byte r, byte g, byte b,
                                                        byte a);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_GetRenderDrawColor(IntPtr renderer,
+            public static extern int SDL_GetRenderDrawColor(IntPtr renderer,
                                                       out byte r, out byte g, out byte b,
                                                       out byte a);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_SetRenderDrawBlendMode(IntPtr renderer,
+            public static extern int SDL_SetRenderDrawBlendMode(IntPtr renderer,
                                                                    BlendMode blendMode);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_GetRenderDrawBlendMode(IntPtr renderer,
+            public static extern int SDL_GetRenderDrawBlendMode(IntPtr renderer,
                                                                   out BlendMode blendMode);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_RenderClear(IntPtr renderer);
+            public static extern int SDL_RenderClear(IntPtr renderer);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_RenderDrawPoint(IntPtr renderer,
+            public static extern int SDL_RenderDrawPoint(IntPtr renderer,
                                                             int x, int y);
 
             [DllImport(LibraryName)]
@@ -1124,7 +949,7 @@ namespace Engine.SDL
             );
 
             [DllImport(LibraryName)]
-            public extern static int SDL_RenderDrawLine(IntPtr renderer,
+            public static extern int SDL_RenderDrawLine(IntPtr renderer,
                                                            int x1, int y1, int x2, int y2);
 
             [DllImport(LibraryName)]
@@ -1230,76 +1055,76 @@ namespace Engine.SDL
             );
 
             [DllImport(LibraryName)]
-            public extern static int SDL_RenderReadPixels(IntPtr renderer, ref Rect rect, uint format, IntPtr pixels, int pitch);
+            public static extern int SDL_RenderReadPixels(IntPtr renderer, ref Rect rect, uint format, IntPtr pixels, int pitch);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_RenderPresent(IntPtr renderer);
+            public static extern void SDL_RenderPresent(IntPtr renderer);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_DestroyTexture(IntPtr texture);
+            public static extern void SDL_DestroyTexture(IntPtr texture);
 
             [DllImport(LibraryName)]
-            public extern static void SDL_DestroyRenderer(IntPtr renderer);
+            public static extern void SDL_DestroyRenderer(IntPtr renderer);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_GL_BindTexture(IntPtr texture, out float texw, out float texh);
+            public static extern int SDL_GL_BindTexture(IntPtr texture, out float texw, out float texh);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_GL_UnbindTexture(IntPtr texture);
+            public static extern int SDL_GL_UnbindTexture(IntPtr texture);
 
             //
             // SDL_rwops.h
             //
             [DllImport(LibraryName)]
-            public extern static IntPtr SDL_RWFromFile(string file, string mode);
+            public static extern IntPtr SDL_RWFromFile(string file, string mode);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_RWclose(IntPtr context);
+            public static extern int SDL_RWclose(IntPtr context);
 
             [DllImport(LibraryName)]
-            public extern static int SDL_RWread(IntPtr context, IntPtr ptr, int size, int maxNum);
+            public static extern int SDL_RWread(IntPtr context, IntPtr ptr, int size, int maxNum);
 
             [DllImport(LibraryName)]
-            public extern static long SDL_RWsize(IntPtr context);
+            public static extern long SDL_RWsize(IntPtr context);
 
             //
             // SDL_shape.h
             //
             [DllImport(LibraryName)]
-            public static extern unsafe Window SDL_CreateShapedWindow(byte title, uint x, uint y, uint w, uint h, WindowFlags flags);
+            public static extern Window SDL_CreateShapedWindow(byte title, uint x, uint y, uint w, uint h, WindowFlags flags);
 
             [DllImport(LibraryName)]
             public static extern bool IsShapedWindow(Window window);
 
             [DllImport(LibraryName)]
-            public static extern unsafe int SDL_SetWindowShape(Window window, Surface* shape, WindowShape* shapeMode);
+            public static extern int SDL_SetWindowShape(Window window, Surface* shape, WindowShape* shapeMode);
 
             [DllImport(LibraryName)]
-            public static extern unsafe int SDL_GetShapedWindowMode(Window window, out WindowShape shapeMode);
+            public static extern int SDL_GetShapedWindowMode(Window window, out WindowShape shapeMode);
 
             //
             // SDL_stdinc.h
             //
             [DllImport(LibraryName)]
-            public static extern unsafe void* SDL_malloc(Size size);
+            public static extern void* SDL_malloc(Size size);
 
             [DllImport(LibraryName)]
-            public static extern unsafe void* SDL_calloc(Size nmemb, Size size);
+            public static extern void* SDL_calloc(Size nmemb, Size size);
 
             [DllImport(LibraryName)]
-            public static extern unsafe void* SDL_realloc(void* mem, Size size);
+            public static extern void* SDL_realloc(void* mem, Size size);
 
             [DllImport(LibraryName)]
-            public static extern unsafe void SDL_free(void* mem);
+            public static extern void SDL_free(void* mem);
 
             [DllImport(LibraryName)]
-            public static extern unsafe byte* SDL_getenv(byte* name);
+            public static extern Text SDL_getenv(Text name);
 
             [DllImport(LibraryName)]
-            public static extern unsafe int SDL_setenv(byte* name, byte* value, int overwrite);
+            public static extern int SDL_setenv(Text name, Text value, int overwrite);
 
             [DllImport(LibraryName)]
-            public static extern unsafe void SDL_qsort(void* buffer, Size nmemb, Size size, IntPtr compare);
+            public static extern void SDL_qsort(void* buffer, Size nmemb, Size size, IntPtr compare);
 
             //
             // SDL_surface.h
@@ -1588,13 +1413,13 @@ namespace Engine.SDL
             // SDL_syswm.h
             //
             [DllImport(LibraryName)]
-            public extern static bool SDL_GetWindowWMInfo(Window window, ref SysWMInfo info);
+            public static extern bool SDL_GetWindowWMInfo(Window window, ref SysWMInfo info);
 
             //
             // SDL_timer.h
             //
             [DllImport(LibraryName)]
-            public extern static uint SDL_GetTicks();
+            public static extern uint SDL_GetTicks();
 
             public static bool SDL_TicksPassed(uint a, uint b)
             {
@@ -1602,40 +1427,40 @@ namespace Engine.SDL
             }
 
             [DllImport(LibraryName)]
-            public extern static ulong SDL_GetPerformanceCounter();
+            public static extern ulong SDL_GetPerformanceCounter();
 
             [DllImport(LibraryName)]
-            public extern static ulong SDL_GetPerformanceFrequency();
+            public static extern ulong SDL_GetPerformanceFrequency();
 
             [DllImport(LibraryName)]
-            public extern static void SDL_Delay(uint ms);
+            public static extern void SDL_Delay(uint ms);
 
             [DllImport(LibraryName)]
-            public extern static TimerID SDL_AddTimer(uint interval, TimerCallback callback, IntPtr param);
+            public static extern TimerID SDL_AddTimer(uint interval, TimerCallback callback, IntPtr param);
 
             [DllImport(LibraryName)]
-            public extern static bool SDL_RemoveTimer(TimerID id);
+            public static extern bool SDL_RemoveTimer(TimerID id);
 
             //
             // SDL_version.h
             //
             [DllImport(LibraryName)]
-            public extern static void SDL_GetVersion(out Version version);
+            public static extern void SDL_GetVersion(out Version version);
 
             [DllImport(LibraryName)]
-            public extern static unsafe byte* SDL_GetRevision();
+            public static extern Text SDL_GetRevision();
 
             [DllImport(LibraryName)]
-            public extern static int SDL_GetRevisionNumber();
+            public static extern int SDL_GetRevisionNumber();
 
             //
             // SDL_video.h
             //
             [DllImport(LibraryName)]
-            public extern static int SDL_GetNumVideoDrivers();
+            public static extern int SDL_GetNumVideoDrivers();
 
             [DllImport(LibraryName)]
-            private extern static IntPtr SDL_GetVideoDriver(int index);
+            private static extern IntPtr SDL_GetVideoDriver(int index);
 
             [DllImport(LibraryName)]
             public static extern int SDL_VideoInit(IntPtr driver_name);
@@ -1693,10 +1518,10 @@ namespace Engine.SDL
             public static extern uint SDL_GetWindowPixelFormat(Window window);
 
             [DllImport(LibraryName)]
-            public static unsafe extern Window SDL_CreateWindow(byte* title, int x, int y, int width, int height, WindowFlags flags);
+            public static extern Window SDL_CreateWindow(Text title, int x, int y, int width, int height, WindowFlags flags);
 
             [DllImport(LibraryName)]
-            public static unsafe extern Window SDL_CreateWindowFrom(void* data);
+            public static extern Window SDL_CreateWindowFrom(void* data);
 
             [DllImport(LibraryName)]
             public static extern WindowID SDL_GetWindowID(Window window);
@@ -1708,19 +1533,19 @@ namespace Engine.SDL
             public static extern WindowFlags SDL_GetWindowFlags(Window window);
 
             [DllImport(LibraryName)]
-            public static unsafe extern void SDL_SetWindowTitle(Window window, byte* title);
+            public static extern void SDL_SetWindowTitle(Window window, Text title);
 
             [DllImport(LibraryName)]
-            public static unsafe extern byte* SDL_GetWindowTitle(Window window);
+            public static extern Text SDL_GetWindowTitle(Window window);
 
             [DllImport(LibraryName)]
             public static extern void SDL_SetWindowIcon(Window window, Surface icon);
 
             [DllImport(LibraryName)]
-            public static unsafe extern void* SDL_SetWindowData(Window window, byte* name, void* userData);
+            public static extern void* SDL_SetWindowData(Window window, Text name, void* userData);
 
             [DllImport(LibraryName)]
-            public static unsafe extern void* SDL_GetWindowData(Window window, byte* name);
+            public static extern void* SDL_GetWindowData(Window window, Text name);
 
             [DllImport(LibraryName)]
             public static extern void SDL_SetWindowPosition(Window window, int x, int y);
@@ -1789,13 +1614,13 @@ namespace Engine.SDL
             public static extern int SDL_SetWindowFullscreen(Window window, WindowFlags flags);
 
             [DllImport(LibraryName)]
-            public static unsafe extern Surface* SDL_GetWindowSurface(Window window);
+            public static extern Surface* SDL_GetWindowSurface(Window window);
 
             [DllImport(LibraryName)]
             public static extern int SDL_UpdateWindowSurface(Window window);
 
             [DllImport(LibraryName)]
-            public static unsafe extern int SDL_UpdateWindowSurfaceRects(
+            public static extern int SDL_UpdateWindowSurfaceRects(
                 Window window,
                 Rect* rectangles,
                 int numRectangles);
@@ -1828,21 +1653,21 @@ namespace Engine.SDL
             public static extern int SDL_SetWindowInputFocus(Window window);
 
             [DllImport(LibraryName)]
-            public static unsafe extern int SDL_SetWindowGammaRamp(
+            public static extern int SDL_SetWindowGammaRamp(
                 Window window,
                 ushort* red,
                 ushort* green,
                 ushort* blue);
 
             [DllImport(LibraryName)]
-            public static unsafe extern int SDL_GetWindowGammaRamp(
+            public static extern int SDL_GetWindowGammaRamp(
                 Window window,
                 ushort* red,
                 ushort* green,
                 ushort* blue);
 
             [DllImport(LibraryName)]
-            public static unsafe extern int SDL_SetWindowHitTest(Window window, HitTest callback, void* callbackData);
+            public static extern int SDL_SetWindowHitTest(Window window, HitTest callback, void* callbackData);
 
             [DllImport(LibraryName)]
             public static extern void SDL_DestroyWindow(Window window);
@@ -2050,10 +1875,6 @@ namespace Engine.SDL
             public static uint DefinePixelFormat(PixelType type, PixelOrder order, PackedLayout layout, byte bits, byte bytes) => (uint)((1 << 28) | ((byte)type << 24) | ((byte)order << 20) | ((byte)layout << 16) | (bits << 8) | bytes);
         }
 
-        public const string LibraryName = "SDL2.dll";
-        public const string ImageLibraryName = "SDL2_image.dll";
-        public const int ScanCodeMask = (1 << 30);
-
         //
         // SDL.h
         //
@@ -2071,16 +1892,7 @@ namespace Engine.SDL
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Quit() => Native.SDL_Quit();
-
-        //
-        // SDL_error.h
-        //
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe string GetError() => GetString(Native.SDL_GetError());
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ClearError() => Native.SDL_ClearError();
-
+        
         //
         // SDL_version.h
         //
@@ -2092,30 +1904,5 @@ namespace Engine.SDL
         //
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void GetDesktopDisplayMode(int displayIndex, out DisplayMode displayMode) => Native.SDL_GetDeskTopDisplayMode(displayIndex, out displayMode).CheckError("Could not get dekstop display mode");
-
-        //
-        // Utility methods
-        //
-        public static unsafe string GetString(IntPtr handle)
-        {
-            Assert.IsTrue(handle != IntPtr.Zero, "[SDL] String is null: " + GetError());
-
-            byte* ptr = (byte*)handle;
-            return GetString(ptr);
-        }
-
-        public static unsafe string GetString(byte* ptr)
-        {
-            Assert.IsTrue(ptr != null, "[SDL] String is null: " + GetError());
-
-            byte* counter = ptr;
-            while (*counter != 0)
-            {
-                counter++;
-            }
-            int count = (int)(counter - ptr);
-
-            return Encoding.UTF8.GetString(ptr, count);
-        }
     }
 }

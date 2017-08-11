@@ -1,10 +1,8 @@
-﻿using System;
+﻿using System.Runtime.InteropServices;
 
 namespace Engine.SDL
 {
-    /// <summary>
-    /// A rectangle, with the origin at the upper left.
-    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
     public struct Rect
     {
         public int X;

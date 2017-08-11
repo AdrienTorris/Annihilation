@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 using static Engine.SDL.SDL;
 
@@ -36,15 +37,12 @@ namespace Engine.SDL
 
     public struct Joystick
     {
-        //
-        // Members
-        //
         internal IntPtr NativeHandle;
 
         //
         // Properties
         //
-        public unsafe string Name => GetString(Native.SDL_JoystickName(this));
+        public unsafe string Name => Native.SDL_JoystickName(this).ToString();
 
         public JoystickID InstanceID => Native.SDL_JoystickInstanceID(this);
 
@@ -74,18 +72,18 @@ namespace Engine.SDL
         //
         // Methods
         //
-        public Guid GetGuid() => Native.SDL_JoystickGetGUID(this);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public Guid GetGuid() => Native.SDL_JoystickGetGUID(this);
 
-        public bool GetAttached() => Native.SDL_JoystickGetAttached(this);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public bool GetAttached() => Native.SDL_JoystickGetAttached(this);
 
-        public short GetAxisState(JoystickAxis axis) => Native.SDL_JoystickGetAxis(this, axis);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public short GetAxisState(JoystickAxis axis) => Native.SDL_JoystickGetAxis(this, axis);
 
-        public JoystickHat GetHatState(int hat) => Native.SDL_JoystickGetHat(this, hat);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public JoystickHat GetHatState(int hat) => Native.SDL_JoystickGetHat(this, hat);
 
-        public unsafe int GetBallState(int ball, int* dx, int* dy) => Native.SDL_JoystickGetBall(this, ball, dx, dy).CheckErrorAndReturn("Could not get ball state");
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public unsafe int GetBallState(int ball, out int dx, out int dy) => Native.SDL_JoystickGetBall(this, ball, out dx, out dy).CheckErrorAndReturn("Could not get ball state");
 
-        public byte GetButtonState(int button) => Native.SDL_JoystickGetButton(this, button);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public byte GetButtonState(int button) => Native.SDL_JoystickGetButton(this, button);
 
-        public void Close() => Native.SDL_JoystickClose(this);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public void Close() => Native.SDL_JoystickClose(this);
     }
 }

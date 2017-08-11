@@ -86,7 +86,7 @@ namespace Engine.SDL
         //
         public unsafe Window(string title, int x, int y, int w, int h, WindowFlags flags)
         {
-            this = Native.SDL_CreateWindow(title.ToBytePtr(), x, y, w, h, flags);
+            this = Native.SDL_CreateWindow(title, x, y, w, h, flags);
             this.CheckError("Could not create SDL window");
         }
         
@@ -133,19 +133,19 @@ namespace Engine.SDL
         public WindowFlags GetFlags() => Native.SDL_GetWindowFlags(this);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public unsafe string GetTitle() => GetString(Native.SDL_GetWindowTitle(this));
+        public unsafe string GetTitle() => Native.SDL_GetWindowTitle(this);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public unsafe void SetTitle(string title) => Native.SDL_SetWindowTitle(this, title.ToBytePtr());
+        public unsafe void SetTitle(string title) => Native.SDL_SetWindowTitle(this, title);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetIcon(Surface icon) => Native.SDL_SetWindowIcon(this, icon);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public unsafe void* SetData(string name, void* data) => Native.SDL_SetWindowData(this, name.ToBytePtr(), data);
+        public unsafe void* SetData(string name, void* data) => Native.SDL_SetWindowData(this, name, data);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public unsafe void* GetData(string name) => Native.SDL_GetWindowData(this, name.ToBytePtr());
+        public unsafe void* GetData(string name) => Native.SDL_GetWindowData(this, name);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetPosition(int x, int y) => Native.SDL_SetWindowPosition(this, x, y);
@@ -220,7 +220,7 @@ namespace Engine.SDL
         public unsafe Surface* GetSurface()
         {
             Surface* surface = Native.SDL_GetWindowSurface(this);
-            Assert.IsTrue(surface != null, "Could not get surface for SDL window: " + GetError());
+            Assert.IsTrue(surface != null, "Could not get surface for SDL window: " + Native.SDL_GetError());
             return surface;
         }
 

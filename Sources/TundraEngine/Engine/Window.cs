@@ -1,14 +1,15 @@
 ﻿using Engine.Vulkan;
 using Engine.SDL;
+using Engine.Rendering;
 using static Engine.SDL.SDL;
 
-namespace Engine.Rendering
+namespace Engine
 {
     public static class Window
     {
         // SDL
-        private static SDL.Window _window;
-        private static SysWMInfo _sysWMInfo;
+        public static SDL.Window SDLWindow;
+        public static SysWMInfo SysWMInfo;
 
         // Vulkan
         private static Instance _instance;
@@ -51,7 +52,7 @@ namespace Engine.Rendering
             GetDesktopDisplayMode(settings.Monitor, out SDL.DisplayMode displayMode);
 
             // Create the window if needed, hidden
-            if (_window == SDL.Window.Null)
+            if (SDLWindow == SDL.Window.Null)
             {
                 WindowFlags flags = WindowFlags.Hidden;
                 if (settings.Mode == WindowMode.BorderlessWindow)
@@ -59,39 +60,39 @@ namespace Engine.Rendering
                     flags |= WindowFlags.Borderless;
                 }
 
-                _window = new SDL.Window(settings.Name, SDL.Window.PositionUndefined, SDL.Window.PositionUndefined, settings.Width, settings.Height, flags);
+                SDLWindow = new SDL.Window(settings.Name, SDL.Window.PositionUndefined, SDL.Window.PositionUndefined, settings.Width, settings.Height, flags);
 
-                GetVersion(out _sysWMInfo.Version);
-                _window.GetWMInfo(ref _sysWMInfo);
+                GetVersion(out SysWMInfo.Version);
+                SDLWindow.GetWMInfo(ref SysWMInfo);
             }
             else
             {
-                previousDisplay = _window.GetDisplayIndex;
+                previousDisplay = SDLWindow.GetDisplayIndex();
             }
 
             // Ensure the window is not fullscreen
-            if (_window.Flags.Has(WindowFlags.Fullscreen))
+            if (SDLWindow.GetFlags().Has(WindowFlags.Fullscreen))
             {
-                _window.SetFullscreen(0);
+                SDLWindow.SetFullscreen(0);
             }
 
             // Set window size and display mode
-            _window.SetSize(settings.Width, settings.Height);
+            SDLWindow.SetSize(settings.Width, settings.Height);
             if (previousDisplay >= 0)
             {
-                _window.SetPosition((int)SDL.Window.PositionCenteredDisplay((uint)previousDisplay), (int)SDL.Window.PositionCenteredDisplay((uint)previousDisplay));
+                SDLWindow.SetPosition((int)SDL.Window.PositionCenteredDisplay((uint)previousDisplay), (int)SDL.Window.PositionCenteredDisplay((uint)previousDisplay));
             }
             else
             {
-                _window.SetPosition(SDL.Window.PositionCentered, SDL.Window.PositionCentered);
+                SDLWindow.SetPosition(SDL.Window.PositionCentered, SDL.Window.PositionCentered);
             }
-            _window.SetDefaultDisplayMode();
-            _window.SetBordered(false);
+            SDLWindow.SetDefaultDisplayMode();
+            SDLWindow.SetBordered(false);
         }
 
         public static void Shutdown()
         {
-            _window.Destroy();
+            SDLWindow.Destroy();
         }
 
         public static void TakeScreenshot()

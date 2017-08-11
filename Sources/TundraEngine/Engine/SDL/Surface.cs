@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace Engine.SDL
 {
@@ -11,10 +12,7 @@ namespace Engine.SDL
         DontFree = 1 << 2
     }
 
-    /// <summary>
-    /// A collection of pixels used in software blitting.
-    /// <para/> This structure should be treated as read-only, except for <see cref="Pixels"/>, which, if not null, contains the raw pixel data for the surface.
-    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct Surface
     {
         public readonly uint Flags;

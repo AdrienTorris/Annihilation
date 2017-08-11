@@ -1,4 +1,4 @@
-﻿namespace Engine.Rendering
+﻿namespace Engine
 {
     public enum WindowMode : byte
     {
