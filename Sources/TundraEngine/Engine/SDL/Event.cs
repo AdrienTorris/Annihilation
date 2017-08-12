@@ -13,7 +13,7 @@ namespace Engine.SDL
         GetEvent
     }
 
-    public enum EventState : int
+    public enum State : int
     {
         Query = -1,
         Ignore = 0,

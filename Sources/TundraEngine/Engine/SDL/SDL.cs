@@ -319,7 +319,7 @@ namespace Engine.SDL
             public static extern void SDL_FilterEvents(EventFilter filter, void* userData);
 
             [DllImport(LibraryName)]
-            public static extern byte SDL_EventState(EventType type, EventState state);
+            public static extern byte SDL_EventState(EventType type, State state);
 
             [DllImport(LibraryName)]
             public static extern uint SDL_RegisterEvents(int numEvents);
@@ -373,7 +373,7 @@ namespace Engine.SDL
             public static extern Joystick SDL_GameControllerGetJoystick(GameController gamecontroller);
 
             [DllImport(LibraryName)]
-            public static extern int SDL_GameControllerEventState(EventState state);
+            public static extern int SDL_GameControllerEventState(State state);
 
             [DllImport(LibraryName)]
             public static extern void SDL_GameControllerUpdate();
@@ -481,7 +481,7 @@ namespace Engine.SDL
             public static extern void SDL_JoystickUpdate();
 
             [DllImport(LibraryName)]
-            public static extern int SDL_JoystickEventState(EventState state);
+            public static extern int SDL_JoystickEventState(State state);
 
             [DllImport(LibraryName)]
             public static extern short SDL_JoystickGetAxis(Joystick joystick, JoystickAxis axis);
@@ -664,28 +664,28 @@ namespace Engine.SDL
             public static extern bool SDL_GetRelativeMouseMode();
 
             [DllImport(LibraryName)]
-            public static extern Cursor SDL_CreateCursor(byte[] data, byte[] mask, int w, int h, int hotX, int hotY);
+            public static extern CursorHandle SDL_CreateCursor(byte[] data, byte[] mask, int w, int h, int hotX, int hotY);
 
             [DllImport(LibraryName)]
-            public static extern Cursor SDL_CreateColorCursor(Surface surface, int hotX, int hotY);
+            public static extern CursorHandle SDL_CreateColorCursor(Surface surface, int hotX, int hotY);
 
             [DllImport(LibraryName)]
-            public static extern Cursor SDL_CreateSystemCursor(SystemCursor id);
+            public static extern CursorHandle SDL_CreateSystemCursor(SystemCursor id);
 
             [DllImport(LibraryName)]
-            public static extern void SDL_SetCursor(Cursor cursor);
+            public static extern void SDL_SetCursor(CursorHandle cursor);
 
             [DllImport(LibraryName)]
-            public static extern Cursor SDL_GetCursor();
+            public static extern CursorHandle SDL_GetCursor();
 
             [DllImport(LibraryName)]
-            public static extern Cursor SDL_GetDefaultCursor();
+            public static extern CursorHandle SDL_GetDefaultCursor();
 
             [DllImport(LibraryName)]
-            public static extern void SDL_FreeCursor(Cursor cursor);
+            public static extern void SDL_FreeCursor(CursorHandle cursor);
 
             [DllImport(LibraryName)]
-            public static extern int SDL_ShowCursor(int toggle);
+            public static extern State SDL_ShowCursor(State toggle);
             
             //
             // SDL_pixels.h
