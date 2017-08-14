@@ -2,8 +2,6 @@
 using System.Text;
 using System.Runtime.InteropServices;
 
-using static SDL2.SDL;
-
 namespace SDL2
 {
     [StructLayout(LayoutKind.Sequential)]
@@ -13,13 +11,13 @@ namespace SDL2
 
         public Text(byte* nativeHandle)
         {
-            Assert.IsTrue(nativeHandle != null, "[SDL] String is null: " + Native.SDL_GetError());
+            Assert.IsTrue(nativeHandle != null, "[SDL] String is null: " + SDL.GetError());
             NativeHandle = nativeHandle;
         }
 
         public Text(IntPtr nativeHandle)
         {
-            Assert.IsTrue(nativeHandle != IntPtr.Zero, "[SDL] String is null: " + Native.SDL_GetError());
+            Assert.IsTrue(nativeHandle != IntPtr.Zero, "[SDL] String is null: " + SDL.GetError());
             NativeHandle = (byte*)nativeHandle;
         }
 

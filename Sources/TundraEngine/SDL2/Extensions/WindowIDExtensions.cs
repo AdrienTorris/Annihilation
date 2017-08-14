@@ -7,13 +7,13 @@ namespace SDL2
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CheckError(this WindowID windowID, string message)
         {
-            Assert.IsTrue(windowID.NativeHandle != 0, "[SDL] " + message + ": " + SDL.GetError());
+            Assert.IsTrue(windowID.Handle != 0, "[SDL] " + message + ": " + SDL.GetError());
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static WindowID CheckErrorAndReturn(this WindowID windowID, string message)
         {
-            Assert.IsTrue(windowID.NativeHandle != 0, "[SDL] " + message + ": " + SDL.GetError());
+            Assert.IsTrue(windowID.Handle != 0, "[SDL] " + message + ": " + SDL.GetError());
             return windowID;
         }
     }
