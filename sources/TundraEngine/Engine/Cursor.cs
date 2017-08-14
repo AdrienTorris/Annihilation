@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices; 
     
-using Engine.SDL;
-using static Engine.SDL.SDL;
+using SDL2;
+using static SDL2.SDL;
 
 namespace Engine
 {

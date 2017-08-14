@@ -1,7 +1,7 @@
 ﻿using Engine.Vulkan;
-using Engine.SDL;
+using SDL2;
 using Engine.Rendering;
-using static Engine.SDL.SDL;
+using static SDL2.SDL;
 
 namespace Engine
 {

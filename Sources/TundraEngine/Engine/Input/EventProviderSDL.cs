@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using static Engine.SDL.SDL;
+using static SDL2.SDL;
 
 namespace Engine.Input
 {
