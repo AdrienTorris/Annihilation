@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Engine.Rendering
+namespace Vulkan
 {
     public class VulkanException : Exception
     {

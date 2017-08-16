@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Engine.Vulkan
+namespace Vulkan
 {
     public struct DisplayMode
     {

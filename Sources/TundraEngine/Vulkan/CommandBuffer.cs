@@ -2,7 +2,7 @@
 using System.Security;
 using System.Runtime.InteropServices;
 
-namespace Engine.Vulkan
+namespace Vulkan
 {
     public unsafe struct RenderPassBeginInfo
     {

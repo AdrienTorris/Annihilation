@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Security;
 
-namespace Engine.Vulkan
+namespace Vulkan
 {
     public struct DeviceMemory
     {

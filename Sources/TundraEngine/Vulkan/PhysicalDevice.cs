@@ -2,33 +2,8 @@
 using System.Runtime.InteropServices;
 using System.Security;
 
-namespace Engine.Vulkan
+namespace Vulkan
 {
-    public enum PhysicalDeviceType
-    {
-        Other = 0,
-        IntegratedGPU = 1,
-        DiscreteGPU = 2,
-        VirtualGPU = 3,
-        CPU = 4
-    }
-
-    [Flags]
-    public enum MemoryPropertyFlags : uint
-    {
-        DeviceLocal = 0x00000001,
-        HostVisible = 0x00000002,
-        HostCoherent = 0x00000004,
-        HostCached = 0x00000008,
-        LazilyAllocated = 0x00000010,
-    }
-
-    [Flags]
-    public enum MemoryHeapFlags : uint
-    {
-        DeviceLocal = 0x00000001,
-        MultiInstance = 0x00000002,
-    }
 
     public unsafe struct PhysicalDeviceLimits
     {
@@ -186,10 +161,5 @@ namespace Engine.Vulkan
         /// Buffer of size <see cref="Vulkan.MaxMemoryHeaps"/>.
         /// </summary>
         public IntPtr MemoryHeaps;
-    }
-
-    public struct PhysicalDevice
-    {
-        internal IntPtr NativeHandle;
     }
 }

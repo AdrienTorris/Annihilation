@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Engine.Vulkan.Allocator
+namespace Vulkan.Allocator
 {
     /// <summary>
     /// Callback function called after successful <see cref="AllocateMemory"/>

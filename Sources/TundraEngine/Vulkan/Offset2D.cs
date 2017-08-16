@@ -1,4 +1,4 @@
-﻿namespace Engine.Vulkan
+﻿namespace Vulkan
 {
     public struct Offset2D
     {

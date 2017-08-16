@@ -1,4 +1,4 @@
-﻿namespace Engine.Vulkan.Allocator
+﻿namespace Vulkan.Allocator
 {
     public struct AllocatorStatInfo
     {

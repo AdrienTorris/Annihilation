@@ -2,7 +2,7 @@
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace Engine.Vulkan
+namespace Vulkan
 {
     public enum DebugReportObjectType
     {
@@ -112,54 +112,4 @@ namespace Engine.Vulkan
         public void* UserData;
     }
     
-    public struct Instance : IEquatable<Instance>
-    {
-        public readonly static Instance Null = new Instance();
-
-        public IntPtr NativeHandle;
-
-        public unsafe Instance(ref InstanceCreateInfo createInfo, AllocationCallbacks* allocator)
-        {
-            fixed (InstanceCreateInfo* createInfoPtr = &createInfo)
-            fixed (Instance* instancePtr = &this)
-            {
-                Vulkan.CreateInstance(createInfoPtr, allocator, instancePtr).CheckError();
-            }
-            Assert.IsTrue(NativeHandle != IntPtr.Zero, "Could not assign instance native handle.");
-        }
-
-        public unsafe void Destroy()
-        {
-        }
-
-        public override bool Equals(object obj)
-        {
-            return obj is Instance && this == (Instance)obj;
-        }
-
-        public static bool operator ==(Instance left, Instance right)
-        {
-            return left.Equals(right);
-        }
-
-        public static bool operator !=(Instance left, Instance right)
-        {
-            return !left.Equals(right);
-        }
-
-        public bool Equals(Instance other)
-        {
-            return NativeHandle == other.NativeHandle;
-        }
-
-        public override int GetHashCode()
-        {
-            return NativeHandle.GetHashCode();
-        }
-
-        public override string ToString()
-        {
-            return NativeHandle.ToString();
-        }
-    }
 }
