@@ -19,4 +19,9 @@ namespace Vulkan
 
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     public delegate void VoidFunction();
+
+    //
+    // EXT
+    //
+    public unsafe delegate Bool32 DebugReportCallbackDelegate(DebugReportFlags flags, DebugReportObjectType objectType, ulong objectHandle, ulong location, int messageCode, Text layerPrefix, Text message, void* userData);
 }

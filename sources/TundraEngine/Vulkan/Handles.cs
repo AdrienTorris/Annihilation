@@ -468,9 +468,46 @@ namespace Vulkan
     }
 
     //
-    // KHR
+    // KHR surface
     //
     public struct Surface
+    {
+        public ulong Handle;
+    }
+
+    //
+    // KHR swapchain
+    //
+    public struct Swapchain
+    {
+        public ulong Handle;
+    }
+
+    //
+    // KHR display
+    //
+    public struct Display
+    {
+        public ulong Handle;
+    }
+
+    public struct DisplayMode
+    {
+        public ulong Handle;
+    }
+
+    //
+    // KHR misc
+    //
+    public struct DescriptorUpdateTemplate
+    {
+        public ulong Handle;
+    }
+
+    //
+    // EXT
+    //
+    public struct DebugReportCallback
     {
         public ulong Handle;
     }

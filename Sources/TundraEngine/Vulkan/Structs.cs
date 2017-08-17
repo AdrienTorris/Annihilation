@@ -128,7 +128,7 @@ namespace Vulkan
         public FormatFeatureFlags OptimalTilingFeatures;
         public FormatFeatureFlags BufferFeatures;
     }
-    
+
     public struct Extent3D
     {
         public uint Width;
@@ -1251,5 +1251,710 @@ namespace Vulkan
     {
         public Format Format;
         public ColorSpace ColorSpace;
+    }
+
+    //
+    // KHR swapchain
+    //
+    public unsafe struct SwapchainCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public SwapchainCreateFlags Flags;
+        public Surface Surface;
+        public uint MinImageCount;
+        public Format ImageFormat;
+        public ColorSpace ImageColorSpace;
+        public Extent2D ImageExtent;
+        public uint ImageArrayLayers;
+        public ImageUsageFlags ImageUsage;
+        public SharingMode ImageSharingMode;
+        public uint QueueFamilyIndexCount;
+        public uint* QueueFamilyIndices;
+        public SurfaceTransformFlags PreTransform;
+        public CompositeAlphaFlags CompositeAlpha;
+        public PresentMode PresentMode;
+        public Bool32 Clipped;
+        public Swapchain OldSwapchain;
+    }
+
+    public unsafe struct PresentInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public uint WaitSemaphoreCount;
+        public Semaphore* WaitSemaphores;
+        public uint SwapchainCount;
+        public Swapchain* Swapchains;
+        public uint* ImageIndices;
+        public Result* Results;
+    }
+
+    //
+    // KHR display
+    // 
+    public unsafe struct DisplayProperties
+    {
+        public Display Display;
+        public Text DisplayName;
+        public Extent2D PhysicalDimensions;
+        public Extent2D PhysicalResolution;
+        public SurfaceTransformFlags SupportedTransforms;
+        public Bool32 PlaneReorderPossible;
+        public Bool32 PersistentContent;
+    }
+
+    public struct DisplayModeParameters
+    {
+        public Extent2D VisibleRegion;
+        public uint RefreshRate;
+    }
+
+    public struct DisplayModeProperties
+    {
+        public DisplayMode DisplayMode;
+        public DisplayModeParameters Parameters;
+    }
+
+    public unsafe struct DisplayModeCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public DisplayModeCreateFlags Flags;
+        public DisplayModeParameters Parameters;
+    }
+
+    public struct DisplayPlaneCapabilities
+    {
+        public DisplayPlaneAlphaFlags SupportedAlpha;
+        public Offset2D MinSrcPosition;
+        public Offset2D MaxSrcPosition;
+        public Extent2D MinSrcExtent;
+        public Extent2D MaxSrcExtent;
+        public Offset2D MinDstPosition;
+        public Offset2D MaxDstPosition;
+        public Extent2D MinDstExtent;
+        public Extent2D MaxDstExtent;
+    }
+
+    public struct DisplayPlaneProperties
+    {
+        public Display CurrentDisplay;
+        public uint CurrentStackIndex;
+    }
+
+    public unsafe struct DisplaySurfaceCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public DisplaySurfaceCreateFlags Flags;
+        public DisplayMode DisplayMode;
+        public uint PlaneIndex;
+        public uint PlaneStackIndex;
+        public SurfaceTransformFlags Transform;
+        public float GlobalAlpha;
+        public DisplayPlaneAlphaFlags AlphaMode;
+        public Extent2D ImageExtent;
+    }
+
+    public unsafe struct DisplayPresentInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public Rect2D SrcRect;
+        public Rect2D DstRect;
+        public Bool32 Persistent;
+    }
+
+    //
+    // KHR Platforms
+    //
+    public unsafe struct XlibSurfaceCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public XlibSurfaceCreateFlags Flags;
+        public IntPtr Dpy;
+        public IntPtr Window;
+    }
+
+    public unsafe struct XcbSurfaceCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public XcbSurfaceCreateFlags Flags;
+        public IntPtr Connection;
+        public IntPtr Window;
+    }
+
+    public unsafe struct WaylandSurfaceCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public WaylandSurfaceCreateFlags Flags;
+        public IntPtr Display;
+        public IntPtr Surface;
+    }
+
+    public unsafe struct MirSurfaceCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public MirSurfaceCreateFlags Flags;
+        public IntPtr Connection;
+        public IntPtr MirSurface;
+    }
+
+    public unsafe struct AndroidSurfaceCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public AndroidSurfaceCreateFlags Flags;
+        public IntPtr Window;
+    }
+
+    public unsafe struct Win32SurfaceCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public Win32SurfaceCreateFlags Flags;
+        public IntPtr Hinstance;
+        public IntPtr Hwnd;
+    }
+
+    //
+    // KHR 2
+    //
+    public unsafe struct PhysicalDeviceFeatures2
+    {
+        public StructureType Type;
+        public void* Next;
+        public PhysicalDeviceFeatures Features;
+    }
+
+    public unsafe struct PhysicalDeviceProperties2
+    {
+        public StructureType Type;
+        public void* Next;
+        public PhysicalDeviceProperties Properties;
+    }
+
+    public unsafe struct FormatProperties2
+    {
+        public StructureType Type;
+        public void* Next;
+        public FormatProperties FormatProperties;
+    }
+
+    public unsafe struct ImageFormatProperties2
+    {
+        public StructureType Type;
+        public void* Next;
+        public ImageFormatProperties ImageFormatProperties;
+    }
+
+    public unsafe struct PhysicalDeviceImageFormatInfo2
+    {
+        public StructureType Type;
+        public void* Next;
+        public Format Format;
+        public ImageType ImageType;
+        public ImageTiling Tiling;
+        public ImageUsageFlags Usage;
+        public ImageCreateFlags Flags;
+    }
+
+    public unsafe struct QueueFamilyProperties2
+    {
+        public StructureType Type;
+        public void* Next;
+        public QueueFamilyProperties QueueFamilyProperties;
+    }
+
+    public unsafe struct PhysicalDeviceMemoryProperties2
+    {
+        public StructureType Type;
+        public void* Next;
+        public PhysicalDeviceMemoryProperties MemoryProperties;
+    }
+
+    public unsafe struct SparseImageFormatProperties2
+    {
+        public StructureType Type;
+        public void* Next;
+        public SparseImageFormatProperties Properties;
+    }
+
+    public unsafe struct PhysicalDeviceSparseImageFormatInfo2
+    {
+        public StructureType Type;
+        public void* Next;
+        public Format Format;
+        public ImageType ImageType;
+        public SampleCountFlags Samples;
+        public ImageUsageFlags Usage;
+        public ImageTiling Tiling;
+    }
+
+    //
+    // KHR memory
+    //
+    public struct ExternalMemoryProperties
+    {
+        public ExternalMemoryFeatureFlags ExternalMemoryFeatures;
+        public ExternalMemoryHandleTypeFlags ExportFomImportedHandleTypes;
+        public ExternalMemoryHandleTypeFlags CompatibleHandleTypes;
+    }
+
+    public unsafe struct PhysicalDeviceExternalImageFormatInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public ExternalMemoryHandleTypeFlags HandleType;
+    }
+
+    public unsafe struct ExternalImageFormatProperties
+    {
+        public StructureType Type;
+        public void* Next;
+        public ExternalMemoryProperties ExternalMemoryProperties;
+    }
+
+    public unsafe struct PhysicalDeviceExternalBufferInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public BufferCreateFlags Flags;
+        public BufferUsageFlags Usage;
+        public ExternalMemoryHandleTypeFlags HandleType;
+    }
+
+    public unsafe struct ExternalBufferProperties
+    {
+        public StructureType Type;
+        public void* Next;
+        public ExternalMemoryProperties ExternalMemoryProperties;
+    }
+
+    public unsafe struct PhysicalDeviceIDProperties
+    {
+        public StructureType Type;
+        public void* Next;
+        public fixed byte DeivceUUID[(int)Vulkan.UuidSize];
+        public fixed byte DriverUUID[(int)Vulkan.UuidSize];
+        public fixed byte DeviceLUID[Vulkan.LuidSize];
+        public uint DeviceNodeMask;
+        public Bool32 DeviceLUIDValid;
+    }
+
+    public unsafe struct ExternalMemoryImageCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public ExternalMemoryHandleTypeFlags HandleTypes;
+    }
+
+    public unsafe struct ExternalMemoryBufferCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public ExternalMemoryHandleTypeFlags HandleTypes;
+    }
+
+    public unsafe struct ExportMemoryAllocateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public ExternalMemoryHandleTypeFlags HandleTypes;
+    }
+
+    public unsafe struct ImportMemoryWin32HandleInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public ExternalMemoryHandleTypeFlags HandleType;
+        public IntPtr Handle;
+        public char* Name;
+    }
+
+    public unsafe struct ExportMemoryWin32HandleInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public IntPtr Attributes;
+        public IntPtr DwAccess;
+        public char* Name;
+    }
+
+    public unsafe struct MemoryWin32HandleProperties
+    {
+        public StructureType Type;
+        public void* Next;
+        public uint MemoryTypeBits;
+    }
+
+    public unsafe struct MemoryGetWin32HandleInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public DeviceMemory Memory;
+        public ExternalMemoryHandleTypeFlags HandleType;
+    }
+
+    public unsafe struct ImportMemoryFdInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public ExternalMemoryHandleTypeFlags HandleType;
+        public int Fd;
+    }
+
+    public unsafe struct MemoryFdProperties
+    {
+        public StructureType Type;
+        public void* Next;
+        public uint MemoryTypeBits;
+    }
+
+    public unsafe struct MemoryGetFdInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public DeviceMemory Memory;
+        public ExternalMemoryHandleTypeFlags HandleType;
+    }
+
+    public unsafe struct Win32KeyedMutexAcquireReleaseInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public uint AcquireCount;
+        public DeviceMemory* AcquireSyncs;
+        public ulong* AcquireKeys;
+        public uint* AcquireTimeouts;
+        public uint ReleaseCount;
+        public DeviceMemory* ReleaseSyncs;
+        public ulong* ReleaseKeys;
+    }
+
+    //
+    // KHR semaphore
+    //
+    public unsafe struct PhysicalDeviceExternalSemaphoreInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public ExternalSemaphoreHandleTypeFlags HandleType;
+    }
+
+    public unsafe struct ExternalSemaphoreProperties
+    {
+        public StructureType Type;
+        public void* Next;
+        public ExternalSemaphoreHandleTypeFlags ExportFromImportedHandleTypes;
+        public ExternalSemaphoreHandleTypeFlags CompatibleHandleTypes;
+        public ExternalSemaphoreFeatureFlags ExternalSemaphoreFeatures;
+    }
+
+    public unsafe struct ExportSemaphoreCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public ExternalSemaphoreHandleTypeFlags HandleTypes;
+    }
+
+    public unsafe struct ImportSemaphoreWin32HandleInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public Semaphore Semaphore;
+        public SemaphoreImportFlags Flags;
+        public ExternalSemaphoreHandleTypeFlags HandleType;
+        public IntPtr Handle;
+        public char* Name;
+    }
+
+    public unsafe struct ExportSemaphoreWin32HandleInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public IntPtr Attributes;
+        public IntPtr DwAccess;
+        public char* Name;
+    }
+
+    public unsafe struct D3D12FenceSubmitInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public uint WaitSemaphoreValuesCount;
+        public ulong* WaitSemaphoreValues;
+        public uint SignalSemaphoreValuesCount;
+        public ulong* SignalSemaphoreValues;
+    }
+
+    public unsafe struct SemaphoreGetWin32HandleInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public Semaphore Semaphore;
+        public ExternalSemaphoreHandleTypeFlags HandleType;
+    }
+
+    public unsafe struct ImportSemaphoreFdInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public Semaphore Semaphore;
+        public SemaphoreImportFlags Flags;
+        public ExternalSemaphoreHandleTypeFlags HandleType;
+        public int Fd;
+    }
+
+    public unsafe struct SemaphoreGetFdInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public Semaphore Semaphore;
+        public ExternalSemaphoreHandleTypeFlags HandleType;
+    }
+
+    //
+    // KHR misc
+    //
+    public unsafe struct PhysicalDevicePushDescriptorProperties
+    {
+        public StructureType Type;
+        public void* Next;
+        public uint MaxPushDescriptors;
+    }
+
+    public unsafe struct PhysicalDevice16BitStorageFeatures
+    {
+        public StructureType Type;
+        public void* Next;
+        public Bool32 StorageBuffer16BitAccess;
+        public Bool32 UniformAndStorageBuffer16BitAccess;
+        public Bool32 StoragePushConstant16;
+        public Bool32 StorageInputOutput16;
+    }
+
+    public struct RectLayer
+    {
+        public Offset2D Offset;
+        public Extent2D Extent;
+        public uint Layer;
+    }
+
+    public unsafe struct PresentRegion
+    {
+        public uint RectangleCount;
+        public RectLayer* Rectangles;
+    }
+
+    public unsafe struct PresentRegions
+    {
+        public StructureType Type;
+        public void* Next;
+        public uint SwapchainCount;
+        public PresentRegion* Regions;
+    }
+
+    public struct DescriptorUpdateTemplateEntry
+    {
+        public uint DstBinding;
+        public uint DstArrayElement;
+        public uint DescriptorCount;
+        public DescriptorType DescriptorType;
+        public Size Offset;
+        public Size Stride;
+    }
+
+    public unsafe struct DescriptorUpdateTemplateCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public DescriptorUpdateTemplateCreateFlags Flags;
+        public uint DescriptorUpdateEntryCount;
+        public DescriptorUpdateTemplateEntry* DescriptorUpdateEntries;
+        public DescriptorUpdateTemplateType TemplateType;
+        public DescriptorSetLayout DescriptorSetLayout;
+        public PipelineBindPoint PipelineBindPoint;
+        public PipelineLayout PipelineLayout;
+        public uint Set;
+    }
+
+    public unsafe struct SharedPresentSurfaceCapabilities
+    {
+        public StructureType Type;
+        public void* Next;
+        public ImageUsageFlags SharedPresentSupportedUsageFlags;
+    }
+
+    //
+    // KHR fence
+    //
+    public unsafe struct PhysicalDeviceExternalFenceInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public ExternalFenceHandleTypeFlags HandleType;
+    }
+
+    public unsafe struct ExternalFenceProperties
+    {
+        public StructureType Type;
+        public void* Next;
+        public ExternalFenceHandleTypeFlags ExportFromImportedHandleTypes;
+        public ExternalFenceHandleTypeFlags CompatibleHandleTypes;
+        public ExternalFenceFeatureFlags ExternalFenceFeatures;
+    }
+
+    public unsafe struct ExportFenceCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public ExternalFenceHandleTypeFlags HandleTypes;
+    }
+
+    public unsafe struct ImportFenceWin32HandleInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public Fence Fence;
+        public FenceImportFlags Flags;
+        public ExternalFenceHandleTypeFlags HandleType;
+        public IntPtr Handle;
+        public char* Name;
+    }
+
+    public unsafe struct ExportFenceWin32HandleInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public IntPtr Attributes;
+        public IntPtr DwAccess;
+        public char* Name;
+    }
+
+    public unsafe struct FenceGetWin32HandleInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public Fence Fence;
+        public ExternalFenceHandleTypeFlags HandleType;
+    }
+
+    public unsafe struct ImportFenceFdInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public Fence Fence;
+        public FenceImportFlags Flags;
+        public ExternalFenceHandleTypeFlags HandleType;
+        public int Fd;
+    }
+
+    public unsafe struct FenceGetFdInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public Fence Fence;
+        public ExternalFenceHandleTypeFlags HandleType;
+    }
+
+    //
+    // KHR 2
+    //
+    public unsafe struct PhysicalDeviceSurfaceInfo2
+    {
+        public StructureType Type;
+        public void* Next;
+        public Surface Surface;
+    }
+
+    public unsafe struct SurfaceCapabilities2
+    {
+        public StructureType Type;
+        public void* Next;
+        public SurfaceCapabilities SurfaceCapabilities;
+    }
+
+    public unsafe struct SurfaceFormat2
+    {
+        public StructureType Type;
+        public void* Next;
+        public SurfaceFormat SurfaceFormat;
+    }
+
+    public unsafe struct PhysicalDeviceVariablePointerFeatures
+    {
+        public StructureType Type;
+        public void* Next;
+        public Bool32 VariablePointersStorageBuffer;
+        public Bool32 VariablePointers;
+    }
+
+    public unsafe struct MemoryDedicatedRequirements
+    {
+        public StructureType Type;
+        public void* Next;
+        public Bool32 PrefersDedicatedAllocation;
+        public Bool32 RequiresDedicatedAllocation;
+    }
+
+    public unsafe struct MemoryDedicatedAllocateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public Image image;
+        public Buffer Buffer;
+    }
+
+    public unsafe struct BufferMemoryRequirementsInfo2
+    {
+        public StructureType Type;
+        public void* Next;
+        public Buffer Buffer;
+    }
+
+    public unsafe struct ImageMemoryRequirementsInfo2
+    {
+        public StructureType Type;
+        public void* Next;
+        public Image Image;
+    }
+
+    public unsafe struct ImageSparseMemoryRequirementsInfo2
+    {
+        public StructureType Type;
+        public void* Next;
+        public Image Image;
+    }
+
+    public unsafe struct MemoryRequirements2
+    {
+        public StructureType Type;
+        public void* Next;
+        public MemoryRequirements MemoryRequirements;
+    }
+
+    public unsafe struct SparseImageMemoryRequirements2
+    {
+        public StructureType Type;
+        public void* Next;
+        public SparseImageMemoryRequirements MemoryRequirements;
+    }
+
+    //
+    // EXT
+    //
+    public unsafe struct DebugReportCallbackCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public DebugReportFlags Flags;
+        public DebugReportCallbackDelegate Callback;
+        public void* UserData;
     }
 }

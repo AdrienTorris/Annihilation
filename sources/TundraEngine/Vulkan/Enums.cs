@@ -1218,4 +1218,179 @@ namespace Vulkan
         PostMultiplied = 1 << 2,
         Inherit = 1 << 3
     }
+
+    //
+    // KHR swapchain
+    //
+    [Flags]
+    public enum SwapchainCreateFlags : uint
+    {
+        BindSFR = 1 << 0
+    }
+
+    //
+    // KHR display
+    //
+    [Flags]
+    public enum DisplayPlaneAlphaFlags : uint
+    {
+        Opaque = 1 << 0,
+        Global = 1 << 1,
+        PerPixel = 1 << 2,
+        PerPixelPremultiplied = 1 << 3
+    }
+
+    [Flags] public enum DisplayModeCreateFlags : uint { }
+    [Flags] public enum DisplaySurfaceCreateFlags : uint { }
+
+    //
+    // KHR Platforms
+    //
+    [Flags] public enum XlibSurfaceCreateFlags : uint { }
+    [Flags] public enum XcbSurfaceCreateFlags : uint { }
+    [Flags] public enum WaylandSurfaceCreateFlags : uint { }
+    [Flags] public enum MirSurfaceCreateFlags : uint { }
+    [Flags] public enum AndroidSurfaceCreateFlags : uint { }
+    [Flags] public enum Win32SurfaceCreateFlags : uint { }
+
+    //
+    // KHR draw
+    //
+    [Flags] public enum CommandPoolTrimFlags : uint { }
+
+    //
+    // KHR memory
+    //
+    [Flags]
+    public enum ExternalMemoryHandleTypeFlags : uint
+    {
+        OpaqueFd = 1 << 0,
+        OpaqueWin32 = 1 << 1,
+        OpaqueWin32Kmt = 1 << 2,
+        D3D11Texture = 1 << 3,
+        D3D11TextureKmt = 1 << 4,
+        D3D12Heap = 1 << 5,
+        D3D12Resource = 1 << 6
+    }
+
+    [Flags]
+    public enum ExternalMemoryFeatureFlags : uint
+    {
+        DedicatedOnly = 1 << 0,
+        Exportable = 1 << 1,
+        Importable = 1 << 2
+    }
+
+    //
+    // KHR semaphore
+    //
+    [Flags]
+    public enum ExternalSemaphoreHandleTypeFlags : uint
+    {
+        OpaqueFd = 1 << 0,
+        OpaqueWin32 = 1 << 1,
+        OpaqueWin32Kmt = 1 << 2,
+        D3D12Fence = 1 << 3,
+        SyncFd = 1 << 4
+    }
+
+    [Flags]
+    public enum ExternalSemaphoreFeatureFlags : uint
+    {
+        Exportable = 1 << 0,
+        Importable = 1 << 1
+    }
+
+    [Flags]
+    public enum SemaphoreImportFlags : uint
+    {
+        Temporary = 1 << 0
+    }
+
+    //
+    // KHR descriptor
+    //
+    public enum DescriptorUpdateTemplateType
+    {
+        DescriptorSet = 0,
+        PushDescriptors = 1
+    }
+
+    [Flags] public enum DescriptorUpdateTemplateCreateFlags : uint { }
+
+    //
+    // KHR fence
+    //
+    [Flags]
+    public enum ExternalFenceHandleTypeFlags : uint
+    {
+        OpaqueFd = 1 << 0,
+        OpaqueWin32 = 1 << 1,
+        OpaqueWin32Kmt = 1 << 2,
+        SyncFd = 1 << 3
+    }
+
+    [Flags]
+    public enum ExternalFenceFeatureFlags : uint
+    {
+        Exportable = 1 << 0,
+        Importable = 1 << 1
+    }
+
+    [Flags]
+    public enum FenceImportFlags : uint
+    {
+        Temporary = 1 << 0
+    }
+
+    //
+    // EXT
+    //
+    public enum DebugReportObjectType
+    {
+        Unknown = 0,
+        Instance = 1,
+        PhysicalDevice = 2,
+        Device = 3,
+        Queue = 4,
+        Semaphore = 5,
+        CommandBuffer = 6,
+        Fence = 7,
+        DeviceMemory = 8,
+        Buffer = 9,
+        Image = 10,
+        Event = 11,
+        QueryPool = 12,
+        BufferView = 13,
+        ImageView = 14,
+        ShaderModule = 15,
+        PipelineCache = 16,
+        PipelineLayout = 17,
+        RenderPass = 18,
+        Pipeline = 19,
+        DescriptorSetLayout = 20,
+        Sampler = 21,
+        DescriptorPool = 22,
+        DescriptorSet = 23,
+        Framebuffer = 24,
+        CommandPool = 25,
+        Surface = 26,
+        Swapchain = 27,
+        DebugReportCallback = 28,
+        Display = 29,
+        DisplayMode = 30,
+        ObjectTable = 31,
+        IndirectCommandsLayout = 32,
+        DescriptorUpdateTemplate = 1000085000
+    }
+
+    [Flags]
+    public enum DebugReportFlags : uint
+    {
+        Information = 0x00000001,
+        Warning = 0x00000002,
+        PerformanceWarning = 0x00000004,
+        Error = 0x00000008,
+        Debug = 0x00000010,
+    }
 }
