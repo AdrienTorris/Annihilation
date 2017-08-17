@@ -1165,7 +1165,57 @@ namespace Vulkan
     }
 
     //
-    // KHR
+    // KHR surface
     //
+    public enum ColorSpace
+    {
+        SrgbNonLinear = 0,
+        DisplayP3NonLinear = 1000104001,
+        ExtendedSrgbLinear = 1000104002,
+        DciP3Linear = 1000104003,
+        DciP3NonLinear = 1000104004,
+        Bt709Linear = 1000104005,
+        Bt709NonLinear = 1000104006,
+        Bt2020Linear = 1000104007,
+        Hdr10St2084 = 1000104008,
+        DolbyVision = 1000104009,
+        Hdr10Hlg = 1000104010,
+        AdobeRgbLinear = 1000104011,
+        AdobeRgbNonLinear = 1000104012,
+        PassThrough = 1000104013,
+        ExtendedSrgbNonLinear = 1000104014
+    }
 
+    public enum PresentMode
+    {
+        Immediate = 0,
+        Mailbox = 1,
+        Fifo = 2,
+        FifoRelaxed = 3,
+        SharedDemandRefresh = 1000111000,
+        SharedContinuousRefresh = 1000111001
+    }
+
+    [Flags]
+    public enum SurfaceTransformFlags : uint
+    {
+        Identity = 0x00000001,
+        Rotate90 = 0x00000002,
+        Rotate180 = 0x00000004,
+        Rotate270 = 0x00000008,
+        HorizontalMirror = 0x00000010,
+        HorizontalMirrorRotate90 = 0x00000020,
+        HorizontalMirrorRotate180 = 0x00000040,
+        HorizontalMirrorRotate270 = 0x00000080,
+        Inherit = 0x00000100,
+    }
+
+    [Flags]
+    public enum CompositeAlphaFlags : uint
+    {
+        Opaque = 1 << 0,
+        PreMultiplied = 1 << 1,
+        PostMultiplied = 1 << 2,
+        Inherit = 1 << 3
+    }
 }
