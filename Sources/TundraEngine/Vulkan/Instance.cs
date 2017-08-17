@@ -43,12 +43,6 @@ namespace Vulkan
     }
 
     [Flags]
-    public enum InstanceCreateFlags : uint
-    {
-        None = 0
-    }
-
-    [Flags]
     public enum DebugReportFlags : uint
     {
         Information = 0x00000001,
@@ -59,30 +53,7 @@ namespace Vulkan
     }
 
     [Flags] public enum Win32SurfaceCreateFlags : uint { }
-
-    public struct ApplicationInfo
-    {
-        public StructureType Type;
-        public IntPtr Next;
-        public IntPtr ApplicationName;
-        public Version ApplicationVersion;
-        public IntPtr EngineName;
-        public Version EngineVersion;
-        public Version ApiVersion;
-    }
-
-    public struct InstanceCreateInfo
-    {
-        public StructureType Type;
-        public IntPtr Next;
-        public InstanceCreateFlags Flags;
-        public IntPtr ApplicationInfo;
-        public uint EnabledLayerCount;
-        public IntPtr EnabledLayerNames;
-        public uint EnabledExtensionCount;
-        public IntPtr EnabledExtensionNames;
-    }
-
+    
     public unsafe struct Win32SurfaceCreateInfo
     {
         public StructureType Type;

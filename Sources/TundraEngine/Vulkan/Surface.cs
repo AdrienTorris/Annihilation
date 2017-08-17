@@ -27,9 +27,4 @@ namespace Vulkan
         public DisplayPlaneAlphaFlags AlphaMode;
         public Extent2D ImageExtent;
     }
-
-    public struct Surface
-    {
-        internal ulong NativeHandle; 
-    }
 }

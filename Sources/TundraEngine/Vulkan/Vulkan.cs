@@ -5,29 +5,6 @@ using System.Runtime.InteropServices;
 
 namespace Vulkan
 {
-
-    [Flags]
-    public enum BufferCreateFlags : uint
-    {
-        SparseBinding = 0x00000001,
-        SparseResidency = 0x00000002,
-        SparseAliased = 0x00000004
-    }
-
-    [Flags]
-    public enum BufferUsageFlags : uint
-    {
-        TransferSrc = 0x00000001,
-        TransferDst = 0x00000002,
-        UniformTexelBuffer = 0x00000004,
-        StorageTexelBuffer = 0x00000008,
-        UniformBuffer = 0x00000010,
-        StorageBuffer = 0x00000020,
-        IndexBuffer = 0x00000040,
-        VertexBuffer = 0x00000080,
-        IndirectBuffer = 0x00000100
-    }
-
     [Flags]
     public enum SurfaceTransformFlags : uint
     {
@@ -49,41 +26,6 @@ namespace Vulkan
         PreMultiplied = 1 << 1,
         PostMultiplied = 1 << 2,
         Inherit = 1 << 3
-    }
-
-    public unsafe struct ExtensionProperties
-    {
-        public fixed byte ExtensionName[(int)Vulkan.MaxExtensionNameSize];
-        public uint SpecVersion;
-    }
-
-    public unsafe struct LayerProperties
-    {
-        public fixed byte LayerName[(int)Vulkan.MaxExtensionNameSize];
-        public uint SpecVersion;
-        public uint ImplementationVersion;
-        public fixed byte Description[(int)Vulkan.MaxDescriptionSize];
-    }
-
-    [StructLayout(LayoutKind.Explicit)]
-    public unsafe struct ClearColorValue
-    {
-        [FieldOffset(0)] public fixed float Float32[4];
-        [FieldOffset(0)] public fixed int Int32[4];
-        [FieldOffset(0)] public fixed uint Uint32[4];
-    }
-
-    public struct ClearDepthStencilValue
-    {
-        public float Depth;
-        public uint Stencil;
-    }
-
-    [StructLayout(LayoutKind.Explicit)]
-    public struct ClearValue
-    {
-        [FieldOffset(0)] public ClearColorValue Color;
-        [FieldOffset(0)] public ClearDepthStencilValue DepthStencil;
     }
     
     public unsafe delegate void* GetInstanceProcAddrDelegate(

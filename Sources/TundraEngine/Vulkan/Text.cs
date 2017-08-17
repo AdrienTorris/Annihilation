@@ -2,7 +2,7 @@
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace SDL2
+namespace Vulkan
 {
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct Text
@@ -22,7 +22,7 @@ namespace SDL2
         public Text(string text)
         {
             byte[] bytes = Encoding.UTF8.GetBytes(text);
-            fixed(byte* ptr = &bytes[0])
+            fixed (byte* ptr = &bytes[0])
             {
                 NativeHandle = ptr;
             }
@@ -30,7 +30,6 @@ namespace SDL2
 
         public override string ToString()
         {
-            // Count the length of the string
             byte* counter = NativeHandle;
             while (*counter != 0)
             {

@@ -1163,4 +1163,9 @@ namespace Vulkan
         Back = 1 << 1,
         FrontAndBack = Front | Back
     }
+
+    //
+    // KHR
+    //
+
 }

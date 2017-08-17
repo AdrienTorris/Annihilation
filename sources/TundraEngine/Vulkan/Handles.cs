@@ -427,7 +427,7 @@ namespace Vulkan
         public ulong Handle;
     }
 
-    public struct RendderPass
+    public struct RenderPass
     {
         public ulong Handle;
     }
@@ -463,6 +463,14 @@ namespace Vulkan
     }
 
     public struct CommandPool
+    {
+        public ulong Handle;
+    }
+
+    //
+    // KHR
+    //
+    public struct Surface
     {
         public ulong Handle;
     }
