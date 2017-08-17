@@ -31,7 +31,7 @@ namespace SDL2
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public CursorHandle CheckErrorAndReturn()
         {
-            Assert.IsTrue(Handle != IntPtr.Zero, SDL.GetError());
+            if (Handle == IntPtr.Zero) SDL.LogError(LogCategory.Application, SDL.GetError());
             return this;
         }
     }
@@ -59,7 +59,7 @@ namespace SDL2
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public WindowHandle CheckErrorAndReturn()
         {
-            Assert.IsTrue(Handle != IntPtr.Zero, SDL.GetError());
+            if (Handle == IntPtr.Zero) SDL.LogError(LogCategory.Application, SDL.GetError());
             return this;
         }
     }

@@ -1003,7 +1003,7 @@ namespace Vulkan
     [Flags] public enum ShaderModuleCreateFlags : uint { }
 
     [Flags] public enum PipelineCacheCreateFlags : uint { }
-    
+
     [Flags]
     public enum PipelineCreateFlags : uint
     {
@@ -1060,4 +1060,107 @@ namespace Vulkan
     [Flags] public enum PipelineDynamicStateCreateFlags : uint { }
     [Flags] public enum PipelineLayoutCreateFlags : uint { }
     [Flags] public enum SamplerCreateFlags : uint { }
+
+    [Flags]
+    public enum DescriptorSetLayoutCreateFlags : uint
+    {
+        PushDescriptor = 1 << 0
+    }
+
+    [Flags]
+    public enum DescriptorPoolCreateFlags : uint
+    {
+        FreeDescriptorSet = 1 << 0
+    }
+
+    [Flags] public enum DescriptorPoolResetFlags : uint { }
+    [Flags] public enum FramebufferCreateFlags : uint { }
+    [Flags] public enum RenderPassCreateFlags : uint { }
+
+    [Flags]
+    public enum AttachmentDescriptionFlags : uint
+    {
+        MayAlias = 1 << 0
+    }
+
+    [Flags]
+    public enum SubpassDescriptionFlags : uint
+    {
+        PerViewAttributes = 1 << 0,
+        PerViewPositionXOnly = 1 << 1
+    }
+
+    [Flags]
+    public enum AccessFlags : uint
+    {
+        IndirectCommandRead = 1 << 0,
+        IndexRead = 1 << 1,
+        VertexAttributeRead = 1 << 2,
+        UniformRead = 1 << 3,
+        InputAttachmentRead = 1 << 4,
+        ShaderRead = 1 << 5,
+        ShaderWrite = 1 << 6,
+        ColorAttachmentRead = 1 << 7,
+        ColorAttachmentWrite = 1 << 8,
+        DepthStencilAttachmentRead = 1 << 9,
+        DepthStencilAttachmentWrite = 1 << 10,
+        TransferRead = 1 << 11,
+        TransferWrite = 1 << 12,
+        HostRead = 1 << 13,
+        HostWrite = 1 << 14,
+        MemoryRead = 1 << 15,
+        MemoryWrite = 1 << 16,
+        CommandProcessRead = 1 << 17,
+        CommandProcessWrite = 1 << 18,
+        ColorAttachmentReadNonCoherent = 1 << 19
+    }
+
+    [Flags]
+    public enum DependencyFlags : uint
+    {
+        ByRegion = 1 << 0,
+        ViewLocal = 1 << 1,
+        DeviceGroup = 1 << 2
+    }
+
+    [Flags]
+    public enum CommandPoolCreateFlags : uint
+    {
+        Transient = 1 << 0,
+        ResetCommandBuffer = 1 << 1
+    }
+
+    [Flags]
+    public enum CommandPoolResetFlags : uint
+    {
+        ReleaseResources = 1 << 0
+    }
+
+    [Flags]
+    public enum CommandBufferUsageFlags : uint
+    {
+        OneTimeSubmit = 1 << 0,
+        RenderPassContinue = 1 << 1,
+        SimultaneousUse = 1 << 2
+    }
+
+    [Flags]
+    public enum QueryControlFlags : uint
+    {
+        Precise = 1 << 0
+    }
+
+    [Flags]
+    public enum CommandBufferResetFlags : uint
+    {
+        ReleaseResources = 1 << 0
+    }
+
+    [Flags]
+    public enum StencilFaceFlags : uint
+    {
+        Front = 1 << 0,
+        Back = 1 << 1,
+        FrontAndBack = Front | Back
+    }
 }
