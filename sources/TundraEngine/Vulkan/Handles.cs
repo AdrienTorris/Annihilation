@@ -511,4 +511,17 @@ namespace Vulkan
     {
         public ulong Handle;
     }
+
+    //
+    // NVX
+    //
+    public struct ObjectTable
+    {
+        public ulong Handle;
+    }
+
+    public struct IndirectCommandsLayout
+    {
+        public ulong Handle;
+    }
 }

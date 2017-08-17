@@ -1393,4 +1393,206 @@ namespace Vulkan
         Error = 0x00000008,
         Debug = 0x00000010,
     }
+
+    //
+    // AMD
+    //
+    public enum RasterizationOrder
+    {
+        Strict = 0,
+        Relaxed = 1
+    }
+
+    //
+    // NV
+    //
+    [Flags]
+    public enum ExternalMemoryHandleTypeFlagsNV : uint
+    {
+        OpaqueWin32 = 1 << 0,
+        OpaqueWin32Kmt = 1 << 1,
+        D3D11Image = 1 << 2,
+        D3D11ImageKmt = 1 << 3
+    }
+
+    [Flags]
+    public enum ExternalMemoryFeatureFlagsNV : uint
+    {
+        Dedicated = 1 << 0,
+        Exportable = 1 << 1,
+        Importable = 1 << 2
+    }
+
+    //
+    // KHX
+    //
+    [Flags]
+    public enum PeerMemoryFeatureFlags : uint
+    {
+        CopySrc = 1 << 0,
+        CopyDst = 1 << 1,
+        GenericSrc = 1 << 2,
+        GenericDst = 1 << 3
+    }
+
+    [Flags]
+    public enum MemoryAllocateFlags : uint
+    {
+        DeviceMask = 1 << 0
+    }
+
+    [Flags]
+    public enum DeviceGroupPresentModeFlags : uint
+    {
+        Local = 1 << 0,
+        Remote = 1 << 1,
+        Sum = 1 << 2,
+        LocalMultiDevice = 1 << 3
+    }
+
+    //
+    // EXT
+    //
+    public enum ValidationCheck
+    {
+        All = 0,
+        Shaders = 1
+    }
+
+    //
+    // NN
+    //
+    [Flags] public enum ViSurfaceCreateFlags : uint { }
+
+    //
+    // NVX
+    //
+    public enum IndirectCommandsTokenType
+    {
+        Pipeline = 0,
+        Descriptor = 1,
+        IndexBuffer = 2,
+        VertexBuffer = 3,
+        PushConstant = 4,
+        DrawIndexed = 5,
+        Draw = 6,
+        Dispatch = 7
+    }
+
+    public enum ObjectEntryType
+    {
+        DescriptorSet = 0,
+        Pipeline = 1,
+        IndexBuffer = 2,
+        VertexBuffer = 3,
+        PushConstant = 4
+    }
+
+    [Flags]
+    public enum IndirectCommandsLayoutUsageFlags : uint
+    {
+        UnorderedSequences = 1 << 0,
+        SparseSequences = 1 << 1,
+        EmptyExecutions = 1 << 2,
+        IndexedSequences = 1 << 3
+    }
+
+    [Flags]
+    public enum ObjectEntryUsageFlags : uint
+    {
+        Graphics = 1 << 0,
+        Compute = 1 << 1
+    }
+
+    //
+    // EXT
+    //
+    [Flags]
+    public enum SurfaceCounterFlags : uint
+    {
+        VBlank = 1 << 0
+    }
+
+    public enum DisplayPowerState
+    {
+        Off = 0,
+        Suspend = 1,
+        On = 2
+    }
+
+    public enum DeviceEventType
+    {
+        DisplayHotplug = 0
+    }
+
+    public enum DisplayEventType
+    {
+        FirstPixelOut = 0
+    }
+
+    //
+    // NV
+    //
+    public enum ViewportCoordinateSwizzle
+    {
+        PositiveX = 0,
+        NegativeX = 1,
+        PositiveY = 2,
+        NegativeY = 3,
+        PositiveZ = 4,
+        NegativeZ = 5,
+        PositiveW = 6,
+        NegativeW = 7
+    }
+
+    [Flags] public enum PipelineViewportSwizzleStateCreateFlags : uint { }
+
+    //
+    // EXT
+    //
+    public enum DiscardRectangleMode
+    {
+        Inclusive = 0,
+        Exclusive = 1
+    }
+
+    [Flags] public enum PipelineDiscardRectangleStateCreateFlags : uint { }
+
+    //
+    // MVK
+    // 
+    [Flags] public enum IOSSurfaceCreateFlags : uint { }
+    [Flags] public enum MacOSSurfaceCreateFlags : uint { }
+
+    //
+    // EXT
+    //
+    public enum SamplerReductionMode
+    {
+        WeightedAverage = 0,
+        Min = 1,
+        Max = 2
+    }
+
+    public enum BlendOverlap
+    {
+        Uncorrelated = 0,
+        Disjoint = 1,
+        Conjoint = 2
+    }
+
+    //
+    // NV
+    //
+    [Flags] public enum PipelineCoverageToColorStateCreateFlags : uint { }
+
+    public enum CoverageModulationMode
+    {
+        None = 0,
+        RGB = 1,
+        Alpha = 2,
+        RGBA = 3
+    }
+
+    [Flags] public enum PipelineCoverageModulationStateCreateFlags : uint { }
 }

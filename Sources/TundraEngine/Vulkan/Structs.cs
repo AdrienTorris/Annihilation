@@ -13,9 +13,9 @@ namespace Vulkan
     {
         private readonly uint _value;
 
-        public Version(uint major, uint minor, uint patch)
+        public Version(uint major, uint Minor, uint patch)
         {
-            _value = major << 22 | minor << 12 | patch;
+            _value = major << 22 | Minor << 12 | patch;
         }
 
         public uint Major => _value >> 22;
@@ -155,7 +155,7 @@ namespace Vulkan
         public uint MaxTexelBufferElements;
         public uint MaxUniformBufferRange;
         public uint MaxStorageBufferRange;
-        public uint MaxPushConstantsSize;
+        public uint MaxPushantsSize;
         public uint MaxMemoryAllocationCount;
         public uint MaxSamplerAllocationCount;
         public DeviceSize BufferImageGranularity;
@@ -282,7 +282,7 @@ namespace Vulkan
         public QueueFlags QueueFlags;
         public uint QueueCount;
         public uint TimestampValidBits;
-        public Extent3D MinIMageTransferGranularity;
+        public Extent3D MinImageTransferGranularity;
     }
 
     public struct MemoryType
@@ -604,7 +604,7 @@ namespace Vulkan
     [StructLayout(LayoutKind.Sequential)]
     public struct SpecializationMapEntry
     {
-        public uint ConstantId;
+        public uint antId;
         public uint Offset;
         public Size Size;
     }
@@ -723,7 +723,7 @@ namespace Vulkan
         public CullModeFlags CullMode;
         public FrontFace FrontFace;
         public Bool32 DepthBiasEnable;
-        public float DepthBiasConstantFactor;
+        public float DepthBiasantFactor;
         public float DepthBiasClamp;
         public float DepthBiasSlopeFactor;
         public float LineWidth;
@@ -790,7 +790,7 @@ namespace Vulkan
         public LogicOp LogicOp;
         public uint AttachmentCount;
         public PipelineColorBlendAttachmentState* Attachments;
-        public fixed float BlendConstants[4];
+        public fixed float Blendants[4];
     }
 
     public unsafe struct PipelineDynamicStateCreateInfo
@@ -837,9 +837,9 @@ namespace Vulkan
         public int BasePipelineIndex;
     }
 
-    public struct PushConstantRange
+    public struct PushantRange
     {
-        public ShaderStageFlags stageFlags;
+        public ShaderStageFlags StageFlags;
         public uint Offset;
         public uint Size;
     }
@@ -851,8 +851,8 @@ namespace Vulkan
         public PipelineLayoutCreateFlags Flags;
         public uint SetLayoutCount;
         public DescriptorSetLayout* SetLayouts;
-        public uint PushConstantRangeCount;
-        public PushConstantRange* PushConstantRanges;
+        public uint PushantRangeCount;
+        public PushantRange* PushantRanges;
     }
 
     public unsafe struct SamplerCreateInfo
@@ -924,7 +924,7 @@ namespace Vulkan
     {
         public Sampler Sampler;
         public ImageView ImageView;
-        public ImageLayout imageLayout;
+        public ImageLayout ImageLayout;
     }
 
     public struct DescriptorBufferInfo
@@ -1254,7 +1254,7 @@ namespace Vulkan
     }
 
     //
-    // KHR swapchain
+    // KHR Swapchain
     //
     public unsafe struct SwapchainCreateInfo
     {
@@ -1497,7 +1497,7 @@ namespace Vulkan
     }
 
     //
-    // KHR memory
+    // KHR Memory
     //
     public struct ExternalMemoryProperties
     {
@@ -1735,7 +1735,7 @@ namespace Vulkan
         public void* Next;
         public Bool32 StorageBuffer16BitAccess;
         public Bool32 UniformAndStorageBuffer16BitAccess;
-        public Bool32 StoragePushConstant16;
+        public Bool32 StoragePushant16;
         public Bool32 StorageInputOutput16;
     }
 
@@ -1907,7 +1907,7 @@ namespace Vulkan
     {
         public StructureType Type;
         public void* Next;
-        public Image image;
+        public Image Image;
         public Buffer Buffer;
     }
 
@@ -1956,5 +1956,715 @@ namespace Vulkan
         public DebugReportFlags Flags;
         public DebugReportCallbackDelegate Callback;
         public void* UserData;
+    }
+
+    //
+    // AMD
+    //
+    public unsafe struct PipelineRasterizationStateRasterizationOrder
+    {
+        public StructureType Type;
+        public void* Next;
+        public RasterizationOrder RasterizationOrder;
+    }
+
+    //
+    // EXT
+    //
+    public unsafe struct DebugMarkerObjectNameInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public DebugReportObjectType ObjectType;
+        public ulong Object;
+        public Text ObjectName;
+    }
+
+    public unsafe struct DebugMarkerObjectTagInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public DebugReportObjectType ObjectType;
+        public ulong Object;
+        public ulong Tagname;
+        public Size TagSize;
+        public void* Tag;
+    }
+
+    public unsafe struct DebugMarkerMarkerInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public Text MarkerName;
+        public fixed float Color[4];
+    }
+
+    //
+    // AMD
+    //
+    public unsafe struct DedicatedAllocationImageCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public Bool32 DedicatedAllocation;
+    }
+
+    public unsafe struct DedicatedAllocationBufferCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public Bool32 DedicatedAllocation;
+    }
+
+    public unsafe struct DedicatedAllocationMemoryAllocateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public Image Image;
+        public Buffer Buffer;
+    }
+
+    public unsafe struct TextureLODGatherFormatProperties
+    {
+        public StructureType Type;
+        public void* Next;
+        public Bool32 SupportsTextureGatherLODBias;
+    }
+
+    //
+    // KHX
+    //
+    public unsafe struct RenderPassMultiviewCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public uint SubpassCount;
+        public uint* ViewMasks;
+        public uint DependencyCount;
+        public uint* ViewOffsets;
+        public uint CorrelationMaskCount;
+        public uint* CorrelationMasks;
+    }
+
+    public unsafe struct PhysicalDeviceMultiviewFeatures
+    {
+        public StructureType Type;
+        public void* Next;
+        public Bool32 Multiview;
+        public Bool32 MultiviewGeometryShader;
+        public Bool32 MultiviewTessellationShader;
+    }
+
+    public unsafe struct PhysicalDeviceMultiviewProperties
+    {
+        public StructureType Type;
+        public void* Next;
+        public uint MaxMultiviewViewCount;
+        public uint MaxMultiviewInstanceIndex;
+    }
+
+    //
+    // NV
+    //
+    public struct ExternalImageFormatPropertiesNV
+    {
+        public ImageFormatProperties ImageFormatProperties;
+        public ExternalMemoryFeatureFlagsNV ExternalMemoryFeatures;
+        public ExternalMemoryHandleTypeFlagsNV ExportFromImportedHandleTypes;
+        public ExternalMemoryHandleTypeFlagsNV CompatibleHandleTypes;
+    }
+
+    public unsafe struct ExternalMemoryImageCreateInfoNV
+    {
+        public StructureType Type;
+        public void* Next;
+        public ExternalMemoryHandleTypeFlagsNV HandleTypes;
+    }
+
+    public unsafe struct ExportMemoryAllocateInfoNV
+    {
+        public StructureType Type;
+        public void* Next;
+        public ExternalMemoryHandleTypeFlagsNV HandleTypes;
+    }
+
+    public unsafe struct ImportMemoryWin32HandleInfoNV
+    {
+        public StructureType Type;
+        public void* Next;
+        public ExternalMemoryHandleTypeFlagsNV HandleType;
+        public IntPtr Handle;
+    }
+
+    public unsafe struct ExportMemoryWin32HandleInfoNV
+    {
+        public StructureType Type;
+        public void* Next;
+        public IntPtr Attributes;
+        public IntPtr DwAccess;
+    }
+
+    public unsafe struct Win32KeyedMutexAcquireReleaseInfoNV
+    {
+        public StructureType Type;
+        public void* Next;
+        public uint AcquireCount;
+        public DeviceMemory* AcquireSyncs;
+        public ulong* AcquireKeys;
+        public uint* AcquireTimeoutMilliseconds;
+        public uint ReleaseCount;
+        public DeviceMemory* ReleaseSyncs;
+        public ulong* ReleaseKeys;
+    }
+
+    //
+    // KHX
+    //
+    public unsafe struct MemoryAllocateFlagsInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public MemoryAllocateFlags Flags;
+        public uint DeviceMask;
+    }
+
+    public unsafe struct BindBufferMemoryInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public Buffer Buffer;
+        public DeviceMemory Memory;
+        public DeviceSize MemoryOffset;
+        public uint DeviceIndexCount;
+        public uint* DeviceIndices;
+    }
+
+    public unsafe struct BindImageMemoryInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public Image Image;
+        public DeviceMemory Memory;
+        public DeviceSize MemoryOffset;
+        public uint DeviceIndexCount;
+        public uint* DeviceIndices;
+        public uint SFRRectCount;
+        public Rect2D* SFRRects;
+    }
+
+    public unsafe struct DeviceGroupRenderPassBeginInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public uint DeviceMask;
+        public uint DeviceRenderAreaCount;
+        public Rect2D* DeviceRenderAreas;
+    }
+
+    public unsafe struct DeviceGroupCommandBufferBeginInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public uint DeviceMask;
+    }
+
+    public unsafe struct DeviceGroupSubmitInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public uint WaitSemaphoreCount;
+        public uint* WaitSemaphoreDeviceIndices;
+        public uint CommandBufferCount;
+        public uint* CommandBufferDeviceMasks;
+        public uint SignalSemaphoreCount;
+        public uint* SignalSemaphoreDeviceIndices;
+    }
+
+    public unsafe struct DeviceGroupBindSparseInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public uint ResourceDeviceIndex;
+        public uint MemoryDeviceIndex;
+    }
+
+    public unsafe struct DeviceGroupPresentCapabilities
+    {
+        public StructureType Type;
+        public void* Next;
+        public fixed uint PresentMask[Vulkan.MaxDeviceGroupSize];
+        public DeviceGroupPresentModeFlags Modes;
+    }
+
+    public unsafe struct ImageSwapchainCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public Swapchain Swapchain;
+    }
+
+    public unsafe struct BindImageMemorySwapchainInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public Swapchain Swapchain;
+        public uint ImageIndex;
+    }
+
+    public unsafe struct AcquireNextImageInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public Swapchain Swapchain;
+        public ulong Timeout;
+        public Semaphore Semaphore;
+        public Fence Fence;
+        public uint DeviceMask;
+    }
+
+    public unsafe struct DeviceGroupPresentInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public uint SwapchainCount;
+        public uint* DeviceMasks;
+        public DeviceGroupPresentModeFlags Mode;
+    }
+
+    public unsafe struct DeviceGroupSwapchainCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public DeviceGroupPresentModeFlags Modes;
+    }
+
+    //
+    // EXT
+    //
+    public unsafe struct ValidationFlags
+    {
+        public StructureType Type;
+        public void* Next;
+        public uint DisabledValidationCheckCount;
+        public ValidationCheck* DisabledValidationChecks;
+    }
+
+    //
+    // NN
+    //
+    public unsafe struct ViSurfaceCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public ViSurfaceCreateFlags Flags;
+        public void* Window;
+    }
+
+    //
+    // KHX
+    //
+    public unsafe struct PhysicalDeviceGroupProperties
+    {
+        public StructureType Type;
+        public void* Next;
+        public uint PhysicalDeviceCount;
+        /// <summary>
+        /// <see cref="PhysicalDevice"/>[<see cref="Vulkan.MaxDeviceGroupSize"/>]
+        /// </summary>
+        public IntPtr PhysicalDevices;
+        public Bool32 SubsetAllocation;
+    }
+
+    public unsafe struct DeviceGroupDeviceCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public uint PhysicalDeviceCount;
+        public PhysicalDevice* PhysicalDevices;
+    }
+
+    //
+    // NVX
+    //
+    public unsafe struct DeviceGeneratedCommandsFeatures
+    {
+        public StructureType Type;
+        public void* Next;
+        public Bool32 ComputeBindingPointSupport;
+    }
+
+    public unsafe struct DeviceGeneratedCommandsLimits
+    {
+        public StructureType Type;
+        public void* Next;
+        public uint MaxIndirectCommandsLayoutTokenCount;
+        public uint MaxObjectEntryCounts;
+        public uint MinSequenceCountBufferOffsetAlignment;
+        public uint MinSequenceIndexBufferOffsetAlignment;
+        public uint MinCommandsTokenBufferOffsetAlignment;
+    }
+
+    public unsafe struct IndirectCommandsToken
+    {
+        public IndirectCommandsTokenType TokenType;
+        public Buffer Buffer;
+        public DeviceSize Offset;
+    }
+
+    public unsafe struct IndirectCommandsLayoutToken
+    {
+        public IndirectCommandsTokenType TokenType;
+        public uint BindingUnit;
+        public uint DynamicCount;
+        public uint Divisor;
+    }
+
+    public unsafe struct IndirectCommandsLayoutCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public PipelineBindPoint PipelineBindPoint;
+        public IndirectCommandsLayoutUsageFlags Flags;
+        public uint TokenCount;
+        public IndirectCommandsLayoutToken* Tokens;
+    }
+
+    public unsafe struct CmdProcessCommandsInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public ObjectTable ObjectTable;
+        public IndirectCommandsLayout IndirectCommandsLayout;
+        public uint IndirectCommandsTokenCount;
+        public IndirectCommandsToken* IndirectCommandsTokens;
+        public uint MaxSequencesCount;
+        public CommandBuffer TargetCommandBuffer;
+        public Buffer SequencesCountBuffer;
+        public DeviceSize SequencesCountOffset;
+        public Buffer SequencesIndexBuffer;
+        public DeviceSize SequencesIndexOffset;
+    }
+
+    public unsafe struct CmdReserveSpaceForCommandsInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public ObjectTable ObjectTable;
+        public IndirectCommandsLayout IndirectCommandsLayout;
+        public uint MaxSequencesCount;
+    }
+
+    public unsafe struct ObjectTableCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public uint ObjectCount;
+        public ObjectEntryType* ObjectEntryTypes;
+        public uint* ObjectEntryCounts;
+        public ObjectEntryUsageFlags* pObjectEntryUsageFlags;
+        public uint MaxUniformBuffersPerDescriptor;
+        public uint MaxStorageBuffersPerDescriptor;
+        public uint MaxStorageImagesPerDescriptor;
+        public uint MaxSampledImagesPerDescriptor;
+        public uint MaxPipelineLayouts;
+    }
+
+    public unsafe struct ObjectTableEntry
+    {
+        public ObjectEntryType Type;
+        public ObjectEntryUsageFlags Flags;
+    }
+
+    public unsafe struct ObjectTablePipelineEntry
+    {
+        public ObjectEntryType Type;
+        public ObjectEntryUsageFlags Flags;
+        public Pipeline Pipeline;
+    }
+
+    public unsafe struct ObjectTableDescriptorSetEntry
+    {
+        public ObjectEntryType Type;
+        public ObjectEntryUsageFlags Flags;
+        public PipelineLayout PipelineLayout;
+        public DescriptorSet DescriptorSet;
+    }
+
+    public unsafe struct ObjectTableVertexBufferEntry
+    {
+        public ObjectEntryType Type;
+        public ObjectEntryUsageFlags Flags;
+        public Buffer Buffer;
+    }
+
+    public unsafe struct ObjectTableIndexBufferEntry
+    {
+        public ObjectEntryType Type;
+        public ObjectEntryUsageFlags Flags;
+        public Buffer Buffer;
+        public IndexType IndexType;
+    }
+
+    public unsafe struct ObjectTablePushantEntry
+    {
+        public ObjectEntryType Type;
+        public ObjectEntryUsageFlags Flags;
+        public PipelineLayout PipelineLayout;
+        public ShaderStageFlags StageFlags;
+    }
+
+    //
+    // NV
+    //
+    public struct ViewportWScaling
+    {
+        public float XCoeff;
+        public float YCoeff;
+    }
+
+    public unsafe struct PipelineViewportWScalingStateCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public Bool32 ViewportWScalingEnable;
+        public uint ViewportCount;
+        public ViewportWScaling* ViewportWScalings;
+    }
+
+    //
+    // EXT
+    //
+    public unsafe struct SurfaceCapabilities2EXT
+    {
+        public StructureType Type;
+        public void* Next;
+        public uint MinImageCount;
+        public uint MaxImageCount;
+        public Extent2D CurrentExtent;
+        public Extent2D MinImageExtent;
+        public Extent2D MaxImageExtent;
+        public uint MaxImageArrayLayers;
+        public SurfaceTransformFlags SupportedTransforms;
+        public SurfaceTransformFlags CurrentTransform;
+        public CompositeAlphaFlags SupportedCompositeAlpha;
+        public ImageUsageFlags SupportedUsageFlags;
+        public SurfaceCounterFlags SupportedSurfaceCounters;
+    }
+
+    public unsafe struct DisplayPowerInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public DisplayPowerState PowerState;
+    }
+
+    public unsafe struct DeviceEventInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public DeviceEventType DeviceEvent;
+    }
+    
+    public unsafe struct DisplayEventInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public DisplayEventType DisplayEvent;
+    }
+
+    public unsafe struct SwapchainCounterCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public SurfaceCounterFlags SurfaceCounters;
+    }
+
+    //
+    // GOOGLE
+    //
+    public struct RefreshCycleDuration
+    {
+        public ulong RefreshDuration;
+    }
+
+    public struct PastPresentationTiming
+    {
+        public uint PresentID;
+        public ulong DesiredPrensetTime;
+        public ulong ActualPresentTime;
+        public ulong EarliestPresentTime;
+        public ulong PresentMargin;
+    }
+
+    public struct PresentTime
+    {
+        public uint PresentID;
+        public ulong DesiredPresentTime;
+    }
+
+    public unsafe struct PresentTimesInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public uint SwapchainCount;
+        public PresentTime* Times;
+    }
+
+    //
+    // NVX
+    //
+    public unsafe struct PhysicalDeviceMultiviewPerViewAttributesProperties
+    {
+        public StructureType Type;
+        public void* Next;
+        public Bool32 PerViewPositionAllComponents;
+    }
+
+    //
+    // NV
+    //
+    public struct ViewportSwizzle
+    {
+        public ViewportCoordinateSwizzle X;
+        public ViewportCoordinateSwizzle Y;
+        public ViewportCoordinateSwizzle Z;
+        public ViewportCoordinateSwizzle W;
+    }
+
+    public unsafe struct PipelineViewportSwizzleStateCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public PipelineViewportSwizzleStateCreateFlags Flags;
+        public uint ViewportCount;
+        public ViewportSwizzle* ViewportSwizzles;
+    }
+
+    //
+    // EXT
+    //
+    public unsafe struct PhysicalDeviceDiscardRectangleProperties
+    {
+        public StructureType Type;
+        public void* Next;
+        public uint MaxDiscardRectangles;
+    }
+
+    public unsafe struct PipelineDiscardRectangleStateCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public PipelineDiscardRectangleStateCreateFlags Flags;
+        public DiscardRectangleMode DiscardRectangleMode;
+        public uint DiscardRectangleCount;
+        public Rect2D* DiscardRectangles;
+    }
+
+    public struct XYColor
+    {
+        public float X;
+        public float Y;
+    }
+
+    public unsafe struct HdrMetadata
+    {
+        public StructureType Type;
+        public void* Next;
+        public XYColor DisplayPrimaryRed;
+        public XYColor DisplayPrimaryGreen;
+        public XYColor DisplayPrimaryBlue;
+        public XYColor WhitePoint;
+        public float MaxLuminance;
+        public float MinLuminance;
+        public float MaxContentLightLevel;
+        public float MaxFrameAverageLightLevel;
+    }
+
+    //
+    // MVK
+    //
+    public unsafe struct IOSSurfaceCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public IOSSurfaceCreateFlags Flags;
+        public void* View;
+    }
+
+    public unsafe struct MacOSSurfaceCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public MacOSSurfaceCreateFlags Flags;
+        public void* View;
+    }
+
+    //
+    // EXT
+    //
+    public unsafe struct SamplerReductionModeCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public SamplerReductionMode ReductionMode;
+    }
+
+    public unsafe struct PhysicalDeviceSamplerFilterMinmaxProperties
+    {
+        public StructureType Type;
+        public void* Next;
+        public Bool32 FilterMinmaxSingleComponentFormats;
+        public Bool32 FilterMinmaxImageComponentMapping;
+    }
+
+    public unsafe struct PhysicalDeviceBlendOperationAdvancedFeatures
+    {
+        public StructureType Type;
+        public void* Next;
+        public Bool32 AdvancedBlendCoherentOperations;
+    }
+
+    public unsafe struct PhysicalDeviceBlendOperationAdvancedProperties
+    {
+        public StructureType Type;
+        public void* Next;
+        public uint AdvancedBlendMaxColorAttachments;
+        public Bool32 AdvancedBlendIndependentBlend;
+        public Bool32 AdvancedBlendNonPremultipliedSrcColor;
+        public Bool32 AdvancedBlendNonPremultipliedDstColor;
+        public Bool32 AdvancedBlendCorrelatedOverlap;
+        public Bool32 AdvancedBlendAllOperations;
+    }
+
+    public unsafe struct PipelineColorBlendAdvancedStateCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public Bool32 SrcPremultiplied;
+        public Bool32 DstPremultiplied;
+        public BlendOverlap BlendOverlap;
+    }
+
+    //
+    // NV
+    //
+    public unsafe struct PipelineCoverageToColorStateCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public PipelineCoverageToColorStateCreateFlags Flags;
+        public Bool32 CoverageToColorEnable;
+        public uint CoverageToColorLocation;
+    }
+
+    public unsafe struct PipelineCoverageModulationStateCreateInfo
+    {
+        public StructureType Type;
+        public void* Next;
+        public PipelineCoverageModulationStateCreateFlags flags;
+        public CoverageModulationMode CoverageModulationMode;
+        public Bool32 CoverageModulationTableEnable;
+        public uint CoverageModulationTableCount;
+        public float* CoverageModulationTable;
     }
 }

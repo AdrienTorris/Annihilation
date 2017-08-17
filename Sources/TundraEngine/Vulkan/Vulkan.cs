@@ -27,6 +27,9 @@ namespace Vulkan
         public const uint MaxDescriptionSize = 256;
         public const int LuidSize = 8;
         public const string DebugReportExtensionName = "VK_EXT_debug_report";
+        public const int MaxDeviceGroupSize = 32;
+        public const string DeviceGroupExtensionName = "VK_KHX_device_group";
+        public const string DeviceGeneratedCommandsExtensionName = "VK_NVX_device_generated_commands";
 
         // Global functions
         public static readonly EnumerateInstanceExtensionPropertiesDelegate EnumerateInstanceExtensionProperties = LoadGlobalFunction<EnumerateInstanceExtensionPropertiesDelegate>();
