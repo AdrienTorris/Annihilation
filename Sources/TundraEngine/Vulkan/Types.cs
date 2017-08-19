@@ -1,7 +1,19 @@
 ﻿using System;
+using System.Text;
 
 namespace Vulkan
 {
+    public class VulkanException : Exception
+    {
+        public Result Result { get; private set; }
+
+        public VulkanException(Result result)
+            : base($"A Vulkan error of type [{result}] occurred.")
+        {
+            Result = result;
+        }
+    }
+
     public struct Bool32 : IEquatable<Bool32>
     {
         private readonly int boolValue;
@@ -196,6 +208,52 @@ namespace Vulkan
         public static implicit operator uint(Version version)
         {
             return version._value;
+        }
+    }
+    
+    public unsafe struct Text
+    {
+        public byte* Handle;
+
+        public Text(byte* handle)
+        {
+            Handle = handle;
+        }
+
+        public Text(IntPtr handle)
+        {
+            Handle = (byte*)handle;
+        }
+
+        public Text(string text)
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(text);
+            fixed (byte* ptr = &bytes[0])
+            {
+                Handle = ptr;
+            }
+        }
+
+        public override string ToString()
+        {
+            byte* counter = Handle;
+            while (*counter != 0)
+            {
+                counter++;
+            }
+            int count = (int)(counter - Handle);
+
+            return Encoding.UTF8.GetString(Handle, count);
+        }
+
+        public static implicit operator string(Text text)
+        {
+            return text.ToString();
+        }
+
+        public static implicit operator Text(string text)
+        {
+            return new Text(text);
         }
     }
 }
