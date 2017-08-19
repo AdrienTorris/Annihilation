@@ -1,35 +1,12 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
+using Vulkan.Handle;
+using Buffer = Vulkan.Handle.Buffer;
+
 namespace Vulkan
 {
-    public struct Size
-    {
-        public ulong Handle;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Size = 4)]
-    public struct Version
-    {
-        private readonly uint _value;
-
-        public Version(uint major, uint Minor, uint patch)
-        {
-            _value = major << 22 | Minor << 12 | patch;
-        }
-
-        public uint Major => _value >> 22;
-
-        public uint Minor => (_value >> 12) & 0x3ff;
-
-        public uint Patch => (_value >> 22) & 0xfff;
-
-        public static implicit operator uint(Version version)
-        {
-            return version._value;
-        }
-    }
-
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ApplicationInfo
     {
         public StructureType Type;
@@ -41,6 +18,7 @@ namespace Vulkan
         public Version ApiVersion;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct InstanceCreateInfo
     {
         public StructureType Type;
@@ -53,6 +31,7 @@ namespace Vulkan
         public Text* EnabledExtensionNames;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct AllocationCallbacks
     {
         public void* UserData;
@@ -63,7 +42,8 @@ namespace Vulkan
         public InternalFreeNotification InternalFree;
     }
 
-    public struct PhysicalDeviceFeatures
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct PhysicalDeviceFeatures
     {
         public Bool32 RobustBufferAccess;
         public Bool32 FullDrawIndexUint32;
@@ -122,21 +102,24 @@ namespace Vulkan
         public Bool32 InheritedQueries;
     }
 
-    public struct FormatProperties
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct FormatProperties
     {
         public FormatFeatureFlags LinearTilingFeatures;
         public FormatFeatureFlags OptimalTilingFeatures;
         public FormatFeatureFlags BufferFeatures;
     }
 
-    public struct Extent3D
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct Extent3D
     {
         public uint Width;
         public uint Height;
         public uint Depth;
     }
 
-    public struct ImageFormatProperties
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct ImageFormatProperties
     {
         public Extent3D MaxExtents;
         public uint MaxMipLevels;
@@ -145,6 +128,7 @@ namespace Vulkan
         public DeviceSize MaxResourceSize;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PhysicalDeviceLimits
     {
         public uint MaxImageDimension1D;
@@ -255,7 +239,8 @@ namespace Vulkan
         public DeviceSize NonCoherentAtomSize;
     }
 
-    public struct PhysicalDeviceSparseProperties
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct PhysicalDeviceSparseProperties
     {
         public Bool32 ResidencyStandard2DBlockShape;
         public Bool32 ResidencyStandard2DMultisampleBlockShape;
@@ -264,6 +249,7 @@ namespace Vulkan
         public Bool32 ResidencyNonResidentStrict;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PhysicalDeviceProperties
     {
         public uint ApiVersion;
@@ -277,7 +263,8 @@ namespace Vulkan
         public PhysicalDeviceSparseProperties SparseProperties;
     }
 
-    public struct QueueFamilyProperties
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct QueueFamilyProperties
     {
         public QueueFlags QueueFlags;
         public uint QueueCount;
@@ -285,19 +272,22 @@ namespace Vulkan
         public Extent3D MinImageTransferGranularity;
     }
 
-    public struct MemoryType
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct MemoryType
     {
         public MemoryPropertyFlags PropertyFlags;
         public uint HeapIndex;
     }
 
-    public struct MemoryHeap
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct MemoryHeap
     {
         public DeviceSize Size;
         public MemoryHeapFlags Flags;
     }
 
-    public struct PhysicalDeviceMemoryProperties
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct PhysicalDeviceMemoryProperties
     {
         public uint MemoryTypeCount;
         /// <summary>
@@ -311,6 +301,7 @@ namespace Vulkan
         public IntPtr MemoryHeaps;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DeviceQueueCreateInfo
     {
         public StructureType Type;
@@ -321,6 +312,7 @@ namespace Vulkan
         public float* QueuePriorities;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DeviceCreateInfo
     {
         public StructureType Type;
@@ -335,12 +327,14 @@ namespace Vulkan
         public PhysicalDeviceFeatures* EnabledFeatures;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ExtensionProperties
     {
         public fixed byte ExtensionName[(int)Vulkan.MaxExtensionNameSize];
         public Version SpecVersion;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct LayerProperties
     {
         public fixed byte LayerName[(int)Vulkan.MaxExtensionNameSize];
@@ -349,6 +343,7 @@ namespace Vulkan
         public fixed byte Description[(int)Vulkan.MaxDescriptionSize];
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct SubmitInfo
     {
         public StructureType Type;
@@ -362,6 +357,7 @@ namespace Vulkan
         public Semaphore* SignalSemaphores;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MemoryAllocateInfo
     {
         public StructureType Type;
@@ -370,6 +366,7 @@ namespace Vulkan
         public uint MemoryTypeIndex;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MappedMemoryRange
     {
         public StructureType Type;
@@ -379,21 +376,24 @@ namespace Vulkan
         public DeviceSize Size;
     }
 
-    public struct MemoryRequirements
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct MemoryRequirements
     {
         public DeviceSize Size;
         public DeviceSize Alignment;
         public uint MemoryTypeBits;
     }
 
-    public struct SparseImageFormatProperties
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct SparseImageFormatProperties
     {
         public ImageAspectFlags AspectMask;
         public Extent3D ImageGranularity;
         public SparseImageFormatFlags Flags;
     }
 
-    public struct SparseImageMemoryRequirements
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct SparseImageMemoryRequirements
     {
         public SparseImageFormatProperties FormatProperties;
         public uint ImageMipTailFirstLod;
@@ -402,7 +402,8 @@ namespace Vulkan
         public DeviceSize ImageMipTailStride;
     }
 
-    public struct SparseMemoryBind
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct SparseMemoryBind
     {
         public DeviceSize ResourceOffset;
         public DeviceSize Size;
@@ -411,6 +412,7 @@ namespace Vulkan
         public SparseMemoryBindFlags Flags;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct SparseBufferMemoryBindInfo
     {
         public Buffer Buffer;
@@ -418,6 +420,7 @@ namespace Vulkan
         public SparseMemoryBind* Binds;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct SparseImageOpaqueMemoryBindInfo
     {
         public Image Image;
@@ -425,21 +428,24 @@ namespace Vulkan
         public SparseMemoryBind* Binds;
     }
 
-    public struct ImageSubresource
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct ImageSubresource
     {
         public ImageAspectFlags AspectMask;
         public uint MipLevel;
         public uint ArrayLayer;
     }
 
-    public struct Offset3D
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct Offset3D
     {
         public int X;
         public int Y;
         public int Z;
     }
 
-    public struct SparseImageMemoryBind
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct SparseImageMemoryBind
     {
         public ImageSubresource Subresource;
         public Offset3D Offset;
@@ -449,6 +455,7 @@ namespace Vulkan
         public SparseMemoryBindFlags Flags;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct SparseImageMemoryBindInfo
     {
         public Image Image;
@@ -456,6 +463,7 @@ namespace Vulkan
         public SparseImageMemoryBind* Binds;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct BindSparseInfo
     {
         public StructureType Type;
@@ -472,6 +480,7 @@ namespace Vulkan
         public Semaphore* SignalSemaphores;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct FenceCreateInfo
     {
         public StructureType Type;
@@ -479,6 +488,7 @@ namespace Vulkan
         public FenceCreateFlags Flags;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct SemaphoreCreateInfo
     {
         public StructureType Type;
@@ -486,6 +496,7 @@ namespace Vulkan
         public SemaphoreCreateFlags Flags;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct EventCreateInfo
     {
         public StructureType Type;
@@ -493,6 +504,7 @@ namespace Vulkan
         public EventCreateFlags Flags;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct QueryPoolCreateInfo
     {
         public StructureType Type;
@@ -503,6 +515,7 @@ namespace Vulkan
         public QueryPipelineStatisticFlags PipelineStatistics;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct BufferCreateInfo
     {
         public StructureType Type;
@@ -515,6 +528,7 @@ namespace Vulkan
         public uint* QueueFamilyIndices;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct BufferViewCreateInfo
     {
         public StructureType Type;
@@ -526,6 +540,7 @@ namespace Vulkan
         public DeviceSize Range;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ImageCreateInfo
     {
         public StructureType Type;
@@ -545,7 +560,8 @@ namespace Vulkan
         public ImageLayout InitialLayout;
     }
 
-    public struct SubresourceLayout
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct SubresourceLayout
     {
         public DeviceSize Offset;
         public DeviceSize Size;
@@ -554,7 +570,8 @@ namespace Vulkan
         public DeviceSize DepthPitch;
     }
 
-    public struct ComponentMapping
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct ComponentMapping
     {
         public ComponentSwizzle R;
         public ComponentSwizzle G;
@@ -562,7 +579,8 @@ namespace Vulkan
         public ComponentSwizzle A;
     }
 
-    public struct ImageSubresourceRange
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct ImageSubresourceRange
     {
         public ImageAspectFlags AspectMask;
         public uint BaseMipLevel;
@@ -571,6 +589,7 @@ namespace Vulkan
         public uint LayerCount;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ImageViewCreateInfo
     {
         public StructureType Type;
@@ -583,6 +602,7 @@ namespace Vulkan
         public ImageSubresourceRange SubresourceRange;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ShaderModuleCreateInfo
     {
         public StructureType Type;
@@ -592,6 +612,7 @@ namespace Vulkan
         public uint* Code;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PipelineCacheCreateInfo
     {
         public StructureType Type;
@@ -602,7 +623,7 @@ namespace Vulkan
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct SpecializationMapEntry
+    public unsafe struct SpecializationMapEntry
     {
         public uint antId;
         public uint Offset;
@@ -630,14 +651,16 @@ namespace Vulkan
         public SpecializationInfo* SpecializationInfo;
     }
 
-    public struct VertexInputBindingDescription
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct VertexInputBindingDescription
     {
         public uint Binding;
         public uint Stride;
         public VertexInputRate InputRate;
     }
 
-    public struct VertexInputAttributeDescription
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct VertexInputAttributeDescription
     {
         public uint Location;
         public uint Binding;
@@ -645,6 +668,7 @@ namespace Vulkan
         public uint Offset;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PipelineVertexInputStateCreateInfo
     {
         public StructureType Type;
@@ -656,6 +680,7 @@ namespace Vulkan
         public VertexInputAttributeDescription* VertexAttributeDescriptions;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PipelineInputAssemblyStateCreateInfo
     {
         public StructureType Type;
@@ -665,6 +690,7 @@ namespace Vulkan
         public Bool32 PrimitiveRestartEnable;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PipelineTessellationStateCreateInfo
     {
         public StructureType Type;
@@ -673,7 +699,8 @@ namespace Vulkan
         public uint PatchControlPoints;
     }
 
-    public struct Viewport
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct Viewport
     {
         public float X;
         public float Y;
@@ -683,24 +710,28 @@ namespace Vulkan
         public float MaxDepth;
     }
 
-    public struct Offset2D
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct Offset2D
     {
         public int X;
         public int Y;
     }
 
-    public struct Extent2D
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct Extent2D
     {
         public uint Width;
         public uint Height;
     }
 
-    public struct Rect2D
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct Rect2D
     {
         public Offset2D Offset;
         public Extent2D Extent;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PipelineViewportStateCreateInfo
     {
         public StructureType Type;
@@ -712,6 +743,7 @@ namespace Vulkan
         public Rect2D* Scissors;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PipelineRasterizationStateCreateInfo
     {
         public StructureType Type;
@@ -729,6 +761,7 @@ namespace Vulkan
         public float LineWidth;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PipelineMultisampleStateCreateInfo
     {
         public StructureType Type;
@@ -742,7 +775,8 @@ namespace Vulkan
         public Bool32 AlphaToOneEnable;
     }
 
-    public struct StencilOpState
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct StencilOpState
     {
         public StencilOp FailOp;
         public StencilOp PassOp;
@@ -753,6 +787,7 @@ namespace Vulkan
         public uint Reference;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PipelineDepthStencilStateCreateInfo
     {
         public StructureType Type;
@@ -769,7 +804,8 @@ namespace Vulkan
         public float MaxDepthBounds;
     }
 
-    public struct PipelineColorBlendAttachmentState
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct PipelineColorBlendAttachmentState
     {
         public Bool32 BlendEnable;
         public BlendFactor SrcColorBlendFactor;
@@ -781,6 +817,7 @@ namespace Vulkan
         public ColorComponentFlags ColorWriteMask;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PipelineColorBlendStateCreateInfo
     {
         public StructureType Type;
@@ -793,6 +830,7 @@ namespace Vulkan
         public fixed float Blendants[4];
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PipelineDynamicStateCreateInfo
     {
         public StructureType Type;
@@ -826,6 +864,7 @@ namespace Vulkan
         public int BasePipelineIndex;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ComputePipelineCreateInfo
     {
         public StructureType Type;
@@ -837,13 +876,15 @@ namespace Vulkan
         public int BasePipelineIndex;
     }
 
-    public struct PushantRange
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct PushantRange
     {
         public ShaderStageFlags StageFlags;
         public uint Offset;
         public uint Size;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PipelineLayoutCreateInfo
     {
         public StructureType Type;
@@ -855,6 +896,7 @@ namespace Vulkan
         public PushantRange* PushantRanges;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct SamplerCreateInfo
     {
         public StructureType Type;
@@ -877,6 +919,7 @@ namespace Vulkan
         public Bool32 UnnormalizedCoordinates;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DescriptorSetLayoutBinding
     {
         public uint Binding;
@@ -886,6 +929,7 @@ namespace Vulkan
         public Sampler* ImmutableSamplers;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DescriptorSetLayoutCreateInfo
     {
         public StructureType Type;
@@ -895,12 +939,14 @@ namespace Vulkan
         public DescriptorSetLayoutBinding* Bindings;
     }
 
-    public struct DescriptorPoolSize
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct DescriptorPoolSize
     {
         public DescriptorType Type;
         public uint DescriptorCount;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DescriptorPoolCreateInfo
     {
         public StructureType Type;
@@ -911,6 +957,7 @@ namespace Vulkan
         public DescriptorPoolSize* PoolSizes;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DescriptorSetAllocateInfo
     {
         public StructureType Type;
@@ -920,20 +967,23 @@ namespace Vulkan
         public DescriptorSetLayout* SetLayouts;
     }
 
-    public struct DescriptorImageInfo
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct DescriptorImageInfo
     {
         public Sampler Sampler;
         public ImageView ImageView;
         public ImageLayout ImageLayout;
     }
 
-    public struct DescriptorBufferInfo
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct DescriptorBufferInfo
     {
         public Buffer Buffer;
         public DeviceSize Offset;
         public DeviceSize Range;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct WriteDescriptorSet
     {
         public StructureType Type;
@@ -948,6 +998,7 @@ namespace Vulkan
         public BufferView* TexelBufferView;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct CopyDescriptorSet
     {
         public StructureType Type;
@@ -961,6 +1012,7 @@ namespace Vulkan
         public uint DescriptorCount;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct FramebufferCreateInfo
     {
         public StructureType Type;
@@ -974,7 +1026,8 @@ namespace Vulkan
         public uint Layers;
     }
 
-    public struct AttachmentDescription
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct AttachmentDescription
     {
         public AttachmentDescriptionFlags Flags;
         public Format Format;
@@ -987,12 +1040,14 @@ namespace Vulkan
         public ImageLayout FinalLayout;
     }
 
-    public struct AttachmentReference
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct AttachmentReference
     {
         public uint Attachment;
         public ImageLayout Layout;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct SubpassDescription
     {
         public SubpassDescriptionFlags Flags;
@@ -1007,7 +1062,8 @@ namespace Vulkan
         public uint* PreserveAttachments;
     }
 
-    public struct SubpassDependency
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct SubpassDependency
     {
         public uint SrcSubpass;
         public uint DstSubpass;
@@ -1018,6 +1074,7 @@ namespace Vulkan
         public DependencyFlags DependencyFlags;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct RenderPassCreateInfo
     {
         public StructureType Type;
@@ -1031,6 +1088,7 @@ namespace Vulkan
         public SubpassDependency* Dependencies;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct CommandPoolCreateInfo
     {
         public StructureType Type;
@@ -1039,6 +1097,7 @@ namespace Vulkan
         public uint QueueFamilyIndex;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct CommandBufferAllocateInfo
     {
         public StructureType Type;
@@ -1048,6 +1107,7 @@ namespace Vulkan
         public uint CommandBufferCount;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct CommandBufferInheritanceInfo
     {
         public StructureType Type;
@@ -1060,6 +1120,7 @@ namespace Vulkan
         public QueryPipelineStatisticFlags PipelineStatistics;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct CommandBufferBeginInfo
     {
         public StructureType Type;
@@ -1068,14 +1129,16 @@ namespace Vulkan
         public CommandBufferInheritanceInfo* InheritanceInfo;
     }
 
-    public struct BufferCopy
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct BufferCopy
     {
         public DeviceSize SrcOffset;
         public DeviceSize DstOffset;
         public DeviceSize Size;
     }
 
-    public struct ImageSubresourceLayers
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct ImageSubresourceLayers
     {
         public ImageAspectFlags AspectMask;
         public uint MipLevel;
@@ -1083,7 +1146,8 @@ namespace Vulkan
         public uint LayerCount;
     }
 
-    public struct ImageCopy
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct ImageCopy
     {
         public ImageSubresourceLayers SrcSubresource;
         public Offset3D SrcOffset;
@@ -1092,6 +1156,7 @@ namespace Vulkan
         public Extent3D Extent;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ImageBlit
     {
         public ImageSubresourceLayers SrcSubresource;
@@ -1106,7 +1171,8 @@ namespace Vulkan
         public IntPtr DstOffsets;
     }
 
-    public struct BufferImageCopy
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct BufferImageCopy
     {
         public DeviceSize BufferOffset;
         public uint BufferRowLength;
@@ -1124,34 +1190,38 @@ namespace Vulkan
         [FieldOffset(0)] public fixed uint Uint32[4];
     }
 
-    public struct ClearDepthStencilValue
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct ClearDepthStencilValue
     {
         public float Depth;
         public uint Stencil;
     }
 
     [StructLayout(LayoutKind.Explicit)]
-    public struct ClearValue
+    public unsafe struct ClearValue
     {
         [FieldOffset(0)] public ClearColorValue Color;
         [FieldOffset(0)] public ClearDepthStencilValue DepthStencil;
     }
 
-    public struct ClearAttachment
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct ClearAttachment
     {
         public ImageAspectFlags AspectMask;
         public uint ColorAttachment;
         public ClearValue ClearValue;
     }
 
-    public struct ClearRect
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct ClearRect
     {
         public Rect2D Rect;
         public uint BaseArrayLayer;
         public uint LayerCount;
     }
 
-    public struct ImageResolve
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct ImageResolve
     {
         public ImageSubresourceLayers SrcSubresource;
         public Offset3D SrcOffset;
@@ -1160,6 +1230,7 @@ namespace Vulkan
         public Extent3D Extent;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MemoryBarrier
     {
         public StructureType Type;
@@ -1168,6 +1239,7 @@ namespace Vulkan
         public AccessFlags DstAccessMask;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct BufferMemoryBarrier
     {
         public StructureType Type;
@@ -1181,6 +1253,7 @@ namespace Vulkan
         public DeviceSize Size;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ImageMemoryBarrier
     {
         public StructureType Type;
@@ -1195,6 +1268,7 @@ namespace Vulkan
         public ImageSubresourceRange SubresourceRange;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct RenderPassBeginInfo
     {
         public StructureType Type;
@@ -1206,14 +1280,16 @@ namespace Vulkan
         public ClearValue* ClearValues;
     }
 
-    public struct DispatchIndirectCommand
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct DispatchIndirectCommand
     {
         public uint X;
         public uint Y;
         public uint Z;
     }
 
-    public struct DrawIndexedIndirectCommand
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct DrawIndexedIndirectCommand
     {
         public uint IndexCount;
         public uint InstanceCount;
@@ -1222,7 +1298,8 @@ namespace Vulkan
         public uint FirstInstance;
     }
 
-    public struct DrawIndirectCommand
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct DrawIndirectCommand
     {
         public uint VertexCount;
         public uint InstanceCount;
@@ -1233,7 +1310,8 @@ namespace Vulkan
     //
     // KHR surface
     //
-    public struct SurfaceCapabilities
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct SurfaceCapabilities
     {
         public uint MinImageCount;
         public uint MaxImageCount;
@@ -1247,7 +1325,8 @@ namespace Vulkan
         public ImageUsageFlags SupportedUsageFlags;
     }
 
-    public struct SurfaceFormat
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct SurfaceFormat
     {
         public Format Format;
         public ColorSpace ColorSpace;
@@ -1256,6 +1335,7 @@ namespace Vulkan
     //
     // KHR Swapchain
     //
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct SwapchainCreateInfo
     {
         public StructureType Type;
@@ -1278,6 +1358,7 @@ namespace Vulkan
         public Swapchain OldSwapchain;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PresentInfo
     {
         public StructureType Type;
@@ -1293,6 +1374,7 @@ namespace Vulkan
     //
     // KHR display
     // 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DisplayProperties
     {
         public Display Display;
@@ -1304,18 +1386,21 @@ namespace Vulkan
         public Bool32 PersistentContent;
     }
 
-    public struct DisplayModeParameters
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct DisplayModeParameters
     {
         public Extent2D VisibleRegion;
         public uint RefreshRate;
     }
 
-    public struct DisplayModeProperties
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct DisplayModeProperties
     {
         public DisplayMode DisplayMode;
         public DisplayModeParameters Parameters;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DisplayModeCreateInfo
     {
         public StructureType Type;
@@ -1324,7 +1409,8 @@ namespace Vulkan
         public DisplayModeParameters Parameters;
     }
 
-    public struct DisplayPlaneCapabilities
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct DisplayPlaneCapabilities
     {
         public DisplayPlaneAlphaFlags SupportedAlpha;
         public Offset2D MinSrcPosition;
@@ -1337,12 +1423,14 @@ namespace Vulkan
         public Extent2D MaxDstExtent;
     }
 
-    public struct DisplayPlaneProperties
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct DisplayPlaneProperties
     {
         public Display CurrentDisplay;
         public uint CurrentStackIndex;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DisplaySurfaceCreateInfo
     {
         public StructureType Type;
@@ -1357,6 +1445,7 @@ namespace Vulkan
         public Extent2D ImageExtent;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DisplayPresentInfo
     {
         public StructureType Type;
@@ -1369,6 +1458,7 @@ namespace Vulkan
     //
     // KHR Platforms
     //
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct XlibSurfaceCreateInfo
     {
         public StructureType Type;
@@ -1378,6 +1468,7 @@ namespace Vulkan
         public IntPtr Window;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct XcbSurfaceCreateInfo
     {
         public StructureType Type;
@@ -1387,6 +1478,7 @@ namespace Vulkan
         public IntPtr Window;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct WaylandSurfaceCreateInfo
     {
         public StructureType Type;
@@ -1396,6 +1488,7 @@ namespace Vulkan
         public IntPtr Surface;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MirSurfaceCreateInfo
     {
         public StructureType Type;
@@ -1405,6 +1498,7 @@ namespace Vulkan
         public IntPtr MirSurface;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct AndroidSurfaceCreateInfo
     {
         public StructureType Type;
@@ -1413,6 +1507,7 @@ namespace Vulkan
         public IntPtr Window;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct Win32SurfaceCreateInfo
     {
         public StructureType Type;
@@ -1425,6 +1520,7 @@ namespace Vulkan
     //
     // KHR 2
     //
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PhysicalDeviceFeatures2
     {
         public StructureType Type;
@@ -1432,6 +1528,7 @@ namespace Vulkan
         public PhysicalDeviceFeatures Features;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PhysicalDeviceProperties2
     {
         public StructureType Type;
@@ -1439,6 +1536,7 @@ namespace Vulkan
         public PhysicalDeviceProperties Properties;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct FormatProperties2
     {
         public StructureType Type;
@@ -1446,6 +1544,7 @@ namespace Vulkan
         public FormatProperties FormatProperties;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ImageFormatProperties2
     {
         public StructureType Type;
@@ -1453,6 +1552,7 @@ namespace Vulkan
         public ImageFormatProperties ImageFormatProperties;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PhysicalDeviceImageFormatInfo2
     {
         public StructureType Type;
@@ -1464,6 +1564,7 @@ namespace Vulkan
         public ImageCreateFlags Flags;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct QueueFamilyProperties2
     {
         public StructureType Type;
@@ -1471,6 +1572,7 @@ namespace Vulkan
         public QueueFamilyProperties QueueFamilyProperties;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PhysicalDeviceMemoryProperties2
     {
         public StructureType Type;
@@ -1478,6 +1580,7 @@ namespace Vulkan
         public PhysicalDeviceMemoryProperties MemoryProperties;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct SparseImageFormatProperties2
     {
         public StructureType Type;
@@ -1485,6 +1588,7 @@ namespace Vulkan
         public SparseImageFormatProperties Properties;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PhysicalDeviceSparseImageFormatInfo2
     {
         public StructureType Type;
@@ -1499,13 +1603,15 @@ namespace Vulkan
     //
     // KHR Memory
     //
-    public struct ExternalMemoryProperties
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct ExternalMemoryProperties
     {
         public ExternalMemoryFeatureFlags ExternalMemoryFeatures;
         public ExternalMemoryHandleTypeFlags ExportFomImportedHandleTypes;
         public ExternalMemoryHandleTypeFlags CompatibleHandleTypes;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PhysicalDeviceExternalImageFormatInfo
     {
         public StructureType Type;
@@ -1513,6 +1619,7 @@ namespace Vulkan
         public ExternalMemoryHandleTypeFlags HandleType;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ExternalImageFormatProperties
     {
         public StructureType Type;
@@ -1520,6 +1627,7 @@ namespace Vulkan
         public ExternalMemoryProperties ExternalMemoryProperties;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PhysicalDeviceExternalBufferInfo
     {
         public StructureType Type;
@@ -1529,6 +1637,7 @@ namespace Vulkan
         public ExternalMemoryHandleTypeFlags HandleType;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ExternalBufferProperties
     {
         public StructureType Type;
@@ -1536,6 +1645,7 @@ namespace Vulkan
         public ExternalMemoryProperties ExternalMemoryProperties;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PhysicalDeviceIDProperties
     {
         public StructureType Type;
@@ -1547,6 +1657,7 @@ namespace Vulkan
         public Bool32 DeviceLUIDValid;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ExternalMemoryImageCreateInfo
     {
         public StructureType Type;
@@ -1554,6 +1665,7 @@ namespace Vulkan
         public ExternalMemoryHandleTypeFlags HandleTypes;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ExternalMemoryBufferCreateInfo
     {
         public StructureType Type;
@@ -1561,6 +1673,7 @@ namespace Vulkan
         public ExternalMemoryHandleTypeFlags HandleTypes;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ExportMemoryAllocateInfo
     {
         public StructureType Type;
@@ -1568,6 +1681,7 @@ namespace Vulkan
         public ExternalMemoryHandleTypeFlags HandleTypes;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ImportMemoryWin32HandleInfo
     {
         public StructureType Type;
@@ -1577,6 +1691,7 @@ namespace Vulkan
         public char* Name;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ExportMemoryWin32HandleInfo
     {
         public StructureType Type;
@@ -1586,6 +1701,7 @@ namespace Vulkan
         public char* Name;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MemoryWin32HandleProperties
     {
         public StructureType Type;
@@ -1593,6 +1709,7 @@ namespace Vulkan
         public uint MemoryTypeBits;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MemoryGetWin32HandleInfo
     {
         public StructureType Type;
@@ -1601,6 +1718,7 @@ namespace Vulkan
         public ExternalMemoryHandleTypeFlags HandleType;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ImportMemoryFdInfo
     {
         public StructureType Type;
@@ -1609,6 +1727,7 @@ namespace Vulkan
         public int Fd;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MemoryFdProperties
     {
         public StructureType Type;
@@ -1616,6 +1735,7 @@ namespace Vulkan
         public uint MemoryTypeBits;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MemoryGetFdInfo
     {
         public StructureType Type;
@@ -1624,6 +1744,7 @@ namespace Vulkan
         public ExternalMemoryHandleTypeFlags HandleType;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct Win32KeyedMutexAcquireReleaseInfo
     {
         public StructureType Type;
@@ -1640,6 +1761,7 @@ namespace Vulkan
     //
     // KHR semaphore
     //
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PhysicalDeviceExternalSemaphoreInfo
     {
         public StructureType Type;
@@ -1647,6 +1769,7 @@ namespace Vulkan
         public ExternalSemaphoreHandleTypeFlags HandleType;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ExternalSemaphoreProperties
     {
         public StructureType Type;
@@ -1656,6 +1779,7 @@ namespace Vulkan
         public ExternalSemaphoreFeatureFlags ExternalSemaphoreFeatures;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ExportSemaphoreCreateInfo
     {
         public StructureType Type;
@@ -1663,6 +1787,7 @@ namespace Vulkan
         public ExternalSemaphoreHandleTypeFlags HandleTypes;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ImportSemaphoreWin32HandleInfo
     {
         public StructureType Type;
@@ -1674,6 +1799,7 @@ namespace Vulkan
         public char* Name;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ExportSemaphoreWin32HandleInfo
     {
         public StructureType Type;
@@ -1683,6 +1809,7 @@ namespace Vulkan
         public char* Name;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct D3D12FenceSubmitInfo
     {
         public StructureType Type;
@@ -1693,6 +1820,7 @@ namespace Vulkan
         public ulong* SignalSemaphoreValues;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct SemaphoreGetWin32HandleInfo
     {
         public StructureType Type;
@@ -1701,6 +1829,7 @@ namespace Vulkan
         public ExternalSemaphoreHandleTypeFlags HandleType;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ImportSemaphoreFdInfo
     {
         public StructureType Type;
@@ -1711,6 +1840,7 @@ namespace Vulkan
         public int Fd;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct SemaphoreGetFdInfo
     {
         public StructureType Type;
@@ -1722,6 +1852,7 @@ namespace Vulkan
     //
     // KHR misc
     //
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PhysicalDevicePushDescriptorProperties
     {
         public StructureType Type;
@@ -1729,6 +1860,7 @@ namespace Vulkan
         public uint MaxPushDescriptors;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PhysicalDevice16BitStorageFeatures
     {
         public StructureType Type;
@@ -1739,19 +1871,22 @@ namespace Vulkan
         public Bool32 StorageInputOutput16;
     }
 
-    public struct RectLayer
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct RectLayer
     {
         public Offset2D Offset;
         public Extent2D Extent;
         public uint Layer;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PresentRegion
     {
         public uint RectangleCount;
         public RectLayer* Rectangles;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PresentRegions
     {
         public StructureType Type;
@@ -1760,7 +1895,8 @@ namespace Vulkan
         public PresentRegion* Regions;
     }
 
-    public struct DescriptorUpdateTemplateEntry
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct DescriptorUpdateTemplateEntry
     {
         public uint DstBinding;
         public uint DstArrayElement;
@@ -1770,6 +1906,7 @@ namespace Vulkan
         public Size Stride;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DescriptorUpdateTemplateCreateInfo
     {
         public StructureType Type;
@@ -1784,6 +1921,7 @@ namespace Vulkan
         public uint Set;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct SharedPresentSurfaceCapabilities
     {
         public StructureType Type;
@@ -1794,6 +1932,7 @@ namespace Vulkan
     //
     // KHR fence
     //
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PhysicalDeviceExternalFenceInfo
     {
         public StructureType Type;
@@ -1801,6 +1940,7 @@ namespace Vulkan
         public ExternalFenceHandleTypeFlags HandleType;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ExternalFenceProperties
     {
         public StructureType Type;
@@ -1810,6 +1950,7 @@ namespace Vulkan
         public ExternalFenceFeatureFlags ExternalFenceFeatures;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ExportFenceCreateInfo
     {
         public StructureType Type;
@@ -1817,6 +1958,7 @@ namespace Vulkan
         public ExternalFenceHandleTypeFlags HandleTypes;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ImportFenceWin32HandleInfo
     {
         public StructureType Type;
@@ -1828,6 +1970,7 @@ namespace Vulkan
         public char* Name;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ExportFenceWin32HandleInfo
     {
         public StructureType Type;
@@ -1837,6 +1980,7 @@ namespace Vulkan
         public char* Name;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct FenceGetWin32HandleInfo
     {
         public StructureType Type;
@@ -1845,6 +1989,7 @@ namespace Vulkan
         public ExternalFenceHandleTypeFlags HandleType;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ImportFenceFdInfo
     {
         public StructureType Type;
@@ -1855,6 +2000,7 @@ namespace Vulkan
         public int Fd;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct FenceGetFdInfo
     {
         public StructureType Type;
@@ -1866,6 +2012,7 @@ namespace Vulkan
     //
     // KHR 2
     //
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PhysicalDeviceSurfaceInfo2
     {
         public StructureType Type;
@@ -1873,6 +2020,7 @@ namespace Vulkan
         public Surface Surface;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct SurfaceCapabilities2
     {
         public StructureType Type;
@@ -1880,6 +2028,7 @@ namespace Vulkan
         public SurfaceCapabilities SurfaceCapabilities;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct SurfaceFormat2
     {
         public StructureType Type;
@@ -1887,6 +2036,7 @@ namespace Vulkan
         public SurfaceFormat SurfaceFormat;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PhysicalDeviceVariablePointerFeatures
     {
         public StructureType Type;
@@ -1895,6 +2045,7 @@ namespace Vulkan
         public Bool32 VariablePointers;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MemoryDedicatedRequirements
     {
         public StructureType Type;
@@ -1903,6 +2054,7 @@ namespace Vulkan
         public Bool32 RequiresDedicatedAllocation;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MemoryDedicatedAllocateInfo
     {
         public StructureType Type;
@@ -1911,6 +2063,7 @@ namespace Vulkan
         public Buffer Buffer;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct BufferMemoryRequirementsInfo2
     {
         public StructureType Type;
@@ -1918,6 +2071,7 @@ namespace Vulkan
         public Buffer Buffer;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ImageMemoryRequirementsInfo2
     {
         public StructureType Type;
@@ -1925,6 +2079,7 @@ namespace Vulkan
         public Image Image;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ImageSparseMemoryRequirementsInfo2
     {
         public StructureType Type;
@@ -1932,6 +2087,7 @@ namespace Vulkan
         public Image Image;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MemoryRequirements2
     {
         public StructureType Type;
@@ -1939,6 +2095,7 @@ namespace Vulkan
         public MemoryRequirements MemoryRequirements;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct SparseImageMemoryRequirements2
     {
         public StructureType Type;
@@ -1949,18 +2106,20 @@ namespace Vulkan
     //
     // EXT
     //
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DebugReportCallbackCreateInfo
     {
         public StructureType Type;
         public void* Next;
         public DebugReportFlags Flags;
-        public DebugReportCallbackDelegate Callback;
+        public DebugReportCallback Callback;
         public void* UserData;
     }
 
     //
     // AMD
     //
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PipelineRasterizationStateRasterizationOrder
     {
         public StructureType Type;
@@ -1971,6 +2130,7 @@ namespace Vulkan
     //
     // EXT
     //
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DebugMarkerObjectNameInfo
     {
         public StructureType Type;
@@ -1980,6 +2140,7 @@ namespace Vulkan
         public Text ObjectName;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DebugMarkerObjectTagInfo
     {
         public StructureType Type;
@@ -1991,6 +2152,7 @@ namespace Vulkan
         public void* Tag;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DebugMarkerMarkerInfo
     {
         public StructureType Type;
@@ -2002,6 +2164,7 @@ namespace Vulkan
     //
     // AMD
     //
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DedicatedAllocationImageCreateInfo
     {
         public StructureType Type;
@@ -2009,6 +2172,7 @@ namespace Vulkan
         public Bool32 DedicatedAllocation;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DedicatedAllocationBufferCreateInfo
     {
         public StructureType Type;
@@ -2016,6 +2180,7 @@ namespace Vulkan
         public Bool32 DedicatedAllocation;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DedicatedAllocationMemoryAllocateInfo
     {
         public StructureType Type;
@@ -2024,6 +2189,7 @@ namespace Vulkan
         public Buffer Buffer;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct TextureLODGatherFormatProperties
     {
         public StructureType Type;
@@ -2034,6 +2200,7 @@ namespace Vulkan
     //
     // KHX
     //
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct RenderPassMultiviewCreateInfo
     {
         public StructureType Type;
@@ -2046,6 +2213,7 @@ namespace Vulkan
         public uint* CorrelationMasks;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PhysicalDeviceMultiviewFeatures
     {
         public StructureType Type;
@@ -2055,6 +2223,7 @@ namespace Vulkan
         public Bool32 MultiviewTessellationShader;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PhysicalDeviceMultiviewProperties
     {
         public StructureType Type;
@@ -2066,7 +2235,8 @@ namespace Vulkan
     //
     // NV
     //
-    public struct ExternalImageFormatPropertiesNV
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct ExternalImageFormatPropertiesNV
     {
         public ImageFormatProperties ImageFormatProperties;
         public ExternalMemoryFeatureFlagsNV ExternalMemoryFeatures;
@@ -2074,6 +2244,7 @@ namespace Vulkan
         public ExternalMemoryHandleTypeFlagsNV CompatibleHandleTypes;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ExternalMemoryImageCreateInfoNV
     {
         public StructureType Type;
@@ -2081,6 +2252,7 @@ namespace Vulkan
         public ExternalMemoryHandleTypeFlagsNV HandleTypes;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ExportMemoryAllocateInfoNV
     {
         public StructureType Type;
@@ -2088,6 +2260,7 @@ namespace Vulkan
         public ExternalMemoryHandleTypeFlagsNV HandleTypes;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ImportMemoryWin32HandleInfoNV
     {
         public StructureType Type;
@@ -2096,6 +2269,7 @@ namespace Vulkan
         public IntPtr Handle;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ExportMemoryWin32HandleInfoNV
     {
         public StructureType Type;
@@ -2104,6 +2278,7 @@ namespace Vulkan
         public IntPtr DwAccess;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct Win32KeyedMutexAcquireReleaseInfoNV
     {
         public StructureType Type;
@@ -2120,6 +2295,7 @@ namespace Vulkan
     //
     // KHX
     //
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MemoryAllocateFlagsInfo
     {
         public StructureType Type;
@@ -2128,6 +2304,7 @@ namespace Vulkan
         public uint DeviceMask;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct BindBufferMemoryInfo
     {
         public StructureType Type;
@@ -2139,6 +2316,7 @@ namespace Vulkan
         public uint* DeviceIndices;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct BindImageMemoryInfo
     {
         public StructureType Type;
@@ -2152,6 +2330,7 @@ namespace Vulkan
         public Rect2D* SFRRects;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DeviceGroupRenderPassBeginInfo
     {
         public StructureType Type;
@@ -2161,6 +2340,7 @@ namespace Vulkan
         public Rect2D* DeviceRenderAreas;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DeviceGroupCommandBufferBeginInfo
     {
         public StructureType Type;
@@ -2168,6 +2348,7 @@ namespace Vulkan
         public uint DeviceMask;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DeviceGroupSubmitInfo
     {
         public StructureType Type;
@@ -2180,6 +2361,7 @@ namespace Vulkan
         public uint* SignalSemaphoreDeviceIndices;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DeviceGroupBindSparseInfo
     {
         public StructureType Type;
@@ -2188,6 +2370,7 @@ namespace Vulkan
         public uint MemoryDeviceIndex;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DeviceGroupPresentCapabilities
     {
         public StructureType Type;
@@ -2196,6 +2379,7 @@ namespace Vulkan
         public DeviceGroupPresentModeFlags Modes;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ImageSwapchainCreateInfo
     {
         public StructureType Type;
@@ -2203,6 +2387,7 @@ namespace Vulkan
         public Swapchain Swapchain;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct BindImageMemorySwapchainInfo
     {
         public StructureType Type;
@@ -2211,6 +2396,7 @@ namespace Vulkan
         public uint ImageIndex;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct AcquireNextImageInfo
     {
         public StructureType Type;
@@ -2222,6 +2408,7 @@ namespace Vulkan
         public uint DeviceMask;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DeviceGroupPresentInfo
     {
         public StructureType Type;
@@ -2231,6 +2418,7 @@ namespace Vulkan
         public DeviceGroupPresentModeFlags Mode;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DeviceGroupSwapchainCreateInfo
     {
         public StructureType Type;
@@ -2241,6 +2429,7 @@ namespace Vulkan
     //
     // EXT
     //
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ValidationFlags
     {
         public StructureType Type;
@@ -2252,6 +2441,7 @@ namespace Vulkan
     //
     // NN
     //
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ViSurfaceCreateInfo
     {
         public StructureType Type;
@@ -2263,6 +2453,7 @@ namespace Vulkan
     //
     // KHX
     //
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PhysicalDeviceGroupProperties
     {
         public StructureType Type;
@@ -2275,6 +2466,7 @@ namespace Vulkan
         public Bool32 SubsetAllocation;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DeviceGroupDeviceCreateInfo
     {
         public StructureType Type;
@@ -2286,6 +2478,7 @@ namespace Vulkan
     //
     // NVX
     //
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DeviceGeneratedCommandsFeatures
     {
         public StructureType Type;
@@ -2293,6 +2486,7 @@ namespace Vulkan
         public Bool32 ComputeBindingPointSupport;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DeviceGeneratedCommandsLimits
     {
         public StructureType Type;
@@ -2304,6 +2498,7 @@ namespace Vulkan
         public uint MinCommandsTokenBufferOffsetAlignment;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct IndirectCommandsToken
     {
         public IndirectCommandsTokenType TokenType;
@@ -2311,6 +2506,7 @@ namespace Vulkan
         public DeviceSize Offset;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct IndirectCommandsLayoutToken
     {
         public IndirectCommandsTokenType TokenType;
@@ -2319,6 +2515,7 @@ namespace Vulkan
         public uint Divisor;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct IndirectCommandsLayoutCreateInfo
     {
         public StructureType Type;
@@ -2329,6 +2526,7 @@ namespace Vulkan
         public IndirectCommandsLayoutToken* Tokens;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct CmdProcessCommandsInfo
     {
         public StructureType Type;
@@ -2345,6 +2543,7 @@ namespace Vulkan
         public DeviceSize SequencesIndexOffset;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct CmdReserveSpaceForCommandsInfo
     {
         public StructureType Type;
@@ -2354,6 +2553,7 @@ namespace Vulkan
         public uint MaxSequencesCount;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ObjectTableCreateInfo
     {
         public StructureType Type;
@@ -2369,12 +2569,14 @@ namespace Vulkan
         public uint MaxPipelineLayouts;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ObjectTableEntry
     {
         public ObjectEntryType Type;
         public ObjectEntryUsageFlags Flags;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ObjectTablePipelineEntry
     {
         public ObjectEntryType Type;
@@ -2382,6 +2584,7 @@ namespace Vulkan
         public Pipeline Pipeline;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ObjectTableDescriptorSetEntry
     {
         public ObjectEntryType Type;
@@ -2390,6 +2593,7 @@ namespace Vulkan
         public DescriptorSet DescriptorSet;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ObjectTableVertexBufferEntry
     {
         public ObjectEntryType Type;
@@ -2397,6 +2601,7 @@ namespace Vulkan
         public Buffer Buffer;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ObjectTableIndexBufferEntry
     {
         public ObjectEntryType Type;
@@ -2405,6 +2610,7 @@ namespace Vulkan
         public IndexType IndexType;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ObjectTablePushantEntry
     {
         public ObjectEntryType Type;
@@ -2416,12 +2622,14 @@ namespace Vulkan
     //
     // NV
     //
-    public struct ViewportWScaling
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct ViewportWScaling
     {
         public float XCoeff;
         public float YCoeff;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PipelineViewportWScalingStateCreateInfo
     {
         public StructureType Type;
@@ -2434,6 +2642,7 @@ namespace Vulkan
     //
     // EXT
     //
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct SurfaceCapabilities2EXT
     {
         public StructureType Type;
@@ -2451,6 +2660,7 @@ namespace Vulkan
         public SurfaceCounterFlags SupportedSurfaceCounters;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DisplayPowerInfo
     {
         public StructureType Type;
@@ -2458,13 +2668,15 @@ namespace Vulkan
         public DisplayPowerState PowerState;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DeviceEventInfo
     {
         public StructureType Type;
         public void* Next;
         public DeviceEventType DeviceEvent;
     }
-    
+
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct DisplayEventInfo
     {
         public StructureType Type;
@@ -2472,6 +2684,7 @@ namespace Vulkan
         public DisplayEventType DisplayEvent;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct SwapchainCounterCreateInfo
     {
         public StructureType Type;
@@ -2482,12 +2695,14 @@ namespace Vulkan
     //
     // GOOGLE
     //
-    public struct RefreshCycleDuration
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct RefreshCycleDuration
     {
         public ulong RefreshDuration;
     }
 
-    public struct PastPresentationTiming
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct PastPresentationTiming
     {
         public uint PresentID;
         public ulong DesiredPrensetTime;
@@ -2496,12 +2711,14 @@ namespace Vulkan
         public ulong PresentMargin;
     }
 
-    public struct PresentTime
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct PresentTime
     {
         public uint PresentID;
         public ulong DesiredPresentTime;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PresentTimesInfo
     {
         public StructureType Type;
@@ -2513,6 +2730,7 @@ namespace Vulkan
     //
     // NVX
     //
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PhysicalDeviceMultiviewPerViewAttributesProperties
     {
         public StructureType Type;
@@ -2523,7 +2741,8 @@ namespace Vulkan
     //
     // NV
     //
-    public struct ViewportSwizzle
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct ViewportSwizzle
     {
         public ViewportCoordinateSwizzle X;
         public ViewportCoordinateSwizzle Y;
@@ -2531,6 +2750,7 @@ namespace Vulkan
         public ViewportCoordinateSwizzle W;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PipelineViewportSwizzleStateCreateInfo
     {
         public StructureType Type;
@@ -2543,6 +2763,7 @@ namespace Vulkan
     //
     // EXT
     //
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PhysicalDeviceDiscardRectangleProperties
     {
         public StructureType Type;
@@ -2550,6 +2771,7 @@ namespace Vulkan
         public uint MaxDiscardRectangles;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PipelineDiscardRectangleStateCreateInfo
     {
         public StructureType Type;
@@ -2560,12 +2782,14 @@ namespace Vulkan
         public Rect2D* DiscardRectangles;
     }
 
-    public struct XYColor
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct XYColor
     {
         public float X;
         public float Y;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct HdrMetadata
     {
         public StructureType Type;
@@ -2583,6 +2807,7 @@ namespace Vulkan
     //
     // MVK
     //
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct IOSSurfaceCreateInfo
     {
         public StructureType Type;
@@ -2591,6 +2816,7 @@ namespace Vulkan
         public void* View;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct MacOSSurfaceCreateInfo
     {
         public StructureType Type;
@@ -2602,6 +2828,7 @@ namespace Vulkan
     //
     // EXT
     //
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct SamplerReductionModeCreateInfo
     {
         public StructureType Type;
@@ -2609,6 +2836,7 @@ namespace Vulkan
         public SamplerReductionMode ReductionMode;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PhysicalDeviceSamplerFilterMinmaxProperties
     {
         public StructureType Type;
@@ -2617,6 +2845,7 @@ namespace Vulkan
         public Bool32 FilterMinmaxImageComponentMapping;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PhysicalDeviceBlendOperationAdvancedFeatures
     {
         public StructureType Type;
@@ -2624,6 +2853,7 @@ namespace Vulkan
         public Bool32 AdvancedBlendCoherentOperations;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PhysicalDeviceBlendOperationAdvancedProperties
     {
         public StructureType Type;
@@ -2636,6 +2866,7 @@ namespace Vulkan
         public Bool32 AdvancedBlendAllOperations;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PipelineColorBlendAdvancedStateCreateInfo
     {
         public StructureType Type;
@@ -2648,6 +2879,7 @@ namespace Vulkan
     //
     // NV
     //
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PipelineCoverageToColorStateCreateInfo
     {
         public StructureType Type;
@@ -2657,6 +2889,7 @@ namespace Vulkan
         public uint CoverageToColorLocation;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public unsafe struct PipelineCoverageModulationStateCreateInfo
     {
         public StructureType Type;

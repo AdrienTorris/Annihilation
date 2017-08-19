@@ -123,16 +123,16 @@ namespace Vulkan
 
     public struct SampleMask : IEquatable<SampleMask>
     {
-        private readonly uint value;
+        private uint _value;
 
         public SampleMask(uint value)
         {
-            this.value = value;
+            this._value = value;
         }
 
         public bool Equals(SampleMask other)
         {
-            return value == other.value;
+            return _value == other._value;
         }
 
         public override bool Equals(object obj)
@@ -144,7 +144,7 @@ namespace Vulkan
 
         public override int GetHashCode()
         {
-            return (int)value;
+            return (int)_value;
         }
 
         public static bool operator ==(SampleMask left, SampleMask right)
@@ -159,17 +159,43 @@ namespace Vulkan
 
         public override string ToString()
         {
-            return value.ToString();
+            return _value.ToString();
         }
 
         public static implicit operator uint(SampleMask SampleMask)
         {
-            return SampleMask.value;
+            return SampleMask._value;
         }
 
         public static implicit operator SampleMask(uint value)
         {
             return new SampleMask(value);
+        }
+    }
+
+    public struct Size
+    {
+        public ulong Handle;
+    }
+    
+    public struct Version
+    {
+        private uint _value;
+
+        public Version(uint major, uint Minor, uint patch)
+        {
+            _value = major << 22 | Minor << 12 | patch;
+        }
+
+        public uint Major => _value >> 22;
+
+        public uint Minor => (_value >> 12) & 0x3ff;
+
+        public uint Patch => (_value >> 22) & 0xfff;
+
+        public static implicit operator uint(Version version)
+        {
+            return version._value;
         }
     }
 }
