@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-using Vulkan;
+using CoreVulkan;
 
 namespace Engine.Rendering
 {

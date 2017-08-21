@@ -13,6 +13,7 @@
     public struct RendererSettings
     {
         //public VulkanSettings VulkanSettings;
+        public bool DebugReport;
         public int Width;
         public int Height;
         public bool UseDepthBuffer;

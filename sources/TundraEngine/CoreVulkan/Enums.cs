@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Vulkan
+namespace CoreVulkan
 {
     public enum PipelineCacheHeaderVersion
     {
@@ -798,7 +798,7 @@ namespace Vulkan
         IndirectCommandsLayout = 1000086001
     }
 
-    [Flags] public enum InstanceCreateFlags : uint { }
+    [Flags] public enum InstanceCreateFlags : uint { None = 0 }
 
     [Flags]
     public enum FormatFeatureFlags : uint

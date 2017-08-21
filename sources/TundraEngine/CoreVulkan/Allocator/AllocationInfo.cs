@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Vulkan.Allocator
+namespace CoreVulkan.Allocator
 {
     /// <summary>
     /// Parameters of <see cref="Allocation"/> objects, that can be retrieved using function <see cref="Allocator.GetAllocationInfo"/>.

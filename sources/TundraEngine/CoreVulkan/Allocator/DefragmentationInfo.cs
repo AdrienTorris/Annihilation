@@ -1,4 +1,4 @@
-﻿namespace Vulkan.Allocator
+﻿namespace CoreVulkan.Allocator
 {
     /// <summary>
     /// Optional configuration parameters to be passed to function <see cref="Allocator.Defragment"/>.

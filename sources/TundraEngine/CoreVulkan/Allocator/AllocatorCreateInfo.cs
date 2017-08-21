@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Vulkan.Allocator
+namespace CoreVulkan.Allocator
 {
     /// <summary>
     /// Flags for created Allocator

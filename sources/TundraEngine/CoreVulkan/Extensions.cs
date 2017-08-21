@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace Vulkan
+namespace CoreVulkan
 {
     public static class ResultExtensions
     {

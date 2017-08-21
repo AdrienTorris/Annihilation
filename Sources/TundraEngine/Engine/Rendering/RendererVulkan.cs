@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-using Vulkan;
-using static Vulkan.Vulkan;
+using CoreVulkan;
+using static CoreVulkan.Vulkan;
 
 namespace Engine.Rendering
 {

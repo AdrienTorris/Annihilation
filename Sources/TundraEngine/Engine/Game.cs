@@ -2,38 +2,23 @@
 using System.Threading.Tasks;
 
 using Engine.Input;
-using Engine.Windowing;
 using Engine.Rendering;
-using Engine.IMGUI;
 
 namespace Engine
 {
-    /// <summary>
-    /// The game manages all systems (Input, Graphics, etc.) and worlds.
-    /// </summary>
     public class Game
     {
-        /// <summary>
-        /// When set to true, the engine will exit the main loop and begin shutdown.
-        /// </summary>
         private bool _quitRequested = false;
-
-        /// <summary>
-        /// The startup settings of the game.
-        /// </summary>
-        public GameSettings Settings { get; private set; }
-        /// <summary>
-        /// The command-line arguments that were supplied to the game when it was executed, if any.
-        /// </summary>
-        public string[] Args { get; private set; }
         
+        public string[] Args { get; private set; }
+
+        public static GameSettings Settings;
+        public static WindowType WindowType;
+
         public IWindow Window { get; private set; }
         public IRenderer Renderer { get; private set; }
         public InputSystem InputSystem { get; private set; }
-        public IDebugUI DebugUI { get; private set; }
-
-        public static Game Instance { get; private set; }
-
+        
         public Game(GameSettings settings, Action initialize, Action<double> update, Action shutdown)
         {
             Instance = this;

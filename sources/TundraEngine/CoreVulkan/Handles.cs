@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Vulkan.Handle
+namespace CoreVulkan.Handle
 {
     public struct Instance : IEquatable<Instance>
     {

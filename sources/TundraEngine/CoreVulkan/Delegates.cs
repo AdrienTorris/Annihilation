@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-using Vulkan.Handle;
+using CoreVulkan.Handle;
 
-using Buffer = Vulkan.Handle.Buffer;
+using Buffer = CoreVulkan.Handle.Buffer;
 
-namespace Vulkan
+namespace CoreVulkan
 {
     //
     // Function pointers

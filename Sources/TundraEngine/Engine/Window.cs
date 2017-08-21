@@ -1,4 +1,4 @@
-﻿using Vulkan;
+﻿using CoreVulkan;
 using SDL2;
 using Engine.Rendering;
 using static SDL2.SDL;
@@ -10,37 +10,7 @@ namespace Engine
         // SDL
         public static SDL.Window SDLWindow;
         public static SysWMInfo SysWMInfo;
-
-        // Vulkan
-        private static Instance _instance;
-        private static PhysicalDevice _physicalDevice;
-        private static PhysicalDeviceFeatures _physicalDeviceFeatures;
-        private static Vulkan.Surface _surface;
-        private static SurfaceCapabilities _surfaceCapabilities;
-        private static Swapchain _swapchain;
-        private static uint _numSwapChainImages;
-        private static uint _currentCommandBuffer;
-        private static CommandPool _commandPool;
-        private static CommandPool _transientCommandPool;
-        private static CommandBuffer[] _commandBuffers;
-        private static Fence[] _commandBufferFences;
-        private static bool[] _commandBufferSubmitted;
-        private static Framebuffer[] _mainFramebuffers;
-        private static Semaphore[] _drawCompleteSemaphores;
-        private static Framebuffer[] _uiFramebuffers;
-        private static Image[] _swapchainImages;
-        private static ImageView[] _swapchainImageViews;
-        private static Semaphore[] _imageAcquiredSemaphores;
-        private static DeviceMemory[] _colorBuffersMemory;
-        private static ImageView[] _colorBuffersView;
-        private static Image _msaaColorBuffer;
-        private static DeviceMemory _msaaColorBufferMemory;
-        private static ImageView _msaaColorBufferView;
-        private static DescriptorSet _postprocessDescriptorSet;
-        private static Image _depthBuffer;
-        private static DeviceMemory _depthBufferMemory;
-        private static ImageView _depthBufferView;
-
+        
         public static void Initialize(ref WindowSettings settings)
         {
             int previousDisplay = -1;

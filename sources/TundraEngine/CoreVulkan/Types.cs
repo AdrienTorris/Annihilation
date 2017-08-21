@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace Vulkan
+namespace CoreVulkan
 {
     public class VulkanException : Exception
     {
@@ -215,6 +215,8 @@ namespace Vulkan
     {
         public byte* Handle;
 
+        public static Text Null = new Text();
+
         public Text(byte* handle)
         {
             Handle = handle;
@@ -254,6 +256,26 @@ namespace Vulkan
         public static implicit operator Text(string text)
         {
             return new Text(text);
+        }
+    }
+
+    public unsafe struct ExtensionName
+    {
+        public fixed byte Name[Constants.MaxExtensionNameSize];
+
+        public bool Compare(Text text)
+        {
+            fixed (byte* pointer1 = Name)
+            {
+                for (int i = 0; i < Constants.MaxExtensionNameSize; ++i)
+                {
+                    if (*(pointer1 + i) != *(text.Handle + i))
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
     }
 }

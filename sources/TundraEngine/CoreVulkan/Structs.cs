@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-using Vulkan.Handle;
-using Buffer = Vulkan.Handle.Buffer;
+using CoreVulkan.Handle;
+using Buffer = CoreVulkan.Handle.Buffer;
 
-namespace Vulkan
+namespace CoreVulkan
 {
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ApplicationInfo
@@ -16,6 +16,17 @@ namespace Vulkan
         public Text EngineName;
         public Version EngineVersion;
         public Version ApiVersion;
+
+        public ApplicationInfo(Text applicationName, Version applicationVersion, Text engineName, Version engineVersion, Version apiVersion)
+        {
+            Type = StructureType.ApplicationInfo;
+            Next = null;
+            ApplicationName = applicationName;
+            ApplicationVersion = applicationVersion;
+            EngineName = engineName;
+            EngineVersion = engineVersion;
+            ApiVersion = apiVersion;
+        }
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -29,6 +40,20 @@ namespace Vulkan
         public Text* EnabledLayerNames;
         public uint EnabledExtensionCount;
         public Text* EnabledExtensionNames;
+        
+        public InstanceCreateInfo(ApplicationInfo* applicationInfo, int extensionCount, Text* extensionNames) : this(applicationInfo, 0, null, extensionCount, extensionNames) { }
+
+        public InstanceCreateInfo(ApplicationInfo* applicationInfo, int layerCount, Text* layerNames, int extensionCount, Text* extensionNames)
+        {
+            Type = StructureType.InstanceCreateInfo;
+            Next = null;
+            Flags = InstanceCreateFlags.None;
+            ApplicationInfo = applicationInfo;
+            EnabledLayerCount = (uint)layerCount;
+            EnabledLayerNames = layerNames;
+            EnabledExtensionCount = (uint)extensionCount;
+            EnabledExtensionNames = extensionNames;
+        }
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -40,6 +65,8 @@ namespace Vulkan
         public FreeFunction Free;
         public InternalAllocationNotification InternalAllocation;
         public InternalFreeNotification InternalFree;
+
+        public static AllocationCallbacks Null = new AllocationCallbacks();
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -257,8 +284,8 @@ namespace Vulkan
         public uint VendorId;
         public uint DeviceId;
         public PhysicalDeviceType DeviceType;
-        public fixed byte DeviceName[(int)Vulkan.MaxPhysicalDeviceNameSize];
-        public fixed byte PipelineCacheUuid[(int)Vulkan.UuidSize];
+        public fixed byte DeviceName[(int)Constants.MaxPhysicalDeviceNameSize];
+        public fixed byte PipelineCacheUuid[(int)Constants.UUIDSize];
         public PhysicalDeviceLimits Limits;
         public PhysicalDeviceSparseProperties SparseProperties;
     }
@@ -330,17 +357,17 @@ namespace Vulkan
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct ExtensionProperties
     {
-        public fixed byte ExtensionName[(int)Vulkan.MaxExtensionNameSize];
+        public ExtensionName ExtensionName;
         public Version SpecVersion;
     }
 
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct LayerProperties
     {
-        public fixed byte LayerName[(int)Vulkan.MaxExtensionNameSize];
+        public ExtensionName LayerName;
         public Version SpecVersion;
         public Version ImplementationVersion;
-        public fixed byte Description[(int)Vulkan.MaxDescriptionSize];
+        public fixed byte Description[Constants.MaxDescriptionSize];
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -1650,9 +1677,9 @@ namespace Vulkan
     {
         public StructureType Type;
         public void* Next;
-        public fixed byte DeivceUUID[(int)Vulkan.UuidSize];
-        public fixed byte DriverUUID[(int)Vulkan.UuidSize];
-        public fixed byte DeviceLUID[Vulkan.LuidSize];
+        public fixed byte DeivceUUID[(int)Constants.UUIDSize];
+        public fixed byte DriverUUID[(int)Constants.UUIDSize];
+        public fixed byte DeviceLUID[Constants.LUIDSize];
         public uint DeviceNodeMask;
         public Bool32 DeviceLUIDValid;
     }
@@ -2375,7 +2402,7 @@ namespace Vulkan
     {
         public StructureType Type;
         public void* Next;
-        public fixed uint PresentMask[Vulkan.MaxDeviceGroupSize];
+        public fixed uint PresentMask[Constants.MaxDeviceGroupSize];
         public DeviceGroupPresentModeFlags Modes;
     }
 

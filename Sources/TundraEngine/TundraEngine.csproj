@@ -36,8 +36,11 @@
 
   <ItemGroup>
     <Compile Remove="obj\**" />
+    <Compile Remove="Resources\**" />
     <EmbeddedResource Remove="obj\**" />
+    <EmbeddedResource Remove="Resources\**" />
     <None Remove="obj\**" />
+    <None Remove="Resources\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,10 +50,6 @@
     <None Update="NativeLibraries\VulkanMemoryAllocator.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Resources\" />
   </ItemGroup>
 
 </Project>
