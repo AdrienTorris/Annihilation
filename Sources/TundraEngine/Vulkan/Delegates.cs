@@ -41,15 +41,15 @@ namespace Vulkan
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     public unsafe delegate void GetPhysicalDeviceMemoryProperties(PhysicalDevice physicalDevice, out PhysicalDeviceMemoryProperties memoryProperties);
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    public unsafe delegate VoidFunction GetInstanceProcAddr(Instance instance, Text name);
+    public unsafe delegate IntPtr GetInstanceProcAddr(Instance instance, Text name);
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    public unsafe delegate VoidFunction GetDeviceProcAddr(Device device, Text name);
+    public unsafe delegate IntPtr GetDeviceProcAddr(Device device, Text name);
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     public unsafe delegate Result CreateDevice(PhysicalDevice physicalDevice, ref DeviceCreateInfo createInfo, ref AllocationCallbacks allocator, out Device device);
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     public unsafe delegate void DestroyDevice(Device device, ref AllocationCallbacks allocator);
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    public unsafe delegate Result EnumerateInstanceensionProperties(Text layerName, out uint propertyCount, ExtensionProperties[] properties);
+    public unsafe delegate Result EnumerateInstanceExtensionProperties(Text layerName, out uint propertyCount, ExtensionProperties[] properties);
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     public unsafe delegate Result EnumerateDeviceensionProperties(PhysicalDevice physicalDevice, Text layerName, out uint propertyCount, ExtensionProperties[] properties);
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]

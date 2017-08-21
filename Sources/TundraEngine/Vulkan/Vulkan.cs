@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Text;
+using System.IO;
 using System.Security;
 using System.Runtime.InteropServices;
 
@@ -10,45 +10,121 @@ namespace Vulkan
     [SuppressUnmanagedCodeSecurity]
     public static class Vulkan
     {
-        public const string LibraryName = "vulkan-1.dll";
+        private static IntPtr _library;
 
-        // Global functions
-        public static readonly EnumerateInstanceExtensionPropertiesDelegate EnumerateInstanceExtensionProperties = LoadGlobalFunction<EnumerateInstanceExtensionPropertiesDelegate>();
-        public static readonly EnumerateInstanceLayerPropertiesDelegate EnumerateInstanceLayerProperties = LoadGlobalFunction<EnumerateInstanceLayerPropertiesDelegate>();
-        public static readonly CreateInstanceDelegate CreateInstance = LoadGlobalFunction<CreateInstanceDelegate>();
-
-        // Instance functions
-        public static readonly DestroyInstanceDelegate DestroyInstance = LoadInstanceFunction<DestroyInstanceDelegate>(Windowing.Window);
-        
-        public unsafe static T LoadGlobalFunction<T>()
+        static Vulkan()
         {
-            IntPtr function = IntPtr.Zero;
-            string name = typeof(T).Name;
-            name = ("vk" + name).Replace("Delegate", string.Empty);
-            byte[] nameBytes = Encoding.UTF8.GetBytes(name);
-            fixed (byte* namePtr = &nameBytes[0])
+            _library = LoadLibrary();
+        }
+
+        //
+        // Kernel32
+        //
+        [DllImport("kernel32")]
+        private static extern IntPtr LoadLibrary(string fileName);
+
+        [DllImport("kernel32")]
+        private static extern IntPtr GetProcAddress(IntPtr module, string procName);
+
+        [DllImport("kernel32")]
+        private static extern int FreeLibrary(IntPtr module);
+
+        //
+        // Libdl
+        //
+        [DllImport("libdl.so")]
+        private static extern IntPtr dlopen(string fileName, int flags);
+
+        [DllImport("libdl.so")]
+        private static extern IntPtr dlsym(IntPtr handle, string name);
+
+        [DllImport("libdl.so")]
+        private static extern int dlclose(IntPtr handle);
+
+        [DllImport("libdl.so")]
+        private static extern string dlerror();
+
+        private const int RTLD_NOW = 0x002;
+
+        //
+        // Global functions
+        //
+        public static readonly GetInstanceProcAddr GetInstanceProcAddr = LoadLoadingFunction();
+        public static readonly EnumerateInstanceExtensionProperties EnumerateInstanceExtensionProperties = LoadGlobalFunction<EnumerateInstanceExtensionProperties>();
+        public static readonly EnumerateInstanceLayerProperties EnumerateInstanceLayerProperties = LoadGlobalFunction<EnumerateInstanceLayerProperties>();
+        public static readonly CreateInstance CreateInstance = LoadGlobalFunction<CreateInstance>();
+
+        //
+        // Instance functions
+        //
+        public static readonly DestroyInstance DestroyInstance = LoadInstanceFunction<DestroyInstance>();
+
+        private static IntPtr LoadLibrary()
+        {
+            IntPtr handle;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                function = GetInstanceProcAddr(IntPtr.Zero, namePtr);
-                if (function == IntPtr.Zero)
-                    throw new NullReferenceException();
+                handle = LoadLibrary("vulkan-1.dll");
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                dlerror();
+                handle = dlopen("libvulkan.so.1", RTLD_NOW);
+                if (handle == IntPtr.Zero && !Path.IsPathRooted("libvulkan.so.1"))
+                {
+                    string localPath = Path.Combine(AppContext.BaseDirectory, "libvulkan.so.1");
+                    handle = dlopen(localPath, RTLD_NOW);
+                }
+            }
+            else
+            {
+                throw new PlatformNotSupportedException();
             }
 
+            if (handle == IntPtr.Zero)
+            {
+                throw new InvalidOperationException("Could not load Vulkan library");
+            }
+            return handle;
+        }
+
+        private unsafe static GetInstanceProcAddr LoadLoadingFunction()
+        {
+            IntPtr handle = IntPtr.Zero;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                handle = GetProcAddress(_library, "PFN_vkGetInstanceProcAddr");
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                handle = dlsym(_library, "PFN_vkGetInstanceProcAddr");
+            }
+            if (handle == IntPtr.Zero)
+            {
+                throw new InvalidOperationException("Could not load Vulkan loading function");
+            }
+            return Marshal.GetDelegateForFunctionPointer<GetInstanceProcAddr>(handle);
+        }
+
+        public unsafe static T LoadGlobalFunction<T>()
+        {
+            string name = "vk" + typeof(T).Name;
+            IntPtr function = GetInstanceProcAddr(Instance.Null, name);
+            if (function == IntPtr.Zero)
+            {
+                throw new NullReferenceException();
+            }
             return Marshal.GetDelegateForFunctionPointer<T>(function);
         }
 
         public unsafe static T LoadInstanceFunction<T>(Instance instance)
         {
-            IntPtr function = IntPtr.Zero;
-            string name = typeof(T).Name;
-            name = ("vk" + name).Replace("Delegate", string.Empty);
-            byte[] nameBytes = Encoding.UTF8.GetBytes(name);
-            fixed (byte* namePtr = &nameBytes[0])
+            string name = "vk" + typeof(T).Name;
+            IntPtr function = GetInstanceProcAddr(instance, name);
+            if (function == IntPtr.Zero)
             {
-                function = GetInstanceProcAddr(instance, namePtr);
-                if (function == IntPtr.Zero)
-                    throw new NullReferenceException();
+                throw new NullReferenceException();
             }
-
             return Marshal.GetDelegateForFunctionPointer<T>(function);
         }
     }
