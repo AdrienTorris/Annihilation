@@ -13,7 +13,7 @@ namespace Engine.Rendering
         public bool EnableValidation;
     }
 
-    public unsafe class RendererVulkan : IRenderer
+    public unsafe class RendererVulkan
     {
         private Instance instance;
 

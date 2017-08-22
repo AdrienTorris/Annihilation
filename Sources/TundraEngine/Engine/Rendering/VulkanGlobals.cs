@@ -254,7 +254,7 @@ namespace Engine.Rendering
                 Game.WindowType == WindowType.Switch ? ViSurfaceExtensionName :
                 throw new PlatformNotSupportedException(),
 #if DEBUG
-                Game.Settings.RendererSettings.DebugReport ? DebugReportExtensionName : string.Empty
+                Game.Settings.RendererSettings.EnableDebugReport ? DebugReportExtensionName : string.Empty
 #endif
             };
             EnumerateInstanceExtensionProperties(Text.Null, out uint extensionCount, null).CheckError();
@@ -313,7 +313,10 @@ namespace Engine.Rendering
                 for (int i = 0; i < queueFamilies.Length; ++i)
                 {
                     if (queueFamilies[i].QueueCount > 0 &&
-                        queueFamilies[i].QueueFlags & QueueFlags.Graphics)
+                        (queueFamilies[i].QueueFlags & QueueFlags.Graphics) != 0)
+                    {
+
+                    }
                 }
             }
         }

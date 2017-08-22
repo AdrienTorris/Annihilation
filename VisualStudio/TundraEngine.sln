@@ -1,13 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26724.1
+VisualStudioVersion = 15.0.26730.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TundraEngine", "..\Sources\TundraEngine\TundraEngine.csproj", "{AA44B57B-B68E-4F83-ACED-16EEA2E8983F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VulkanMemoryAllocator", "VulkanMemoryAllocator.vcxproj", "{7A58E172-47E9-4E9B-AA1A-A3374DB76BB9}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TundraTest", "TundraTest\TundraTest.csproj", "{E668183E-96DF-41DA-BC0F-728BE44EF71F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +21,6 @@ Global
 		{7A58E172-47E9-4E9B-AA1A-A3374DB76BB9}.Debug|x64.Build.0 = Release|x64
 		{7A58E172-47E9-4E9B-AA1A-A3374DB76BB9}.Release|x64.ActiveCfg = Release|x64
 		{7A58E172-47E9-4E9B-AA1A-A3374DB76BB9}.Release|x64.Build.0 = Release|x64
-		{E668183E-96DF-41DA-BC0F-728BE44EF71F}.Debug|x64.ActiveCfg = Debug|x64
-		{E668183E-96DF-41DA-BC0F-728BE44EF71F}.Debug|x64.Build.0 = Debug|x64
-		{E668183E-96DF-41DA-BC0F-728BE44EF71F}.Release|x64.ActiveCfg = Release|x64
-		{E668183E-96DF-41DA-BC0F-728BE44EF71F}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
