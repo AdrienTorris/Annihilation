@@ -27,7 +27,7 @@ namespace CoreVulkan
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     public unsafe delegate void DestroyInstance(Instance instance, ref AllocationCallbacks allocator);
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    public unsafe delegate Result EnumeratePhysicalDevices(Instance instance, ref AllocationCallbacks allocator);
+    public unsafe delegate Result EnumeratePhysicalDevices(Instance instance, out uint physicalDeviceCount, PhysicalDevice[] physicalDevices);
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     public unsafe delegate void GetPhysicalDeviceFeatures(PhysicalDevice physicalDevice, out PhysicalDeviceFeatures features);
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
@@ -51,7 +51,7 @@ namespace CoreVulkan
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     public unsafe delegate Result EnumerateInstanceExtensionProperties(Text layerName, out uint propertyCount, ExtensionProperties[] properties);
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    public unsafe delegate Result EnumerateDeviceensionProperties(PhysicalDevice physicalDevice, Text layerName, out uint propertyCount, ExtensionProperties[] properties);
+    public unsafe delegate Result EnumerateDeviceExtensionProperties(PhysicalDevice physicalDevice, Text layerName, out uint propertyCount, ExtensionProperties[] properties);
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     public unsafe delegate Result EnumerateInstanceLayerProperties(out uint propertyCount, LayerProperties[] properties);
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
@@ -291,7 +291,7 @@ namespace CoreVulkan
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     public unsafe delegate void CmdBeginRenderPass(CommandBuffer commandBuffer, ref RenderPassBeginInfo renderPassBegin, SubpassContents contents);
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    public unsafe delegate void CmdNSubpass(CommandBuffer commandBuffer, SubpassContents contents);
+    public unsafe delegate void CmdNextSubpass(CommandBuffer commandBuffer, SubpassContents contents);
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     public unsafe delegate void CmdEndRenderPass(CommandBuffer commandBuffer);
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
@@ -317,7 +317,7 @@ namespace CoreVulkan
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     public unsafe delegate Result GetSwapchainImages(Device device, Swapchain swapchain, out uint swapchainImageCount, Image[] swapchainImages);
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    public unsafe delegate Result AcquireNImage(Device device, Swapchain swapchain, ulong timeout, Semaphore semaphore, Fence fence, out uint imageIndex);
+    public unsafe delegate Result AcquireNextImage(Device device, Swapchain swapchain, ulong timeout, Semaphore semaphore, Fence fence, out uint imageIndex);
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     public unsafe delegate Result QueuePresent(Queue queue, ref PresentInfo presentInfo);
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]

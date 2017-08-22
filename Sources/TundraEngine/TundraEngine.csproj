@@ -24,6 +24,7 @@
     <BaseIntermediateOutputPath>..\..\Temp\</BaseIntermediateOutputPath>
     <BaseOutputPath>..\..\Build\</BaseOutputPath>
     <DocumentationFile></DocumentationFile>
+    <DefineConstants>TRACE;DEBUG;NETCOREAPP2_0;WINDOW_WIN32</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Security;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 using CoreVulkan.Handle;
@@ -66,6 +67,18 @@ namespace CoreVulkan
                 throw new NullReferenceException();
             }
             return Marshal.GetDelegateForFunctionPointer<T>(function);
+        }
+
+        public unsafe static T LoadInstanceFunctionFromExtension<T>(Instance instance, Text extension, Text[] enabledExtensions)
+        {
+            foreach (Text enabledExtension in enabledExtensions)
+            {
+                if (enabledExtension == extension)
+                {
+                    return LoadInstanceFunction<T>(instance);
+                }
+            }
+            return default(T);
         }
 
         [SuppressUnmanagedCodeSecurity]

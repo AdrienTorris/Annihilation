@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Numerics;
-using System.Collections.Generic;
 
 using CoreVulkan;
 using CoreVulkan.Handle;
@@ -19,9 +18,139 @@ namespace Engine.Rendering
         public static readonly CreateInstance CreateInstance;
 
         // Instance functions
+        public static readonly EnumeratePhysicalDevices EnumeratePhysicalDevices;
+        public static readonly EnumerateDeviceExtensionProperties EnumerateDeviceExtensionProperties;
+        public static readonly GetPhysicalDeviceFeatures GetPhysicalDeviceFeatures;
+        public static readonly GetPhysicalDeviceProperties GetPhysicalDeviceProperties;
+        public static readonly GetPhysicalDeviceQueueFamilyProperties GetPhysicalDeviceQueueFamilyProperties;
+        public static readonly GetPhysicalDeviceMemoryProperties GetPhysicalDeviceMemoryProperties;
+        public static readonly GetPhysicalDeviceFormatProperties GetPhysicalDeviceFormatProperties;
+        public static readonly CreateDevice CreateDevice;
+        public static readonly GetDeviceProcAddr GetDeviceProcAddr;
         public static readonly DestroyInstance DestroyInstance;
 
+        // Instance functions from extensions
+        public static readonly GetPhysicalDeviceSurfaceSupport GetPhysicalDeviceSurfaceSupport;
+        public static readonly GetPhysicalDeviceSurfaceCapabilities GetPhysicalDeviceSurfaceCapabilities;
+        public static readonly GetPhysicalDeviceSurfaceFormats GetPhysicalDeviceSurfaceFormats;
+        public static readonly GetPhysicalDeviceSurfacePresentModes GetPhysicalDeviceSurfacePresentModes;
+        public static readonly DestroySurface DestroySurface;
+#if WINDOW_WIN32
+        public static readonly CreateWin32Surface CreateWin32Surface;
+#elif WINDOW_XLIB
+        public static readonly CreateXlibSurface CreateXlibSurface;
+#elif WINDOW_XCB
+        public static readonly CreateXcbSurface CreateXcbSurface;
+#elif WINDOW_MIR
+        public static readonly CreateMirSurface CreateMirSurface;
+#elif WINDOW_WAYLAND
+        public static readonly CreateWaylandSurface CreateWaylandSurface;
+#elif WINDOW_MACOS
+        public static readonly CreateMacOSSurface CreateMacOSSurface;
+#elif WINDOW_ANDROID
+        public static readonly CreateAndroidSurface CreateAndroidSurface;
+#elif WINDOW_IOS
+        public static readonly CreateIOSSurface CreateIOSSurface;
+#elif WINDOW_SWITCH
+        public static readonly CreateViSurface CreateViSurface;
+#endif
+
         // Device functions
+        public static readonly GetDeviceQueue GetDeviceQueue;
+        public static readonly DeviceWaitIdle DeviceWaitIdle;
+        public static readonly DestroyDevice DestroyDevice;
+        public static readonly CreateBuffer CreateBuffer;
+        public static readonly GetBufferMemoryRequirements GetBufferMemoryRequirements;
+        public static readonly AllocateMemory AllocateMemory;
+        public static readonly BindBufferMemory BindBufferMemory;
+        public static readonly CmdPipelineBarrier CmdPipelineBarrier;
+        public static readonly CreateImage CreateImage;
+        public static readonly GetImageMemoryRequirements GetImageMemoryRequirements;
+        public static readonly BindImageMemory BindImageMemory;
+        public static readonly CreateImageView CreateImageView;
+        public static readonly MapMemory MapMemory;
+        public static readonly FlushMappedMemoryRanges FlushMappedMemoryRanges;
+        public static readonly UnmapMemory UnmapMemory;
+        public static readonly CmdCopyBuffer CmdCopyBuffer;
+        public static readonly CmdCopyBufferToImage CmdCopyBufferToImage;
+        public static readonly CmdCopyImageToBuffer CmdCopyImageToBuffer;
+        public static readonly BeginCommandBuffer BeginCommandBuffer;
+        public static readonly EndCommandBuffer EndCommandBuffer;
+        public static readonly QueueSubmit QueueSubmit;
+        public static readonly DestroyImageView DestroyImageView;
+        public static readonly DestroyImage DestroyImage;
+        public static readonly DestroyBuffer DestroyBuffer;
+        public static readonly FreeMemory FreeMemory;
+        public static readonly CreateCommandPool CreateCommandPool;
+        public static readonly AllocateCommandBuffers AllocateCommandBuffers;
+        public static readonly CreateSemaphore CreateSemaphore;
+        public static readonly CreateFence CreateFence;
+        public static readonly WaitForFences WaitForFences;
+        public static readonly ResetFences ResetFences;
+        public static readonly DestroyFence DestroyFence;
+        public static readonly DestroySemaphore DestroySemaphore;
+        public static readonly ResetCommandBuffer ResetCommandBuffer;
+        public static readonly FreeCommandBuffers FreeCommandBuffers;
+        public static readonly ResetCommandPool ResetCommandPool;
+        public static readonly DestroyCommandPool DestroyCommandPool;
+        public static readonly CreateBufferView CreateBufferView;
+        public static readonly DestroyBufferView DestroyBufferView;
+        public static readonly QueueWaitIdle QueueWaitIdle;
+        public static readonly CreateSampler CreateSampler;
+        public static readonly CreateDescriptorSetLayout CreateDescriptorSetLayout;
+        public static readonly CreateDescriptorPool CreateDescriptorPool;
+        public static readonly AllocateDescriptorSets AllocateDescriptorSets;
+        public static readonly UpdateDescriptorSets UpdateDescriptorSets;
+        public static readonly CmdBindDescriptorSets CmdBindDescriptorSets;
+        public static readonly FreeDescriptorSets FreeDescriptorSets;
+        public static readonly ResetDescriptorPool ResetDescriptorPool;
+        public static readonly DestroyDescriptorPool DestroyDescriptorPool;
+        public static readonly DestroyDescriptorSetLayout DestroyDescriptorSetLayout;
+        public static readonly DestroySampler DestroySampler;
+        public static readonly CreateRenderPass CreateRenderPass;
+        public static readonly CreateFramebuffer CreateFramebuffer;
+        public static readonly DestroyFramebuffer DestroyFramebuffer;
+        public static readonly DestroyRenderPass DestroyRenderPass;
+        public static readonly CmdBeginRenderPass CmdBeginRenderPass;
+        public static readonly CmdNextSubpass CmdNextSubpass;
+        public static readonly CmdEndRenderPass CmdEndRenderPass;
+        public static readonly CreatePipelineCache CreatePipelineCache;
+        public static readonly GetPipelineCacheData GetPipelineCacheData;
+        public static readonly MergePipelineCaches MergePipelineCaches;
+        public static readonly DestroyPipelineCache DestroyPipelineCache;
+        public static readonly CreateGraphicsPipelines CreateGraphicsPipelines;
+        public static readonly CreateComputePipelines CreateComputePipelines;
+        public static readonly DestroyPipeline DestroyPipeline;
+        public static readonly DestroyEvent DestroyEvent;
+        public static readonly DestroyQueryPool DestroyQueryPool;
+        public static readonly CreateShaderModule CreateShaderModule;
+        public static readonly DestroyShaderModule DestroyShaderModule;
+        public static readonly CreatePipelineLayout CreatePipelineLayout;
+        public static readonly DestroyPipelineLayout DestroyPipelineLayout;
+        public static readonly CmdBindPipeline CmdBindPipeline;
+        public static readonly CmdSetViewport CmdSetViewport;
+        public static readonly CmdSetScissor CmdSetScissor;
+        public static readonly CmdBindVertexBuffers CmdBindVertexBuffers;
+        public static readonly CmdDraw CmdDraw;
+        public static readonly CmdDrawIndexed CmdDrawIndexed;
+        public static readonly CmdDispatch CmdDispatch;
+        public static readonly CmdCopyImage CmdCopyImage;
+        public static readonly CmdPushConstants CmdPushConstants;
+        public static readonly CmdClearColorImage CmdClearColorImage;
+        public static readonly CmdClearDepthStencilImage CmdClearDepthStencilImage;
+        public static readonly CmdBindIndexBuffer CmdBindIndexBuffer;
+        public static readonly CmdSetLineWidth CmdSetLineWidth;
+        public static readonly CmdSetDepthBias CmdSetDepthBias;
+        public static readonly CmdSetBlendConstants CmdSetBlendConstants;
+        public static readonly CmdExecuteCommands CmdExecuteCommands;
+        public static readonly CmdClearAttachments CmdClearAttachments;
+
+        // Device functions from extensions
+        public static readonly CreateSwapchain CreateSwapchain;
+        public static readonly GetSwapchainImages GetSwapchainImages;
+        public static readonly AcquireNextImage AcquireNextImage;
+        public static readonly QueuePresent QueuePresent;
+        public static readonly DestroySwapchain DestroySwapchain;
 
         // Objects
         private static Instance _instance;
@@ -110,7 +239,7 @@ namespace Engine.Rendering
             EnumerateInstanceLayerProperties = Vulkan.LoadGlobalFunction<EnumerateInstanceLayerProperties>();
             CreateInstance = Vulkan.LoadGlobalFunction<CreateInstance>();
 
-            // Instance
+            // Instance extensions
             Text[] desiredInstanceExtensions = new Text[]
             {
                 SurfaceExtensionName,
@@ -142,17 +271,51 @@ namespace Engine.Rendering
                 }
             }
 
+            // Instance
             ApplicationInfo applicationInfo = new ApplicationInfo(Game.Settings.Name, new Version(1, 0, 0), "Pillar Engine", new Version(1, 0, 0), new Version(1, 0, 0));
-            InstanceCreateInfo instanceCreateInfo;
-            fixed (Text* extensionsPointer = &desiredInstanceExtensions[0])
-            {
-                instanceCreateInfo = new InstanceCreateInfo(&applicationInfo, desiredInstanceExtensions.Length, extensionsPointer);
-            }
-
+            InstanceCreateInfo instanceCreateInfo = new InstanceCreateInfo(&applicationInfo, desiredInstanceExtensions);
             CreateInstance(ref instanceCreateInfo, ref AllocationCallbacks.Null, out _instance).CheckError();
 
             // Instance functions
+            EnumeratePhysicalDevices = Vulkan.LoadInstanceFunction<EnumeratePhysicalDevices>(_instance);
+            EnumerateDeviceExtensionProperties = Vulkan.LoadInstanceFunction<EnumerateDeviceExtensionProperties>(_instance);
+            GetPhysicalDeviceProperties = Vulkan.LoadInstanceFunction<GetPhysicalDeviceProperties>(_instance);
+            GetPhysicalDeviceFeatures = Vulkan.LoadInstanceFunction<GetPhysicalDeviceFeatures>(_instance);
+            CreateDevice = Vulkan.LoadInstanceFunction<CreateDevice>(_instance);
+            GetDeviceProcAddr = Vulkan.LoadInstanceFunction<GetDeviceProcAddr>(_instance);
 
+            // Physical devices
+            EnumeratePhysicalDevices(_instance, out uint deviceCount, null).CheckError();
+            PhysicalDevice[] availablePhysicalDevices = new PhysicalDevice[(int)deviceCount];
+            EnumeratePhysicalDevices(_instance, out deviceCount, availablePhysicalDevices).CheckError();
+
+            foreach (PhysicalDevice physicalDevice in availablePhysicalDevices)
+            {
+                // Device extensions
+                EnumerateDeviceExtensionProperties(physicalDevice, Text.Null, out extensionCount, null).CheckError();
+                availableExtensions = new ExtensionProperties[(int)extensionCount];
+                EnumerateDeviceExtensionProperties(physicalDevice, Text.Null, out extensionCount, availableExtensions).CheckError();
+
+                // Queue families
+                GetPhysicalDeviceQueueFamilyProperties(physicalDevice, out uint queueFamilyPropertyCount, null);
+                if (queueFamilyPropertyCount == 0)
+                {
+                    throw new InvalidOperationException();
+                }
+                QueueFamilyProperties[] queueFamilies = new QueueFamilyProperties[(int)queueFamilyPropertyCount];
+                GetPhysicalDeviceQueueFamilyProperties(physicalDevice, out queueFamilyPropertyCount, queueFamilies);
+                if (queueFamilyPropertyCount == 0)
+                {
+                    throw new InvalidOperationException();
+                }
+
+                // Select graphics queue family
+                for (int i = 0; i < queueFamilies.Length; ++i)
+                {
+                    if (queueFamilies[i].QueueCount > 0 &&
+                        queueFamilies[i].QueueFlags & QueueFlags.Graphics)
+                }
+            }
         }
     }
 }

@@ -41,18 +41,37 @@ namespace CoreVulkan
         public uint EnabledExtensionCount;
         public Text* EnabledExtensionNames;
         
-        public InstanceCreateInfo(ApplicationInfo* applicationInfo, int extensionCount, Text* extensionNames) : this(applicationInfo, 0, null, extensionCount, extensionNames) { }
-
-        public InstanceCreateInfo(ApplicationInfo* applicationInfo, int layerCount, Text* layerNames, int extensionCount, Text* extensionNames)
+        public InstanceCreateInfo(ApplicationInfo* applicationInfo, Text[] extensionNames)
         {
             Type = StructureType.InstanceCreateInfo;
             Next = null;
             Flags = InstanceCreateFlags.None;
             ApplicationInfo = applicationInfo;
-            EnabledLayerCount = (uint)layerCount;
-            EnabledLayerNames = layerNames;
-            EnabledExtensionCount = (uint)extensionCount;
-            EnabledExtensionNames = extensionNames;
+            EnabledLayerCount = 0;
+            EnabledLayerNames = null;
+            EnabledExtensionCount = (uint)extensionNames.Length;
+            fixed (Text* ptr = &extensionNames[0])
+            {
+                EnabledExtensionNames = ptr;
+            }
+        }
+        
+        public InstanceCreateInfo(ApplicationInfo* applicationInfo, Text[] layerNames, Text[] extensionNames)
+        {
+            Type = StructureType.InstanceCreateInfo;
+            Next = null;
+            Flags = InstanceCreateFlags.None;
+            ApplicationInfo = applicationInfo;
+            EnabledLayerCount = (uint)layerNames.Length;
+            fixed (Text* ptr = &layerNames[0])
+            {
+                EnabledLayerNames = ptr;
+            }
+            EnabledExtensionCount = (uint)extensionNames.Length;
+            fixed (Text* ptr = &extensionNames[0])
+            {
+                EnabledExtensionNames = ptr;
+            }
         }
     }
 
