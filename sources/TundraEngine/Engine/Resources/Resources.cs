@@ -12,11 +12,63 @@ namespace Engine
         {
             0xAB, 0x4B, 0x54, 0x58, 0x20, 0x31, 0x31, 0xBB, 0x0D, 0x0A, 0x1A, 0x0A
         };
-        
+
         private static readonly Dictionary<int, Vk.Format> GlInternalFormatToVkFormat = new Dictionary<int, Vk.Format>()
         {
-            [32855] = Vk.Format.R5G5B5A1UnormPack16,
-            [32856] = Vk.Format.R8G8B8A8Unorm
+            [0x8229] = Vk.Format.R8UNorm,
+            [0x8F94] = Vk.Format.R8SNorm,
+            [0x822A] = Vk.Format.R16UNorm,
+            [0x8F98] = Vk.Format.R16SNorm,
+            [0x822B] = Vk.Format.R8G8UNorm,
+            [0x8F95] = Vk.Format.R8G8SNorm,
+            [0x822C] = Vk.Format.R16G16UNorm,
+            [0x8F99] = Vk.Format.R16G16SNorm,
+            [0x8D62] = Vk.Format.R5G6B5UNormPack16,
+            [0x8051] = Vk.Format.R8G8B8UNorm,
+            [0x8F96] = Vk.Format.R8G8B8SNorm,
+            [0x8054] = Vk.Format.R16G16B16UNorm,
+            [0x8F9A] = Vk.Format.R16G16B16SNorm,
+            [0x8056] = Vk.Format.R4G4B4A4UNormPack16,
+            [0x8057] = Vk.Format.R5G5B5A1UNormPack16,
+            [0x8058] = Vk.Format.R8G8B8A8UNorm,
+            [0x8F97] = Vk.Format.R8G8B8A8SNorm,
+            [0x805B] = Vk.Format.R16G16B16A16UNorm,
+            [0x8F9B] = Vk.Format.R16G16B16A16SNorm,
+            [0x8C41] = Vk.Format.R8G8B8SRGB,
+            [0x8C43] = Vk.Format.R8G8B8A8SRGB,
+            [0x822D] = Vk.Format.R16SFloat,
+            [0x822F] = Vk.Format.R16G16SFloat,
+            [0x881B] = Vk.Format.R16G16B16SFloat,
+            [0x881A] = Vk.Format.R16G16B16A16SFloat,
+            [0x822E] = Vk.Format.R32SFloat,
+            [0x8230] = Vk.Format.R32G32SFloat,
+            [0x8815] = Vk.Format.R32G32B32SFloat,
+            [0x8814] = Vk.Format.R32G32B32A32SFloat,
+            [0x8C3D] = Vk.Format.E5B9G9R9UFloatPack32,
+            [0x8231] = Vk.Format.R8SInt,
+            [0x8232] = Vk.Format.R8UInt,
+            [0x8233] = Vk.Format.R16SInt,
+            [0x8234] = Vk.Format.R16UInt,
+            [0x8235] = Vk.Format.R32SInt,
+            [0x8236] = Vk.Format.R32UInt,
+            [0x8237] = Vk.Format.R8G8SInt,
+            [0x8238] = Vk.Format.R8G8UInt,
+            [0x8239] = Vk.Format.R16G16SInt,
+            [0x823A] = Vk.Format.R16G16UInt,
+            [0x823B] = Vk.Format.R32G32SInt,
+            [0x823C] = Vk.Format.R32G32UInt,
+            [0x8D8F] = Vk.Format.R8G8B8SInt,
+            [0x8D7D] = Vk.Format.R8G8B8UInt,
+            [0x8D89] = Vk.Format.R16G16B16SInt,
+            [0x8D77] = Vk.Format.R16G16B16UInt,
+            [0x8D83] = Vk.Format.R32G32B32SInt,
+            [0x8D71] = Vk.Format.R32G32B32UInt,
+            [0x8D8E] = Vk.Format.R8G8B8A8SInt,
+            [0x8D7C] = Vk.Format.R8G8B8A8UInt,
+            [0x8D88] = Vk.Format.R16G16B16A16SInt,
+            [0x8D76] = Vk.Format.R16G16B16A16UInt,
+            [0x8D82] = Vk.Format.R32G32B32A32SInt,
+            [0x8D70] = Vk.Format.R32G32B32A32UInt
         };
 
         public static Image LoadKtxImage(string path)
