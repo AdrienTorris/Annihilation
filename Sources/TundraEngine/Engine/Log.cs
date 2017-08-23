@@ -1,5 +1,4 @@
-﻿using SDL2;
-using static SDL2.SDL;
+﻿using System;
 
 namespace Engine
 {
@@ -7,22 +6,35 @@ namespace Engine
     {
         public static void Info(string text)
         {
-            Native.SDL_Log(text);
+            System.Diagnostics.Debug.WriteLine(text, "[Info]");
+        }
+
+        public static void Debug(string text)
+        {
+            Console.ForegroundColor = ConsoleColor.Blue;
+            System.Diagnostics.Debug.WriteLine(text, "[Debug]");
+            Console.ResetColor();
         }
 
         public static void Warning(string text)
         {
-            Native.SDL_LogWarn(LogCategory.Application, text);
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            System.Diagnostics.Debug.WriteLine(text, "[Warning]");
+            Console.ResetColor();
         }
 
         public static void Error(string text)
         {
-            Native.SDL_LogError(LogCategory.Application, text);
+            Console.ForegroundColor = ConsoleColor.Red;
+            System.Diagnostics.Debug.WriteLine(text, "[Error]");
+            Console.ResetColor();
         }
 
-        public static unsafe void SetOutputFunction(LogOutputFunction callback)
+        public static void Performance(string text)
         {
-            Native.SDL_LogSetOutputFunction(callback, null);
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            System.Diagnostics.Debug.WriteLine(text, "[Performance]");
+            Console.ResetColor();
         }
     }
 }

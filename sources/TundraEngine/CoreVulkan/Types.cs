@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace CoreVulkan
@@ -194,6 +195,8 @@ namespace CoreVulkan
     {
         private uint _value;
 
+        public static Version One => new Version(1, 0, 0);
+
         public Version(uint major, uint Minor, uint patch)
         {
             _value = major << 22 | Minor << 12 | patch;
@@ -261,15 +264,44 @@ namespace CoreVulkan
 
     public unsafe struct ExtensionName
     {
-        public fixed byte Name[Constants.MaxExtensionNameSize];
+        public fixed byte Name[Vulkan.MaxExtensionNameSize];
 
         public bool Compare(Text text)
         {
-            fixed (byte* pointer1 = Name)
+            fixed (byte* namePtr = Name)
             {
-                for (int i = 0; i < Constants.MaxExtensionNameSize; ++i)
+                for (int i = 0; i < Vulkan.MaxExtensionNameSize; ++i)
                 {
-                    if (*(pointer1 + i) != *(text.Handle + i))
+                    if (*(namePtr + i) == 0)
+                    {
+                        return true;
+                    }
+
+                    if (*(namePtr + i) != *(text.Handle + i))
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        
+        public bool Compare(string str)
+        {
+            int strByteCount = Encoding.UTF8.GetMaxByteCount(str.Length);
+            byte[] strBytes = new byte[strByteCount];
+            Encoding.UTF8.GetBytes(str, 0, str.Length, strBytes, 0);
+            fixed (byte* namePtr = Name)
+            fixed (byte* strPtr = &strBytes[0])
+            {
+                for (int i = 0; i < Vulkan.MaxExtensionNameSize; ++i)
+                {
+                    if (*(namePtr + i) == 0)
+                    {
+                        return true;
+                    }
+
+                    if (*(namePtr + i) != *(strPtr + i))
                     {
                         return false;
                     }

@@ -450,11 +450,11 @@ namespace CoreVulkan
     // Multi-vendor
     //
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    public unsafe delegate Bool32 DebugReportCallback(DebugReportFlags flags, DebugReportObjectType objectType, ulong objectHandle, ulong location, int messageCode, Text layerPrefix, Text message, void* userData);
+    public unsafe delegate Bool32 DebugReportCallback(DebugReportFlags flags, DebugReportObjectType objectType, ulong objectHandle, Size location, int messageCode, Text layerPrefix, Text message, IntPtr userData);
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    public unsafe delegate Result CreateDebugReportCallback(Vulkan.Instance instance, ref DebugReportCallbackCreateInfo createInfo, ref AllocationCallbacks allocator, DebugReportCallback callback);
+    public unsafe delegate Result CreateDebugReportCallback(Vulkan.Instance instance, ref DebugReportCallbackCreateInfo createInfo, ref AllocationCallbacks allocator, out Vulkan.DebugReportCallback callback);
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    public unsafe delegate void DestroyDebugReportCallback(Vulkan.Instance instance, DebugReportCallback callback, ref AllocationCallbacks allocator);
+    public unsafe delegate void DestroyDebugReportCallback(Vulkan.Instance instance, Vulkan.DebugReportCallback callback, ref AllocationCallbacks allocator);
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     public unsafe delegate void DebugReportMessage(Vulkan.Instance instance, DebugReportFlags flags, DebugReportObjectType objectType, ulong obj, Size location, int messageCode, Text layerPrefix, Text message);
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]

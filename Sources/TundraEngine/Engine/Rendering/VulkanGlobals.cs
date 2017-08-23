@@ -2,7 +2,6 @@
 using System.Numerics;
 
 using CoreVulkan;
-using CoreVulkan.Handle;
 
 using static CoreVulkan.Constants;
 
