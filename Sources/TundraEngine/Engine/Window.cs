@@ -1,16 +1,31 @@
-﻿using CoreVulkan;
+﻿using Engine.Rendering;
+using Vulkan;
 using SDL2;
-using Engine.Rendering;
 using static SDL2.SDL;
 
 namespace Engine
 {
-    public static class Window
+    public class Window
     {
-        // SDL
         public static SDL.Window SDLWindow;
         public static SysWMInfo SysWMInfo;
         
+        public Window()
+        {
+            // Init SDL video subsystem
+            InitSubSystem(InitFlags.Video);
+
+            // Create SDL window
+
+            // Create Vulkan instance
+            Instance instance = new Instance("Howitzer", "Pillar Engine");
+            
+            // Create Vulkan surface
+#if WINDOW_WIN32
+            Win32SurfaceCreateInfo surfaceCreateInfo = new Win32SurfaceCreateInfo();
+#endif
+        }
+
         public static void Initialize(ref WindowSettings settings)
         {
             int previousDisplay = -1;
@@ -64,13 +79,7 @@ namespace Engine
         {
             SDLWindow.Destroy();
         }
-
-        public static void TakeScreenshot()
-        {
-            Assert.IsTrue(VulkanGlobals.SwapChainFormat == Format.R8G8B8A8Unorm, "Invalid swapchain format.");
-            
-        }
-
+        
         private static void SetWindowMode(int width, int height, bool fullscreen)
         {
 

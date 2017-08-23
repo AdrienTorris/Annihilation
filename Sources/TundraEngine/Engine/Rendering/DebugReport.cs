@@ -1,12 +1,14 @@
-﻿using System;
-using CoreVulkan;
+﻿#if ENABLE_VALIDATION
+using System;
+using Vulkan;
 
 namespace Engine.Rendering
 {
-    public class DebugReport
+    public class DebugReport : IDisposable
     {
-        private Vulkan.DebugReportCallback _debugReportCallback;
-        private Vulkan.Instance _instance;
+        private Vk.DebugReportCallback _debugReportCallback;
+        private Vk.Instance _instance;
+        private bool _isDisposed = false;
         
         public DebugReportFlags Flags { get; set; }
         public DebugReportCallback Callback { get; set; }
@@ -35,11 +37,11 @@ namespace Engine.Rendering
             }
         }
 
-        public void Init(Vulkan.Instance instance)
+        public DebugReport(Vk.Instance instance)
         {
             // Load functions
-            CreateDebugReportCallback = Vulkan.LoadInstanceFunction<CreateDebugReportCallback>(instance);
-            DestroyDebugReportCallback = Vulkan.LoadInstanceFunction<DestroyDebugReportCallback>(instance);
+            CreateDebugReportCallback = Vk.LoadInstanceFunction<CreateDebugReportCallback>(instance);
+            DestroyDebugReportCallback = Vk.LoadInstanceFunction<DestroyDebugReportCallback>(instance);
 
             _instance = instance;
             Callback = DebugCallback;
@@ -76,12 +78,44 @@ namespace Engine.Rendering
             CreateDebugReportCallback(_instance, ref createInfo, ref AllocationCallbacks.Null, out _debugReportCallback).CheckError();
         }
 
-        public void Destroy()
+        private void Destroy()
         {
             if (_debugReportCallback.Handle != 0)
             {
                 DestroyDebugReportCallback(_instance, _debugReportCallback, ref AllocationCallbacks.Null);
             }
         }
+        
+        private void Dispose(bool disposing)
+        {
+            if (!_isDisposed)
+            {
+                if (disposing)
+                {
+                }
+
+                if (_debugReportCallback.Handle != 0)
+                {
+                    DestroyDebugReportCallback(_instance, _debugReportCallback, ref AllocationCallbacks.Null);
+                }
+                Callback = null;
+                CreateDebugReportCallback = null;
+                DestroyDebugReportCallback = null;
+
+                _isDisposed = true;
+            }
+        }
+        
+        ~DebugReport()
+        {
+            Dispose(false);
+        }
+        
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
     }
 }
+#endif

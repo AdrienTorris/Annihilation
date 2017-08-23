@@ -1,47 +1,34 @@
 ﻿using System;
-using CoreVulkan;
+using Vulkan;
 
-using Version = CoreVulkan.Version;
+using Version = Vulkan.Version;
 
 namespace Engine.Rendering
 {
-    public unsafe class Instance
+    public unsafe class Instance : IDisposable
     {
         // Members
-        private Vulkan.Instance _instance;
+        private Vk.Instance _instance;
+        private bool _isDisposed = false;
 
+#if ENABLE_VALIDATION
         public DebugReport DebugReport { get; set; }
+#endif
 
         // Vulkan global functions
-        private EnumerateInstanceExtensionProperties EnumerateInstanceExtensionProperties;
-        private EnumerateInstanceLayerProperties EnumerateInstanceLayerProperties;
-        private CreateInstance CreateInstance;
+        private static EnumerateInstanceExtensionProperties EnumerateInstanceExtensionProperties;
+        private static EnumerateInstanceLayerProperties EnumerateInstanceLayerProperties;
+        private static CreateInstance CreateInstance;
 
         // Vulkan instance functions
-        private DestroySurface _destroySurface;
-        private GetPhysicalDeviceSurfaceCapabilities _getPhysicalDeviceSurfaceCapabilities;
-        private GetPhysicalDeviceSurfaceFormats _getPhysicalDeviceSurfaceFormats;
-        private GetPhysicalDeviceSurfacePresentModes _getPhysicalDeviceSurfacePresentModes;
-        private GetPhysicalDeviceSurfaceSupport _getPhysicalDeviceSurfaceSupport;
-        private GetPhysicalDeviceFeatures2 _getPhysicalDeviceFeatures2;
-        private GetPhysicalDeviceFormatProperties2 _getPhysicalDeviceFormatProperties2;
-        private GetPhysicalDeviceImageFormatProperties2 _getPhysicalDeviceImageFormatProperties2;
-        private GetPhysicalDeviceMemoryProperties2 _getPhysicalDeviceMemoryProperties2;
-        private GetPhysicalDeviceProperties2 _getPhysicalDeviceProperties2;
-        private GetPhysicalDeviceQueueFamilyProperties2 _getPhysicalDeviceQueueFamilyProperties2;
-        private GetPhysicalDeviceSparseImageFormatProperties2 _getPhysicalDeviceSparseImageFormatProperties2;
-        private CreateWin32Surface _createWin32Surface;
-        private GetPhysicalDeviceWin32PresentationSupport _getPhysicalDeviceWin32PresentationSupport;
-        private CreateXcbSurface _createXcbSurface;
-        private GetPhysicalDeviceXcbPresentationSupport _getPhysicalDeviceXcbPresentationSupport;
-        // TODO: Other platform functions here
+        public static DestroyInstance DestroyInstance;
         
-        public void Create(Text applicationName, Text engineName, Text[] layers, Text[] extensions)
+        public Instance(Text applicationName, Text engineName)
         {
             // Load global functions
-            EnumerateInstanceExtensionProperties = Vulkan.LoadGlobalFunction<EnumerateInstanceExtensionProperties>();
-            EnumerateInstanceLayerProperties = Vulkan.LoadGlobalFunction<EnumerateInstanceLayerProperties>();
-            CreateInstance = Vulkan.LoadGlobalFunction<CreateInstance>();
+            EnumerateInstanceExtensionProperties = Vk.LoadGlobalFunction<EnumerateInstanceExtensionProperties>();
+            EnumerateInstanceLayerProperties = Vk.LoadGlobalFunction<EnumerateInstanceLayerProperties>();
+            CreateInstance = Vk.LoadGlobalFunction<CreateInstance>();
 
             // Find available instance extensions
             EnumerateInstanceExtensionProperties(Text.Null, out uint extensionCount, null).CheckError();
@@ -51,18 +38,20 @@ namespace Engine.Rendering
             // Check if the desired instance extensions are available
             Text[] desiredExtensions = new Text[]
             {
-                Vulkan.SurfaceExtensionName,
-                Game.WindowType == WindowType.Win32 ? Vulkan.Win32SurfaceExtensionName :
-                Game.WindowType == WindowType.Xlib ? Vulkan.XlibSurfaceExtensionName :
-                Game.WindowType == WindowType.Xcb ? Vulkan.XcbSurfaceExtensionName :
-                Game.WindowType == WindowType.Mir ? Vulkan.MirSurfaceExtensionName :
-                Game.WindowType == WindowType.Wayland ? Vulkan.WaylandSurfaceExtensionName :
-                Game.WindowType == WindowType.Android ? Vulkan.AndroidSurfaceExtensionName :
-                Game.WindowType == WindowType.IOS ? Vulkan.IOSSurfaceExtensionName :
-                Game.WindowType == WindowType.MacOS ? Vulkan.MacOSSurfaceExtensionName :
-                Game.WindowType == WindowType.Switch ? Vulkan.ViSurfaceExtensionName :
+                Vk.SurfaceExtensionName,
+                Game.WindowType == WindowType.Win32 ? Vk.Win32SurfaceExtensionName :
+                Game.WindowType == WindowType.Xlib ? Vk.XlibSurfaceExtensionName :
+                Game.WindowType == WindowType.Xcb ? Vk.XcbSurfaceExtensionName :
+                Game.WindowType == WindowType.Mir ? Vk.MirSurfaceExtensionName :
+                Game.WindowType == WindowType.Wayland ? Vk.WaylandSurfaceExtensionName :
+                Game.WindowType == WindowType.Android ? Vk.AndroidSurfaceExtensionName :
+                Game.WindowType == WindowType.IOS ? Vk.IOSSurfaceExtensionName :
+                Game.WindowType == WindowType.MacOS ? Vk.MacOSSurfaceExtensionName :
+                Game.WindowType == WindowType.Switch ? Vk.ViSurfaceExtensionName :
                 throw new PlatformNotSupportedException(),
-                Game.Settings.RendererSettings.EnableDebugReport ? Vulkan.DebugReportExtensionName : string.Empty
+#if ENABLE_VALIDATION
+                Vk.DebugReportExtensionName
+#endif
             };
 
             foreach (string desiredExtension in desiredExtensions)
@@ -76,45 +65,89 @@ namespace Engine.Rendering
                 }
             }
 
-            if (Game.Settings.RendererSettings.EnableValidation)
+#if ENABLE_VALIDATION
+            // Find available instance layers
+            EnumerateInstanceLayerProperties(out uint layerCount, null).CheckError();
+            LayerProperties[] availableLayers = new LayerProperties[layerCount];
+            EnumerateInstanceLayerProperties(out layerCount, availableLayers).CheckError();
+
+            // Check if the desired instance layers are available
+            Text[] desiredLayers = new Text[]
             {
-                // Find available instance layers
-                EnumerateInstanceLayerProperties(out uint layerCount, null).CheckError();
-                LayerProperties[] availableLayers = new LayerProperties[layerCount];
-                EnumerateInstanceLayerProperties(out layerCount, availableLayers).CheckError();
+                "VK_LAYER_LUNARG_standard_validation"
+            };
 
-                // Check if the desired instance layers are available
-                Text[] desiredLayers = new Text[]
+            foreach (string desiredLayer in desiredLayers)
+            {
+                foreach (LayerProperties availableLayer in availableLayers)
                 {
-                    "VK_LAYER_LUNARG_standard_validation"
-                };
-
-                foreach (string desiredLayer in desiredLayers)
-                {
-                    foreach (LayerProperties availableLayer in availableLayers)
+                    if (!availableLayer.LayerName.Compare(desiredLayer))
                     {
-                        if (!availableLayer.LayerName.Compare(desiredLayer))
-                        {
-                            throw new InvalidOperationException("Layer " + desiredLayer + " is not supported");
-                        }
+                        throw new InvalidOperationException("Layer " + desiredLayer + " is not supported");
                     }
                 }
             }
+#endif
 
             // Create the instance
             ApplicationInfo applicationInfo = new ApplicationInfo(
-                _applicationName, 
+                applicationName, 
                 Version.One, 
-                _engineName, 
+                engineName, 
                 Version.One, 
                 Version.One
             );
             InstanceCreateInfo instanceCreateInfo = new InstanceCreateInfo(
-                &applicationInfo, 
-                desiredLayers, 
+                &applicationInfo,
+#if ENABLE_VALIDATION
+                desiredLayers,
+#endif
                 desiredExtensions
             );
+
             CreateInstance(ref instanceCreateInfo, ref AllocationCallbacks.Null, out _instance).CheckError();
+
+#if ENABLE_VALIDATION
+            DebugReport = new DebugReport(_instance);
+#endif
+
+            // Load instance functions
+            DestroyInstance = Vk.LoadInstanceFunction<DestroyInstance>(_instance);
+        }
+        
+        private void Dispose(bool disposing)
+        {
+            if (!_isDisposed)
+            {
+                if (disposing)
+                {
+#if ENABLE_VALIDATION
+                    DebugReport.Dispose();
+#endif
+                }
+
+                DestroyInstance(_instance, ref AllocationCallbacks.Null);
+
+                EnumerateInstanceExtensionProperties = null;
+                EnumerateInstanceLayerProperties = null;
+                CreateInstance = null;
+                DestroyInstance = null;
+
+                _isDisposed = true;
+
+                Log.Info("Vulkan instance destroyed");
+            }
+        }
+        
+        ~Instance()
+        {
+            Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -2,7 +2,7 @@
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace CoreVulkan
+namespace Vulkan
 {
     public static unsafe class MarshalUtility
     {

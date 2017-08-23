@@ -1,4 +1,4 @@
-﻿using CoreVulkan;
+﻿using Vulkan;
 
 namespace Engine.Rendering
 {
@@ -6,9 +6,6 @@ namespace Engine.Rendering
     {
         public int Width;
         public int Height;
-        public bool EnableDebugReport;
-        public DebugReportFlags DebugReportFlags;
-        public bool EnableValidation;
         public PresentMode PresentMode;
         public SampleCountFlags SampleCount;
     }

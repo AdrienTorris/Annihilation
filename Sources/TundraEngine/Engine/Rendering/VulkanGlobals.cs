@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Numerics;
 
-using CoreVulkan;
+using Vulkan;
 
-using static CoreVulkan.Constants;
-
-using Version = CoreVulkan.Version;
+using Version = Vulkan.Version;
 
 namespace Engine.Rendering
 {
@@ -234,9 +232,9 @@ namespace Engine.Rendering
         static VulkanGlobals()
         {
             // Global functions
-            EnumerateInstanceExtensionProperties = Vulkan.LoadGlobalFunction<EnumerateInstanceExtensionProperties>();
-            EnumerateInstanceLayerProperties = Vulkan.LoadGlobalFunction<EnumerateInstanceLayerProperties>();
-            CreateInstance = Vulkan.LoadGlobalFunction<CreateInstance>();
+            EnumerateInstanceExtensionProperties = Vk.LoadGlobalFunction<EnumerateInstanceExtensionProperties>();
+            EnumerateInstanceLayerProperties = Vk.LoadGlobalFunction<EnumerateInstanceLayerProperties>();
+            CreateInstance = Vk.LoadGlobalFunction<CreateInstance>();
 
             // Instance extensions
             Text[] desiredInstanceExtensions = new Text[]
@@ -276,12 +274,12 @@ namespace Engine.Rendering
             CreateInstance(ref instanceCreateInfo, ref AllocationCallbacks.Null, out _instance).CheckError();
 
             // Instance functions
-            EnumeratePhysicalDevices = Vulkan.LoadInstanceFunction<EnumeratePhysicalDevices>(_instance);
-            EnumerateDeviceExtensionProperties = Vulkan.LoadInstanceFunction<EnumerateDeviceExtensionProperties>(_instance);
-            GetPhysicalDeviceProperties = Vulkan.LoadInstanceFunction<GetPhysicalDeviceProperties>(_instance);
-            GetPhysicalDeviceFeatures = Vulkan.LoadInstanceFunction<GetPhysicalDeviceFeatures>(_instance);
-            CreateDevice = Vulkan.LoadInstanceFunction<CreateDevice>(_instance);
-            GetDeviceProcAddr = Vulkan.LoadInstanceFunction<GetDeviceProcAddr>(_instance);
+            EnumeratePhysicalDevices = Vk.LoadInstanceFunction<EnumeratePhysicalDevices>(_instance);
+            EnumerateDeviceExtensionProperties = Vk.LoadInstanceFunction<EnumerateDeviceExtensionProperties>(_instance);
+            GetPhysicalDeviceProperties = Vk.LoadInstanceFunction<GetPhysicalDeviceProperties>(_instance);
+            GetPhysicalDeviceFeatures = Vk.LoadInstanceFunction<GetPhysicalDeviceFeatures>(_instance);
+            CreateDevice = Vk.LoadInstanceFunction<CreateDevice>(_instance);
+            GetDeviceProcAddr = Vk.LoadInstanceFunction<GetDeviceProcAddr>(_instance);
 
             // Physical devices
             EnumeratePhysicalDevices(_instance, out uint deviceCount, null).CheckError();

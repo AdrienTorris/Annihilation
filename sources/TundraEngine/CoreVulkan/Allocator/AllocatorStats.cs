@@ -1,4 +1,4 @@
-﻿namespace CoreVulkan.Allocator
+﻿namespace Vulkan.Allocator
 {
     public struct AllocatorStatInfo
     {

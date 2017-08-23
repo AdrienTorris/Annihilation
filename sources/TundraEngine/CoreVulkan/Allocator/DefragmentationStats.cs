@@ -1,4 +1,4 @@
-﻿namespace CoreVulkan.Allocator
+﻿namespace Vulkan.Allocator
 {
     /// <summary>
     /// Statistics returned by function <see cref="Allocator.Defragment"/>
