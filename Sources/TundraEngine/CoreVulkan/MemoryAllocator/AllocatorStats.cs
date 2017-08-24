@@ -1,4 +1,4 @@
-﻿namespace Vulkan.Allocator
+﻿namespace Vulkan.MemoryAllocator
 {
     public struct AllocatorStatInfo
     {
@@ -16,7 +16,7 @@
     }
 
     /// <summary>
-    /// General statistics from current state of <see cref="Allocator"/>.
+    /// General statistics from current state of <see cref="MemoryAllocator"/>.
     /// </summary>
     public struct AllocatorStats
     {

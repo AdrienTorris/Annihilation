@@ -1,7 +1,7 @@
-﻿namespace Vulkan.Allocator
+﻿namespace Vulkan.MemoryAllocator
 {
     /// <summary>
-    /// Optional configuration parameters to be passed to function <see cref="Allocator.Defragment"/>.
+    /// Optional configuration parameters to be passed to function <see cref="MemoryAllocator.Defragment"/>.
     /// </summary>
     public struct DefragmentationInfo
     {

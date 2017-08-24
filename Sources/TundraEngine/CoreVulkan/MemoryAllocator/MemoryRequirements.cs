@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Vulkan.Allocator
+namespace Vulkan.MemoryAllocator
 {
     public enum MemoryUsage : uint
     {
@@ -75,7 +75,7 @@ namespace Vulkan.Allocator
         /// </summary>
         public MemoryPropertyFlags PreferredFlags;
         /// <summary>
-        /// Custom general-purpose pointer that will be stored in <see cref="Allocation"/>, can be read as <see cref="AllocationInfo.UserData"/> and changed using <see cref="Allocator.SetAllocationUserData"/>.
+        /// Custom general-purpose pointer that will be stored in <see cref="Allocation"/>, can be read as <see cref="AllocationInfo.UserData"/> and changed using <see cref="MemoryAllocator.SetAllocationUserData"/>.
         /// </summary>
         public IntPtr UserData;
     }

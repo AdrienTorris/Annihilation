@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace Vulkan.Allocator
+namespace Vulkan.MemoryAllocator
 {
     /// <summary>
-    /// Parameters of <see cref="Allocation"/> objects, that can be retrieved using function <see cref="Allocator.GetAllocationInfo"/>.
+    /// Parameters of <see cref="Allocation"/> objects, that can be retrieved using function <see cref="MemoryAllocator.GetAllocationInfo"/>.
     /// </summary>
     public struct AllocationInfo
     {
@@ -15,12 +15,12 @@ namespace Vulkan.Allocator
         /// <summary>
         /// Handle to Vulkan memory object.
         /// <para/> Same memory object can be shared by multiple allocations.
-        /// <para/> It can change after call to <see cref="Allocator.Defragment"/> if this allocation is passed to the function.
+        /// <para/> It can change after call to <see cref="MemoryAllocator.Defragment"/> if this allocation is passed to the function.
         /// </summary>
         public DeviceMemory DeviceMemory;
         /// <summary>
         /// Offset into <see cref="DeviceMemory"/> object to the beginning of this allocation, in bytes. (<see cref="DeviceMemory"/>, <see cref="Offset"/>) pair is unique to this allocation.
-        /// <para/> It can change after call to <see cref="Allocator.Defragment"/> if this allocation is passed to the function.
+        /// <para/> It can change after call to <see cref="MemoryAllocator.Defragment"/> if this allocation is passed to the function.
         /// </summary>
         public DeviceSize Offset;
         /// <summary>
@@ -30,13 +30,13 @@ namespace Vulkan.Allocator
         public DeviceSize Size;
         /// <summary>
         /// Pointer to the beginning of this allocation as mapped data. <see cref="IntPtr.Zero"/> if this alloaction is not persistently mapped.
-        /// <para/> It can change after call to <see cref="Allocator.UnmapPersistentlyMappedMemory"/>, <see cref="Allocator.MapPersistentlyMappedMemory"/>.
-        /// <para/> It can also change after call to <see cref="Allocator.Defragment"/> if this allocation is passed to the function.
+        /// <para/> It can change after call to <see cref="MemoryAllocator.UnmapPersistentlyMappedMemory"/>, <see cref="MemoryAllocator.MapPersistentlyMappedMemory"/>.
+        /// <para/> It can also change after call to <see cref="MemoryAllocator.Defragment"/> if this allocation is passed to the function.
         /// </summary>
         public IntPtr MappedData;
         /// <summary>
-        /// Custom general-purpose pointer that was passed as <see cref="MemoryRequirements.UserData"/> or set using <see cref="Allocator.SetAllocationUserData"/>.
-        /// <para/> It can change after call to <see cref="Allocator.SetAllocationUserData"/> for this allocation.
+        /// Custom general-purpose pointer that was passed as <see cref="MemoryRequirements.UserData"/> or set using <see cref="MemoryAllocator.SetAllocationUserData"/>.
+        /// <para/> It can change after call to <see cref="MemoryAllocator.SetAllocationUserData"/> for this allocation.
         /// </summary>
         public IntPtr UserData;
     }

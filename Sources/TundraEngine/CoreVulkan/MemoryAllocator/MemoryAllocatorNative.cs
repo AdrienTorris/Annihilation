@@ -2,7 +2,7 @@
 using System.Security;
 using System.Runtime.InteropServices;
 
-namespace Vulkan.Allocator
+namespace Vulkan.MemoryAllocator
 {
     [SuppressUnmanagedCodeSecurity]
     internal class MemoryAllocatorNative

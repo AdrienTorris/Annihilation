@@ -3,7 +3,7 @@ using Vulkan;
 
 namespace Engine.Rendering
 {
-    public class Image
+    public class Image : IDisposable
     {
 
     }

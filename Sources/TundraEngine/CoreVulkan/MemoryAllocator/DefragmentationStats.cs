@@ -1,7 +1,7 @@
-﻿namespace Vulkan.Allocator
+﻿namespace Vulkan.MemoryAllocator
 {
     /// <summary>
-    /// Statistics returned by function <see cref="Allocator.Defragment"/>
+    /// Statistics returned by function <see cref="MemoryAllocator.Defragment"/>
     /// </summary>
     public struct DefragmentationStats
     {

@@ -5,6 +5,81 @@ namespace Vulkan
 {
     public static partial class Vk
     {
+        public struct Bool32 : IEquatable<Bool32>
+        {
+            private readonly int _value;
+
+            public Bool32(bool value) => _value = value ? 1 : 0;
+
+            public Bool32(int value) => _value = value;
+
+            public bool Equals(Bool32 other) => _value == other._value;
+
+            public override bool Equals(object obj) => obj is Bool32 && Equals((Bool32)obj);
+
+            public override int GetHashCode() => _value.GetHashCode();
+
+            public static bool operator ==(Bool32 left, Bool32 right) => left.Equals(right);
+
+            public static bool operator !=(Bool32 left, Bool32 right) => !left.Equals(right);
+
+            public static implicit operator bool(Bool32 value) => value._value != 0;
+
+            public static implicit operator Bool32(bool value) => new Bool32(value);
+
+            public static implicit operator int(Bool32 value) => value._value;
+
+            public static implicit operator Bool32(int value) => new Bool32(value);
+
+            public override string ToString() => ((bool)this).ToString();
+        }
+
+        public struct DeviceSize : IEquatable<DeviceSize>
+        {
+            private readonly ulong _value;
+
+            public DeviceSize(ulong value) => _value = value;
+
+            public bool Equals(DeviceSize other) => _value == other._value;
+
+            public override bool Equals(object obj) => obj is DeviceSize && Equals((DeviceSize)obj);
+
+            public override int GetHashCode() => _value.GetHashCode();
+
+            public static bool operator ==(DeviceSize left, DeviceSize right) => left.Equals(right);
+
+            public static bool operator !=(DeviceSize left, DeviceSize right) => !left.Equals(right);
+
+            public override string ToString() => _value.ToString();
+
+            public static implicit operator ulong(DeviceSize deviceSize) => deviceSize._value;
+
+            public static implicit operator DeviceSize(ulong value) => new DeviceSize(value);
+        }
+
+        public struct SampleMask : IEquatable<SampleMask>
+        {
+            private uint _value;
+
+            public SampleMask(uint value) => _value = value;
+
+            public bool Equals(SampleMask other) => _value == other._value;
+
+            public override bool Equals(object obj) => obj is SampleMask && Equals((SampleMask)obj);
+
+            public override int GetHashCode() => _value.GetHashCode();
+
+            public static bool operator ==(SampleMask left, SampleMask right) => left.Equals(right);
+
+            public static bool operator !=(SampleMask left, SampleMask right) => !left.Equals(right);
+
+            public override string ToString() => _value.ToString();
+
+            public static implicit operator uint(SampleMask SampleMask) => SampleMask._value;
+
+            public static implicit operator SampleMask(uint value) => new SampleMask(value);
+        }
+
         [StructLayout(LayoutKind.Sequential)]
         public unsafe struct ApplicationInfo
         {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Vulkan.Allocator
+namespace Vulkan.MemoryAllocator
 {
     /// <summary>
     /// Flags for created Allocator
@@ -29,27 +29,27 @@ namespace Vulkan.Allocator
         /// Vulkan physical device.
         /// <para/> It must be valid throughout whole lifetime of created Allocator.
         /// </summary>
-        public PhysicalDevice PhysicalDevice;
+        public Vk.PhysicalDevice PhysicalDevice;
         /// <summary>
         /// Vulkan device.
         /// <para/> It must be valid throughout whole lifetime of created Allocator.
         /// </summary>
-        public Device Device;
+        public Vk.Device Device;
         /// <summary>
         /// Size of a single memory block to allocate for resources.
         /// <para/> Set to 0 to use default, which is currently 256 MB.
         /// </summary>
-        public DeviceSize PreferredLargeHeapBlockSize;
+        public Vk.DeviceSize PreferredLargeHeapBlockSize;
         /// <summary>
         /// Size of a single memory block to allocate for resources from a small heap &lt 512 MB.
         /// <para/> Set to 0 to use default, which is currently 64 MB.
         /// </summary>
-        public DeviceSize PreferredSmallHeapBlockSize;
+        public Vk.DeviceSize PreferredSmallHeapBlockSize;
         /// <summary>
         /// Custom allocation callbacks.
         /// <para/> Optional, can be null. When specified, will also be used for all CPU-side memory allocations.
         /// </summary>
-        public AllocationCallbacks AllocationCallbacks;
+        public Vk.AllocationCallbacks AllocationCallbacks;
         /// <summary>
         /// Informative callbacks for <see cref="AllocateMemory"/>, <see cref="FreeMemory"/>
         /// <para/> Optional, can be null.
