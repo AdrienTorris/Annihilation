@@ -6,10 +6,10 @@
     <ApplicationIcon />
     <StartupObject />
     <Platforms>x64</Platforms>
-    <PackageId>TundraEngine.JeremieStAmand</PackageId>
+    <PackageId>Annihilation.JeremieStAmand</PackageId>
     <PackageVersion>0.1.0</PackageVersion>
     <Authors>Jérémie St-Amand</Authors>
-    <Description>.Net Core game engine with Vulkan graphics</Description>
+    <Description>.Net Core RTS game with Vulkan graphics</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageReleaseNotes>Prerelease</PackageReleaseNotes>
     <Copyright>Copyright 2017 Jérémie St-Amand. All rights reserved.</Copyright>
@@ -21,8 +21,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PlatformTarget>x64</PlatformTarget>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <BaseIntermediateOutputPath>..\..\Temp\</BaseIntermediateOutputPath>
-    <BaseOutputPath>..\..\Build\</BaseOutputPath>
+    <BaseIntermediateOutputPath>..\Temp\</BaseIntermediateOutputPath>
+    <BaseOutputPath>..\Build\</BaseOutputPath>
     <DocumentationFile></DocumentationFile>
     <DefineConstants>TRACE;DEBUG;NETCOREAPP2_0;WINDOW_WIN32;ENABLE_VALIDATION</DefineConstants>
   </PropertyGroup>
@@ -30,9 +30,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <PlatformTarget>x64</PlatformTarget>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <BaseIntermediateOutputPath>..\..\Temp\</BaseIntermediateOutputPath>
-    <BaseOutputPath>..\..\Build\</BaseOutputPath>
-    <DefineConstants>RELEASE;NETCOREAPP2_0;</DefineConstants>
+    <BaseIntermediateOutputPath>..\Temp\</BaseIntermediateOutputPath>
+    <BaseOutputPath>..\Build\</BaseOutputPath>
+    <DefineConstants>RELEASE;NETCOREAPP2_0;WINDOW_WIN32</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -42,15 +42,6 @@
     <EmbeddedResource Remove="Resources\**" />
     <None Remove="obj\**" />
     <None Remove="Resources\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="NativeLibraries\SDL2.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="NativeLibraries\VulkanMemoryAllocator.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

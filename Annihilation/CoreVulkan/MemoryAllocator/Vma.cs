@@ -16,9 +16,23 @@ namespace Vulkan.MemoryAllocator
         //
         // Objects
         //
-        public class Block
+        public struct Suballocation
         {
+            public Vk.DeviceSize Offset;
+            public Vk.DeviceSize Size;
+        }
 
+        public unsafe class Block
+        {
+            public uint MemoryTypeIndex;
+            public BlockVectorType BlockVectorType;
+            public Vk.DeviceMemory Memory;
+            public Vk.DeviceSize Size;
+            public bool PersistentMap;
+            public void* MappedData;
+            public uint FreeCount;
+            public Vk.DeviceSize SumFreeSize;
+            public 
         }
 
         public class AllocatorType
