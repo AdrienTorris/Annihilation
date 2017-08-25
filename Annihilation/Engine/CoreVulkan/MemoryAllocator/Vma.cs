@@ -50,7 +50,7 @@ namespace Vulkan.MemoryAllocator
             public Vk.PhysicalDeviceProperties PhysicalDeviceProperties;
             public Vk.PhysicalDeviceMemoryProperties MemProps;
 
-            public 
+            public BlockVector
         }
 
         public static unsafe Vk.Result CreateAllocator(ref AllocatorCreateInfo createInfo, out Allocator allocator)

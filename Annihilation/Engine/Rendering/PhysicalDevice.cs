@@ -7,14 +7,14 @@ namespace Engine.Rendering
     public class PhysicalDevice : IDisposable
     {
         public Vk.PhysicalDevice Handle { get; private set; }
-        public PhysicalDeviceProperties Properties { get; private set; }
-        public PhysicalDeviceFeatures Features { get; private set; }
-        public QueueFamilyProperties[] QueueFamilies { get; private set; }
+        public Vk.PhysicalDeviceProperties Properties { get; private set; }
+        public Vk.PhysicalDeviceFeatures Features { get; private set; }
+        public Vk.QueueFamilyProperties[] QueueFamilies { get; private set; }
 
         private bool _isDisposed = false;
 
         // Vulkan instance functions
-        private static GetPhysicalDeviceSurfaceSupport GetPhysicalDeviceSurfaceSupport;
+        private static Vk.GetPhysicalDeviceSurfaceSupportDelegate GetPhysicalDeviceSurfaceSupport;
 
         private static readonly Dictionary<uint, string> _vendorMap = new Dictionary<uint, string>
         {
@@ -28,11 +28,11 @@ namespace Engine.Rendering
 
         public string GetVendorName() => _vendorMap[Properties.VendorId];
 
-        public int FindQueueFamily(QueueFlags flags, Vk.Surface surface)
+        public int FindQueueFamily(Vk.QueueFlags flags, Vk.Surface surface)
         {
             for (int i = 0; i < QueueFamilies.Length; ++i)
             {
-                Bool32 canPresent = false;
+                Vk.Bool32 canPresent = false;
                 if ((QueueFamilies[i].QueueFlags & flags) != flags) continue;
                 if (surface.Handle != 0) GetPhysicalDeviceSurfaceSupport(Handle, (uint)i, surface, out canPresent);
                 if ((surface.Handle != 0) == canPresent) return i;

@@ -44,4 +44,9 @@
     <None Remove="Resources\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="Engine\CoreDDL\OpenDDL.cs" />
+    <Compile Include="Engine\CoreDDL\Tree.cs" />
+  </ItemGroup>
+
 </Project>

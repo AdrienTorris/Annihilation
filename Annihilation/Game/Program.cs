@@ -37,7 +37,7 @@ namespace Game
             GameSettings settings = new GameSettings
             {
                 Name = "Bomberman",
-                Version = new Engine.Version(0, 1, 0),
+
                 CommandLineArgs = args,
 
                 InitialContext = Context.MainMenu,
@@ -58,11 +58,8 @@ namespace Game
                 },
                 RendererSettings = new RendererSettings
                 {
-                    UseDepthBuffer = false,
                     Width = 1280,
                     Height = 720,
-                    SSAA = 8,
-                    VSync = false,
                 },
                 InputSettings = new InputSettings
                 {
