@@ -1,4 +1,4 @@
-﻿namespace OpenDDL
+﻿namespace ODDL
 {
     public abstract class TreeBase
     {
