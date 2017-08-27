@@ -1741,5 +1741,10 @@ namespace ODDL
 
             return DataResult.Okay;
         }
+
+        public static DataResult ProcessText(char* text)
+        {
+
+        }
     }
 }
