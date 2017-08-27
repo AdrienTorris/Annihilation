@@ -1,14 +1,21 @@
 ﻿namespace ODDL
 {
-    public abstract class TreeBase
+    public enum StructureType
     {
-        public TreeBase PreviousNode;
-        public TreeBase NextNode;
-        public TreeBase SuperNode;
-        public TreeBase FirstSubnode;
-        public TreeBase LastSubnode;
+        Structure,
+        DataList,
+        DataArrayList
+    }
 
-        protected TreeBase() { }
+    public class Structure
+    {
+        public Structure PreviousNode;
+        public Structure NextNode;
+        public Structure SuperNode;
+        public Structure FirstSubnode;
+        public Structure LastSubnode;
+
+        protected Structure() { }
 
         protected virtual void Destroy()
         {
@@ -19,7 +26,7 @@
         public int GetSubnodeCount()
         {
             long count = 0;
-            TreeBase subnode = FirstSubnode;
+            Structure subnode = FirstSubnode;
             while (subnode != null)
             {
                 count++;
@@ -31,7 +38,7 @@
         public int GetSubtreeNodeCount()
         {
             long count = 0;
-            TreeBase subnode = FirstSubnode;
+            Structure subnode = FirstSubnode;
             while (subnode != null)
             {
                 count++;
@@ -43,7 +50,7 @@
         public int GetNodeIndex()
         {
             long index = 0;
-            TreeBase element = this;
+            Structure element = this;
             while (true)
             {
                 element = element.PreviousNode;
@@ -59,7 +66,7 @@
         public int GetNodeDepth()
         {
             long depth = 0;
-            TreeBase element = this;
+            Structure element = this;
             while (true)
             {
                 element = element.SuperNode;
@@ -74,10 +81,10 @@
 
         public void RemoveSubtree()
         {
-            TreeBase subnode = FirstSubnode;
+            Structure subnode = FirstSubnode;
             while (subnode != null)
             {
-                TreeBase next = subnode.NextNode;
+                Structure next = subnode.NextNode;
                 subnode.PreviousNode = null;
                 subnode.NextNode = null;
                 subnode.SuperNode = null;
@@ -103,12 +110,12 @@
             }
         }
 
-        protected TreeBase GetRootNode()
+        protected Structure GetRootNode()
         {
-            TreeBase root = this;
+            Structure root = this;
             while (true)
             {
-                TreeBase node = root.SuperNode;
+                Structure node = root.SuperNode;
                 if (node == null)
                 {
                     break;
@@ -118,9 +125,9 @@
             return root;
         }
 
-        protected bool Sucessor(TreeBase node)
+        protected bool Sucessor(Structure node)
         {
-            TreeBase super = node.SuperNode;
+            Structure super = node.SuperNode;
             while (super != null)
             {
                 if (super == this)
@@ -132,12 +139,12 @@
             return false;
         }
 
-        protected TreeBase GetLeftmostNode()
+        protected Structure GetLeftmostNode()
         {
-            TreeBase node = this;
+            Structure node = this;
             while (true)
             {
-                TreeBase subnode = node.FirstSubnode;
+                Structure subnode = node.FirstSubnode;
                 if (subnode == null)
                 {
                     break;
@@ -147,13 +154,13 @@
             return node;
         }
 
-        protected TreeBase GetRightmostNode()
+        protected Structure GetRightmostNode()
         {
 
-            TreeBase node = this;
+            Structure node = this;
             while (true)
             {
-                TreeBase subnode = node.LastSubnode;
+                Structure subnode = node.LastSubnode;
                 if (subnode == null)
                 {
                     break;
@@ -163,9 +170,9 @@
             return node;
         }
 
-        protected TreeBase GetNextNode(TreeBase node)
+        protected Structure GetNextNode(Structure node)
         {
-            TreeBase next = node.FirstSubnode;
+            Structure next = node.FirstSubnode;
             if (next == null)
             {
                 while (true)
@@ -186,14 +193,14 @@
             return next;
         }
 
-        protected TreeBase GetPreviousNode(TreeBase node)
+        protected Structure GetPreviousNode(Structure node)
         {
             if (node == this)
             {
                 return null;
             }
 
-            TreeBase prev = node.PreviousNode;
+            Structure prev = node.PreviousNode;
             if (prev == null)
             {
                 return node.SuperNode;
@@ -201,9 +208,9 @@
             return prev.GetRightmostNode();
         }
 
-        protected TreeBase GetNextLevelNode(TreeBase node)
+        protected Structure GetNextLevelNode(Structure node)
         {
-            TreeBase next = null;
+            Structure next = null;
             while (true)
             {
                 if (node == this)
@@ -220,9 +227,9 @@
             return next;
         }
 
-        protected TreeBase GetPreviousLevelNode(TreeBase node)
+        protected Structure GetPreviousLevelNode(Structure node)
         {
-            TreeBase prev = null;
+            Structure prev = null;
             while (true)
             {
                 if (node == this)
@@ -239,13 +246,13 @@
             return prev;
         }
 
-        protected void AppendSubnode(TreeBase node)
+        protected void AppendSubnode(Structure node)
         {
-            TreeBase tree = node.SuperNode;
+            Structure tree = node.SuperNode;
             if (tree != null)
             {
-                TreeBase prev = node.PreviousNode;
-                TreeBase next = node.NextNode;
+                Structure prev = node.PreviousNode;
+                Structure next = node.NextNode;
 
                 if (prev != null)
                 {
@@ -284,13 +291,13 @@
             node.SuperNode = this;
         }
 
-        protected void PrependSubnode(TreeBase node)
+        protected void PrependSubnode(Structure node)
         {
-            TreeBase tree = node.SuperNode;
+            Structure tree = node.SuperNode;
             if (tree != null)
             {
-                TreeBase prev = node.PreviousNode;
-                TreeBase next = node.NextNode;
+                Structure prev = node.PreviousNode;
+                Structure next = node.NextNode;
 
                 if (prev != null)
                 {
@@ -330,13 +337,13 @@
             node.SuperNode = this;
         }
 
-        protected void InsertSubnodeBefore(TreeBase node, TreeBase before)
+        protected void InsertSubnodeBefore(Structure node, Structure before)
         {
-            TreeBase tree = node.SuperNode;
+            Structure tree = node.SuperNode;
             if (tree != null)
             {
-                TreeBase prev = node.PreviousNode;
-                TreeBase next = node.NextNode;
+                Structure prev = node.PreviousNode;
+                Structure next = node.NextNode;
 
                 if (prev != null)
                 {
@@ -364,7 +371,7 @@
 
             if (before != null)
             {
-                TreeBase after = before.PreviousNode;
+                Structure after = before.PreviousNode;
                 node.PreviousNode = after;
                 before.PreviousNode = node;
 
@@ -379,7 +386,7 @@
             }
             else
             {
-                TreeBase after = LastSubnode;
+                Structure after = LastSubnode;
                 node.PreviousNode = after;
 
                 if (after != null)
@@ -395,13 +402,13 @@
             }
         }
 
-        protected void InsertSubnodeAfter(TreeBase node, TreeBase after)
+        protected void InsertSubnodeAfter(Structure node, Structure after)
         {
-            TreeBase tree = node.SuperNode;
+            Structure tree = node.SuperNode;
             if (tree != null)
             {
-                TreeBase prev = node.PreviousNode;
-                TreeBase next = node.NextNode;
+                Structure prev = node.PreviousNode;
+                Structure next = node.NextNode;
 
                 if (prev != null)
                 {
@@ -429,7 +436,7 @@
 
             if (after != null)
             {
-                TreeBase before = after.NextNode;
+                Structure before = after.NextNode;
                 node.NextNode = before;
                 after.NextNode = node;
 
@@ -444,7 +451,7 @@
             }
             else
             {
-                TreeBase before = FirstSubnode;
+                Structure before = FirstSubnode;
                 node.NextNode = before;
 
                 if (before != null)
@@ -460,10 +467,10 @@
             }
         }
 
-        protected void RemoveSubnode(TreeBase subnode)
+        protected void RemoveSubnode(Structure subnode)
         {
-            TreeBase prev = subnode.PreviousNode;
-            TreeBase next = subnode.NextNode;
+            Structure prev = subnode.PreviousNode;
+            Structure next = subnode.NextNode;
 
             if (prev != null)
             {

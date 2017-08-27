@@ -36,17 +36,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Engine\CoreDDL\**" />
     <Compile Remove="obj\**" />
     <Compile Remove="Resources\**" />
+    <EmbeddedResource Remove="Engine\CoreDDL\**" />
     <EmbeddedResource Remove="obj\**" />
     <EmbeddedResource Remove="Resources\**" />
+    <None Remove="Engine\CoreDDL\**" />
     <None Remove="obj\**" />
     <None Remove="Resources\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Engine\CoreDDL\OpenDDL.cs" />
-    <Compile Include="Engine\CoreDDL\Tree.cs" />
+    <Compile Include="Engine\CoreODDL\PrimitiveStructure.cs" />
+    <Compile Include="Engine\CoreODDL\Text.cs" />
   </ItemGroup>
 
 </Project>
