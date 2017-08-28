@@ -1,4 +1,4 @@
-﻿namespace ODDL
+﻿namespace OpenDDL
 {
     public enum DataType
     {

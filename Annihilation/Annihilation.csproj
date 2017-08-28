@@ -56,16 +56,16 @@
     <Compile Include="Engine\CoreDDL\Property.cs" />
     <Compile Include="Engine\CoreDDL\Reference.cs" />
     <Compile Include="Engine\CoreDDL\Structure.cs" />
-    <Compile Include="Engine\CoreDDL\StructureReference.cs" />
     <Compile Include="Engine\CoreDDL\Symbol.cs" />
     <Compile Include="Engine\CoreDDL\Text.cs" />
+    <Compile Include="Engine\CoreGEX\File.cs" />
     <Compile Include="Engine\Core\Map.cs" />
     <Compile Include="Engine\Core\String.cs" />
     <Compile Include="Engine\Core\Tree.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Engine\CoreGEX\" />
+    <Folder Include="Engine\Resources\" />
   </ItemGroup>
 
 </Project>

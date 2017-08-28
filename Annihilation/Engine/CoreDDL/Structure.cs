@@ -45,7 +45,7 @@
 
 using Engine.Core;
 
-namespace ODDL
+namespace OpenDDL
 {
     public enum StructureType
     {

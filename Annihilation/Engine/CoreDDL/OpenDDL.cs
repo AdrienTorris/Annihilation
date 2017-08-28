@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 
-namespace ODDL
+namespace OpenDDL
 {
     public enum Result
     {
@@ -76,12 +76,12 @@ namespace ODDL
                 readCount = stream.Read(chars, 0, (int)byteCount);
             }
 
+            RootStructure rootStructure;
+            Structure errorStructure = null;
+            int errorLine = 0;
+
             fixed (char* start = chars)
             {
-                RootStructure rootStructure;
-                Structure errorStructure = null;
-                int errorLine = 0;
-
                 char* text = start;
                 text += GetWhitespaceLength(text);
 

@@ -3,33 +3,38 @@ using System.Runtime.InteropServices;
 
 namespace SDL2
 {
-    //
-    // SDL_events.h
-    //
-    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    public unsafe delegate int EventFilter(void* userdata, Event* sdlEvent);
-    
-    //
-    // SDL_hints.h
-    //
-    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    public unsafe delegate void HintCallback(void* userData, Text name, Text oldValue, Text newValue);
+    public static partial class SDL
+    {
+        //
+        // SDL_audio.h
+        //
+        public unsafe delegate void AudioCallback(IntPtr userData, byte[] stream, int length);
 
-    //
-    // SDL_log.h
-    //
-    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    public unsafe delegate void LogOutputFunction(void* userData, LogCategory category, LogPriority priority, Text message);
+        public unsafe delegate void AudioFilter(ref AudioCVT cvt, AudioFormat format);
 
-    //
-    // SDL_timer.h
-    //
-    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    public delegate TimerID TimerCallback(uint interval, IntPtr param);
+        //
+        // SDL_events.h
+        //
+        public unsafe delegate int EventFilter(void* userdata, Event* sdlEvent);
 
-    //
-    // SDL_video.h
-    //
-    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    public unsafe delegate HitTestResult HitTest(Window window, Point* area, void* data);
+        //
+        // SDL_hints.h
+        //
+        public unsafe delegate void HintCallback(void* userData, Text name, Text oldValue, Text newValue);
+
+        //
+        // SDL_log.h
+        //
+        public unsafe delegate void LogOutputFunction(void* userData, LogCategory category, LogPriority priority, Text message);
+
+        //
+        // SDL_timer.h
+        //
+        public delegate TimerID TimerCallback(uint interval, IntPtr param);
+
+        //
+        // SDL_video.h
+        //
+        public unsafe delegate HitTestResult HitTest(Window window, Point* area, void* data);
+    }
 }

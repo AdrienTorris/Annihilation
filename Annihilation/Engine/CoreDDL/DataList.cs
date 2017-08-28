@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ODDL
+namespace OpenDDL
 {
     public abstract class DataList
     {

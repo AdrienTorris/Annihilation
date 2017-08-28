@@ -7,7 +7,7 @@ namespace Engine
 {
     public class Cursor
     {
-        public CursorHandle Handle;
+        public SDL.Cursor Handle;
 
         public static readonly Cursor Null = new Cursor();
 
@@ -15,10 +15,10 @@ namespace Engine
         // Constructors
         //
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Cursor() => Handle = new CursorHandle();
+        public Cursor() => Handle = new SDL.Cursor();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Cursor(CursorHandle handle) => Handle = handle;
+        public Cursor(SDL.Cursor handle) => Handle = handle;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Cursor(byte[] data, byte[] mask, int w, int h, int hotX, int hotY) => Handle = Native.SDL_CreateCursor(data, mask, w, h, hotX, hotY);

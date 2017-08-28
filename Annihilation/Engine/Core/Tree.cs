@@ -45,7 +45,7 @@
 
 namespace Engine.Core
 {
-    public class Tree<T> : Tree where T : Tree
+    public class Tree<T> : TreeNode where T : TreeNode
     {
         public T Previous => (T)PreviousNode;
         public T Next => (T)NextNode;
@@ -68,15 +68,15 @@ namespace Engine.Core
         public void RemoveSubnode(T node) => base.RemoveSubnode(node);
     }
 
-    public abstract class Tree
+    public abstract class TreeNode
     { 
-        public Tree PreviousNode;
-        public Tree NextNode;
-        public Tree SuperNode;
-        public Tree FirstSubnode;
-        public Tree LastSubnode;
+        public TreeNode PreviousNode;
+        public TreeNode NextNode;
+        public TreeNode SuperNode;
+        public TreeNode FirstSubnode;
+        public TreeNode LastSubnode;
 
-        protected Tree() { }
+        protected TreeNode() { }
 
         protected virtual void Destroy()
         {
@@ -87,7 +87,7 @@ namespace Engine.Core
         public int GetSubnodeCount()
         {
             long count = 0;
-            Tree subnode = FirstSubnode;
+            TreeNode subnode = FirstSubnode;
             while (subnode != null)
             {
                 count++;
@@ -99,7 +99,7 @@ namespace Engine.Core
         public int GetSubtreeNodeCount()
         {
             long count = 0;
-            Tree subnode = FirstSubnode;
+            TreeNode subnode = FirstSubnode;
             while (subnode != null)
             {
                 count++;
@@ -111,7 +111,7 @@ namespace Engine.Core
         public int GetNodeIndex()
         {
             long index = 0;
-            Tree element = this;
+            TreeNode element = this;
             while (true)
             {
                 element = element.PreviousNode;
@@ -127,7 +127,7 @@ namespace Engine.Core
         public int GetNodeDepth()
         {
             long depth = 0;
-            Tree element = this;
+            TreeNode element = this;
             while (true)
             {
                 element = element.SuperNode;
@@ -142,10 +142,10 @@ namespace Engine.Core
 
         public void RemoveSubtree()
         {
-            Tree subnode = FirstSubnode;
+            TreeNode subnode = FirstSubnode;
             while (subnode != null)
             {
-                Tree next = subnode.NextNode;
+                TreeNode next = subnode.NextNode;
                 subnode.PreviousNode = null;
                 subnode.NextNode = null;
                 subnode.SuperNode = null;
@@ -171,12 +171,12 @@ namespace Engine.Core
             }
         }
 
-        protected Tree GetRootNode()
+        protected TreeNode GetRootNode()
         {
-            Tree root = this;
+            TreeNode root = this;
             while (true)
             {
-                Tree node = root.SuperNode;
+                TreeNode node = root.SuperNode;
                 if (node == null)
                 {
                     break;
@@ -186,9 +186,9 @@ namespace Engine.Core
             return root;
         }
 
-        protected bool IsSucessor(Tree node)
+        protected bool IsSucessor(TreeNode node)
         {
-            Tree super = node.SuperNode;
+            TreeNode super = node.SuperNode;
             while (super != null)
             {
                 if (super == this)
@@ -200,12 +200,12 @@ namespace Engine.Core
             return false;
         }
 
-        protected Tree GetLeftmostNode()
+        protected TreeNode GetLeftmostNode()
         {
-            Tree node = this;
+            TreeNode node = this;
             while (true)
             {
-                Tree subnode = node.FirstSubnode;
+                TreeNode subnode = node.FirstSubnode;
                 if (subnode == null)
                 {
                     break;
@@ -215,12 +215,12 @@ namespace Engine.Core
             return node;
         }
 
-        protected Tree GetRightmostNode()
+        protected TreeNode GetRightmostNode()
         {
-            Tree node = this;
+            TreeNode node = this;
             while (true)
             {
-                Tree subnode = node.LastSubnode;
+                TreeNode subnode = node.LastSubnode;
                 if (subnode == null)
                 {
                     break;
@@ -230,9 +230,9 @@ namespace Engine.Core
             return node;
         }
 
-        protected Tree GetNextNode(Tree node)
+        protected TreeNode GetNextNode(TreeNode node)
         {
-            Tree next = node.FirstSubnode;
+            TreeNode next = node.FirstSubnode;
             if (next == null)
             {
                 while (true)
@@ -253,14 +253,14 @@ namespace Engine.Core
             return next;
         }
 
-        protected Tree GetPreviousNode(Tree node)
+        protected TreeNode GetPreviousNode(TreeNode node)
         {
             if (node == this)
             {
                 return null;
             }
 
-            Tree prev = node.PreviousNode;
+            TreeNode prev = node.PreviousNode;
             if (prev == null)
             {
                 return node.SuperNode;
@@ -268,9 +268,9 @@ namespace Engine.Core
             return prev.GetRightmostNode();
         }
 
-        protected Tree GetNextLevelNode(Tree node)
+        protected TreeNode GetNextLevelNode(TreeNode node)
         {
-            Tree next = null;
+            TreeNode next = null;
             while (true)
             {
                 if (node == this)
@@ -287,9 +287,9 @@ namespace Engine.Core
             return next;
         }
 
-        protected Tree GetPreviousLevelNode(Tree node)
+        protected TreeNode GetPreviousLevelNode(TreeNode node)
         {
-            Tree prev = null;
+            TreeNode prev = null;
             while (true)
             {
                 if (node == this)
@@ -306,13 +306,13 @@ namespace Engine.Core
             return prev;
         }
 
-        protected void AppendSubnode(Tree node)
+        protected void AppendSubnode(TreeNode node)
         {
-            Tree tree = node.SuperNode;
+            TreeNode tree = node.SuperNode;
             if (tree != null)
             {
-                Tree prev = node.PreviousNode;
-                Tree next = node.NextNode;
+                TreeNode prev = node.PreviousNode;
+                TreeNode next = node.NextNode;
 
                 if (prev != null)
                 {
@@ -351,13 +351,13 @@ namespace Engine.Core
             node.SuperNode = (this);
         }
 
-        protected void PrependSubnode(Tree node)
+        protected void PrependSubnode(TreeNode node)
         {
-            Tree tree = node.SuperNode;
+            TreeNode tree = node.SuperNode;
             if (tree != null)
             {
-                Tree prev = node.PreviousNode;
-                Tree next = node.NextNode;
+                TreeNode prev = node.PreviousNode;
+                TreeNode next = node.NextNode;
 
                 if (prev != null)
                 {
@@ -397,13 +397,13 @@ namespace Engine.Core
             node.SuperNode = (this);
         }
 
-        protected void InsertSubnodeBefore(Tree node, Tree before)
+        protected void InsertSubnodeBefore(TreeNode node, TreeNode before)
         {
-            Tree tree = node.SuperNode;
+            TreeNode tree = node.SuperNode;
             if (tree != null)
             {
-                Tree prev = node.PreviousNode;
-                Tree next = node.NextNode;
+                TreeNode prev = node.PreviousNode;
+                TreeNode next = node.NextNode;
 
                 if (prev != null)
                 {
@@ -431,7 +431,7 @@ namespace Engine.Core
 
             if (before != null)
             {
-                Tree after = before.PreviousNode;
+                TreeNode after = before.PreviousNode;
                 node.PreviousNode = after;
                 before.PreviousNode = node;
 
@@ -446,7 +446,7 @@ namespace Engine.Core
             }
             else
             {
-                Tree after = LastSubnode;
+                TreeNode after = LastSubnode;
                 node.PreviousNode = after;
 
                 if (after != null)
@@ -462,13 +462,13 @@ namespace Engine.Core
             }
         }
 
-        protected void InsertSubnodeAfter(Tree node, Tree after)
+        protected void InsertSubnodeAfter(TreeNode node, TreeNode after)
         {
-            Tree tree = node.SuperNode;
+            TreeNode tree = node.SuperNode;
             if (tree != null)
             {
-                Tree prev = node.PreviousNode;
-                Tree next = node.NextNode;
+                TreeNode prev = node.PreviousNode;
+                TreeNode next = node.NextNode;
 
                 if (prev != null)
                 {
@@ -496,7 +496,7 @@ namespace Engine.Core
 
             if (after != null)
             {
-                Tree before = after.NextNode;
+                TreeNode before = after.NextNode;
                 node.NextNode = before;
                 after.NextNode = node;
 
@@ -511,7 +511,7 @@ namespace Engine.Core
             }
             else
             {
-                Tree before = FirstSubnode;
+                TreeNode before = FirstSubnode;
                 node.NextNode = before;
 
                 if (before != null)
@@ -527,10 +527,10 @@ namespace Engine.Core
             }
         }
 
-        protected void RemoveSubnode(Tree subnode)
+        protected void RemoveSubnode(TreeNode subnode)
         {
-            Tree prev = subnode.PreviousNode;
-            Tree next = subnode.NextNode;
+            TreeNode prev = subnode.PreviousNode;
+            TreeNode next = subnode.NextNode;
 
             if (prev != null)
             {

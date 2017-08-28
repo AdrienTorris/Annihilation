@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ODDL
+namespace OpenDDL
 {
     public class DataDescription
     {
