@@ -36,20 +36,36 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Engine\CoreDDL\**" />
     <Compile Remove="obj\**" />
     <Compile Remove="Resources\**" />
-    <EmbeddedResource Remove="Engine\CoreDDL\**" />
     <EmbeddedResource Remove="obj\**" />
     <EmbeddedResource Remove="Resources\**" />
-    <None Remove="Engine\CoreDDL\**" />
     <None Remove="obj\**" />
     <None Remove="Resources\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Engine\CoreODDL\PrimitiveStructure.cs" />
-    <Compile Include="Engine\CoreODDL\Text.cs" />
+    <Compile Include="Engine\CoreDDL\Data.cs" />
+    <Compile Include="Engine\CoreDDL\DataArrayList.cs" />
+    <Compile Include="Engine\CoreDDL\DataDescription.cs" />
+    <Compile Include="Engine\CoreDDL\DataList.cs" />
+    <Compile Include="Engine\CoreDDL\Identifier.cs" />
+    <Compile Include="Engine\CoreDDL\Name.cs" />
+    <Compile Include="Engine\CoreDDL\OpenDDL.cs" />
+    <Compile Include="Engine\CoreDDL\PrimitiveStructure.cs" />
+    <Compile Include="Engine\CoreDDL\Property.cs" />
+    <Compile Include="Engine\CoreDDL\Reference.cs" />
+    <Compile Include="Engine\CoreDDL\Structure.cs" />
+    <Compile Include="Engine\CoreDDL\StructureReference.cs" />
+    <Compile Include="Engine\CoreDDL\Symbol.cs" />
+    <Compile Include="Engine\CoreDDL\Text.cs" />
+    <Compile Include="Engine\Core\Map.cs" />
+    <Compile Include="Engine\Core\String.cs" />
+    <Compile Include="Engine\Core\Tree.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Engine\CoreGEX\" />
   </ItemGroup>
 
 </Project>

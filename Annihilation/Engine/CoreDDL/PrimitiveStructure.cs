@@ -14,6 +14,6 @@ namespace ODDL
 
         }
 
-        public abstract DataResult ParseData(string text);
+        public abstract Result ParseData(string text);
     }
 }

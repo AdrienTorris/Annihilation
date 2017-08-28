@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace ODDL
 {
-    public enum DataResult
+    public enum Result
     {
         Okay,
         SyntaxError,
@@ -64,6 +64,61 @@ namespace ODDL
             2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, // 192 - 223
             2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2  // 224 - 255
         };
+
+        public static Result ParseFile(string path)
+        {
+            long byteCount = new FileInfo(path).Length;
+            char[] chars = new char[byteCount];
+
+            int readCount = 0;
+            using (StreamReader stream = new StreamReader(path, Encoding.UTF8))
+            {
+                readCount = stream.Read(chars, 0, (int)byteCount);
+            }
+
+            fixed (char* start = chars)
+            {
+                RootStructure rootStructure;
+                Structure errorStructure = null;
+                int errorLine = 0;
+
+                char* text = start;
+                text += GetWhitespaceLength(text);
+
+                Result result = ParseStructures(text, ref rootStructure);
+                if ((result == Result.Okay) && (text[0] != 0))
+                {
+                    result = Result.SyntaxError;
+                }
+
+                if (result == Result.Okay)
+                {
+                    result = ProcessData();
+                    if ((result != Result.Okay) && (errorStructure != null))
+                    {
+                        text = errorStructure.TextLocation;
+                    }
+                }
+
+                if (result != Result.Okay)
+                {
+                    rootStructure.PurgeSubtree();
+
+                    int line = 1;
+                    while (text != start)
+                    {
+                        if ((--text)[0] == '\n')
+                        {
+                            line++;
+                        }
+                    }
+
+                    errorLine = line;
+                }
+
+                return result;
+            }
+        }
 
         public static int GetWhitespaceLength(char* text)
         {
@@ -138,7 +193,7 @@ namespace ODDL
             return (int)(chars - text);
         }
 
-        public static DataResult ReadDataType(char* text, out int textLength, out DataType dataType)
+        public static Result ReadDataType(char* text, out int textLength, out DataType dataType)
         {
             char* chars = text;
 
@@ -151,28 +206,28 @@ namespace ODDL
                 {
                     dataType = DataType.Int8;
                     textLength = length + 1;
-                    return DataResult.Okay;
+                    return Result.Okay;
                 }
 
                 if ((chars[length] == '1') && (chars[length + 1] == '6') && (IdentifierCharState[chars[length + 2]] == 0))
                 {
                     dataType = DataType.Int16;
                     textLength = length + 2;
-                    return DataResult.Okay;
+                    return Result.Okay;
                 }
 
                 if ((chars[length] == '3') && (chars[length + 1] == '2') && (IdentifierCharState[chars[length + 2]] == 0))
                 {
                     dataType = DataType.Int32;
                     textLength = length + 2;
-                    return DataResult.Okay;
+                    return Result.Okay;
                 }
 
                 if ((chars[length] == '6') && (chars[length + 1] == '4') && (IdentifierCharState[chars[length + 2]] == 0))
                 {
                     dataType = DataType.Int64;
                     textLength = length + 2;
-                    return DataResult.Okay;
+                    return Result.Okay;
                 }
             }
             else if (c == 'u')
@@ -183,28 +238,28 @@ namespace ODDL
                 {
                     dataType = DataType.UInt8;
                     textLength = length + 1;
-                    return DataResult.Okay;
+                    return Result.Okay;
                 }
 
                 if ((chars[length] == '1') && (chars[length + 1] == '6') && (IdentifierCharState[chars[length + 2]] == 0))
                 {
                     dataType = DataType.UInt16;
                     textLength = length + 2;
-                    return DataResult.Okay;
+                    return Result.Okay;
                 }
 
                 if ((chars[length] == '3') && (chars[length + 1] == '2') && (IdentifierCharState[chars[length + 2]] == 0))
                 {
                     dataType = DataType.UInt32;
                     textLength = length + 2;
-                    return DataResult.Okay;
+                    return Result.Okay;
                 }
 
                 if ((chars[length] == '6') && (chars[length + 1] == '4') && (IdentifierCharState[chars[length + 2]] == 0))
                 {
                     dataType = DataType.UInt64;
                     textLength = length + 2;
-                    return DataResult.Okay;
+                    return Result.Okay;
                 }
             }
             else if (c == 'f')
@@ -215,28 +270,28 @@ namespace ODDL
                 {
                     dataType = DataType.Float;
                     textLength = length;
-                    return DataResult.Okay;
+                    return Result.Okay;
                 }
 
                 if ((chars[length] == '1') && (chars[length + 1] == '6') && (IdentifierCharState[chars[length + 2]] == 0))
                 {
                     dataType = DataType.Half;
                     textLength = length + 2;
-                    return DataResult.Okay;
+                    return Result.Okay;
                 }
 
                 if ((chars[length] == '3') && (chars[length + 1] == '2') && (IdentifierCharState[chars[length + 2]] == 0))
                 {
                     dataType = DataType.Float;
                     textLength = length + 2;
-                    return DataResult.Okay;
+                    return Result.Okay;
                 }
 
                 if ((chars[length] == '6') && (chars[length + 1] == '4') && (IdentifierCharState[chars[length + 2]] == 0))
                 {
                     dataType = DataType.Double;
                     textLength = length + 2;
-                    return DataResult.Okay;
+                    return Result.Okay;
                 }
             }
             else if (c == 'b')
@@ -247,7 +302,7 @@ namespace ODDL
                 {
                     dataType = DataType.Bool;
                     textLength = length;
-                    return DataResult.Okay;
+                    return Result.Okay;
                 }
             }
             else if (c == 'h')
@@ -258,7 +313,7 @@ namespace ODDL
                 {
                     dataType = DataType.Half;
                     textLength = length;
-                    return DataResult.Okay;
+                    return Result.Okay;
                 }
             }
             else if (c == 'd')
@@ -269,7 +324,7 @@ namespace ODDL
                 {
                     dataType = DataType.Double;
                     textLength = length;
-                    return DataResult.Okay;
+                    return Result.Okay;
                 }
             }
             else if (c == 's')
@@ -280,7 +335,7 @@ namespace ODDL
                 {
                     dataType = DataType.String;
                     textLength = length;
-                    return DataResult.Okay;
+                    return Result.Okay;
                 }
             }
             else if (c == 'r')
@@ -291,7 +346,7 @@ namespace ODDL
                 {
                     dataType = DataType.Reference;
                     textLength = length;
-                    return DataResult.Okay;
+                    return Result.Okay;
                 }
             }
             else if (c == 't')
@@ -302,16 +357,16 @@ namespace ODDL
                 {
                     dataType = DataType.Type;
                     textLength = length;
-                    return DataResult.Okay;
+                    return Result.Okay;
                 }
             }
 
             textLength = 0;
             dataType = DataType.Invalid;
-            return DataResult.TypeInvalid;
+            return Result.TypeInvalid;
         }
 
-        public static DataResult ReadIdentifier(char* text, out int textLength, StringBuilder identifier)
+        public static Result ReadIdentifier(char* text, out int textLength, StringBuilder identifier = null)
         {
             char* chars = text;
 
@@ -325,7 +380,7 @@ namespace ODDL
             {
                 if (c < 'A')
                 {
-                    return DataResult.IdentifierIllegalChar;
+                    return Result.IdentifierIllegalChar;
                 }
 
                 identifier.Append(c);
@@ -344,7 +399,7 @@ namespace ODDL
                     }
                     else if (state == 2)
                     {
-                        return DataResult.IdentifierIllegalChar;
+                        return Result.IdentifierIllegalChar;
                     }
 
                     break;
@@ -353,14 +408,14 @@ namespace ODDL
                 identifier.Append((char)0);
 
                 textLength = count;
-                return DataResult.Okay;
+                return Result.Okay;
             }
             else if (state == 2)
             {
-                return DataResult.IdentifierIllegalChar;
+                return Result.IdentifierIllegalChar;
             }
 
-            return DataResult.IdentifierEmpty;
+            return Result.IdentifierEmpty;
         }
 
         public static int ReadEscapeChar(char* text, out char escapeChar)
@@ -532,7 +587,7 @@ namespace ODDL
             return 0;
         }
 
-        public static DataResult ReadStringLiteral(char* text, out int textLength, out int stringLength, char* str)
+        public static Result ReadStringLiteral(char* text, out int textLength, out int stringLength, char* str)
         {
             textLength = 0;
             stringLength = 0;
@@ -550,7 +605,7 @@ namespace ODDL
 
                 if ((c < 32U) || (c == 127U))
                 {
-                    return DataResult.StringIllegalChar;
+                    return Result.StringIllegalChar;
                 }
 
                 if (c != '\\')
@@ -558,7 +613,7 @@ namespace ODDL
                     int length = Text.ValidateGlyphCodeUTF8(chars);
                     if (length == 0)
                     {
-                        return DataResult.StringIllegalChar;
+                        return Result.StringIllegalChar;
                     }
 
                     if (str != null)
@@ -579,7 +634,7 @@ namespace ODDL
                     int textLen = ReadStringEscapeChar(++chars, out int stringLen, str);
                     if (textLen == 0)
                     {
-                        return DataResult.StringIllegalEscape;
+                        return Result.StringIllegalEscape;
                     }
 
                     if (str != null)
@@ -594,10 +649,10 @@ namespace ODDL
 
             textLength = (int)(chars - text);
             stringLength = count;
-            return DataResult.Okay;
+            return Result.Okay;
         }
 
-        public static DataResult ReadBoolLiteral(char* text, out int textLength, out bool value)
+        public static Result ReadBoolLiteral(char* text, out int textLength, out bool value)
         {
             char* chars = text;
 
@@ -608,7 +663,7 @@ namespace ODDL
                 {
                     value = false;
                     textLength = 5;
-                    return DataResult.Okay;
+                    return Result.Okay;
                 }
             }
             else if (c == 't')
@@ -617,16 +672,16 @@ namespace ODDL
                 {
                     value = true;
                     textLength = 4;
-                    return DataResult.Okay;
+                    return Result.Okay;
                 }
             }
 
             textLength = 0;
             value = false;
-            return DataResult.BoolInvalid;
+            return Result.BoolInvalid;
         }
 
-        public static DataResult ReadDecimalLiteral(char* text, out int textLength, out ulong value)
+        public static Result ReadDecimalLiteral(char* text, out int textLength, out ulong value)
         {
             value = 0;
             textLength = 0;
@@ -642,7 +697,7 @@ namespace ODDL
                 {
                     if (v >= 0x199999999999999AUL)
                     {
-                        return DataResult.IntegerOverflow;
+                        return Result.IntegerOverflow;
                     }
 
                     ulong w = v;
@@ -650,7 +705,7 @@ namespace ODDL
 
                     if ((w >= 9U) && (v < 9U))
                     {
-                        return DataResult.IntegerOverflow;
+                        return Result.IntegerOverflow;
                     }
 
                     separator = true;
@@ -670,15 +725,15 @@ namespace ODDL
 
             if (!separator)
             {
-                return DataResult.SyntaxError;
+                return Result.SyntaxError;
             }
 
             value = v;
             textLength = (int)(chars - text);
-            return DataResult.Okay;
+            return Result.Okay;
         }
 
-        public static DataResult ReadHexadecimalLiteral(char* text, out int textLength, out ulong value)
+        public static Result ReadHexadecimalLiteral(char* text, out int textLength, out ulong value)
         {
             value = 0;
             textLength = 0;
@@ -700,7 +755,7 @@ namespace ODDL
                 {
                     if ((v >> 60) != 0)
                     {
-                        return DataResult.IntegerOverflow;
+                        return Result.IntegerOverflow;
                     }
 
                     v = (ulong)((int)(v << 4) | x);
@@ -721,15 +776,15 @@ namespace ODDL
 
             if (!separator)
             {
-                return DataResult.SyntaxError;
+                return Result.SyntaxError;
             }
 
             value = v;
             textLength = (int)(chars - text);
-            return DataResult.Okay;
+            return Result.Okay;
         }
 
-        public static DataResult ReadOctalLiteral(char* text, out int textLength, out ulong value)
+        public static Result ReadOctalLiteral(char* text, out int textLength, out ulong value)
         {
             value = 0;
             textLength = 0;
@@ -745,7 +800,7 @@ namespace ODDL
                 {
                     if (v >= 0x2000000000000000UL)
                     {
-                        return DataResult.IntegerOverflow;
+                        return Result.IntegerOverflow;
                     }
 
                     ulong w = v;
@@ -753,7 +808,7 @@ namespace ODDL
 
                     if ((w >= 7U) && (v < 7U))
                     {
-                        return DataResult.IntegerOverflow;
+                        return Result.IntegerOverflow;
                     }
 
                     separator = true;
@@ -773,15 +828,15 @@ namespace ODDL
 
             if (!separator)
             {
-                return DataResult.SyntaxError;
+                return Result.SyntaxError;
             }
 
             value = v;
             textLength = (int)(chars - text);
-            return DataResult.Okay;
+            return Result.Okay;
         }
 
-        public static DataResult ReadBinaryLiteral(char* text, out int textLength, out ulong value)
+        public static Result ReadBinaryLiteral(char* text, out int textLength, out ulong value)
         {
             value = 0;
             textLength = 0;
@@ -797,7 +852,7 @@ namespace ODDL
                 {
                     if ((v >> 63) != 0)
                     {
-                        return DataResult.IntegerOverflow;
+                        return Result.IntegerOverflow;
                     }
 
                     v = (v << 1) | x;
@@ -818,15 +873,15 @@ namespace ODDL
 
             if (!separator)
             {
-                return DataResult.SyntaxError;
+                return Result.SyntaxError;
             }
 
             value = v;
             textLength = (int)(chars - text);
-            return DataResult.Okay;
+            return Result.Okay;
         }
 
-        public static DataResult ReadCharLiteral(char* text, out int textLength, out ulong value)
+        public static Result ReadCharLiteral(char* text, out int textLength, out ulong value)
         {
             value = 0;
             textLength = 0;
@@ -844,14 +899,14 @@ namespace ODDL
 
                 if ((c < 32U) || (c >= 127U))
                 {
-                    return DataResult.CharIllegalChar;
+                    return Result.CharIllegalChar;
                 }
 
                 if (c != '\\')
                 {
                     if ((v >> 56) != 0)
                     {
-                        return DataResult.IntegerOverflow;
+                        return Result.IntegerOverflow;
                     }
 
                     v = (v << 8) | c;
@@ -862,12 +917,12 @@ namespace ODDL
                     int length = ReadEscapeChar(++chars, out char x);
                     if (length == 0)
                     {
-                        return DataResult.CharIllegalEscape;
+                        return Result.CharIllegalEscape;
                     }
 
                     if ((v >> 56) != 0)
                     {
-                        return DataResult.IntegerOverflow;
+                        return Result.IntegerOverflow;
                     }
 
                     v = (v << 8) | x;
@@ -877,10 +932,10 @@ namespace ODDL
 
             value = v;
             textLength = (int)(chars - text);
-            return DataResult.Okay;
+            return Result.Okay;
         }
 
-        public static DataResult ReadIntegerLiteral(char* text, out int textLength, out ulong value)
+        public static Result ReadIntegerLiteral(char* text, out int textLength, out ulong value)
         {
             textLength = 0;
             value = 0;
@@ -909,12 +964,12 @@ namespace ODDL
             }
             else if (c == '\'')
             {
-                DataResult result = ReadCharLiteral(chars + 1, out int length, out value);
-                if (result == DataResult.Okay)
+                Result result = ReadCharLiteral(chars + 1, out int length, out value);
+                if (result == Result.Okay)
                 {
                     if (text[length + 1] != '\'')
                     {
-                        return DataResult.CharEndOfFile;
+                        return Result.CharEndOfFile;
                     }
 
                     textLength = length + 2;
@@ -926,7 +981,7 @@ namespace ODDL
             return ReadDecimalLiteral(text, out textLength, out value);
         }
 
-        public static DataResult ReadFloatLiteral(char* text, out int textLength, out float value)
+        public static Result ReadFloatLiteral(char* text, out int textLength, out float value)
         {
             textLength = 0;
             value = 0f;
@@ -940,12 +995,12 @@ namespace ODDL
 
                 if ((c == 'x') || (c == 'X'))
                 {
-                    DataResult result = ReadHexadecimalLiteral(text, out textLength, out ulong val);
-                    if (result == DataResult.Okay)
+                    Result result = ReadHexadecimalLiteral(text, out textLength, out ulong val);
+                    if (result == Result.Okay)
                     {
                         if (val > ((1UL << (sizeof(float) * 8 - 1)) - 1) * 2 + 1)
                         {
-                            return DataResult.FloatOverflow;
+                            return Result.FloatOverflow;
                         }
 
                         value = val;
@@ -956,12 +1011,12 @@ namespace ODDL
 
                 if ((c == 'o') || (c == 'O'))
                 {
-                    DataResult result = ReadOctalLiteral(text, out textLength, out ulong val);
-                    if (result == DataResult.Okay)
+                    Result result = ReadOctalLiteral(text, out textLength, out ulong val);
+                    if (result == Result.Okay)
                     {
                         if (val > ((1UL << (sizeof(float) * 8 - 1)) - 1) * 2 + 1)
                         {
-                            return DataResult.FloatOverflow;
+                            return Result.FloatOverflow;
                         }
 
                         value = val;
@@ -972,12 +1027,12 @@ namespace ODDL
 
                 if ((c == 'b') || (c == 'B'))
                 {
-                    DataResult result = ReadBinaryLiteral(text, out textLength, out ulong val);
-                    if (result == DataResult.Okay)
+                    Result result = ReadBinaryLiteral(text, out textLength, out ulong val);
+                    if (result == Result.Okay)
                     {
                         if (val > ((1UL << (sizeof(float) * 8 - 1)) - 1) * 2 + 1)
                         {
-                            return DataResult.FloatOverflow;
+                            return Result.FloatOverflow;
                         }
 
                         value = val;
@@ -1003,7 +1058,7 @@ namespace ODDL
                 {
                     if (!digitFlag)
                     {
-                        return DataResult.FloatInvalid;
+                        return Result.FloatInvalid;
                     }
 
                     digitFlag = false;
@@ -1016,7 +1071,7 @@ namespace ODDL
 
             if (wholeFlag & !digitFlag)
             {
-                return DataResult.FloatInvalid;
+                return Result.FloatInvalid;
             }
 
             bool fractionFlag = false;
@@ -1040,7 +1095,7 @@ namespace ODDL
                     {
                         if (!digitFlag)
                         {
-                            return DataResult.FloatInvalid;
+                            return Result.FloatInvalid;
                         }
 
                         digitFlag = false;
@@ -1053,7 +1108,7 @@ namespace ODDL
 
                 if (fractionFlag & !digitFlag)
                 {
-                    return DataResult.FloatInvalid;
+                    return Result.FloatInvalid;
                 }
 
                 c = chars[0];
@@ -1061,7 +1116,7 @@ namespace ODDL
 
             if (!(wholeFlag | fractionFlag))
             {
-                return DataResult.FloatInvalid;
+                return Result.FloatInvalid;
             }
 
             if ((c == 'e') || (c == 'E'))
@@ -1093,7 +1148,7 @@ namespace ODDL
                     {
                         if (!digitFlag)
                         {
-                            return DataResult.FloatInvalid;
+                            return Result.FloatInvalid;
                         }
 
                         digitFlag = false;
@@ -1106,7 +1161,7 @@ namespace ODDL
 
                 if (!digitFlag)
                 {
-                    return DataResult.FloatInvalid;
+                    return Result.FloatInvalid;
                 }
 
                 if (exponent != 0)
@@ -1135,10 +1190,10 @@ namespace ODDL
 
             value = (float)v;
             textLength = (int)(chars - text);
-            return DataResult.Okay;
+            return Result.Okay;
         }
 
-        public static DataResult ReadDoubleLiteral(char* text, out int textLength, out double value)
+        public static Result ReadDoubleLiteral(char* text, out int textLength, out double value)
         {
             textLength = 0;
             value = 0f;
@@ -1152,12 +1207,12 @@ namespace ODDL
 
                 if ((c == 'x') || (c == 'X'))
                 {
-                    DataResult result = ReadHexadecimalLiteral(text, out textLength, out ulong val);
-                    if (result == DataResult.Okay)
+                    Result result = ReadHexadecimalLiteral(text, out textLength, out ulong val);
+                    if (result == Result.Okay)
                     {
                         if (val > ((1UL << (sizeof(double) * 8 - 1)) - 1) * 2 + 1)
                         {
-                            return DataResult.FloatOverflow;
+                            return Result.FloatOverflow;
                         }
 
                         value = val;
@@ -1168,12 +1223,12 @@ namespace ODDL
 
                 if ((c == 'o') || (c == 'O'))
                 {
-                    DataResult result = ReadOctalLiteral(text, out textLength, out ulong val);
-                    if (result == DataResult.Okay)
+                    Result result = ReadOctalLiteral(text, out textLength, out ulong val);
+                    if (result == Result.Okay)
                     {
                         if (val > ((1UL << (sizeof(double) * 8 - 1)) - 1) * 2 + 1)
                         {
-                            return DataResult.FloatOverflow;
+                            return Result.FloatOverflow;
                         }
 
                         value = val;
@@ -1184,12 +1239,12 @@ namespace ODDL
 
                 if ((c == 'b') || (c == 'B'))
                 {
-                    DataResult result = ReadBinaryLiteral(text, out textLength, out ulong val);
-                    if (result == DataResult.Okay)
+                    Result result = ReadBinaryLiteral(text, out textLength, out ulong val);
+                    if (result == Result.Okay)
                     {
                         if (val > ((1UL << (sizeof(double) * 8 - 1)) - 1) * 2 + 1)
                         {
-                            return DataResult.FloatOverflow;
+                            return Result.FloatOverflow;
                         }
 
                         value = val;
@@ -1215,7 +1270,7 @@ namespace ODDL
                 {
                     if (!digitFlag)
                     {
-                        return DataResult.FloatInvalid;
+                        return Result.FloatInvalid;
                     }
 
                     digitFlag = false;
@@ -1228,7 +1283,7 @@ namespace ODDL
 
             if (wholeFlag & !digitFlag)
             {
-                return DataResult.FloatInvalid;
+                return Result.FloatInvalid;
             }
 
             bool fractionFlag = false;
@@ -1252,7 +1307,7 @@ namespace ODDL
                     {
                         if (!digitFlag)
                         {
-                            return DataResult.FloatInvalid;
+                            return Result.FloatInvalid;
                         }
 
                         digitFlag = false;
@@ -1265,7 +1320,7 @@ namespace ODDL
 
                 if (fractionFlag & !digitFlag)
                 {
-                    return DataResult.FloatInvalid;
+                    return Result.FloatInvalid;
                 }
 
                 c = chars[0];
@@ -1273,7 +1328,7 @@ namespace ODDL
 
             if (!(wholeFlag | fractionFlag))
             {
-                return DataResult.FloatInvalid;
+                return Result.FloatInvalid;
             }
 
             if ((c == 'e') || (c == 'E'))
@@ -1305,7 +1360,7 @@ namespace ODDL
                     {
                         if (!digitFlag)
                         {
-                            return DataResult.FloatInvalid;
+                            return Result.FloatInvalid;
                         }
 
                         digitFlag = false;
@@ -1318,7 +1373,7 @@ namespace ODDL
 
                 if (!digitFlag)
                 {
-                    return DataResult.FloatInvalid;
+                    return Result.FloatInvalid;
                 }
 
                 if (exponent != 0)
@@ -1347,7 +1402,7 @@ namespace ODDL
 
             value = v;
             textLength = (int)(chars - text);
-            return DataResult.Okay;
+            return Result.Okay;
         }
 
         public static bool ParseSign(char* text)
@@ -1370,10 +1425,10 @@ namespace ODDL
             return false;
         }
 
-        public static DataResult ParseBool(char* text, out bool value)
+        public static Result ParseBool(char* text, out bool value)
         {
-            DataResult result = ReadBoolLiteral(text, out int length, out value);
-            if (result != DataResult.Okay)
+            Result result = ReadBoolLiteral(text, out int length, out value);
+            if (result != Result.Okay)
             {
                 return result;
             }
@@ -1381,17 +1436,17 @@ namespace ODDL
             text += length;
             text += GetWhitespaceLength(text);
 
-            return DataResult.Okay;
+            return Result.Okay;
         }
 
-        public static DataResult ParseInt8(char* text, out sbyte value)
+        public static Result ParseInt8(char* text, out sbyte value)
         {
             value = 0;
 
             bool negative = ParseSign(text);
 
-            DataResult result = ReadIntegerLiteral(text, out int length, out ulong unsignedValue);
-            if (result != DataResult.Okay)
+            Result result = ReadIntegerLiteral(text, out int length, out ulong unsignedValue);
+            if (result != Result.Okay)
             {
                 return result;
             }
@@ -1400,7 +1455,7 @@ namespace ODDL
             {
                 if (unsignedValue > 0x7F)
                 {
-                    return DataResult.IntegerOverflow;
+                    return Result.IntegerOverflow;
                 }
 
                 value = (sbyte)unsignedValue;
@@ -1409,7 +1464,7 @@ namespace ODDL
             {
                 if (unsignedValue > 0x80)
                 {
-                    return DataResult.IntegerOverflow;
+                    return Result.IntegerOverflow;
                 }
 
                 value = (sbyte)-(long)unsignedValue;
@@ -1418,17 +1473,17 @@ namespace ODDL
             text += length;
             text += GetWhitespaceLength(text);
 
-            return DataResult.Okay;
+            return Result.Okay;
         }
 
-        public static DataResult ParseInt16(char* text, out short value)
+        public static Result ParseInt16(char* text, out short value)
         {
             value = 0;
 
             bool negative = ParseSign(text);
 
-            DataResult result = ReadIntegerLiteral(text, out int length, out ulong unsignedValue);
-            if (result != DataResult.Okay)
+            Result result = ReadIntegerLiteral(text, out int length, out ulong unsignedValue);
+            if (result != Result.Okay)
             {
                 return result;
             }
@@ -1437,7 +1492,7 @@ namespace ODDL
             {
                 if (unsignedValue > 0x7FFF)
                 {
-                    return DataResult.IntegerOverflow;
+                    return Result.IntegerOverflow;
                 }
 
                 value = (short)unsignedValue;
@@ -1446,7 +1501,7 @@ namespace ODDL
             {
                 if (unsignedValue > 0x8000)
                 {
-                    return DataResult.IntegerOverflow;
+                    return Result.IntegerOverflow;
                 }
 
                 value = (short)-(long)unsignedValue;
@@ -1455,17 +1510,17 @@ namespace ODDL
             text += length;
             text += GetWhitespaceLength(text);
 
-            return DataResult.Okay;
+            return Result.Okay;
         }
 
-        public static DataResult ParseInt32(char* text, out int value)
+        public static Result ParseInt32(char* text, out int value)
         {
             value = 0;
 
             bool negative = ParseSign(text);
 
-            DataResult result = ReadIntegerLiteral(text, out int length, out ulong unsignedValue);
-            if (result != DataResult.Okay)
+            Result result = ReadIntegerLiteral(text, out int length, out ulong unsignedValue);
+            if (result != Result.Okay)
             {
                 return result;
             }
@@ -1474,7 +1529,7 @@ namespace ODDL
             {
                 if (unsignedValue > 0x7FFFFFFF)
                 {
-                    return DataResult.IntegerOverflow;
+                    return Result.IntegerOverflow;
                 }
 
                 value = (int)unsignedValue;
@@ -1483,7 +1538,7 @@ namespace ODDL
             {
                 if (unsignedValue > 0x80000000)
                 {
-                    return DataResult.IntegerOverflow;
+                    return Result.IntegerOverflow;
                 }
 
                 value = (int)-(long)unsignedValue;
@@ -1492,17 +1547,17 @@ namespace ODDL
             text += length;
             text += GetWhitespaceLength(text);
 
-            return DataResult.Okay;
+            return Result.Okay;
         }
 
-        public static DataResult ParseInt64(char* text, out long value)
+        public static Result ParseInt64(char* text, out long value)
         {
             value = 0;
 
             bool negative = ParseSign(text);
 
-            DataResult result = ReadIntegerLiteral(text, out int length, out ulong unsignedValue);
-            if (result != DataResult.Okay)
+            Result result = ReadIntegerLiteral(text, out int length, out ulong unsignedValue);
+            if (result != Result.Okay)
             {
                 return result;
             }
@@ -1511,7 +1566,7 @@ namespace ODDL
             {
                 if (unsignedValue > 0x7FFFFFFFFFFFFFFF)
                 {
-                    return DataResult.IntegerOverflow;
+                    return Result.IntegerOverflow;
                 }
 
                 value = (long)unsignedValue;
@@ -1520,7 +1575,7 @@ namespace ODDL
             {
                 if (unsignedValue > 0x8000000000000000)
                 {
-                    return DataResult.IntegerOverflow;
+                    return Result.IntegerOverflow;
                 }
 
                 value = -(long)unsignedValue;
@@ -1529,17 +1584,17 @@ namespace ODDL
             text += length;
             text += GetWhitespaceLength(text);
 
-            return DataResult.Okay;
+            return Result.Okay;
         }
 
-        public static DataResult ParseUInt8(char* text, out byte value)
+        public static Result ParseUInt8(char* text, out byte value)
         {
             value = 0;
 
             bool negative = ParseSign(text);
 
-            DataResult result = ReadIntegerLiteral(text, out int length, out ulong unsignedValue);
-            if (result != DataResult.Okay)
+            Result result = ReadIntegerLiteral(text, out int length, out ulong unsignedValue);
+            if (result != Result.Okay)
             {
                 return result;
             }
@@ -1554,17 +1609,17 @@ namespace ODDL
             text += length;
             text += GetWhitespaceLength(text);
 
-            return DataResult.Okay;
+            return Result.Okay;
         }
 
-        public static DataResult ParseUInt16(char* text, out ushort value)
+        public static Result ParseUInt16(char* text, out ushort value)
         {
             value = 0;
 
             bool negative = ParseSign(text);
 
-            DataResult result = ReadIntegerLiteral(text, out int length, out ulong unsignedValue);
-            if (result != DataResult.Okay)
+            Result result = ReadIntegerLiteral(text, out int length, out ulong unsignedValue);
+            if (result != Result.Okay)
             {
                 return result;
             }
@@ -1579,17 +1634,17 @@ namespace ODDL
             text += length;
             text += GetWhitespaceLength(text);
 
-            return DataResult.Okay;
+            return Result.Okay;
         }
 
-        public static DataResult ParseUInt32(char* text, out uint value)
+        public static Result ParseUInt32(char* text, out uint value)
         {
             value = 0;
 
             bool negative = ParseSign(text);
 
-            DataResult result = ReadIntegerLiteral(text, out int length, out ulong unsignedValue);
-            if (result != DataResult.Okay)
+            Result result = ReadIntegerLiteral(text, out int length, out ulong unsignedValue);
+            if (result != Result.Okay)
             {
                 return result;
             }
@@ -1604,17 +1659,17 @@ namespace ODDL
             text += length;
             text += GetWhitespaceLength(text);
 
-            return DataResult.Okay;
+            return Result.Okay;
         }
 
-        public static DataResult ParseUInt64(char* text, out ulong value)
+        public static Result ParseUInt64(char* text, out ulong value)
         {
             value = 0;
 
             bool negative = ParseSign(text);
 
-            DataResult result = ReadIntegerLiteral(text, out int length, out ulong unsignedValue);
-            if (result != DataResult.Okay)
+            Result result = ReadIntegerLiteral(text, out int length, out ulong unsignedValue);
+            if (result != Result.Okay)
             {
                 return result;
             }
@@ -1629,17 +1684,17 @@ namespace ODDL
             text += length;
             text += GetWhitespaceLength(text);
 
-            return DataResult.Okay;
+            return Result.Okay;
         }
 
-        public static DataResult ParseFloat(char* text, out float value)
+        public static Result ParseFloat(char* text, out float value)
         {
             value = 0f;
 
             bool negative = ParseSign(text);
 
-            DataResult result = ReadFloatLiteral(text, out int length, out float floatValue);
-            if (result != DataResult.Okay)
+            Result result = ReadFloatLiteral(text, out int length, out float floatValue);
+            if (result != Result.Okay)
             {
                 return result;
             }
@@ -1654,17 +1709,17 @@ namespace ODDL
             text += length;
             text += GetWhitespaceLength(text);
 
-            return DataResult.Okay;
+            return Result.Okay;
         }
 
-        public static DataResult ParseDouble(char* text, out double value)
+        public static Result ParseDouble(char* text, out double value)
         {
             value = 0f;
 
             bool negative = ParseSign(text);
 
-            DataResult result = ReadDoubleLiteral(text, out int length, out double doubleValue);
-            if (result != DataResult.Okay)
+            Result result = ReadDoubleLiteral(text, out int length, out double doubleValue);
+            if (result != Result.Okay)
             {
                 return result;
             }
@@ -1679,16 +1734,16 @@ namespace ODDL
             text += length;
             text += GetWhitespaceLength(text);
 
-            return DataResult.Okay;
+            return Result.Okay;
         }
 
-        public static DataResult ParseString(char* text, out string value)
+        public static Result ParseString(char* text, out string value)
         {
             value = null;
 
             if (text[0] != '"')
             {
-                return DataResult.StringInvalid;
+                return Result.StringInvalid;
             }
 
             int accumLength = 0;
@@ -1696,8 +1751,8 @@ namespace ODDL
             {
                 text++;
 
-                DataResult result = ReadStringLiteral(text, out int textLength, out int stringLength, null);
-                if (result != DataResult.Okay)
+                Result result = ReadStringLiteral(text, out int textLength, out int stringLength, null);
+                if (result != Result.Okay)
                 {
                     return result;
                 }
@@ -1708,7 +1763,7 @@ namespace ODDL
                 text += textLength;
                 if (text[0] != '"')
                 {
-                    return DataResult.StringInvalid;
+                    return Result.StringInvalid;
                 }
 
                 text++;
@@ -1720,18 +1775,18 @@ namespace ODDL
                 }
             }
 
-            return DataResult.Okay;
+            return Result.Okay;
         }
 
-        public static DataResult ParseReference(char* text, out Reference value)
+        public static Result ParseReference(char* text, out Reference value)
         {
 
         }
 
-        public static DataResult ParseType(char* text, out DataType value)
+        public static Result ParseType(char* text, out DataType value)
         {
-            DataResult result = ReadDataType(text, out int length, out value);
-            if (result != DataResult.Okay)
+            Result result = ReadDataType(text, out int length, out value);
+            if (result != Result.Okay)
             {
                 return result;
             }
@@ -1739,12 +1794,186 @@ namespace ODDL
             text += length;
             text += GetWhitespaceLength(text);
 
-            return DataResult.Okay;
+            return Result.Okay;
         }
 
-        public static DataResult ProcessText(char* text)
+        public static Result ParseStructures(char* text, out Structure root)
         {
+            root = null;
 
+            while (true)
+            {
+                Result result = ReadIdentifier(text, out int length);
+                if (result != Result.Okay)
+                {
+                    return result;
+                }
+
+                StringBuilder identifier = new StringBuilder();
+                ReadIdentifier(text, out length, identifier);
+
+                bool primitive = false;
+
+                Structure structure = CreatePrimitive(identifier);
+                if (structure != null)
+                {
+                    primitive = true;
+                }
+                else
+                {
+                    structure = CreateStructure(identifier);
+                    if (structure == null)
+                    {
+                        return Result.StructUndefined;
+                    }
+                }
+
+                identifier.Clear();
+
+                AutoDelete<Structure> structurePtr(structure);
+                structure->textLocation = text;
+
+                text += length;
+                text += GetWhitespaceLength(text);
+
+                if ((primitive) && (text[0] == '['))
+                {
+                    ulong value;
+
+                    text++;
+                    text += GetWhitespaceLength(text);
+
+                    if (ParseSign(text))
+                    {
+                        return Result.PrimitiveIllegalArraySize;
+                    }
+
+                    result = ReadUnsignedLiteral(text, &length, &value);
+                    if (result != Result.Okay)
+                    {
+                        return (result);
+                    }
+
+                    if ((value == 0) || (value > DataMaxPrimitiveArraySize))
+                    {
+                        return Result.PrimitiveIllegalArraySize;
+                    }
+
+                    text += length;
+                    text += GetWhitespaceLength(text);
+
+                    if (text[0] != ']')
+                    {
+                        return Result.PrimitiveSyntaxError;
+                    }
+
+                    text++;
+                    text += GetWhitespaceLength(text);
+
+                    static_cast<PrimitiveStructure*>(structure)->arraySize = (uint)value;
+                }
+
+                if (!root.ValidateSubstructure(this, structure))
+                {
+                    return Result.InvalidStructure;
+                }
+
+                char c = text[0];
+                if ((uint)(c - '$') < 2U)
+                {
+                    text++;
+
+                    result = ReadIdentifier(text, out length);
+                    if (result != Result.Okay)
+                    {
+                        return (result);
+                    }
+
+                    ReadIdentifier(text, &length, structure->structureName.SetLength(length));
+
+                    bool global = (c == '$');
+                    structure->globalNameFlag = global;
+
+                    Map<Structure>* map = (global) ? &structureMap : &root->structureMap;
+                    if (!map->Insert(structure))
+                    {
+                        return (kDataStructNameExists);
+                    }
+
+                    text += length;
+                    text += GetWhitespaceLength(text);
+                }
+
+                if ((!primitive) && (text[0] == '('))
+                {
+                    text++;
+                    text += GetWhitespaceLength(text);
+
+                    if (text[0] != ')')
+                    {
+                        result = ParseProperties(text, structure);
+                        if (result != Result.Okay)
+                        {
+                            return (result);
+                        }
+
+                        if (text[0] != ')')
+                        {
+                            return (kDataPropertySyntaxError);
+                        }
+                    }
+
+                    text++;
+                    text += GetWhitespaceLength(text);
+                }
+
+                if (text[0] != '{')
+                {
+                    return (kDataSyntaxError);
+                }
+
+                text++;
+                text += GetWhitespaceLength(text);
+
+                if (text[0] != '}')
+                {
+                    if (primitive)
+                    {
+                        result = static_cast<PrimitiveStructure*>(structure)->ParseData(text);
+                        if (result != Result.Okay)
+                        {
+                            return (result);
+                        }
+                    }
+                    else
+                    {
+                        result = ParseStructures(text, structure);
+                        if (result != Result.Okay)
+                        {
+                            return (result);
+                        }
+                    }
+                }
+
+                if (text[0] != '}')
+                {
+                    return (kDataSyntaxError);
+                }
+
+                text++;
+                text += GetWhitespaceLength(text);
+
+                root->AppendSubnode(structure);
+                structurePtr = nullptr;
+
+                c = text[0];
+                if ((c == 0) || (c == '}'))
+                {
+                    break;
+                }
+            }
+
+            return Result.Okay;
         }
     }
 }

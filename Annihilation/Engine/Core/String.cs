@@ -43,19 +43,21 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-using Engine.Core;
-
-namespace ODDL
+namespace Engine.Core
 {
-    public enum StructureType
+    public unsafe class String
     {
-        Structure,
-        DataList,
-        DataArrayList
-    }
+        private const int AllocSize = 63;
 
-    public unsafe class Structure : Tree<Structure>
-    {
-        public char* TextLocation;
+        private int _logicalSize;
+        private int _physicalSize;
+        private char* _pointer;
+
+        public static readonly char[] Empty = new char[] { char.MinValue };
+
+        public static int GetPhysicalSize(int size)
+        {
+            return ((size + (AllocSize + 4)) & ~AllocSize);
+        }
     }
 }
