@@ -526,8 +526,8 @@ namespace SDL2
         [StructLayout(LayoutKind.Sequential)]
         public struct KeySym
         {
-            public ScanCode ScanCode;
-            public KeyCode Sym;
+            public Scancode ScanCode;
+            public Keycode Sym;
             public KeyMod Mod;
             private uint Unused;
         }

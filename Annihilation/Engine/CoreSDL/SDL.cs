@@ -529,275 +529,359 @@ namespace SDL2
         //
         // SDL_keyboard.h
         //
-        
-        public static Window GetKeyboardFocus();
+        private delegate Window GetKeyboardFocusDelegate();
+        private static GetKeyboardFocusDelegate _getKeyboardFocus = LoadFunction<GetKeyboardFocusDelegate>("SDL_GetKeyboardFocus");
+        public static Window GetKeyboardFocus() => _getKeyboardFocus();
 
-        
-        public static string GetKeyboardState(out int numkeys);
+        private delegate string GetKeyboardStateDelegate(out int numKeys);
+        private static GetKeyboardStateDelegate _getKeyboardState = LoadFunction<GetKeyboardStateDelegate>("SDL_GetKeyboardState");
+        public static string GetKeyboardState(out int numkeys) => _getKeyboardState(out numkeys);
 
-        
-        public static KeyMod GetModState();
+        private delegate KeyMod GetModStateDelegate();
+        private static GetModStateDelegate _getModState = LoadFunction<GetModStateDelegate>("SDL_GetModState");
+        public static KeyMod GetModState() => _getModState();
 
-        
-        public static void SetModState(KeyMod modstate);
+        private delegate void SetModStateDelegate(KeyMod modState);
+        private static SetModStateDelegate _setModState = LoadFunction<SetModStateDelegate>("SDL_SetModState");
+        public static void SetModState(KeyMod modState) => _setModState(modState);
 
-        
-        public static KeyCode GetKeyFromScancode(ScanCode scanCode);
+        private delegate Keycode GetKeyFromScancodeDelegate(Scancode scancode);
+        private static GetKeyFromScancodeDelegate _getKeyFromScancode = LoadFunction<GetKeyFromScancodeDelegate>("SDL_GetKeyFromScancode");
+        public static Keycode GetKeyFromScancode(Scancode scancode) => _getKeyFromScancode(scancode);
 
-        
-        public static ScanCode GetScancodeFromKey(KeyCode key);
+        private delegate Scancode GetScancodeFromKeyDelegate(Keycode key);
+        private static GetScancodeFromKeyDelegate _getScancodeFromKey = LoadFunction<GetScancodeFromKeyDelegate>("SDL_GetScancodeFromKey");
+        public static Scancode GetScancodeFromKey(Keycode key) => _getScancodeFromKey(key);
 
-        
-        public static string GetScancodeName(ScanCode scanCode);
+        private delegate string GetScancodeNameDelegate(Scancode scancode);
+        private static GetScancodeNameDelegate _getScancodeName = LoadFunction<GetScancodeNameDelegate>("SDL_GetScancodeName");
+        public static string GetScancodeName(Scancode scancode) => _getScancodeName(scancode);
 
-        
-        public static ScanCode GetScancodeFromName(string name);
+        private delegate Scancode GetScancodeFromNameDelegate(string name);
+        private static GetScancodeFromNameDelegate _getScancodeFromName = LoadFunction<GetScancodeFromNameDelegate>("SDL_GetScancodeFromName");
+        public static Scancode GetScancodeFromName(string name) => _getScancodeFromName(name);
 
-        
-        public static string GetKeyName(KeyCode key);
+        private delegate string GetKeyNameDelegate(Keycode key);
+        private static GetKeyNameDelegate _getKeyName = LoadFunction<GetKeyNameDelegate>("SDL_GetKeyName");
+        public static string GetKeyName(Keycode key) => _getKeyName(key);
 
-        
-        public static KeyCode GetKeyFromName(string name);
 
-        
-        public static void StartstringInput();
+        private delegate Keycode GetKeyFromNameDelegate(string name);
+        private static GetKeyFromNameDelegate _getKeyFromName = LoadFunction<GetKeyFromNameDelegate>("SDL_GetKeyFromName");
+        public static Keycode GetKeyFromName(string name) => _getKeyFromName(name);
 
-        
-        public static bool IsstringInputActive();
+        private delegate void StartTextInputDelegate();
+        private static StartTextInputDelegate _startTextInput = LoadFunction<StartTextInputDelegate>("SDL_StartTextInput");
+        public static void StartTextInput() => _startTextInput();
 
-        
-        public static void StopstringInput();
+        private delegate bool IsTextInputActiveDelegate();
+        private static IsTextInputActiveDelegate _isTextInputActive = LoadFunction<IsTextInputActiveDelegate>("SDL_IsTextInputActive");
+        public static bool IsTextInputActive() => _isTextInputActive();
 
-        
-        public static void SetstringInputRect(ref Rect rectangle);
+        private delegate void StopTextInputDelegate();
+        private static StopTextInputDelegate _stopTextInput = LoadFunction<StopTextInputDelegate>("SDL_StopTextInput");
+        public static void StopTextInput() => _stopTextInput();
 
-        
-        public static bool HasScreenKeyboardSupport();
+        private delegate void SetTextInputRectDelegate(ref Rect rectangle);
+        private static SetTextInputRectDelegate _setTextInputRect = LoadFunction<SetTextInputRectDelegate>("SDL_SetTextInputRect");
+        public static void SetTextInputRect(ref Rect rectangle) => _setTextInputRect(ref rectangle);
 
-        
-        public static bool IsScreenKeyboardShown(Window window);
+        private delegate bool HasScreenKeyboardSupportDelegate();
+        private static HasScreenKeyboardSupportDelegate _hasScreenKeyboardSupport = LoadFunction<HasScreenKeyboardSupportDelegate>("SDL_HasScreenKeyboardSupport");
+        public static bool HasScreenKeyboardSupport() => _hasScreenKeyboardSupport();
+
+        private delegate bool IsScreenKeyboardShownDelegate(Window window);
+        private static IsScreenKeyboardShownDelegate _isScreenKeyboardShown = LoadFunction<IsScreenKeyboardShownDelegate>("SDL_IsScreenKeyboardShown");
+        public static bool IsScreenKeyboardShown(Window window) => _isScreenKeyboardShown(window);
+
+        //
+        // SDL_loadso.h
+        //
+        private delegate IntPtr LoadObjectDelegate(string file);
+        private static LoadObjectDelegate _loadObject = LoadFunction<LoadObjectDelegate>("SDL_LoadObject");
+        public static IntPtr LoadObject(string file) => _loadObject(file);
+
+        private delegate IntPtr LoadFunctionDelegate(IntPtr handle, string name);
+        private static LoadFunctionDelegate _loadFunction = LoadFunction<LoadFunctionDelegate>("SDL_LoadFunction");
+        public static IntPtr LoadFunction(IntPtr handle, string name) => _loadFunction(handle, name);
+
+        private delegate void UnloadObjectDelegate(IntPtr handle);
+        private static UnloadObjectDelegate _unloadObject = LoadFunction<UnloadObjectDelegate>("SDL_UnloadObject");
+        public static void UnloadObject(IntPtr handle) => _unloadObject(handle);
 
         //
         // SDL_log.h
         //
-        
-        public static void LogSetAllPriority(LogPriority priority);
+        private delegate void LogSetAllPriorityDelegate(LogPriority priority);
+        private static LogSetAllPriorityDelegate _logSetAllPriority = LoadFunction<LogSetAllPriorityDelegate>("SDL_LogSetAllPriority");
+        public static void LogSetAllPriority(LogPriority priority) => _logSetAllPriority(priority);
 
-        
-        public static void LogSetPriority(LogCategory category, LogPriority priority);
+        private delegate void LogSetPriorityDelegate(LogCategory category, LogPriority priority);
+        private static LogSetPriorityDelegate _logSetPriority = LoadFunction<LogSetPriorityDelegate>("SDL_LogSetPriority");
+        public static void LogSetPriority(LogCategory category, LogPriority priority) => _logSetPriority(category, priority);
 
-        
-        public static LogPriority LogGetPriority(LogCategory category);
+        private delegate LogPriority LogGetPriorityDelegate(LogCategory category);
+        private static LogGetPriorityDelegate _logGetPriority = LoadFunction<LogGetPriorityDelegate>("SDL_LogGetPriority");
+        public static LogPriority LogGetPriority(LogCategory category) => _logGetPriority(category);
 
-        
-        public static void LogResetPriorities();
+        private delegate void LogResetPrioritiesDelegate();
+        private static LogResetPrioritiesDelegate _logResetPriorities = LoadFunction<LogResetPrioritiesDelegate>("SDL_LogResetPriorities");
+        public static void LogResetPriorities() => _logResetPriorities();
 
-        
-        public static void Log(string fmt, params object[] objects);
+        private delegate void LogDelegate(string fmt, params object[] objects);
+        private static LogDelegate _log = LoadFunction<LogDelegate>("SDL_Log");
+        public static void Log(string fmt, params object[] objects) => _log(fmt, objects);
 
-        
-        public static void LogVerbose(LogCategory category, string fmt, params object[] objects);
+        private delegate void LogVerboseDelegate(LogCategory category, string fmt, params object[] objects);
+        private static LogVerboseDelegate _logVerbose = LoadFunction<LogVerboseDelegate>("SDL_LogVerbose");
+        public static void LogVerbose(LogCategory category, string fmt, params object[] objects) => _logVerbose(category, fmt, objects);
 
-        
-        public static void LogDebug(LogCategory category, string fmt, params object[] objects);
+        private delegate void LogDebugDelegate(LogCategory category, string fmt, params object[] objects);
+        private static LogDebugDelegate _logDebug = LoadFunction<LogDebugDelegate>("SDL_LogDebug");
+        public static void LogDebug(LogCategory category, string fmt, params object[] objects) => _logDebug(category, fmt, objects);
 
-        
-        public static void LogInfo(LogCategory category, string fmt, params object[] objects);
+        private delegate void LogInfoDelegate(LogCategory category, string fmt, params object[] objects);
+        private static LogInfoDelegate _logInfo = LoadFunction<LogInfoDelegate>("SDL_LogInfo");
+        public static void LogInfo(LogCategory category, string fmt, params object[] objects) => _logInfo(category, fmt, objects);
 
-        
-        public static void LogWarn(LogCategory category, string fmt, params object[] objects);
+        private delegate void LogWarnDelegate(LogCategory category, string fmt, params object[] objects);
+        private static LogWarnDelegate _logWarn = LoadFunction<LogWarnDelegate>("SDL_LogWarn");
+        public static void LogWarn(LogCategory category, string fmt, params object[] objects) => _logWarn(category, fmt, objects);
 
-        
-        public static void LogError(LogCategory category, string fmt, params object[] objects);
+        private delegate void LogErrorDelegate(LogCategory category, string fmt, params object[] objects);
+        private static LogErrorDelegate _logError = LoadFunction<LogErrorDelegate>("SDL_LogError");
+        public static void LogError(LogCategory category, string fmt, params object[] objects) => _logError(category, fmt, objects);
 
-        
-        public static void LogCritical(LogCategory category, string fmt, params object[] objects);
+        private delegate void LogCriticalDelegate(LogCategory category, string fmt, params object[] objects);
+        private static LogCriticalDelegate _logCritical = LoadFunction<LogCriticalDelegate>("SDL_LogCritical");
+        public static void LogCritical(LogCategory category, string fmt, params object[] objects) => _logCritical(category, fmt, objects);
 
-        
-        public static void LogMessage(LogCategory category, LogPriority priority, string fmt, params object[] objects);
+        private delegate void LogMessageDelegate(LogCategory category, string fmt, params object[] objects);
+        private static LogMessageDelegate _logMessage = LoadFunction<LogMessageDelegate>("SDL_LogMessage");
+        public static void LogMessage(LogCategory category, string fmt, params object[] objects) => _logMessage(category, fmt, objects);
 
-        
-        public static void LogGetOutputFunction(LogOutputFunction callback, IntPtr userData);
+        private delegate void LogGetOutputFunctionDelegate(LogOutputFunction callback, IntPtr userData);
+        private static LogGetOutputFunctionDelegate _logGetOutputFunction = LoadFunction<LogGetOutputFunctionDelegate>("SDL_LogGetOutputFunction");
+        public static void LogGetOutputFunction(LogOutputFunction callback, IntPtr userData) => _logGetOutputFunction(callback, userData);
 
-        
-        public static void LogSetOutputFunction(LogOutputFunction callback, IntPtr userData);
+        private delegate void LogSetOutputFunctionDelegate(LogOutputFunction callback, IntPtr userData);
+        private static LogSetOutputFunctionDelegate _logSetOutputFunction = LoadFunction<LogSetOutputFunctionDelegate>("SDL_LogSetOutputFunction");
+        public static void LogSetOutputFunction(LogOutputFunction callback, IntPtr userData) => _logSetOutputFunction(callback, userData);
 
         //
         // SDL_messagebox.h
         //
-        
-        public static int ShowMessageBox(ref MessageBoxData messageBoxData, out int buttonID);
+        private delegate int ShowMessageBoxDelegate(ref MessageBoxData messageBoxData, out int buttonID);
+        private static ShowMessageBoxDelegate _showMessageBox = LoadFunction<ShowMessageBoxDelegate>("SDL_ShowMessageBox");
+        public static int ShowMessageBox(ref MessageBoxData messageBoxData, out int buttonID) => _showMessageBox(ref messageBoxData, out buttonID);
 
-        
-        public static int ShowSimpleMessageBox(MessageBoxFlags flags, string title, string message, Window window);
+        private delegate int ShowSimpleMessageBoxDelegate(MessageBoxFlags flags, string title, string message, Window window);
+        private static ShowSimpleMessageBoxDelegate _showSimpleMessageBox = LoadFunction<ShowSimpleMessageBoxDelegate>("SDL_ShowSimpleMessageBox");
+        public static int ShowSimpleMessageBox(MessageBoxFlags flags, string title, string message, Window window) => _showSimpleMessageBox(flags, title, message, window);
 
         //
         // SDL_mouse.h
         //
-        
-        public static Window GetMouseFocus();
+        private delegate Window GetMouseFocusDelegate();
+        private static GetMouseFocusDelegate _getMouseFocus = LoadFunction<GetMouseFocusDelegate>("SDL_GetMouseFocus");
+        public static Window GetMouseFocus() => _getMouseFocus();
 
-        
-        public static MouseButtonState GetMouseState(out int x, out int y);
+        private delegate MouseButtonState GetMouseStateDelegate(out int? x, out int? y);
+        private static GetMouseStateDelegate _getMouseState = LoadFunction<GetMouseStateDelegate>("SDL_GetMouseState");
+        public static MouseButtonState GetMouseState(out int? x, out int? y) => _getMouseState(out x, out y);
 
-        
-        public static MouseButtonState GetMouseState(out int x, int* y);
+        private delegate MouseButtonState GetGlobalMouseStateDelegate(out int? x, out int? y);
+        private static GetGlobalMouseStateDelegate _getGlobalMouseState = LoadFunction<GetGlobalMouseStateDelegate>("SDL_GetGlobalMouseState");
+        public static MouseButtonState GetGlobalMouseState(out int? x, out int? y) => _getGlobalMouseState(out x, out y);
 
-        
-        public static MouseButtonState GetMouseState(int* x, out int y);
+        private delegate MouseButtonState GetRelativeMouseStateDelegate(out int? x, out int? y);
+        private static GetRelativeMouseStateDelegate _getRelativeMouseState = LoadFunction<GetRelativeMouseStateDelegate>("SDL_GetRelativeMouseState");
+        public static MouseButtonState GetRelativeMouseState(out int? x, out int? y) => _getRelativeMouseState(out x, out y);
 
-        
-        public static MouseButtonState GetMouseState(int* x, int* y);
+        private delegate void WarpMouseInWindowDelegate(Window window, int x, int y);
+        private static WarpMouseInWindowDelegate _warpMouseInWindow = LoadFunction<WarpMouseInWindowDelegate>("SDL_WarpMouseInWindow");
+        public static void WarpMouseInWindow(Window window, int x, int y) => _warpMouseInWindow(window, x, y);
 
-        
-        public static MouseButtonState GetGlobalMouseState(out int x, out int y);
+        private delegate int WarpMouseGlobalDelegate(int x, int y);
+        private static WarpMouseGlobalDelegate _warpMouseGlobal = LoadFunction<WarpMouseGlobalDelegate>("SDL_WarpMouseGlobal");
+        public static int WarpMouseGlobal(int x, int y) => _warpMouseGlobal(x, y);
 
-        
-        public static MouseButtonState GetGlobalMouseState(out int x, int* y);
+        private delegate int SetRelativeMouseModeDelegate(bool enabled);
+        private static SetRelativeMouseModeDelegate _setRelativeMouseMode = LoadFunction<SetRelativeMouseModeDelegate>("SDL_SetRelativeMouseMode");
+        public static int SetRelativeMouseMode(bool enabled) => _setRelativeMouseMode(enabled);
 
-        
-        public static MouseButtonState GetGlobalMouseState(int* x, out int y);
+        private delegate int CaptureMouseDelegate(bool enabled);
+        private static CaptureMouseDelegate _captureMouse = LoadFunction<CaptureMouseDelegate>("SDL_CaptureMouse");
+        public static int CaptureMouse(bool enabled) => _captureMouse(enabled);
 
-        
-        public static MouseButtonState GetGlobalMouseState(int* x, int* y);
+        private delegate bool GetRelativeMouseModeDelegate();
+        private static GetRelativeMouseModeDelegate _getRelativeMouseMode = LoadFunction<GetRelativeMouseModeDelegate>("SDL_GetRelativeMouseMode");
+        public static bool GetRelativeMouseMode() => _getRelativeMouseMode();
 
-        
-        public static MouseButtonState GetRelativeMouseState(out int x, out int y);
+        private delegate Cursor CreateCursorDelegate(byte[] data, byte[] mask, int w, int h, int hotX, int hotY);
+        private static CreateCursorDelegate _createCursor = LoadFunction<CreateCursorDelegate>("SDL_CreateCursor");
+        public static Cursor CreateCursor(byte[] data, byte[] mask, int w, int h, int hotX, int hotY) => _createCursor(data, mask, w, h, hotX, hotY);
 
-        
-        public static MouseButtonState GetRelativeMouseState(out int x, int* y);
+        private delegate Cursor CreateColorCursorDelegate(Surface surface, int hotX, int hotY);
+        private static CreateColorCursorDelegate _createColorCursor = LoadFunction<CreateColorCursorDelegate>("SDL_CreateColorCursor");
+        public static Cursor CreateColorCursor(Surface surface, int hotX, int hotY) => _createColorCursor(surface, hotX, hotY);
 
-        
-        public static MouseButtonState GetRelativeMouseState(int* x, out int y);
+        private delegate Cursor CreateSystemCursorDelegate(SystemCursor id);
+        private static CreateSystemCursorDelegate _createSystemCursor = LoadFunction<CreateSystemCursorDelegate>("SDL_CreateSystemCursor");
+        public static Cursor CreateSystemCursor(SystemCursor id) => _createSystemCursor(id);
 
-        
-        public static MouseButtonState GetRelativeMouseState(int* x, int* y);
+        private delegate void SetCursorDelegate(Cursor cursor);
+        private static SetCursorDelegate _setCursor = LoadFunction<SetCursorDelegate>("SDL_SetCursor");
+        public static void SetCursor(Cursor cursor) => _setCursor(cursor);
 
-        
-        public static void WarpMouseInWindow(Window window, int x, int y);
+        private delegate Cursor GetCursorDelegate();
+        private static GetCursorDelegate _getCursor = LoadFunction<GetCursorDelegate>("SDL_GetCursor");
+        public static Cursor GetCursor() => _getCursor();
 
-        
-        public static int WarpMouseGlobal(int x, int y);
+        private delegate Cursor GetDefaultCursorDelegate();
+        private static GetDefaultCursorDelegate _getDefaultCursor = LoadFunction<GetDefaultCursorDelegate>("SDL_GetDefaultCusror");
+        public static Cursor GetDefaultCursor() => _getDefaultCursor();
 
-        
-        public static int SetRelativeMouseMode(bool enabled);
+        private delegate void FreeCursorDelegate(Cursor cursor);
+        private static FreeCursorDelegate _freeCursor = LoadFunction<FreeCursorDelegate>("SDL_FreeCursor");
+        public static void FreeCursor(Cursor cursor) => _freeCursor(cursor);
 
-        
-        public static int CaptureMouse(bool enabled);
+        private delegate State ShowCursorDelegate(State toggle);
+        private static ShowCursorDelegate _showCursor = LoadFunction<ShowCursorDelegate>("SDL_ShowCursor");
+        public static State ShowCursor(State toggle) => _showCursor(toggle);
 
-        
-        public static bool GetRelativeMouseMode();
-
-        
-        public static Cursor CreateCursor(byte[] data, byte[] mask, int w, int h, int hotX, int hotY);
-
-        
-        public static Cursor CreateColorCursor(Surface surface, int hotX, int hotY);
-
-        
-        public static Cursor CreateSystemCursor(SystemCursor id);
-
-        
-        public static void SetCursor(Cursor cursor);
-
-        
-        public static Cursor GetCursor();
-
-        
-        public static Cursor GetDefaultCursor();
-
-        
-        public static void FreeCursor(Cursor cursor);
-
-        
-        public static State ShowCursor(State toggle);
+        // TODO: SDL_mutex.h
 
         //
         // SDL_pixels.h
         //
-        
-        public static string GetPixelFormatName(uint format);
+        private delegate string GetPixelFormatNameDelegate(uint format);
+        private static GetPixelFormatNameDelegate _getPixelFormatName = LoadFunction<GetPixelFormatNameDelegate>("SDL_GetPixelFormatName");
+        public static string GetPixelFormatName(uint format) => _getPixelFormatName(format);
 
-        
-        public static bool PixelFormatEnumToMasks(uint format, out int bpp, out uint rMask, out uint gMask, out uint bMask, out uint aMask);
+        private delegate bool PixelFormatEnumToMasksDelegate(uint format, out int bpp, out uint rMask, out uint gMask, out uint bMask, out uint aMask);
+        private static PixelFormatEnumToMasksDelegate _pixelFormatEnumToMasks = LoadFunction<PixelFormatEnumToMasksDelegate>("SDL_PixelFormatEnumToMasks");
+        public static bool PixelFormatEnumToMasks(uint format, out int bpp, out uint rMask, out uint gMask, out uint bMask, out uint aMask) => _pixelFormatEnumToMasks(format, out bpp, out rMask, out gMask, out bMask, out aMask);
 
+        private delegate uint MasksToPixelFormatEnumDelegate(int bpp, uint rMask, uint gMask, uint bMask, uint aMask);
+        private static MasksToPixelFormatEnumDelegate _masksToPixelFormatEnum = LoadFunction<MasksToPixelFormatEnumDelegate>("SDL_MasksToPixelFormatEnum");
+        public static uint MasksToPixelFormatEnum(int bpp, uint rMask, uint gMask, uint bMask, uint aMask) => _masksToPixelFormatEnum(bpp, rMask, gMask, bMask, aMask);
         
-        public static uint MasksToPixelFormatEnum(int bpp, uint rMask, uint gMask, uint bMask, uint aMask);
+        private delegate PixelFormat* AllocFormatDelegate(uint pixelFormat);
+        private static AllocFormatDelegate _allocFormat = LoadFunction<AllocFormatDelegate>("SDL_AllocFormat");
+        public static PixelFormat* AllocFormat(uint pixelFormat) => _allocFormat(pixelFormat);
 
-        
-        public static PixelFormat* AllocFormat(uint pixelFormat);
+        private delegate void FreeFormatDelegate(ref PixelFormat pixelFormat);
+        private static FreeFormatDelegate _freeFormat = LoadFunction<FreeFormatDelegate>("SDL_FreeFormat");
+        public static void FreeFormat(ref PixelFormat pixelFormat) => _freeFormat(ref pixelFormat);
 
-        
-        public static void FreeFormat(ref PixelFormat pixelFormat);
+        private delegate IntPtr AllocPaletteDelegate(int numColors);
+        private static AllocPaletteDelegate _allocPalette = LoadFunction<AllocPaletteDelegate>("SDL_AllocPalette");
+        public static IntPtr AllocPalette(int numColors) => _allocPalette(numColors);
 
-        
-        public static Palette AllocPalette(int numColors);
+        private delegate int SetPixelFormatPaletteDelegate(ref PixelFormat format, ref Palette palette);
+        private static SetPixelFormatPaletteDelegate _setPixelFormatPalette = LoadFunction<SetPixelFormatPaletteDelegate>("SDL_SetPixelFormatPalette");
+        public static int SetPixelFormatPalette(ref PixelFormat format, ref Palette palette) => _setPixelFormatPalette(ref format, ref palette);
 
-        
-        public static int SetPixelFormatPalette(ref PixelFormat format, ref Palette palette);
+        private delegate int SetPaletteColorsDelegate(Palette palette, Color[] colors, int firstColor, int numColors);
+        private static SetPaletteColorsDelegate _setPaletteColors = LoadFunction<SetPaletteColorsDelegate>("SDL_SetPaletteColors");
+        public static int SetPaletteColors(Palette palette, Color[] colors, int firstColor, int numColors) => _setPaletteColors(palette, colors, firstColor, numColors);
 
-        
-        public static int SetPaletteColors(Palette palette, Color[] colors, int firstColor, int numColors);
+        private delegate void FreePaletteDelegate(Palette palette);
+        private static FreePaletteDelegate _freePalette = LoadFunction<FreePaletteDelegate>("SDL_FreePalette");
+        public static void FreePalette(Palette palette) => _freePalette(palette);
 
-        
-        public static void FreePalette(Palette palette);
+        private delegate uint MapRgbDelegate(ref PixelFormat format, byte r, byte g, byte b);
+        private static MapRgbDelegate _mapRgb = LoadFunction<MapRgbDelegate>("SDL_MapRGB");
+        public static uint MapRgb(ref PixelFormat format, byte r, byte g, byte b) => _mapRgb(ref format, r, g, b);
 
-        
-        public static uint MapRGB(ref PixelFormat format, byte r, byte g, byte b);
+        private delegate uint MapRgbaDelegate(ref PixelFormat format, byte r, byte g, byte b, byte a);
+        private static MapRgbaDelegate _mapRgba = LoadFunction<MapRgbaDelegate>("SDL_MapRGBA");
+        public static uint MapRgba(ref PixelFormat format, byte r, byte g, byte b, byte a) => _mapRgba(ref format, r, g, b, a);
 
-        
-        public static uint MapRGBA(ref PixelFormat format, byte r, byte g, byte b, byte a);
+        private delegate void GetRgbDelegate(uint pixel, ref PixelFormat format, out byte r, out byte g, out byte b);
+        private static GetRgbDelegate _getRgb = LoadFunction<GetRgbDelegate>("SDL_GetRGB");
+        public static void GetRgb(uint pixel, ref PixelFormat format, out byte r, out byte g, out byte b) => _getRgb(pixel, ref format, out r, out g, out b);
 
-        
-        public static void GetRGB(uint pixel, ref PixelFormat format, out byte r, out byte g, out byte b);
+        private delegate void GetRgbaDelegate(uint pixel, ref PixelFormat format, out byte r, out byte g, out byte b, out byte a);
+        private static GetRgbaDelegate _getRgba = LoadFunction<GetRgbaDelegate>("SDL_GetRGBA");
+        public static void GetRgba(uint pixel, ref PixelFormat format, out byte r, out byte g, out byte b, out byte a) => _getRgba(pixel, ref format, out r, out g, out b, out a);
 
-        
-        public static void GetRGBA(uint pixel, ref PixelFormat format, out byte r, out byte g, out byte b, out byte a);
-
-        
-        public static void CalculateGammaRamp(float gamma, out ushort[] ramp);
+        private delegate void CalculateGammaRampDelegate(float gamma, out ushort[] ramp);
+        private static CalculateGammaRampDelegate _calculateGammaRamp = LoadFunction<CalculateGammaRampDelegate>("SDL_CalculateGammaRamp");
+        public static void CalculateGammaRamp(float gamma, out ushort[] ramp) => _calculateGammaRamp(gamma, out ramp);
 
         //
         // SDL_platform.h
         //
-        
-        public static string GetPlatform();
+        private delegate string GetPlatformDelegate();
+        private static GetPlatformDelegate _getPlatform = LoadFunction<GetPlatformDelegate>("SDL_GetPlatform");
+        public static string GetPlatform() => _getPlatform();
 
         //
         // SDL_power.h
         //
-        
-        public static PowerState GetPowerInfo(out int seconds, out int percentage);
+        private delegate PowerState GetPowerInfoDelegate(out int seconds, out int percentage);
+        private static GetPowerInfoDelegate _getPowerInfo = LoadFunction<GetPowerInfoDelegate>("SDL_GetPowerInfo");
+        public static PowerState GetPowerInfo(out int seconds, out int percentage) => _getPowerInfo(out seconds, out percentage);
 
         //
         // SDL_rect.h
         //
-        
-        public static bool HasIntersection(ref Rect a, ref Rect b);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool PointInRect(ref Point p, ref Rect r)
+        {
+            return ((p.X >= r.X) && (p.X < (r.X + r.W)) &&
+                    (p.Y >= r.Y) && (p.Y < (r.Y + r.H))) ? true : false;
+        }
 
-        
-        public static bool IntersectRect(ref Rect a, ref Rect b, out Rect result);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool RectEmpty(ref Rect r)
+        {
+            return ((r.W <= 0) || (r.H <= 0)) ? true : false;
+        }
 
-        
-        public static void UnionRect(ref Rect a, ref Rect b, out Rect result);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool RectEquals(ref Rect a, ref Rect b)
+        {
+            return ((a.X == b.X) && (a.Y == b.Y) &&
+                    (a.W == b.W) && (a.H == b.H)) ? true : false;
+        }
 
-        
-        public static bool EnclosePoints(Point[] points, int count, ref Rect clip, out Rect result);
+        private delegate bool HasIntersectionDelegate(ref Rect a, ref Rect b);
+        private static HasIntersectionDelegate _hasIntersection = LoadFunction<HasIntersectionDelegate>("SDL_HasIntersection");
+        public static bool HasIntersection(ref Rect a, ref Rect b) => _hasIntersection(ref a, ref b);
 
-        
-        public static bool IntersectRectAndLine(ref Rect rectangle, ref int x1, ref int y1, ref int x2, ref int y2);
+        private delegate bool IntersectRectDelegate(ref Rect a, ref Rect b, out Rect result);
+        private static IntersectRectDelegate _intersectRect = LoadFunction<IntersectRectDelegate>("SDL_IntersectRect");
+        public static bool IntersectRect(ref Rect a, ref Rect b, out Rect result) => _intersectRect(ref a, ref b, out result);
+
+        private delegate void UnionRectDelegate(ref Rect a, ref Rect b, out Rect result);
+        private static UnionRectDelegate _unionRect = LoadFunction<UnionRectDelegate>("SDL_UnionRect");
+        public static void UnionRect(ref Rect a, ref Rect b, out Rect result) => _unionRect(ref a, ref b, out result);
+
+        private delegate bool EnclosePointsDelegate(Point[] points, int count, ref Rect clip, out Rect result);
+        private static EnclosePointsDelegate _enclosePoints = LoadFunction<EnclosePointsDelegate>("SDL_EnclosePoints");
+        public static bool EnclosePoints(Point[] points, int count, ref Rect clip, out Rect result) => _enclosePoints(points, count, ref clip, out result);
+
+        private delegate bool IntersectRectAndLineDelegate(ref Rect rectangle, ref int x1, ref int y1, ref int x2, ref int y2);
+        private static IntersectRectAndLineDelegate _intersectRectAndLine = LoadFunction<IntersectRectAndLineDelegate>("SDL_IntersectRectAndLine");
+        public static bool IntersectRectAndLine(ref Rect rectangle, ref int x1, ref int y1, ref int x2, ref int y2) => _intersectRectAndLine(ref rectangle, ref x1, ref y1, ref x2, ref y2);
 
         //
         // SDL_render.h
         //
-        
-        public static int GetNumRenderDrivers();
+        private delegate int GetNumRenderDriversDelegate();
+        private static GetNumRenderDriversDelegate _getNumRenderDrivers = LoadFunction<GetNumRenderDriversDelegate>("SDL_GetNumRenderDrivers");
+        public static int GetNumRenderDrivers() => _getNumRenderDrivers();
 
-        
-        public static int GetRenderDriverInfo(int index, out RendererInfo info);
+        private delegate int GetRenderDriverInfoDelegate(int index, out RendererInfo info);
+        private static GetRenderDriverInfoDelegate _getRenderDriverInfo = LoadFunction<GetRenderDriverInfoDelegate>("SDL_GetRenderDriverInfo");
+        public static int GetRenderDriverInfo(int index, out RendererInfo info) => _getRenderDriverInfo(index, out info);
 
-        
-        public static int CreateWindowAndRenderer(int width, int height, WindowFlags windowFlags, out Window window, out Renderer renderer);
+        private delegate int CreateWindowAndRendererDelegate(int width, int height, WindowFlags windowFlags, out Window window, out Renderer renderer);
+        private static CreateWindowAndRendererDelegate _createWindowAndRenderer = LoadFunction<CreateWindowAndRendererDelegate>("SDL_CreateWindowAndRenderer");
+        public static int CreateWindowAndRenderer(int width, int height, WindowFlags windowFlags, out Window window, out Renderer renderer) => _createWindowAndRenderer(width, height, windowFlags, out window, out renderer);
 
         
         public static Renderer CreateRenderer(Window window, int index, RendererFlags flags);
@@ -815,52 +899,47 @@ namespace SDL2
         public static int GetRendererOutputSize(IntPtr renderer, out int w, out int h);
 
         
-        public static IntPtr Createstringure(IntPtr renderer, uint format, int access, int w, int h);
+        public static IntPtr CreateTexture(IntPtr renderer, uint format, int access, int w, int h);
 
         
-        public static IntPtr CreatestringureFromSurface(IntPtr renderer, IntPtr surface);
+        public static IntPtr CreateTextureFromSurface(IntPtr renderer, IntPtr surface);
 
         
-        public static int Querystringure(IntPtr stringure, out uint format, out int access, out int w, out int h);
+        public static int QueryTexture(IntPtr Texture, out uint format, out int access, out int w, out int h);
 
         
-        public static int SetstringureColorMod(IntPtr stringure, byte r, byte g, byte b);
+        public static int SetTextureColorMod(IntPtr Texture, byte r, byte g, byte b);
 
         
-        public static int GetstringureColorMod(IntPtr stringure, out byte r, out byte g, out byte b);
+        public static int GetTextureColorMod(IntPtr Texture, out byte r, out byte g, out byte b);
 
         
-        public static int SetstringureAlphaMod(IntPtr stringure, byte alpha);
+        public static int SetTextureAlphaMod(IntPtr Texture, byte alpha);
 
         
-        public static int GetstringureAlphaMod(IntPtr stringure, out byte alpha);
+        public static int GetTextureAlphaMod(IntPtr Texture, out byte alpha);
 
         
-        public static int SetstringureBlendMode(IntPtr stringure, BlendMode blendMode);
+        public static int SetTextureBlendMode(IntPtr Texture, BlendMode blendMode);
 
         
-        public static int GetstringureBlendMode(IntPtr stringure, out BlendMode blendMode);
+        public static int GetTextureBlendMode(IntPtr Texture, out BlendMode blendMode);
 
         
-        public static int Updatestringure(IntPtr stringure, ref Rect rect, IntPtr pixels, int pitch);
+        public static int UpdateTexture(IntPtr Texture, ref Rect? rect, IntPtr pixels, int pitch);
+
+        SDL_UpdateYUVTexture
+
+        public static int LockTexture(IntPtr Texture, ref Rect? rect, out IntPtr pixels, out int pitch);
 
         
-        public static int Updatestringure(IntPtr stringure, IntPtr rect, IntPtr pixels, int pitch);
-
-        
-        public static int Lockstringure(IntPtr stringure, ref Rect rect, out IntPtr pixels, out int pitch);
-
-        
-        public static int Lockstringure(IntPtr stringure, IntPtr rect, out IntPtr pixels, out int pitch);
-
-        
-        public static void Unlockstringure(IntPtr stringure);
+        public static void UnlockTexture(IntPtr Texture);
 
         
         public static bool RenderTargetSupported(IntPtr renderer);
 
         
-        public static int SetRenderTarget(IntPtr renderer, IntPtr stringure);
+        public static int SetRenderTarget(IntPtr renderer, IntPtr Texture);
 
         
         public static IntPtr GetRenderTarget(IntPtr renderer);
@@ -944,23 +1023,11 @@ namespace SDL2
         public static int RenderFillRects(IntPtr renderer, Rect[] rects, int count);
 
         
-        public static int RenderCopy(IntPtr renderer, IntPtr stringure, ref Rect srcrect, ref Rect dstrect);
-
+        public static int RenderCopy(IntPtr renderer, IntPtr Texture, ref Rect? srcrect, ref Rect? dstrect);
         
-        public static int RenderCopy(IntPtr renderer, IntPtr stringure, IntPtr srcrect, ref Rect dstrect);
 
+        public static int RenderCopyEx(IntPtr renderer, IntPtr Texture, ref Rect? srcrect, ref Rect? dstrect, double angle, ref Point center, RendererFlip flip);
         
-        public static int RenderCopy(IntPtr renderer, IntPtr stringure, ref Rect srcrect, IntPtr dstrect);
-
-        
-        public static int RenderCopy(IntPtr renderer, IntPtr stringure, IntPtr srcrect, IntPtr dstrect);
-
-        
-        public static int RenderCopyEx(IntPtr renderer, IntPtr stringure, ref Rect srcrect, ref Rect dstrect, double angle, ref Point center, RendererFlip flip);
-
-        
-        public static int RenderCopyEx(IntPtr renderer, IntPtr stringure, IntPtr srcrect, ref Rect dstrect, double angle, ref Point center, RendererFlip flip);
-
         
         public static int RenderReadPixels(IntPtr renderer, ref Rect rect, uint format, IntPtr pixels, int pitch);
 
@@ -968,49 +1035,34 @@ namespace SDL2
         public static void RenderPresent(IntPtr renderer);
 
         
-        public static void Destroystringure(IntPtr stringure);
+        public static void DestroyTexture(IntPtr Texture);
 
         
         public static void DestroyRenderer(IntPtr renderer);
 
-        
-        public static int GL_Bindstringure(IntPtr stringure, out float texw, out float texh);
-
-        
-        public static int GL_Unbindstringure(IntPtr stringure);
-
-        //
-        // SDL_rwops.h
-        //
-        
-        public static RWops RWFromFile(string file, string mode);
-
-        
-        public static int RWclose(IntPtr constring);
-
-        
-        public static int RWread(IntPtr constring, IntPtr ptr, int size, int maxNum);
-
-        
-        public static long RWsize(IntPtr constring);
+        // TODO: SDL_rwops.h
 
         //
         // SDL_shape.h
         //
-        
-        public static Window CreateShapedWindow(byte title, uint x, uint y, uint w, uint h, WindowFlags flags);
+        private delegate Window CreateShapedWindowDelegate(string title, uint x, uint y, uint w, uint h, WindowFlags flags);
+        private static CreateShapedWindowDelegate _createShapedWindow = LoadFunction<CreateShapedWindowDelegate>("SDL_CreateShapedWindow");
+        public static Window CreateShapedWindow(string title, uint x, uint y, uint w, uint h, WindowFlags flags) => _createShapedWindow(title, x, y, w, h, flags);
 
-        
-        public static bool IsShapedWindow(Window window);
+        private delegate bool IsShapedWindowDelegate(Window window);
+        private static IsShapedWindowDelegate _isShapedWindow = LoadFunction<IsShapedWindowDelegate>("SDL_IsShapedWindow");
+        public static bool IsShapedWindow(Window window) => _isShapedWindow(window);
 
-        
-        public static int SetWindowShape(Window window, Surface* shape, WindowShape* shapeMode);
+        private delegate int SetWindowShapeDelegate(Window window, ref Surface shape, ref WindowShape shapeMode);
+        private static SetWindowShapeDelegate _setWindowShape = LoadFunction<SetWindowShapeDelegate>("SDL_SetWindowShape");
+        public static int SetWindowShape(Window window, ref Surface shape, ref WindowShape shapeMode) => _setWindowShape(window, ref shape, ref shapeMode);
 
-        
-        public static int GetShapedWindowMode(Window window, out WindowShape shapeMode);
+        private delegate int GetShapedWindowModeDelegate(Window window, out WindowShape shapeMode);
+        private static GetShapedWindowModeDelegate _getShapedWindowMode = LoadFunction<GetShapedWindowModeDelegate>("SDL_GetShapedWindowMode");
+        public static int GetShapedWindowMode(Window window, out WindowShape shapeMode) => _getShapedWindowMode(window, out shapeMode);
 
         //
-        // SDL_stdinc.h
+        // TODO: SDL_stdinc.h
         //
         
         public static IntPtr Malloc(Size size);
@@ -1153,8 +1205,11 @@ namespace SDL2
         //
         // SDL_syswm.h
         //
-        
-        public static bool GetWindowWMInfo(Window window, ref SysWMInfo info);
+        private delegate bool GetWindowWMInfoDelegate(Window window, out SysWMInfo info);
+        private static GetWindowWMInfoDelegate _getWindowWMInfo = LoadFunction<GetWindowWMInfoDelegate>("SDL_GetWindowWMInfo");
+        public static bool GetWindowWMInfo(Window window, out SysWMInfo info) => _getWindowWMInfo(window, out info);
+
+        // TODO: SDL_thread.h
 
         //
         // SDL_timer.h
@@ -1181,6 +1236,8 @@ namespace SDL2
 
         
         public static bool RemoveTimer(TimerID id);
+
+        // TODO: SDL_touch.h
 
         //
         // SDL_version.h
@@ -1410,6 +1467,8 @@ namespace SDL2
 
         
         public static void DisableScreenSaver();
+
+        // TODO: SDL_vulkan.h
 
         public static class Hints
         {
