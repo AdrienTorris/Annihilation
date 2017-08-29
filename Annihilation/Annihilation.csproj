@@ -62,6 +62,10 @@
     <Compile Include="Engine\Core\Map.cs" />
     <Compile Include="Engine\Core\String.cs" />
     <Compile Include="Engine\Core\Tree.cs" />
+    <Compile Include="Engine\System\Kernel32.cs" />
+    <Compile Include="Engine\System\Libdl.cs" />
+    <Compile Include="Engine\System\LibraryLoader.cs" />
+    <Compile Include="Engine\System\NativeLibrary.cs" />
   </ItemGroup>
 
   <ItemGroup>

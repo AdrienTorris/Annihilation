@@ -81,9 +81,17 @@ namespace SDL2
         }
 
         //
-        // SDL_pixels.h
+        // SDL_render.h
         //
+        public struct Renderer
+        {
+            public IntPtr Handle;
+        }
 
+        public struct Texture
+        {
+            public IntPtr Handle;
+        }
 
         //
         // SDL_render.h
@@ -105,12 +113,20 @@ namespace SDL2
         {
             public IntPtr Handle;
 
+            public Window(IntPtr handle)
+            {
+                Handle = handle;
+            }
+
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public Window CheckErrorAndReturn()
             {
-                if (Handle == IntPtr.Zero) LogError(LogCategory.Application, SDL.GetError());
+                if (Handle == IntPtr.Zero) LogError(LogCategory.Application, GetError());
                 return this;
             }
+
+            public static implicit operator IntPtr(Window window) => window.Handle;
+            public static implicit operator Window(IntPtr handle) => new Window(handle);
         }
 
         public struct WindowID

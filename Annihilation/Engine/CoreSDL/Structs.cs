@@ -573,6 +573,7 @@ namespace SDL2
         //
         // SDL_pixels.h
         //
+        [StructLayout(LayoutKind.Sequential)]
         public struct Color
         {
             public byte R;
@@ -581,36 +582,37 @@ namespace SDL2
             public byte A;
         }
 
+        [StructLayout(LayoutKind.Sequential)]
         public struct Palette
         {
-            internal IntPtr NativeHandle;
-            /*public int NumColors;
-            public Color* Colors;
+            public int NumColors;
+            public Color[] Colors;
             public uint Version;
-            public int RefCount;*/
+            public int RefCount;
         }
 
+        [StructLayout(LayoutKind.Sequential)]
         public unsafe struct PixelFormat
         {
-            public readonly uint Format;
-            public readonly Palette Palette;
-            public readonly byte BitsPerPixel;
-            public readonly byte BytesPerPixel;
+            public uint Format;
+            public IntPtr Palette;
+            public byte BitsPerPixel;
+            public byte BytesPerPixel;
             public fixed byte Padding[2];
-            public readonly uint RMask;
-            public readonly uint GMask;
-            public readonly uint BMask;
-            public readonly uint AMask;
-            public readonly byte RLoss;
-            public readonly byte GLoss;
-            public readonly byte BLoss;
-            public readonly byte ALoss;
-            public readonly byte RShift;
-            public readonly byte GShift;
-            public readonly byte BShift;
-            public readonly byte AShift;
-            public readonly int RefCount;
-            public readonly PixelFormat* Next;
+            public uint RMask;
+            public uint GMask;
+            public uint BMask;
+            public uint AMask;
+            public byte RLoss;
+            public byte GLoss;
+            public byte BLoss;
+            public byte ALoss;
+            public byte RShift;
+            public byte GShift;
+            public byte BShift;
+            public byte AShift;
+            public int RefCount;
+            public IntPtr Next;
         }
 
         //
@@ -638,7 +640,7 @@ namespace SDL2
         [StructLayout(LayoutKind.Sequential)]
         public unsafe struct RendererInfo
         {
-            public byte* Name;
+            public Text Name;
             public RendererFlags Flags;
             public uint NumTextureFormats;
             public fixed uint TextureFormats[16];
@@ -677,16 +679,16 @@ namespace SDL2
         [StructLayout(LayoutKind.Sequential)]
         public unsafe struct Surface
         {
-            public readonly uint Flags;
-            public readonly PixelFormat* Format;
-            public readonly int W;
-            public readonly int H;
-            public readonly int Pitch;
+            public uint Flags;
+            public PixelFormat* Format;
+            public int W;
+            public int H;
+            public int Pitch;
             public void* Pixels;
             public void* UserData;
-            public readonly int Locked;
-            public readonly void* LockData;
-            public readonly Rect ClipRect;
+            public int Locked;
+            public void* LockData;
+            public Rect ClipRect;
             private IntPtr Map;
             public int RefCount;
         }
@@ -703,91 +705,91 @@ namespace SDL2
                 [StructLayout(LayoutKind.Sequential)]
                 public struct WindowsInfo
                 {
-                    public readonly IntPtr Window;
-                    public readonly IntPtr Hdc;
-                    public readonly IntPtr HInstance;
+                    public IntPtr Window;
+                    public IntPtr Hdc;
+                    public IntPtr HInstance;
                 }
 
                 [StructLayout(LayoutKind.Sequential)]
                 public struct WinRTInfo
                 {
-                    public readonly IntPtr Window;
+                    public IntPtr Window;
                 }
 
                 [StructLayout(LayoutKind.Sequential)]
                 public struct X11Info
                 {
-                    public readonly IntPtr Display;
-                    public readonly IntPtr Window;
+                    public IntPtr Display;
+                    public IntPtr Window;
                 }
 
                 [StructLayout(LayoutKind.Sequential)]
                 public struct DirectFBInfo
                 {
-                    public readonly IntPtr DirectFB;
-                    public readonly IntPtr Window;
-                    public readonly IntPtr Surface;
+                    public IntPtr DirectFB;
+                    public IntPtr Window;
+                    public IntPtr Surface;
                 }
 
                 [StructLayout(LayoutKind.Sequential)]
                 public struct CocoaInfo
                 {
-                    public readonly IntPtr Window;
+                    public IntPtr Window;
                 }
 
                 [StructLayout(LayoutKind.Sequential)]
                 public struct UIKitInfo
                 {
-                    public readonly IntPtr Window;
-                    public readonly uint FrameBuffer;
-                    public readonly uint ColorBuffer;
-                    public readonly uint ResolveFrameBuffer;
+                    public IntPtr Window;
+                    public uint FrameBuffer;
+                    public uint ColorBuffer;
+                    public uint ResolveFrameBuffer;
                 }
 
                 [StructLayout(LayoutKind.Sequential)]
                 public struct WaylandInfo
                 {
-                    public readonly IntPtr Display;
-                    public readonly IntPtr Surface;
-                    public readonly IntPtr ShellSurface;
+                    public IntPtr Display;
+                    public IntPtr Surface;
+                    public IntPtr ShellSurface;
                 }
 
                 [StructLayout(LayoutKind.Sequential)]
                 public struct MirInfo
                 {
-                    public readonly IntPtr Connection;
-                    public readonly IntPtr Surface;
+                    public IntPtr Connection;
+                    public IntPtr Surface;
                 }
 
                 [StructLayout(LayoutKind.Sequential)]
                 public struct AndroidInfo
                 {
-                    public readonly IntPtr Window;
-                    public readonly IntPtr Surface;
+                    public IntPtr Window;
+                    public IntPtr Surface;
                 }
 
                 [StructLayout(LayoutKind.Sequential)]
                 public struct VivanteInfo
                 {
-                    public readonly IntPtr Display;
-                    public readonly IntPtr Window;
+                    public IntPtr Display;
+                    public IntPtr Window;
                 }
 
-                [FieldOffset(0)] public readonly WindowsInfo Windows;
-                [FieldOffset(0)] public readonly WinRTInfo WinRT;
-                [FieldOffset(0)] public readonly X11Info X11;
-                [FieldOffset(0)] public readonly DirectFBInfo DirectFB;
-                [FieldOffset(0)] public readonly CocoaInfo Cocoa;
-                [FieldOffset(0)] public readonly UIKitInfo UIKit;
-                [FieldOffset(0)] public readonly WaylandInfo Wayland;
-                [FieldOffset(0)] public readonly MirInfo Mir;
-                [FieldOffset(0)] public readonly AndroidInfo Android;
-                [FieldOffset(0)] public readonly VivanteInfo Vivante;
+                [FieldOffset(0)] public WindowsInfo Windows;
+                [FieldOffset(0)] public WinRTInfo WinRT;
+                [FieldOffset(0)] public X11Info X11;
+                [FieldOffset(0)] public DirectFBInfo DirectFB;
+                [FieldOffset(0)] public CocoaInfo Cocoa;
+                [FieldOffset(0)] public UIKitInfo UIKit;
+                [FieldOffset(0)] public WaylandInfo Wayland;
+                [FieldOffset(0)] public MirInfo Mir;
+                [FieldOffset(0)] public AndroidInfo Android;
+                [FieldOffset(0)] public VivanteInfo Vivante;
             }
 
             public Version Version;
-            public readonly SysWMType SubSystem;
-            public readonly InfoUnion Info;
+            public SysWMType SubSystem;
+            public InfoUnion Info;
         }
 
         //
@@ -805,9 +807,9 @@ namespace SDL2
         [StructLayout(LayoutKind.Sequential)]
         public struct Version
         {
-            public readonly byte Major;
-            public readonly byte Minor;
-            public readonly byte Patch;
+            public byte Major;
+            public byte Minor;
+            public byte Patch;
 
             public const int MajorVersion = 2;
             public const int MinorVersion = 0;
