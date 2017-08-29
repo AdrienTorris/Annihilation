@@ -150,7 +150,7 @@ namespace SDL2
             GetEvent
         }
 
-        public enum State : int
+        public enum State : byte
         {
             Query = -1,
             Ignore = 0,
