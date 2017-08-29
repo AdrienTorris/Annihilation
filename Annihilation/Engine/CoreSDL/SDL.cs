@@ -10,7 +10,7 @@ namespace SDL2
     {   
         private static readonly NativeLibrary _library = LoadLibrary();
 
-        public const string LibraryName = "SDL2.dll";
+        public const string LibraryName = "dll";
         public const int ScanCodeMask = (1 << 30);
         public const int AudioCVTMaxFilters = 9;
 
@@ -19,7 +19,7 @@ namespace SDL2
             string name;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                name = "SDL2.dll";
+                name = "dll";
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
@@ -27,7 +27,7 @@ namespace SDL2
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                name = "libsdl2.dylib";
+                name = "libdylib";
             }
             else
             {
@@ -356,101 +356,175 @@ namespace SDL2
         private static GameControllerCloseDelegate _gameControllerClose = LoadFunction<GameControllerCloseDelegate>("SDL_GameControllerClose");
         public static void GameControllerClose(GameController gameController) => _gameControllerClose(gameController);
 
+        // TODO: SDL_gesture.h
+        // TODO: SDL_haptic.h
+
         //
         // SDL_hints.h
         //
-        
-        public static bool SetHintWithPriority(string name, string value, HintPriority priority);
+        private delegate bool SetHintWithPriorityDelegate(string name, string value, HintPriority priority);
+        private static SetHintWithPriorityDelegate _setHintWithPriority = LoadFunction<SetHintWithPriorityDelegate>("SDL_SetHintWithPriority");
+        public static bool SetHintWithPriority(string name, string value, HintPriority priority) => _setHintWithPriority(name, value, priority);
 
-        
-        public static bool SetHint(string name, string value);
+        private delegate bool SetHintDelegate(string name, string value);
+        private static SetHintDelegate _setHint = LoadFunction<SetHintDelegate>("SDL_SetHint");
+        public static bool SetHint(string name, string value) => _setHint(name, value);
 
-        
-        private static string GetHint(string name);
+        private delegate string GetHintDelegate(string name);
+        private static GetHintDelegate _getHint = LoadFunction<GetHintDelegate>("SDL_GetHint");
+        private static string GetHint(string name) => _getHint(name);
 
-        
-        public static bool GetHintBoolean(string name, bool defaultValue);
+        private delegate bool GetHintBooleanDelegate(string name, bool defaultValue);
+        private static GetHintBooleanDelegate _getHintBoolean = LoadFunction<GetHintBooleanDelegate>("SDL_GetHintBoolean");
+        public static bool GetHintBoolean(string name, bool defaultValue) => _getHintBoolean(name, defaultValue);
 
-        
-        public static void AddHintCallback(string name, HintCallback callback, IntPtr userData);
+        private delegate void AddHintCallbackDelegate(string name, HintCallback callback, IntPtr userData);
+        private static AddHintCallbackDelegate _addHintCallback = LoadFunction<AddHintCallbackDelegate>("SDL_AddHintCallback");
+        public static void AddHintCallback(string name, HintCallback callback, IntPtr userData) => _addHintCallback(name, callback, userData);
 
-        
-        public static void DelHintCallback(string name, HintCallback callback, IntPtr userData);
+        private delegate void DelHintCallbackDelegate(string name, HintCallback callback, IntPtr userData);
+        private static DelHintCallbackDelegate _delHintCallback = LoadFunction<DelHintCallbackDelegate>("SDL_DelHintCallback");
+        public static void DelHintCallback(string name, HintCallback callback, IntPtr userData) => _delHintCallback(name, callback, userData);
 
-        
-        public static void ClearHints();
+        private delegate void ClearHintsDelegate();
+        private static ClearHintsDelegate _clearHints = LoadFunction<ClearHintsDelegate>("SDL_ClearHints");
+        public static void ClearHints() => _clearHints();
 
         //
         // SDL_joystick.h
         //
-        
-        public static int NumJoysticks();
+        private delegate int NumJoysticksDelegate();
+        private static NumJoysticksDelegate _numJoysticks = LoadFunction<NumJoysticksDelegate>("SDL_NumJoysticks");
+        public static int NumJoysticks() => _numJoysticks();
 
-        
-        public static string JoystickNameForIndex(int deviceIndex);
+        private delegate string JoystickNameForIndexDelegate(int deviceIndex);
+        private static JoystickNameForIndexDelegate _joystickNameForIndex = LoadFunction<JoystickNameForIndexDelegate>("SDL_JoystickNameForIndex");
+        public static string JoystickNameForIndex(int deviceIndex) => _joystickNameForIndex(deviceIndex);
 
-        
-        public static Joystick JoystickOpen(int deviceIndex);
+        private delegate Guid JoystickGetDeviceGuidDelegate(int deviceIndex);
+        private static JoystickGetDeviceGuidDelegate _joystickGetDeviceGuid = LoadFunction<JoystickGetDeviceGuidDelegate>("SDL_JoystickGetDeviceGUID");
+        public static Guid JoystickGetDeviceGUID(int deviceIndex) => _joystickGetDeviceGuid(deviceIndex);
 
-        
-        public static Joystick JoystickFromInstanceID(JoystickID joystickID);
+        private delegate ushort JoystickGetDeviceVendorDelegate(int deviceIndex);
+        private static JoystickGetDeviceVendorDelegate _joystickGetDeviceVendor = LoadFunction<JoystickGetDeviceVendorDelegate>("SDL_JoystickGetDeviceVendor");
+        public static ushort JoystickGetDeviceVendor(int deviceIndex) => _joystickGetDeviceVendor(deviceIndex);
 
-        
-        public static string JoystickName(SDL2.Joystick joystick);
+        private delegate ushort JoystickGetDeviceProductDelegate(int deviceIndex);
+        private static JoystickGetDeviceProductDelegate _joystickGetDeviceProduct = LoadFunction<JoystickGetDeviceProductDelegate>("SDL_JoystickGetDeviceProduct");
+        public static ushort JoystickGetDeviceProduct(int deviceIndex) => _joystickGetDeviceProduct(deviceIndex);
 
-        
-        public static Guid JoystickGetDeviceGUID(int deviceIndex);
+        private delegate ushort JoystickGetDeviceProductVersionDelegate(int deviceIndex);
+        private static JoystickGetDeviceProductVersionDelegate _joystickGetDeviceProductVersion = LoadFunction<JoystickGetDeviceProductVersionDelegate>("SDL_JoystickGetDeviceProductVersion");
+        public static ushort JoystickGetDeviceProductVersion(int deviceIndex) => _joystickGetDeviceProductVersion(deviceIndex);
 
-        
-        public static Guid JoystickGetGUID(SDL2.Joystick joystick);
+        private delegate JoystickType JoystickGetDeviceTypeDelegate(int deviceIndex);
+        private static JoystickGetDeviceTypeDelegate _joystickGetDeviceType = LoadFunction<JoystickGetDeviceTypeDelegate>("SDL_JoystickGetDeviceType");
+        public static JoystickType JoystickGetDeviceType(int deviceIndex) => _joystickGetDeviceType(deviceIndex);
 
-        
-        public static void JoystickGetGUIDString(Guid guid, string pszGUID, int cbGUID);
+        private delegate JoystickID JoystickGetDeviceInstanceIDDelegate(int deviceIndex);
+        private static JoystickGetDeviceInstanceIDDelegate _joystickGetDeviceInstanceID = LoadFunction<JoystickGetDeviceInstanceIDDelegate>("SDL_JoystickGetDeviceInstanceID");
+        public static JoystickID JoystickGetDeviceInstanceID(int deviceIndex) => _joystickGetDeviceInstanceID(deviceIndex);
 
-        
-        public static Guid JoystickGetGUIDFromString(string pchGUID);
+        private delegate Joystick JoystickOpenDelegate(int deviceIndex);
+        private static JoystickOpenDelegate _joystickOpen = LoadFunction<JoystickOpenDelegate>("SDL_JoystickOpen");
+        public static Joystick JoystickOpen(int deviceIndex) => _joystickOpen(deviceIndex);
 
-        
-        public static bool JoystickGetAttached(SDL2.Joystick joystick);
+        private delegate Joystick JoystickFromInstanceIDDelegate(JoystickID joystickID);
+        private static JoystickFromInstanceIDDelegate _joystickFromInstanceID = LoadFunction<JoystickFromInstanceIDDelegate>("SDL_JoystickFromInstanceID");
+        public static Joystick JoystickFromInstanceID(JoystickID joystickID) => _joystickFromInstanceID(joystickID);
 
-        
-        public static JoystickID JoystickInstanceID(SDL2.Joystick joystick);
+        private delegate string JoystickNameDelegate(Joystick joystick);
+        private static JoystickNameDelegate _joystickName = LoadFunction<JoystickNameDelegate>("SDL_JoystickName");
+        public static string JoystickName(Joystick joystick) => _joystickName(joystick);
 
-        
-        public static int JoystickNumAxes(SDL2.Joystick joystick);
+        private delegate Guid JoystickGetGuidDelegate(Joystick joystick);
+        private static JoystickGetGuidDelegate _joystickGetGuid = LoadFunction<JoystickGetGuidDelegate>("SDL_JoystickGetGUID");
+        public static Guid JoystickGetGUID(Joystick joystick) => _joystickGetGuid(joystick);
 
-        
-        public static int JoystickNumBalls(SDL2.Joystick joystick);
 
-        
-        public static int JoystickNumHats(SDL2.Joystick joystick);
+        private delegate ushort JoystickGetVendorDelegate(Joystick joystick);
+        private static JoystickGetVendorDelegate _joystickGetVendor = LoadFunction<JoystickGetVendorDelegate>("SDL_JoystickGetVendor");
+        public static ushort JoystickGetVendor(Joystick joystick) => _joystickGetVendor(joystick);
 
-        
-        public static int JoystickNumButtons(SDL2.Joystick joystick);
+        private delegate ushort JoystickGetProductDelegate(Joystick joystick);
+        private static JoystickGetProductDelegate _joystickGetProduct = LoadFunction<JoystickGetProductDelegate>("SDL_JoystickGetProduct");
+        public static ushort JoystickGetProduct(Joystick joystick) => _joystickGetProduct(joystick);
 
-        
-        public static void JoystickUpdate();
+        private delegate ushort JoystickGetProductVersionDelegate(Joystick joystick);
+        private static JoystickGetProductVersionDelegate _joystickGetProductVersion = LoadFunction<JoystickGetProductVersionDelegate>("SDL_JoystickGetProductVersion");
+        public static ushort JoystickGetProductVersion(Joystick joystick) => _joystickGetProductVersion(joystick);
 
-        
-        public static int JoystickEventState(State state);
+        private delegate JoystickType JoystickGetTypeDelegate(Joystick joystick);
+        private static JoystickGetTypeDelegate _joystickGetType = LoadFunction<JoystickGetTypeDelegate>("SDL_JoystickGetType");
+        public static JoystickType JoystickGetType(Joystick joystick) => _joystickGetType(joystick);
 
-        
-        public static short JoystickGetAxis(SDL2.Joystick joystick, JoystickAxis axis);
+        private delegate void JoystickGetGuidStringDelegate(Guid guid, string pszGuid, int cbGuid);
+        private static JoystickGetGuidStringDelegate _joystickGetGuidString = LoadFunction<JoystickGetGuidStringDelegate>("SDL_JoystickGetGUIDString");
+        public static void JoystickGetGuidString(Guid guid, string pszGUID, int cbGUID) => _joystickGetGuidString(guid, pszGUID, cbGUID);
 
-        
-        public static JoystickHat JoystickGetHat(SDL2.Joystick joystick, int hat);
+        private delegate Guid JoystickGetGuidFromStringDelegate(string pchGuid);
+        private static JoystickGetGuidFromStringDelegate _joystickGetGuidFromString = LoadFunction<JoystickGetGuidFromStringDelegate>("SDL_JoystickGetGUIDFromString");
+        public static Guid JoystickGetGUIDFromString(string pchGUID) => _joystickGetGuidFromString(pchGUID);
 
-        
-        public static int JoystickGetBall(SDL2.Joystick joystick, int ball, out int dx, out int dy);
+        private delegate bool JoystickGetAttachedDelegate(Joystick joystick);
+        private static JoystickGetAttachedDelegate _joystickGetAttached = LoadFunction<JoystickGetAttachedDelegate>("SDL_JoystickGetAttached");
+        public static bool JoystickGetAttached(Joystick joystick) => _joystickGetAttached(joystick);
 
-        
-        public static byte JoystickGetButton(SDL2.Joystick joystick, int button);
+        private delegate JoystickID JoystickInstanceIDDelegate(Joystick joystick);
+        private static JoystickInstanceIDDelegate _joystickInstanceID = LoadFunction<JoystickInstanceIDDelegate>("SDL_JoystickInstanceID");
+        public static JoystickID JoystickInstanceID(Joystick joystick) => _joystickInstanceID(joystick);
 
-        
-        public static void JoystickClose(SDL2.Joystick joystick);
+        private delegate int JoystickNumAxesDelegate(Joystick joystick);
+        private static JoystickNumAxesDelegate _joystickNumAxes = LoadFunction<JoystickNumAxesDelegate>("SDL_JoystickNumAxes");
+        public static int JoystickNumAxes(Joystick joystick) => _joystickNumAxes(joystick);
 
-        
-        public static JoystickPowerLevel JoystickCurrentPowerLevel(SDL2.Joystick joystick);
+        private delegate int JoystickNumBallsDelegate(Joystick joystick);
+        private static JoystickNumBallsDelegate _joystickNumBalls = LoadFunction<JoystickNumBallsDelegate>("SDL_JoystickNumBalls");
+        public static int JoystickNumBalls(Joystick joystick) => _joystickNumBalls(joystick);
+
+        private delegate int JoystickNumHatsDelegate(Joystick joystick);
+        private static JoystickNumHatsDelegate _joystickNumHats = LoadFunction<JoystickNumHatsDelegate>("SDL_JoystickNumHats");
+        public static int JoystickNumHats(Joystick joystick) => _joystickNumHats(joystick);
+
+        private delegate int JoystickNumButtonsDelegate(Joystick joystick);
+        private static JoystickNumButtonsDelegate _joystickNumButtons = LoadFunction<JoystickNumButtonsDelegate>("SDL_JoystickNumButtons");
+        public static int JoystickNumButtons(Joystick joystick) => _joystickNumButtons(joystick);
+
+        private delegate void JoystickUpdateDelegate();
+        private static JoystickUpdateDelegate _joystickUpdate = LoadFunction<JoystickUpdateDelegate>("SDL_JoystickUpdate");
+        public static void JoystickUpdate() => _joystickUpdate();
+
+        private delegate State JoystickEventStateDelegate(State state);
+        private static JoystickEventStateDelegate _joystickEventState = LoadFunction<JoystickEventStateDelegate>("SDL_JoystickEventState");
+        public static State JoystickEventState(State state) => _joystickEventState(state);
+
+        private delegate short JoystickGetAxisDelegate(Joystick joystick, JoystickAxis axis);
+        private static JoystickGetAxisDelegate _joystickGetAxis = LoadFunction<JoystickGetAxisDelegate>("SDL_JoystickGetAxis");
+        public static short JoystickGetAxis(Joystick joystick, JoystickAxis axis) => _joystickGetAxis(joystick, axis);
+
+        private delegate bool JoystickGetAxisInitialStateDelegate(Joystick joystick, JoystickAxis axis, out short state);
+        private static JoystickGetAxisInitialStateDelegate _joystickGetAxisInitialState = LoadFunction<JoystickGetAxisInitialStateDelegate>("SDL_JoystickGetAxisInitialState");
+        public static bool JoystickGetAxisInitialState(Joystick joystick, JoystickAxis axis, out short state) => _joystickGetAxisInitialState(joystick, axis, out state);
+
+        private delegate JoystickHat JoystickGetHatDelegate(Joystick joystick, int hat);
+        private static JoystickGetHatDelegate _joystickGetHat = LoadFunction<JoystickGetHatDelegate>("SDL_JoystickGetHat");
+        public static JoystickHat JoystickGetHat(Joystick joystick, int hat) => _joystickGetHat(joystick, hat);
+
+        private delegate int JoystickGetBallDelegate(Joystick joystick, int ball, out int dx, out int dy);
+        private static JoystickGetBallDelegate _joystickGetBall = LoadFunction<JoystickGetBallDelegate>("SDL_JoystickGetBallDelegate");
+        public static int JoystickGetBall(Joystick joystick, int ball, out int dx, out int dy) => _joystickGetBall(joystick, ball, out dx, out dy);
+
+        private delegate byte JoystickGetButtonDelegate(Joystick joystick, int button);
+        private static JoystickGetButtonDelegate _joystickGetButton = LoadFunction<JoystickGetButtonDelegate>("SDL_JoystickGetButton");
+        public static byte JoystickGetButton(Joystick joystick, int button) => _joystickGetButton(joystick, button);
+
+        private delegate void JoystickCloseDelegte(Joystick joystick);
+        private static JoystickCloseDelegte _joystickClose = LoadFunction<JoystickCloseDelegte>("SDL_JoystickClose");
+        public static void JoystickClose(Joystick joystick) => _joystickClose(joystick);
+
+        private delegate JoystickPowerLevel JoystickCurrentPowerLevelDelegate(Joystick joystick);
+        private static JoystickCurrentPowerLevelDelegate _joystickCurrentPowerLevel = LoadFunction<JoystickCurrentPowerLevelDelegate>("SDL_JoystickCurrentPowerLevel");
+        public static JoystickPowerLevel JoystickCurrentPowerLevel(Joystick joystick) => _joystickCurrentPowerLevel(joystick);
 
         //
         // SDL_keyboard.h
@@ -501,7 +575,7 @@ namespace SDL2
         public static bool HasScreenKeyboardSupport();
 
         
-        public static bool IsScreenKeyboardShown(SDL2.Window window);
+        public static bool IsScreenKeyboardShown(Window window);
 
         //
         // SDL_log.h
@@ -555,7 +629,7 @@ namespace SDL2
         public static int ShowMessageBox(ref MessageBoxData messageBoxData, out int buttonID);
 
         
-        public static int ShowSimpleMessageBox(MessageBoxFlags flags, string title, string message, SDL2.Window window);
+        public static int ShowSimpleMessageBox(MessageBoxFlags flags, string title, string message, Window window);
 
         //
         // SDL_mouse.h
@@ -600,7 +674,7 @@ namespace SDL2
         public static MouseButtonState GetRelativeMouseState(int* x, int* y);
 
         
-        public static void WarpMouseInWindow(SDL2.Window window, int x, int y);
+        public static void WarpMouseInWindow(Window window, int x, int y);
 
         
         public static int WarpMouseGlobal(int x, int y);
@@ -723,16 +797,16 @@ namespace SDL2
         public static int GetRenderDriverInfo(int index, out RendererInfo info);
 
         
-        public static int CreateWindowAndRenderer(int width, int height, WindowFlags windowFlags, out SDL2.Window window, out Renderer renderer);
+        public static int CreateWindowAndRenderer(int width, int height, WindowFlags windowFlags, out Window window, out Renderer renderer);
 
         
-        public static Renderer CreateRenderer(SDL2.Window window, int index, RendererFlags flags);
+        public static Renderer CreateRenderer(Window window, int index, RendererFlags flags);
 
         
         public static IntPtr CreateSoftwareRenderer(IntPtr surface);
 
         
-        public static Renderer GetRenderer(SDL2.Window window);
+        public static Renderer GetRenderer(Window window);
 
         
         public static int GetRendererInfo(IntPtr renderer, out RendererInfo info);
@@ -927,13 +1001,13 @@ namespace SDL2
         public static Window CreateShapedWindow(byte title, uint x, uint y, uint w, uint h, WindowFlags flags);
 
         
-        public static bool IsShapedWindow(SDL2.Window window);
+        public static bool IsShapedWindow(Window window);
 
         
-        public static int SetWindowShape(SDL2.Window window, Surface* shape, WindowShape* shapeMode);
+        public static int SetWindowShape(Window window, Surface* shape, WindowShape* shapeMode);
 
         
-        public static int GetShapedWindowMode(SDL2.Window window, out WindowShape shapeMode);
+        public static int GetShapedWindowMode(Window window, out WindowShape shapeMode);
 
         //
         // SDL_stdinc.h
@@ -1080,7 +1154,7 @@ namespace SDL2
         // SDL_syswm.h
         //
         
-        public static bool GetWindowWMInfo(SDL2.Window window, ref SysWMInfo info);
+        public static bool GetWindowWMInfo(Window window, ref SysWMInfo info);
 
         //
         // SDL_timer.h
@@ -1170,19 +1244,19 @@ namespace SDL2
         public static DisplayMode GetClosestDisplayMode(int displayIndex, ref DisplayMode mode, out DisplayMode closest);
 
         
-        public static int GetWindowDisplayIndex(SDL2.Window window);
+        public static int GetWindowDisplayIndex(Window window);
 
         
-        public static int SetWindowDisplayMode(SDL2.Window window, ref DisplayMode mode);
+        public static int SetWindowDisplayMode(Window window, ref DisplayMode mode);
 
         
-        public static int SetWindowDisplayMode(SDL2.Window window, IntPtr mode);
+        public static int SetWindowDisplayMode(Window window, IntPtr mode);
 
         
-        public static int GetWindowDisplayMode(SDL2.Window window, out DisplayMode mode);
+        public static int GetWindowDisplayMode(Window window, out DisplayMode mode);
 
         
-        public static uint GetWindowPixelFormat(SDL2.Window window);
+        public static uint GetWindowPixelFormat(Window window);
 
         
         public static Window CreateWindow(string title, int x, int y, int width, int height, WindowFlags flags);
@@ -1191,142 +1265,142 @@ namespace SDL2
         public static Window CreateWindowFrom(IntPtr data);
 
         
-        public static WindowID GetWindowID(SDL2.Window window);
+        public static WindowID GetWindowID(Window window);
 
         
         public static Window GetWindowFromID(WindowID id);
 
         
-        public static WindowFlags GetWindowFlags(SDL2.Window window);
+        public static WindowFlags GetWindowFlags(Window window);
 
         
-        public static void SetWindowTitle(SDL2.Window window, string title);
+        public static void SetWindowTitle(Window window, string title);
 
         
-        public static string GetWindowTitle(SDL2.Window window);
+        public static string GetWindowTitle(Window window);
 
         
-        public static void SetWindowIcon(SDL2.Window window, Surface icon);
+        public static void SetWindowIcon(Window window, Surface icon);
 
         
-        public static IntPtr SetWindowData(SDL2.Window window, string name, IntPtr userData);
+        public static IntPtr SetWindowData(Window window, string name, IntPtr userData);
 
         
-        public static IntPtr GetWindowData(SDL2.Window window, string name);
+        public static IntPtr GetWindowData(Window window, string name);
 
         
-        public static void SetWindowPosition(SDL2.Window window, int x, int y);
+        public static void SetWindowPosition(Window window, int x, int y);
 
         
-        public static void GetWindowPosition(SDL2.Window window, out int x, out int y);
+        public static void GetWindowPosition(Window window, out int x, out int y);
 
         
-        public static void GetWindowPosition(SDL2.Window window, out int x, IntPtr y);
+        public static void GetWindowPosition(Window window, out int x, IntPtr y);
 
         
-        public static void GetWindowPosition(SDL2.Window window, IntPtr x, out int y);
+        public static void GetWindowPosition(Window window, IntPtr x, out int y);
 
         
-        public static void SetWindowSize(SDL2.Window window, int width, int height);
+        public static void SetWindowSize(Window window, int width, int height);
 
         
-        public static void GetWindowSize(SDL2.Window window, out int width, out int height);
+        public static void GetWindowSize(Window window, out int width, out int height);
 
         
-        public static void GetWindowSize(SDL2.Window window, out int width, IntPtr height);
+        public static void GetWindowSize(Window window, out int width, IntPtr height);
 
         
-        public static void GetWindowSize(SDL2.Window window, IntPtr width, out int height);
+        public static void GetWindowSize(Window window, IntPtr width, out int height);
 
         
-        public static int GetWindowBordersSize(SDL2.Window window, out int top, out int left, out int bottom, out int right);
+        public static int GetWindowBordersSize(Window window, out int top, out int left, out int bottom, out int right);
 
         
-        public static void SetWindowMinimumSize(SDL2.Window window, int minwidth, int minHeight);
+        public static void SetWindowMinimumSize(Window window, int minwidth, int minHeight);
 
         
-        public static void GetWindowMinimumSize(SDL2.Window window, out int width, out int height);
+        public static void GetWindowMinimumSize(Window window, out int width, out int height);
 
         
-        public static void SetWindowMaximumSize(SDL2.Window window, int maxWidth, int maxHeight);
+        public static void SetWindowMaximumSize(Window window, int maxWidth, int maxHeight);
 
         
-        public static void GetWindowMaximumSize(SDL2.Window window, out int width, out int height);
+        public static void GetWindowMaximumSize(Window window, out int width, out int height);
 
         
-        public static void SetWindowBordered(SDL2.Window window, bool bordered);
+        public static void SetWindowBordered(Window window, bool bordered);
 
         
-        public static void SetWindowResizable(SDL2.Window window, bool resizable);
+        public static void SetWindowResizable(Window window, bool resizable);
 
         
-        public static void ShowWindow(SDL2.Window window);
+        public static void ShowWindow(Window window);
 
         
-        public static void HideWindow(SDL2.Window window);
+        public static void HideWindow(Window window);
 
         
-        public static void RaiseWindow(SDL2.Window window);
+        public static void RaiseWindow(Window window);
 
         
-        public static void MaximizeWindow(SDL2.Window window);
+        public static void MaximizeWindow(Window window);
 
         
-        public static void MinimizeWindow(SDL2.Window window);
+        public static void MinimizeWindow(Window window);
 
         
-        public static void RestoreWindow(SDL2.Window window);
+        public static void RestoreWindow(Window window);
 
         
-        public static int SetWindowFullscreen(SDL2.Window window, WindowFlags flags);
+        public static int SetWindowFullscreen(Window window, WindowFlags flags);
 
         
-        public static Surface* GetWindowSurface(SDL2.Window window);
+        public static Surface* GetWindowSurface(Window window);
 
         
-        public static int UpdateWindowSurface(SDL2.Window window);
+        public static int UpdateWindowSurface(Window window);
 
         
-        public static int UpdateWindowSurfaceRects(SDL2.Window window, Rect* rectangles, int numRectangles);
+        public static int UpdateWindowSurfaceRects(Window window, Rect* rectangles, int numRectangles);
 
         
-        public static void SetWindowGrab(SDL2.Window window, bool grabbed);
+        public static void SetWindowGrab(Window window, bool grabbed);
 
         
-        public static bool GetWindowGrab(SDL2.Window window);
+        public static bool GetWindowGrab(Window window);
 
         
         public static Window GetGrabbedWindow();
 
         
-        public static int SetWindowBrightness(SDL2.Window window, float brightness);
+        public static int SetWindowBrightness(Window window, float brightness);
 
         
-        public static float GetWindowBrightness(SDL2.Window window);
+        public static float GetWindowBrightness(Window window);
 
         
-        public static int SetWindowOpacity(SDL2.Window window, float opacity);
+        public static int SetWindowOpacity(Window window, float opacity);
 
         
-        public static int GetWindowOpacity(SDL2.Window window, out float outOpacity);
+        public static int GetWindowOpacity(Window window, out float outOpacity);
 
         
-        public static int SetWindowModalFor(SDL2.Window modalWindow, SDL2.Window parentWindow);
+        public static int SetWindowModalFor(Window modalWindow, Window parentWindow);
 
         
-        public static int SetWindowInputFocus(SDL2.Window window);
+        public static int SetWindowInputFocus(Window window);
 
         
-        public static int SetWindowGammaRamp(SDL2.Window window, ushort* red, ushort* green, ushort* blue);
+        public static int SetWindowGammaRamp(Window window, ushort* red, ushort* green, ushort* blue);
 
         
-        public static int GetWindowGammaRamp(SDL2.Window window, ushort* red, ushort* green, ushort* blue);
+        public static int GetWindowGammaRamp(Window window, ushort* red, ushort* green, ushort* blue);
 
         
-        public static int SetWindowHitTest(SDL2.Window window, HitTest callback, IntPtr callbackData);
+        public static int SetWindowHitTest(Window window, HitTest callback, IntPtr callbackData);
 
         
-        public static void DestroyWindow(SDL2.Window window);
+        public static void DestroyWindow(Window window);
 
         
         public static bool IsScreenSaverEnabled();
