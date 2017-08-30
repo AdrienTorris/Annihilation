@@ -1,11 +1,54 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Security;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using Engine.System;
 
 namespace SDL2
 {
+    public enum SDLModule
+    {
+        SDL,
+        Assert,
+        Atomic,
+        Audio,
+        BlendMode,
+        Clipboard,
+        CpuInfo,
+        Error,
+        Events,
+        FileSystem,
+        GameController,
+        Gesture,
+        Haptic,
+        Hints,
+        Joystick,
+        Keyboard,
+        Loading,
+        Log,
+        MessageBox,
+        Mouse,
+        Mutex,
+        Pixels,
+        Platform,
+        Power,
+        Rect,
+        Render,
+        Rwops,
+        Shape,
+        Std,
+        Surface,
+        System,
+        SysWm,
+        Thread,
+        Timer,
+        Touch,
+        Version,
+        Video,
+        Vulkan
+    }
+
+    [SuppressUnmanagedCodeSecurity]
     public static unsafe partial class SDL
     {   
         private static readonly NativeLibrary _library = LoadLibrary();
@@ -43,42 +86,73 @@ namespace SDL2
             return _library.LoadFunction<T>(name);
         }
 
+        public static void LoadFunctions(SDLModule module)
+        {
+            switch(module)
+            {
+                case SDLModule.SDL:
+                    _initSubSystem = LoadFunction<InitSubSystemDelegate>("SDL_InitSubSystem");
+                    _quitSubSystem = LoadFunction<QuitSubSystemDelegate>("SDL_QuitSubSystem");
+                    _wasInit = LoadFunction<WasInitDelegate>("SDL_WasInit");
+                    _quit = LoadFunction<QuitDelegate>("SDL_Quit");
+                    break;
+                case SDLModule.Assert:
+                    throw new NotImplementedException();
+                case SDLModule.Atomic:
+                    throw new NotImplementedException();
+                case SDLModule.Audio:
+                    throw new NotImplementedException();
+                case SDLModule.BlendMode:
+                    throw new NotImplementedException();
+                case SDLModule.Clipboard:
+                    _setClipboardstring = LoadFunction<SetClipboardstringDelegate>("SDL_SetClipboardstring");
+                    _getClipboardstring = LoadFunction<GetClipboardstringDelegate>("SDL_GetClipboardstring");
+                    _hasClipboardstring = LoadFunction<HasClipboardstringDelegate>("SDL_HasClipboardstring");
+                    break;
+            }
+        }
+        
         //
         // SDL.h
         //
         private delegate int InitDelegate(InitFlags flags);
-        private static InitDelegate _init = LoadFunction<InitDelegate>("SDL_Init");
+        private static InitDelegate _init;
         public static int Init(InitFlags flags) => _init(flags);
 
         private delegate int InitSubSystemDelegate(InitFlags flags);
-        private static InitSubSystemDelegate _initSubSystem = LoadFunction<InitSubSystemDelegate>("SDL_InitSubSystem");
+        private static InitSubSystemDelegate _initSubSystem;
         public static int InitSubSystem(InitFlags flags) => _initSubSystem(flags);
 
         private delegate void QuitSubSystemDelegate(InitFlags flags);
-        private static QuitSubSystemDelegate _quitSubSystem = LoadFunction<QuitSubSystemDelegate>("SDL_QuitSubSystem");
+        private static QuitSubSystemDelegate _quitSubSystem;
         public static void QuitSubSystem(InitFlags flags) => _quitSubSystem(flags);
 
         private delegate InitFlags WasInitDelegate(InitFlags flags);
-        private static WasInitDelegate _wasInit = LoadFunction<WasInitDelegate>("SDL_WasInit");
+        private static WasInitDelegate _wasInit;
         public static InitFlags WasInit(InitFlags flags) => _wasInit(flags);
 
         private delegate void QuitDelegate();
-        private static QuitDelegate _quit = LoadFunction<QuitDelegate>("SDL_Quit");
+        private static QuitDelegate _quit;
         public static void Quit() => _quit();
+
+        // TODO: SDL_assert.h
+        // TODO: SDL_atomic.h
+        // TODO: SDL_audio.h
+        // TODO: SDL_blendmode.h
 
         //
         // SDL_clipboard.h
         //
         private delegate int SetClipboardstringDelegate(string text);
-        private static SetClipboardstringDelegate _setClipboardstring = LoadFunction<SetClipboardstringDelegate>("SDL_SetClipboardstring");
+        private static SetClipboardstringDelegate _setClipboardstring;
         public static int SetClipboardstring(string text) => _setClipboardstring(text);
 
         private delegate string GetClipboardstringDelegate();
-        private static GetClipboardstringDelegate _getClipboardstring = LoadFunction<GetClipboardstringDelegate>("SDL_GetClipboardstring");
+        private static GetClipboardstringDelegate _getClipboardstring;
         public static string GetClipboardstring() => _getClipboardstring();
 
         private delegate bool HasClipboardstringDelegate();
-        private static HasClipboardstringDelegate _hasClipboardstring = LoadFunction<HasClipboardstringDelegate>("SDL_HasClipboardstring");
+        private static HasClipboardstringDelegate _hasClipboardstring;
         public static bool HasClipboardstring() => _hasClipboardstring();
 
         //
@@ -883,162 +957,184 @@ namespace SDL2
         private static CreateWindowAndRendererDelegate _createWindowAndRenderer = LoadFunction<CreateWindowAndRendererDelegate>("SDL_CreateWindowAndRenderer");
         public static int CreateWindowAndRenderer(int width, int height, WindowFlags windowFlags, out Window window, out Renderer renderer) => _createWindowAndRenderer(width, height, windowFlags, out window, out renderer);
 
-        
-        public static Renderer CreateRenderer(Window window, int index, RendererFlags flags);
+        private delegate Renderer CreateRendererDelegate(Window window, int index, RendererFlags flags);
+        private static CreateRendererDelegate _createRenderer = LoadFunction<CreateRendererDelegate>("SDL_CreateRenderer");
+        public static Renderer CreateRenderer(Window window, int index, RendererFlags flags) => _createRenderer(window, index, flags);
+
+        private delegate Renderer CreateSoftwareRendererDelegate(Surface surface);
+        private static CreateSoftwareRendererDelegate _createSoftwareRenderer = LoadFunction<CreateSoftwareRendererDelegate>("SDL_CreateSoftwareRenderer");
+        public static Renderer CreateSoftwareRenderer(Surface surface) => _createSoftwareRenderer(surface);
+
+        private delegate Renderer GetRendererDelegate(Window window);
+        private static GetRendererDelegate _getRenderer => LoadFunction<GetRendererDelegate>("SDL_GetRenderer");
+        public static Renderer GetRenderer(Window window) => _getRenderer(window);
+
+        private delegate int GetRendererInfoDelegate(Renderer renderer, out RendererInfo info);
+        private static GetRendererInfoDelegate _getRendererInfo = LoadFunction<GetRendererInfoDelegate>("SDL_GetRendererInfo");
+        public static int GetRendererInfo(Renderer renderer, out RendererInfo info) => _getRendererInfo(renderer, out info);
+
+        private delegate int GetRendererOutputSizeDelegate(Renderer renderer, out int w, out int h);
+        private static GetRendererOutputSizeDelegate _getRendererOutputSize = LoadFunction<GetRendererOutputSizeDelegate>("SDL_GetRendererOutputSize");
+        public static int GetRendererOutputSize(Renderer renderer, out int w, out int h) => _getRendererOutputSize(renderer, out w, out h);
+
+        private delegate Texture CreateTextureDelegate(Renderer renderer, uint format, int access, int w, int h);
+        private static CreateTextureDelegate _createTexture = LoadFunction<CreateTextureDelegate>("SDL_CreateTexture");
+        public static Texture CreateTexture(Renderer renderer, uint format, int access, int w, int h) => _createTexture(renderer, format, access, w, h);
+
+        private delegate Texture CreateTextureFromSurfaceDelegate(Renderer renderer, Surface surface);
+        private static CreateTextureFromSurfaceDelegate _createTextureFromSurface = LoadFunction<CreateTextureFromSurfaceDelegate>("SDL_CreateTextureFromSurface");
+        public static Texture CreateTextureFromSurface(Renderer renderer, Surface surface) => _createTextureFromSurface(renderer, surface);
+
+        private delegate int QueryTextureDelegate(Texture texture, out uint format, out int access, out int w, out int h);
+        private static QueryTextureDelegate _queryTexture = LoadFunction<QueryTextureDelegate>("SDL_QueryTexture");
+        public static int QueryTexture(Texture texture, out uint format, out int access, out int w, out int h) => _queryTexture(texture, out format, out access, out w, out h);
+
+        private delegate int SetTextureColorModDelegate(Texture texture, byte r, byte g, byte b);
+        private static SetTextureColorModDelegate _setTextureColorMod = LoadFunction<SetTextureColorModDelegate>("SDL_SetTextureColorMod");
+        public static int SetTextureColorMod(Texture texture, byte r, byte g, byte b) => _setTextureColorMod(texture, r, g, b);
+
+        private delegate int GetTextureColorModDelegate(Texture texture, out byte r, out byte g, out byte b);
+        private static GetTextureColorModDelegate _getTextureColorMod = LoadFunction<GetTextureColorModDelegate>("SDL_GetTextureColorMod");
+        public static int GetTextureColorMod(Texture texture, out byte r, out byte g, out byte b) => _getTextureColorMod(texture, out r, out g, out b);
+
+        private delegate int SetTextureAlphaModDelegate(Texture texture, byte alpha);
+        private static SetTextureAlphaModDelegate _setTextureAlphaMod = LoadFunction<SetTextureAlphaModDelegate>("SDL_SetTextureAlphaMod");
+        public static int SetTextureAlphaMod(Texture texture, byte alpha) => _setTextureAlphaMod(texture, alpha);
+
+        private delegate int GetTextureAlphaModDelegate(Texture texture, out byte alpha);
+        private static GetTextureAlphaModDelegate _getTextureAlphaMod = LoadFunction<GetTextureAlphaModDelegate>("SDL_GetTextureAlphaMod");
+        public static int GetTextureAlphaMod(Texture texture, out byte alpha) => _getTextureAlphaMod(texture, out alpha);
+
+        private delegate int SetTextureBlendModeDelegate(Texture texture, BlendMode blendMode);
+        private static SetTextureBlendModeDelegate _setTextureBlendMode = LoadFunction<SetTextureBlendModeDelegate>("SDL_SetTextureBlendMode");
+        public static int SetTextureBlendMode(Texture texture, BlendMode blendMode) => _setTextureBlendMode(texture, blendMode);
+
+        private delegate int GetTextureBlendModeDelegate(Texture texture, out BlendMode blendMode);
+        private static GetTextureBlendModeDelegate _getTextureBlendMode = LoadFunction<GetTextureBlendModeDelegate>("SDL_GetTextureBlendMode");
+        public static int GetTextureBlendMode(Texture texture, out BlendMode blendMode) => _getTextureBlendMode(texture, out blendMode);
+
+        private delegate int UpdateTextureDelegate(Texture texture, ref Rect? rect, IntPtr pixels, int pitch);
+        private static UpdateTextureDelegate _updateTexture = LoadFunction<UpdateTextureDelegate>("SDL_UpdateTexture");
+        public static int UpdateTexture(Texture texture, ref Rect? rect, IntPtr pixels, int pitch) => _updateTexture(texture, ref rect, pixels, pitch);
+
+        private delegate int UpdateYUVTextureDelegate(Texture texture, ref Rect? rect, byte[] yPlane, int yPitch, byte[] uPlane, int uPitch, byte[] vPlane, int vPitch);
+        private static UpdateYUVTextureDelegate _updateYUVTexture = LoadFunction<UpdateYUVTextureDelegate>("SDL_UpdateYUVTexture");
+        public static int UpdateYUVTexture(Texture texture, ref Rect? rect, byte[] yPlane, int yPitch, byte[] uPlane, int uPitch, byte[] vPlane, int vPitch) => _updateYUVTexture(texture, ref rect, yPlane, yPitch, uPlane, uPitch, vPlane, vPitch);
+
+        private delegate int LockTextureDelegate(Texture texture, ref Rect? rect, out IntPtr pixels, out int pitch);
+        private static LockTextureDelegate _lockTexture = LoadFunction<LockTextureDelegate>("SDL_LockTexture");
+        public static int LockTexture(Texture texture, ref Rect? rect, out IntPtr pixels, out int pitch) => _lockTexture(texture, ref rect, out pixels, out pitch);
+
+        private delegate void UnlockTextureDelegate(Texture texture);
+        private static UnlockTextureDelegate _unlockTexture = LoadFunction<UnlockTextureDelegate>("SDL_UnlockTexture");
+        public static void UnlockTexture(Texture texture) => _unlockTexture(texture);
+
+        private delegate bool RenderTargetSupportedDelegate(Renderer renderer);
+        private static RenderTargetSupportedDelegate _renderTargetSupported = LoadFunction<RenderTargetSupportedDelegate>("SDL_RenderTargetSupported");
+        public static bool RenderTargetSupported(Renderer renderer) => _renderTargetSupported(renderer);
+
+        private delegate int SetRenderTargetDelegate(Renderer renderer, Texture texture);
+        private static SetRenderTargetDelegate _setRenderTarget = LoadFunction<SetRenderTargetDelegate>("SDL_SetRenderTarget");
+        public static int SetRenderTarget(Renderer renderer, Texture texture) => _setRenderTarget(renderer, texture);
+
+        private delegate Texture GetRenderTargetDelegate(Renderer renderer);
+        private static GetRenderTargetDelegate _getRenderTarget = LoadFunction<GetRenderTargetDelegate>("SDL_GetRenderTarget");
+        public static Texture GetRenderTarget(Renderer renderer) => _getRenderTarget(renderer);
+
+        private delegate int RenderSetLogicalSizeDelegate(Renderer renderer, int w, int h);
+        private static RenderSetLogicalSizeDelegate _renderSetLogicalSize = LoadFunction<RenderSetLogicalSizeDelegate>("SDL_RenderSetLogicalSize");
+        public static int RenderSetLogicalSize(Renderer renderer, int w, int h) => _renderSetLogicalSize(renderer, w, h);
+
+        private delegate void RenderGetLogicalSizeDelegate(Renderer renderer, out int w, out int h);
+        private static RenderGetLogicalSizeDelegate _renderGetLogicalSize = LoadFunction<RenderGetLogicalSizeDelegate>("SDL_RenderGetLogicalSize");
+        public static void RenderGetLogicalSize(Renderer renderer, out int w, out int h) => _renderGetLogicalSize(renderer, out w, out h);
+
+        private delegate int RenderSetIntegerScaleDelegate(Renderer renderer, bool enable);
+        private static RenderSetIntegerScaleDelegate _renderSetIntegerScale = LoadFunction<RenderSetIntegerScaleDelegate>("SDL_RenderSetIntegerScale");
+        public static int RenderSetIntegerScale(Renderer renderer, bool enable) => _renderSetIntegerScale(renderer, enable);
+
+        private delegate bool RenderGetIntegerScaleDelegate(Renderer renderer);
+        private static RenderGetIntegerScaleDelegate _renderGetIntegerScale = LoadFunction<RenderGetIntegerScaleDelegate>("SDL_RenderGetIntegerScale");
+        public static bool RenderGetIntegerScale(Renderer renderer) => _renderGetIntegerScale(renderer);
+
+        private delegate int RenderSetViewportDelegate(Renderer renderer, ref Rect rect);
+        private static RenderSetViewportDelegate _renderSetViewport = LoadFunction<RenderSetViewportDelegate>("SDL_RenderSetViewport");
+        public static int RenderSetViewport(Renderer renderer, ref Rect rect) => _renderSetViewport(renderer, ref rect);
 
         
-        public static IntPtr CreateSoftwareRenderer(IntPtr surface);
+        public static void RenderGetViewport(Renderer renderer, out Rect rect);
 
         
-        public static Renderer GetRenderer(Window window);
+        public static int RenderSetClipRect(Renderer renderer, ref Rect rect);
 
         
-        public static int GetRendererInfo(IntPtr renderer, out RendererInfo info);
+        public static void RenderGetClipRect(Renderer renderer, out Rect rect);
 
         
-        public static int GetRendererOutputSize(IntPtr renderer, out int w, out int h);
+        public static bool RenderIsClipEnabled(Renderer renderer);
 
         
-        public static IntPtr CreateTexture(IntPtr renderer, uint format, int access, int w, int h);
+        public static int RenderSetScale(Renderer renderer, float scaleX, float scaleY);
 
         
-        public static IntPtr CreateTextureFromSurface(IntPtr renderer, IntPtr surface);
+        public static void RenderGetScale(Renderer renderer, out float scaleX, out float scaleY);
 
         
-        public static int QueryTexture(IntPtr Texture, out uint format, out int access, out int w, out int h);
+        public static int SetRenderDrawColor(Renderer renderer, byte r, byte g, byte b, byte a);
 
         
-        public static int SetTextureColorMod(IntPtr Texture, byte r, byte g, byte b);
+        public static int GetRenderDrawColor(Renderer renderer, out byte r, out byte g, out byte b, out byte a);
 
         
-        public static int GetTextureColorMod(IntPtr Texture, out byte r, out byte g, out byte b);
+        public static int SetRenderDrawBlendMode(Renderer renderer, BlendMode blendMode);
 
         
-        public static int SetTextureAlphaMod(IntPtr Texture, byte alpha);
+        public static int GetRenderDrawBlendMode(Renderer renderer, out BlendMode blendMode);
 
         
-        public static int GetTextureAlphaMod(IntPtr Texture, out byte alpha);
+        public static int RenderClear(Renderer renderer);
 
         
-        public static int SetTextureBlendMode(IntPtr Texture, BlendMode blendMode);
+        public static int RenderDrawPoint(Renderer renderer, int x, int y);
 
         
-        public static int GetTextureBlendMode(IntPtr Texture, out BlendMode blendMode);
+        public static int RenderDrawPoints(Renderer renderer, Point[] points, int count);
 
         
-        public static int UpdateTexture(IntPtr Texture, ref Rect? rect, IntPtr pixels, int pitch);
-
-        SDL_UpdateYUVTexture
-
-        public static int LockTexture(IntPtr Texture, ref Rect? rect, out IntPtr pixels, out int pitch);
+        public static int RenderDrawLine(Renderer renderer, int x1, int y1, int x2, int y2);
 
         
-        public static void UnlockTexture(IntPtr Texture);
+        public static int RenderDrawLines(Renderer renderer, Point[] points, int count);
 
         
-        public static bool RenderTargetSupported(IntPtr renderer);
-
-        
-        public static int SetRenderTarget(IntPtr renderer, IntPtr Texture);
-
-        
-        public static IntPtr GetRenderTarget(IntPtr renderer);
-
-        
-        public static int RenderSetLogicalSize(IntPtr renderer, int w, int h);
-
-        
-        public static void RenderGetLogicalSize(IntPtr renderer, out int w, out int h);
-
-        
-        public static int RenderSetIntegerScale(IntPtr renderer, bool enable);
-
-        
-        public static bool RenderGetIntegerScale(IntPtr renderer);
-
-        
-        public static int RenderSetViewport(IntPtr renderer, ref Rect rect);
-
-        
-        public static void RenderGetViewport(IntPtr renderer, out Rect rect);
-
-        
-        public static int RenderSetClipRect(IntPtr renderer, ref Rect rect);
-
-        
-        public static void RenderGetClipRect(IntPtr renderer, out Rect rect);
-
-        
-        public static bool RenderIsClipEnabled(IntPtr renderer);
-
-        
-        public static int RenderSetScale(IntPtr renderer, float scaleX, float scaleY);
-
-        
-        public static void RenderGetScale(IntPtr renderer, out float scaleX, out float scaleY);
-
-        
-        public static int SetRenderDrawColor(IntPtr renderer, byte r, byte g, byte b, byte a);
-
-        
-        public static int GetRenderDrawColor(IntPtr renderer, out byte r, out byte g, out byte b, out byte a);
-
-        
-        public static int SetRenderDrawBlendMode(IntPtr renderer, BlendMode blendMode);
-
-        
-        public static int GetRenderDrawBlendMode(IntPtr renderer, out BlendMode blendMode);
-
-        
-        public static int RenderClear(IntPtr renderer);
-
-        
-        public static int RenderDrawPoint(IntPtr renderer, int x, int y);
-
-        
-        public static int RenderDrawPoints(IntPtr renderer, Point[] points, int count);
-
-        
-        public static int RenderDrawLine(IntPtr renderer, int x1, int y1, int x2, int y2);
-
-        
-        public static int RenderDrawLines(IntPtr renderer, Point[] points, int count);
-
-        
-        public static int RenderDrawRect(IntPtr renderer, ref Rect rect);
-
-        
-        public static int RenderDrawRect(IntPtr renderer, IntPtr rect);
-
-        
-        public static int RenderDrawRects(IntPtr renderer, Rect[] rects, int count);
-
-        
-        public static int RenderFillRect(IntPtr renderer, ref Rect rect);
-
-        
-        public static int RenderFillRect(IntPtr renderer, IntPtr rect);
-
-        
-        public static int RenderFillRects(IntPtr renderer, Rect[] rects, int count);
-
-        
-        public static int RenderCopy(IntPtr renderer, IntPtr Texture, ref Rect? srcrect, ref Rect? dstrect);
+        public static int RenderDrawRect(Renderer renderer, ref Rect rect);
         
 
-        public static int RenderCopyEx(IntPtr renderer, IntPtr Texture, ref Rect? srcrect, ref Rect? dstrect, double angle, ref Point center, RendererFlip flip);
-        
-        
-        public static int RenderReadPixels(IntPtr renderer, ref Rect rect, uint format, IntPtr pixels, int pitch);
+        public static int RenderDrawRects(Renderer renderer, Rect[] rects, int count);
 
         
-        public static void RenderPresent(IntPtr renderer);
+        public static int RenderFillRect(Renderer renderer, ref Rect rect);
+        
+
+        public static int RenderFillRects(Renderer renderer, Rect[] rects, int count);
 
         
-        public static void DestroyTexture(IntPtr Texture);
+        public static int RenderCopy(Renderer renderer, Texture texture, ref Rect? srcrect, ref Rect? dstrect);
+        
+
+        public static int RenderCopyEx(Renderer renderer, Texture texture, ref Rect? srcrect, ref Rect? dstrect, double angle, ref Point center, RendererFlip flip);
+        
+        
+        public static int RenderReadPixels(Renderer renderer, ref Rect rect, uint format, IntPtr pixels, int pitch);
 
         
-        public static void DestroyRenderer(IntPtr renderer);
+        public static void RenderPresent(Renderer renderer);
+
+        
+        public static void DestroyTexture(Texture texture);
+
+        
+        public static void DestroyRenderer(Renderer renderer);
 
         // TODO: SDL_rwops.h
 
@@ -1143,28 +1239,28 @@ namespace SDL2
         public static int FillRects(IntPtr dst, Rect[] rects, int count, uint color);
 
         
-        public static void FreeSurface(IntPtr surface);
+        public static void FreeSurface(Surface surface);
 
         
-        public static void GetClipRect(IntPtr surface, out Rect rect);
+        public static void GetClipRect(Surface surface, out Rect rect);
 
         
-        public static int GetColorKey(IntPtr surface, out uint key);
+        public static int GetColorKey(Surface surface, out uint key);
 
         
-        public static int GetSurfaceAlphaMod(IntPtr surface, out byte alpha);
+        public static int GetSurfaceAlphaMod(Surface surface, out byte alpha);
 
         
-        public static int GetSurfaceBlendMode(IntPtr surface, out BlendMode blendMode);
+        public static int GetSurfaceBlendMode(Surface surface, out BlendMode blendMode);
 
         
-        public static int GetSurfaceColorMod(IntPtr surface, out byte r, out byte g, out byte b);
+        public static int GetSurfaceColorMod(Surface surface, out byte r, out byte g, out byte b);
 
         
         private static IntPtr LoadBMP_RW(IntPtr src, int freesrc);
 
         
-        public static int LockSurface(IntPtr surface);
+        public static int LockSurface(Surface surface);
 
         
         public static int LowerBlit(IntPtr src, ref Rect srcrect, IntPtr dst, ref Rect dstrect);
@@ -1173,34 +1269,34 @@ namespace SDL2
         public static int LowerBlitScaled(IntPtr src, ref Rect srcrect, IntPtr dst, ref Rect dstrect);
 
         
-        private static int SaveBMP_RW(IntPtr surface, IntPtr src, int freesrc);
+        private static int SaveBMP_RW(Surface surface, IntPtr src, int freesrc);
 
         
-        public static bool SetClipRect(IntPtr surface, ref Rect rect);
+        public static bool SetClipRect(Surface surface, ref Rect rect);
 
         
-        public static int SetColorKey(IntPtr surface, int flag, uint key);
+        public static int SetColorKey(Surface surface, int flag, uint key);
 
         
-        public static int SetSurfaceAlphaMod(IntPtr surface, byte alpha);
+        public static int SetSurfaceAlphaMod(Surface surface, byte alpha);
 
         
-        public static int SetSurfaceBlendMode(IntPtr surface, BlendMode blendMode);
+        public static int SetSurfaceBlendMode(Surface surface, BlendMode blendMode);
 
         
-        public static int SetSurfaceColorMod(IntPtr surface, byte r, byte g, byte b);
+        public static int SetSurfaceColorMod(Surface surface, byte r, byte g, byte b);
 
         
-        public static int SetSurfacePalette(IntPtr surface, IntPtr palette);
+        public static int SetSurfacePalette(Surface surface, IntPtr palette);
 
         
-        public static int SetSurfaceRLE(IntPtr surface, int flag);
+        public static int SetSurfaceRLE(Surface surface, int flag);
 
         
         public static int SoftStretch(IntPtr src, ref Rect srcrect, IntPtr dst, ref Rect dstrect);
 
         
-        public static void UnlockSurface(IntPtr surface);
+        public static void UnlockSurface(Surface surface);
 
         //
         // SDL_syswm.h
@@ -1310,7 +1406,6 @@ namespace SDL2
         public static int GetCurrentDisplayMode(int displayIndex, out DisplayMode mode);
 
         
-        [return: MarshalAs(UnmanagedType.LPStruct)]
         public static DisplayMode GetClosestDisplayMode(int displayIndex, ref DisplayMode mode, out DisplayMode closest);
 
         
