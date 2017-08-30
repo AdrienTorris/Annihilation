@@ -6,21 +6,6 @@ namespace SDL2
     public static partial class SDL
     {
         //
-        // SDL_assert.h
-        //
-        [StructLayout(LayoutKind.Sequential)]
-        public unsafe struct AssertData
-        {
-            public int AlwaysIgnore;
-            public uint TriggerCount;
-            public Text Condition;
-            public Text Filename;
-            public int LineNumber;
-            public Text Function;
-            public AssertData* Next;
-        }
-
-        //
         // SDL_atomic.h
         //
         public struct Atomic

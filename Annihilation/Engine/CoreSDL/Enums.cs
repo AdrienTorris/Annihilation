@@ -20,7 +20,7 @@ namespace SDL2
             NoParachute = 0x00100000,
             Everything = Timer | Audio | Video | Joystick | Haptic | GameController | Events
         }
-
+        
         //
         // SDL_audio.h
         //
