@@ -1214,42 +1214,55 @@ namespace SDL2
         //
         // SDL_timer.h
         //
-        
-        public static uint GetTicks();
+        private delegate uint GetTicksDelegate();
+        private static GetTicksDelegate _getTicks = LoadFunction<GetTicksDelegate>("SDL_GetTicks");
+        public static uint GetTicks() => _getTicks();
 
         public static bool TicksPassed(uint a, uint b)
         {
             return ((int)(b - a) <= 0);
         }
 
-        
-        public static ulong GetPerformanceCounter();
+        private delegate ulong GetPerformanceCounterDelegate();
+        private static GetPerformanceCounterDelegate _getPerformanceCounter = LoadFunction<GetPerformanceCounterDelegate>("SDL_GetPerformanceCounter");
+        public static ulong GetPerformanceCounter() => _getPerformanceCounter();
 
-        
-        public static ulong GetPerformanceFrequency();
+        private delegate ulong GetPerformanceFrequencyDelegate();
+        private static GetPerformanceFrequencyDelegate _getPerformanceFrequency = LoadFunction<GetPerformanceFrequencyDelegate>("SDL_GetPerformanceFrequency");
+        public static ulong GetPerformanceFrequency() => _getPerformanceFrequency();
 
-        
-        public static void Delay(uint ms);
+        private delegate void DelayDelegate(uint ms);
+        private static DelayDelegate _delay = LoadFunction<DelayDelegate>("SDL_Delay");
+        public static void Delay(uint ms) => _delay(ms);
 
-        
-        public static TimerID AddTimer(uint interval, TimerCallback callback, IntPtr param);
+        private delegate TimerID AddTimerDelegate(uint interval, TimerCallback callback, IntPtr param);
+        private static AddTimerDelegate _addTimer = LoadFunction<AddTimerDelegate>("SDL_AddTimer");
+        public static TimerID AddTimer(uint interval, TimerCallback callback, IntPtr param) => _addTimer(interval, callback, param);
 
-        
-        public static bool RemoveTimer(TimerID id);
+        private delegate bool RemoveTimerDelegate(TimerID id);
+        private static RemoveTimerDelegate _removeTimer = LoadFunction<RemoveTimerDelegate>("SDL_RemoveTimer");
+        public static bool RemoveTimer(TimerID id) => _removeTimer(id);
 
         // TODO: SDL_touch.h
 
         //
         // SDL_version.h
         //
-        
-        public static void GetVersion(out Version version);
+        public static int VersionNum(int x, int y, int z) => x * 1000 + y * 100 + z;
+        public static int CompiledVersion() => VersionNum(Version.MajorVersion, Version.MinorVersion, Version.PatchLevel);
+        public static bool VersionAtLeast(int x, int y, int z) => CompiledVersion() >= VersionNum(x, y, z);
 
-        
-        public static string GetRevision();
+        private delegate void GetVersionDelegate(out Version version);
+        private static GetVersionDelegate _getVersion = LoadFunction<GetVersionDelegate>("SDL_GetVersion");
+        public static void GetVersion(out Version version) => _getVersion(out version);
 
-        
-        public static int GetRevisionNumber();
+        private delegate string GetRevisionDelegate();
+        private static GetRevisionDelegate _getRevision = LoadFunction<GetRevisionDelegate>("SDL_GetRevision");
+        public static string GetRevision() => _getRevision();
+
+        private delegate int GetRevisionNumberDelegate();
+        private static GetRevisionNumberDelegate _getRevisionNumber = LoadFunction<GetRevisionNumberDelegate>("SDL_GetRevisionNumber");
+        public static int GetRevisionNumber() => _getRevisionNumber();
 
         //
         // SDL_video.h
@@ -1468,7 +1481,32 @@ namespace SDL2
         
         public static void DisableScreenSaver();
 
-        // TODO: SDL_vulkan.h
+        //
+        // SDL_vulkan.h
+        //
+        private delegate int VulkanLoadLibraryDelegate(string path);
+        private static VulkanLoadLibraryDelegate _vulkanLoadLibrary = LoadFunction<VulkanLoadLibraryDelegate>("SDL_Vulkan_LoadLibrary");
+        public static int VulkanLoadLibrary(string path) => _vulkanLoadLibrary(path);
+
+        private delegate IntPtr VulkanGetVkGetInstanceProcAddrDelegate();
+        private static VulkanGetVkGetInstanceProcAddrDelegate _vulkanGetVkGetInstanceProcAddr = LoadFunction<VulkanGetVkGetInstanceProcAddrDelegate>("SDL_Vulkan_GetVkGetInstanceProcAddr");
+        public static IntPtr VulkanGetVkGetInstanceProcAddr() => _vulkanGetVkGetInstanceProcAddr();
+
+        private delegate void VulkanUnloadLibraryDelegate();
+        private static VulkanUnloadLibraryDelegate _vulkanUnloadLibrary = LoadFunction<VulkanUnloadLibraryDelegate>("SDL_Vulkan_UnloadLibrary");
+        public static void VulkanUnloadLibrary() => _vulkanUnloadLibrary();
+
+        private delegate bool VulkanGetInstanceExtensionsDelegate(Window window, ref uint count, string[] names);
+        private static VulkanGetInstanceExtensionsDelegate _vulkanGetInstanceExtensions = LoadFunction<VulkanGetInstanceExtensionsDelegate>("SDL_Vulkan_GetInstanceExtensions");
+        public static bool VulkanGetInstanceExtensions(Window window, ref uint count, string[] names) => _vulkanGetInstanceExtensions(window, ref count, names);
+
+        private delegate bool VulkanCreateSurfaceDelegate(Window window, Vulkan.Vk.Instance instance, out Vulkan.Vk.Surface surface);
+        private static VulkanCreateSurfaceDelegate _vulkanCreateSurface = LoadFunction<VulkanCreateSurfaceDelegate>("SDL_Vulkan_CreateSurface");
+        public static bool VulkanCreateSurface(Window window, Vulkan.Vk.Instance instance, out Vulkan.Vk.Surface surface) => _vulkanCreateSurface(window, instance, out surface);
+
+        private delegate void VulkanGetDrawableSizeDelegate(Window window, out int? w, out int? h);
+        private static VulkanGetDrawableSizeDelegate _vulkanGetDrawableSize = LoadFunction<VulkanGetDrawableSizeDelegate>("SDL_Vulkan_GetDrawableSize");
+        public static void VulkanGetDrawableSize(Window window, out int? w, out int? h) => _vulkanGetDrawableSize(window, out w, out h);
 
         public static class Hints
         {

@@ -813,7 +813,7 @@ namespace SDL2
 
             public const int MajorVersion = 2;
             public const int MinorVersion = 0;
-            public const int PatchLevel = 5;
+            public const int PatchLevel = 6;
 
             public static Version Current => new Version(MajorVersion, MinorVersion, PatchLevel);
 
