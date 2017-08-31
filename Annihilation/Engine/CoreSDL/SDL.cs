@@ -342,9 +342,34 @@ namespace SDL2
                     _renderSetIntegerScale = LoadFunction<RenderSetIntegerScaleDelegate>("SDL_RenderSetIntegerScale");
                     _renderGetIntegerScale = LoadFunction<RenderGetIntegerScaleDelegate>("SDL_RenderGetIntegerScale");
                     _renderSetViewport = LoadFunction<RenderSetViewportDelegate>("SDL_RenderSetViewport");
+                    _renderGetViewport = LoadFunction<RenderGetViewportDelegate>("SDL_RenderGetViewport");
+                    _renderSetClipRect = LoadFunction<RenderSetClipRectDelegate>("SDL_RenderSetClipRect");
+                    _renderGetClipRect = LoadFunction<RenderGetClipRectDelegate>("SDL_RenderGetClipRect");
+                    _renderIsClipEnabled = LoadFunction<RenderIsClipEnabledDelegate>("SDL_RenderIsClipEnabled");
+                    _renderSetScale = LoadFunction<RenderSetScaleDelegate>("SDL_RenderSetScale");
+                    _renderGetScale = LoadFunction<RenderGetScaleDelegate>("SDL_RenderGetScale");
+                    _setRenderDrawColor = LoadFunction<SetRenderDrawColorDelegate>("SDL_SetRenderDrawColor");
+                    _getRenderDrawColor = LoadFunction<GetRenderDrawColorDelegate>("SDL_GetRenderDrawColor");
+                    _setRenderDrawBlendMode = LoadFunction<SetRenderDrawBlendModeDelegate>("SDL_SetRenderDrawBlendMode");
+                    _getRenderDrawBlendMode = LoadFunction<GetRenderDrawBlendModeDelegate>("SDL_GetRenderDrawBlendMode");
+                    _renderClear = LoadFunction<RenderClearDelegate>("SDL_RenderClear");
+                    _renderDrawPoint = LoadFunction<RenderDrawPointDelegate>("SDL_RenderDrawPoint");
+                    _renderDrawPoints = LoadFunction<RenderDrawPointsDelegate>("SDL_RenderDrawPoints");
+                    _renderDrawLine = LoadFunction<RenderDrawLineDelegate>("SDL_RenderDrawLine");
+                    _renderDrawLines = LoadFunction<RenderDrawLinesDelegate>("SDL_RenderDrawLines");
+                    _renderDrawRect = LoadFunction<RenderDrawRectDelegate>("SDL_RenderDrawRect");
+                    _renderDrawRects = LoadFunction<RenderDrawRectsDelegate>("SDL_RenderDrawRects");
+                    _renderFillRect = LoadFunction<RenderFillRectDelegate>("SDL_RenderFillRect");
+                    _renderFillRects = LoadFunction<RenderFillRectsDelegate>("SDL_RenderFillRects");
+                    _renderCopy = LoadFunction<RenderCopyDelegate>("SDL_RenderCopy");
+                    _renderCopyEx = LoadFunction<RenderCopyExDelegate>("SDL_RenderCopyEx");
+                    _renderReadPixels = LoadFunction<RenderReadPixelsDelegate>("SDL_RenderReadPixels");
+                    _renderPresent = LoadFunction<RenderPresentDelegate>("SDL_RenderPresent");
+                    _destroyTexture = LoadFunction<DestroyTextureDelegate>("SDL_DestroyTexture");
+                    _destroyRenderer = LoadFunction<DestroyRendererDelegate>("SDL_DestroyRenderer");
                     break;
                 case SDLModule.Rwops:
-
+                    _rwFromFile = LoadFunction<RWFromFileDelegate>("SDL_RWFromFile");
                     break;
                 case SDLModule.Shape:
                     _createShapedWindow = LoadFunction<CreateShapedWindowDelegate>("SDL_CreateShapedWindow");
@@ -356,8 +381,7 @@ namespace SDL2
 
                     break;
                 case SDLModule.System:
-
-                    break;
+                    throw new NotImplementedException();
                 case SDLModule.SysWm:
                     _getWindowWMInfo = LoadFunction<GetWindowWMInfoDelegate>("SDL_GetWindowWMInfo");
                     break;
@@ -1340,80 +1364,105 @@ namespace SDL2
         private static RenderSetViewportDelegate _renderSetViewport;
         public static int RenderSetViewport(Renderer renderer, ref Rect rect) => _renderSetViewport(renderer, ref rect);
 
+        private delegate void RenderGetViewportDelegate(Renderer renderer, out Rect rect);
+        private static RenderGetViewportDelegate _renderGetViewport;
+        public static void RenderGetViewport(Renderer renderer, out Rect rect) => _renderGetViewport(renderer, out rect);
 
-        public static void RenderGetViewport(Renderer renderer, out Rect rect);
+        private delegate int RenderSetClipRectDelegate(Renderer renderer, ref Rect rect);
+        private static RenderSetClipRectDelegate _renderSetClipRect;
+        public static int RenderSetClipRect(Renderer renderer, ref Rect rect) => _renderSetClipRect(renderer, ref rect);
 
+        private delegate void RenderGetClipRectDelegate(Renderer renderer, out Rect rect);
+        private static RenderGetClipRectDelegate _renderGetClipRect;
+        public static void RenderGetClipRect(Renderer renderer, out Rect rect) => _renderGetClipRect(renderer, out rect);
 
-        public static int RenderSetClipRect(Renderer renderer, ref Rect rect);
+        private delegate bool RenderIsClipEnabledDelegate(Renderer renderer);
+        private static RenderIsClipEnabledDelegate _renderIsClipEnabled;
+        public static bool RenderIsClipEnabled(Renderer renderer) => _renderIsClipEnabled(renderer);
 
+        private delegate int RenderSetScaleDelegate(Renderer renderer, float scaleX, float scaleY);
+        private static RenderSetScaleDelegate _renderSetScale;
+        public static int RenderSetScale(Renderer renderer, float scaleX, float scaleY) => _renderSetScale(renderer, scaleX, scaleY);
 
-        public static void RenderGetClipRect(Renderer renderer, out Rect rect);
+        private delegate void RenderGetScaleDelegate(Renderer renderer, out float scaleX, out float scaleY);
+        private static RenderGetScaleDelegate _renderGetScale;
+        public static void RenderGetScale(Renderer renderer, out float scaleX, out float scaleY) => _renderGetScale(renderer, out scaleX, out scaleY);
 
+        private delegate int SetRenderDrawColorDelegate(Renderer renderer, byte r, byte g, byte b, byte a);
+        private static SetRenderDrawColorDelegate _setRenderDrawColor;
+        public static int SetRenderDrawColor(Renderer renderer, byte r, byte g, byte b, byte a) => _setRenderDrawColor(renderer, r, g, b, a);
 
-        public static bool RenderIsClipEnabled(Renderer renderer);
+        private delegate int GetRenderDrawColorDelegate(Renderer renderer, out byte r, out byte g, out byte b, out byte a);
+        private static GetRenderDrawColorDelegate _getRenderDrawColor;
+        public static int GetRenderDrawColor(Renderer renderer, out byte r, out byte g, out byte b, out byte a) => _getRenderDrawColor(renderer, out r, out g, out b, out a);
 
+        private delegate int SetRenderDrawBlendModeDelegate(Renderer renderer, BlendMode blendMode);
+        private static SetRenderDrawBlendModeDelegate _setRenderDrawBlendMode;
+        public static int SetRenderDrawBlendMode(Renderer renderer, BlendMode blendMode) => _setRenderDrawBlendMode(renderer, blendMode);
 
-        public static int RenderSetScale(Renderer renderer, float scaleX, float scaleY);
+        private delegate int GetRenderDrawBlendModeDelegate(Renderer renderer, out BlendMode blendMode);
+        private static GetRenderDrawBlendModeDelegate _getRenderDrawBlendMode;
+        public static int GetRenderDrawBlendMode(Renderer renderer, out BlendMode blendMode) => _getRenderDrawBlendMode(renderer, out blendMode);
 
+        private delegate int RenderClearDelegate(Renderer renderer);
+        private static RenderClearDelegate _renderClear;
+        public static int RenderClear(Renderer renderer) => _renderClear(renderer);
 
-        public static void RenderGetScale(Renderer renderer, out float scaleX, out float scaleY);
+        private delegate int RenderDrawPointDelegate(Renderer renderer, int x, int y);
+        private static RenderDrawPointDelegate _renderDrawPoint;
+        public static int RenderDrawPoint(Renderer renderer, int x, int y) => _renderDrawPoint(renderer, x, y);
 
+        private delegate int RenderDrawPointsDelegate(Renderer renderer, Point[] points, int count);
+        private static RenderDrawPointsDelegate _renderDrawPoints;
+        public static int RenderDrawPoints(Renderer renderer, Point[] points, int count) => _renderDrawPoints(renderer, points, count);
 
-        public static int SetRenderDrawColor(Renderer renderer, byte r, byte g, byte b, byte a);
+        private delegate int RenderDrawLineDelegate(Renderer renderer, int x1, int y1, int x2, int y2);
+        private static RenderDrawLineDelegate _renderDrawLine;
+        public static int RenderDrawLine(Renderer renderer, int x1, int y1, int x2, int y2) => _renderDrawLine(renderer, x1, y1, x2, y2);
 
+        private delegate int RenderDrawLinesDelegate(Renderer renderer, Point[] points, int count);
+        private static RenderDrawLinesDelegate _renderDrawLines;
+        public static int RenderDrawLines(Renderer renderer, Point[] points, int count) => _renderDrawLines(renderer, points, count);
 
-        public static int GetRenderDrawColor(Renderer renderer, out byte r, out byte g, out byte b, out byte a);
+        private delegate int RenderDrawRectDelegate(Renderer renderer, ref Rect rect);
+        private static RenderDrawRectDelegate _renderDrawRect;
+        public static int RenderDrawRect(Renderer renderer, ref Rect rect) => _renderDrawRect(renderer, ref rect);
 
+        private delegate int RenderDrawRectsDelegate(Renderer renderer, Rect[] rects, int count);
+        private static RenderDrawRectsDelegate _renderDrawRects;
+        public static int RenderDrawRects(Renderer renderer, Rect[] rects, int count) => _renderDrawRects(renderer, rects, count);
 
-        public static int SetRenderDrawBlendMode(Renderer renderer, BlendMode blendMode);
+        private delegate int RenderFillRectDelegate(Renderer renderer, ref Rect rect);
+        private static RenderFillRectDelegate _renderFillRect;
+        public static int RenderFillRect(Renderer renderer, ref Rect rect) => _renderFillRect(renderer, ref rect);
 
+        private delegate int RenderFillRectsDelegate(Renderer renderer, Rect[] rects, int count);
+        private static RenderFillRectsDelegate _renderFillRects;
+        public static int RenderFillRects(Renderer renderer, Rect[] rects, int count) => _renderFillRects(renderer, rects, count);
 
-        public static int GetRenderDrawBlendMode(Renderer renderer, out BlendMode blendMode);
+        private delegate int RenderCopyDelegate(Renderer renderer, Texture texture, ref Rect? srcRect, ref Rect? dstRect);
+        private static RenderCopyDelegate _renderCopy;
+        public static int RenderCopy(Renderer renderer, Texture texture, ref Rect? srcRect, ref Rect? dstRect) => _renderCopy(renderer, texture, ref srcRect, ref dstRect);
 
+        private delegate int RenderCopyExDelegate(Renderer renderer, Texture texture, ref Rect? srcrect, ref Rect? dstrect, double angle, ref Point center, RendererFlip flip);
+        private static RenderCopyExDelegate _renderCopyEx;
+        public static int RenderCopyEx(Renderer renderer, Texture texture, ref Rect? srcRect, ref Rect? dstRect, double angle, ref Point center, RendererFlip flip) => _renderCopyEx(renderer, texture, ref srcRect, ref dstRect, angle, ref center, flip);
 
-        public static int RenderClear(Renderer renderer);
+        private delegate int RenderReadPixelsDelegate(Renderer renderer, ref Rect rect, uint format, IntPtr pixels, int pitch);
+        private static RenderReadPixelsDelegate _renderReadPixels;
+        public static int RenderReadPixels(Renderer renderer, ref Rect rect, uint format, IntPtr pixels, int pitch) => _renderReadPixels(renderer, ref rect, format, pixels, pitch);
 
+        private delegate void RenderPresentDelegate(Renderer renderer);
+        private static RenderPresentDelegate _renderPresent;
+        public static void RenderPresent(Renderer renderer) => _renderPresent(renderer);
 
-        public static int RenderDrawPoint(Renderer renderer, int x, int y);
+        private delegate void DestroyTextureDelegate(Texture texture);
+        private static DestroyTextureDelegate _destroyTexture;
+        public static void DestroyTexture(Texture texture) => _destroyTexture(texture);
 
-
-        public static int RenderDrawPoints(Renderer renderer, Point[] points, int count);
-
-
-        public static int RenderDrawLine(Renderer renderer, int x1, int y1, int x2, int y2);
-
-
-        public static int RenderDrawLines(Renderer renderer, Point[] points, int count);
-
-
-        public static int RenderDrawRect(Renderer renderer, ref Rect rect);
-
-
-        public static int RenderDrawRects(Renderer renderer, Rect[] rects, int count);
-
-
-        public static int RenderFillRect(Renderer renderer, ref Rect rect);
-
-
-        public static int RenderFillRects(Renderer renderer, Rect[] rects, int count);
-
-
-        public static int RenderCopy(Renderer renderer, Texture texture, ref Rect? srcrect, ref Rect? dstrect);
-
-
-        public static int RenderCopyEx(Renderer renderer, Texture texture, ref Rect? srcrect, ref Rect? dstrect, double angle, ref Point center, RendererFlip flip);
-
-
-        public static int RenderReadPixels(Renderer renderer, ref Rect rect, uint format, IntPtr pixels, int pitch);
-
-
-        public static void RenderPresent(Renderer renderer);
-
-
-        public static void DestroyTexture(Texture texture);
-
-
-        public static void DestroyRenderer(Renderer renderer);
+        private delegate void DestroyRendererDelegate(Renderer renderer);
+        private static DestroyRendererDelegate _destroyRenderer;
+        public static void DestroyRenderer(Renderer renderer) => _destroyRenderer(renderer);
 
         //
         // SDL_rwops.h
@@ -1442,121 +1491,100 @@ namespace SDL2
         public static int GetShapedWindowMode(Window window, out WindowShape shapeMode) => _getShapedWindowMode(window, out shapeMode);
 
         //
-        // SDL_surface.h
+        // TODO: SDL_surface.h
         //
 
-        public static int UpperBlit(IntPtr src, ref Rect srcrect, IntPtr dst, ref Rect dstrect);
+        //public static int UpperBlit(Surface src, ref Rect srcrect, Surface dst, ref Rect dstrect);
+        
 
+        //public static int UpperBlitScaled(Surface src, ref Rect srcrect, Surface dst, ref Rect dstrect);
+        
 
-        public static int UpperBlit(IntPtr src, IntPtr srcrect, IntPtr dst, ref Rect dstrect);
+        //public static int ConvertPixels(int width, int height, uint src_format, Surface src, int src_pitch, uint dst_format, Surface dst, int dst_pitch);
 
 
-        public static int UpperBlit(IntPtr src, ref Rect srcrect, IntPtr dst, IntPtr dstrect);
+        //public static IntPtr ConvertSurface(IntPtr src, IntPtr fmt, uint flags);
 
 
-        public static int UpperBlit(IntPtr src, IntPtr srcrect, IntPtr dst, IntPtr dstrect);
+        //public static IntPtr ConvertSurfaceFormat(IntPtr src, uint pixel_format, uint flags);
 
 
-        public static int UpperBlitScaled(IntPtr src, ref Rect srcrect, IntPtr dst, ref Rect dstrect);
+        //public static IntPtr CreateRGBSurface(uint flags, int width, int height, int depth, uint Rmask, uint Gmask, uint Bmask, uint Amask);
 
 
-        public static int UpperBlitScaled(IntPtr src, IntPtr srcrect, IntPtr dst, ref Rect dstrect);
+        //public static IntPtr CreateRGBSurfaceFrom(IntPtr pixels, int width, int height, int depth, int pitch, uint Rmask, uint Gmask, uint Bmask, uint Amask);
 
 
-        public static int UpperBlitScaled(IntPtr src, ref Rect srcrect, IntPtr dst, IntPtr dstrect);
+        //public static IntPtr CreateRGBSurfaceWithFormat(uint flags, int width, int height, int depth, uint format);
 
 
-        public static int UpperBlitScaled(IntPtr src, IntPtr srcrect, IntPtr dst, IntPtr dstrect);
+        //public static IntPtr CreateRGBSurfaceWithFormatFrom(IntPtr pixels, int width, int height, int depth, int pitch, uint format);
 
 
-        public static int ConvertPixels(int width, int height, uint src_format, IntPtr src, int src_pitch, uint dst_format, IntPtr dst, int dst_pitch);
+        //public static int FillRect(IntPtr dst, ref Rect rect, uint color);
+        
 
+        //public static int FillRects(IntPtr dst, Rect[] rects, int count, uint color);
 
-        public static IntPtr ConvertSurface(IntPtr src, IntPtr fmt, uint flags);
 
+        //public static void FreeSurface(Surface surface);
 
-        public static IntPtr ConvertSurfaceFormat(IntPtr src, uint pixel_format, uint flags);
 
+        //public static void GetClipRect(Surface surface, out Rect rect);
 
-        public static IntPtr CreateRGBSurface(uint flags, int width, int height, int depth, uint Rmask, uint Gmask, uint Bmask, uint Amask);
 
+        //public static int GetColorKey(Surface surface, out uint key);
 
-        public static IntPtr CreateRGBSurfaceFrom(IntPtr pixels, int width, int height, int depth, int pitch, uint Rmask, uint Gmask, uint Bmask, uint Amask);
 
+        //public static int GetSurfaceAlphaMod(Surface surface, out byte alpha);
 
-        public static IntPtr CreateRGBSurfaceWithFormat(uint flags, int width, int height, int depth, uint format);
 
+        //public static int GetSurfaceBlendMode(Surface surface, out BlendMode blendMode);
 
-        public static IntPtr CreateRGBSurfaceWithFormatFrom(IntPtr pixels, int width, int height, int depth, int pitch, uint format);
 
+        //public static int GetSurfaceColorMod(Surface surface, out byte r, out byte g, out byte b);
 
-        public static int FillRect(IntPtr dst, ref Rect rect, uint color);
 
+        //private static IntPtr LoadBMP_RW(IntPtr src, int freesrc);
 
-        public static int FillRect(IntPtr dst, IntPtr rect, uint color);
 
+        //public static int LockSurface(Surface surface);
 
-        public static int FillRects(IntPtr dst, Rect[] rects, int count, uint color);
 
+        //public static int LowerBlit(IntPtr src, ref Rect srcrect, IntPtr dst, ref Rect dstrect);
 
-        public static void FreeSurface(Surface surface);
 
+        //public static int LowerBlitScaled(IntPtr src, ref Rect srcrect, IntPtr dst, ref Rect dstrect);
 
-        public static void GetClipRect(Surface surface, out Rect rect);
 
+        //private static int SaveBMP_RW(Surface surface, IntPtr src, int freesrc);
 
-        public static int GetColorKey(Surface surface, out uint key);
 
+        //public static bool SetClipRect(Surface surface, ref Rect rect);
 
-        public static int GetSurfaceAlphaMod(Surface surface, out byte alpha);
 
+        //public static int SetColorKey(Surface surface, int flag, uint key);
 
-        public static int GetSurfaceBlendMode(Surface surface, out BlendMode blendMode);
 
+        //public static int SetSurfaceAlphaMod(Surface surface, byte alpha);
 
-        public static int GetSurfaceColorMod(Surface surface, out byte r, out byte g, out byte b);
 
+        //public static int SetSurfaceBlendMode(Surface surface, BlendMode blendMode);
 
-        private static IntPtr LoadBMP_RW(IntPtr src, int freesrc);
 
+        //public static int SetSurfaceColorMod(Surface surface, byte r, byte g, byte b);
 
-        public static int LockSurface(Surface surface);
 
+        //public static int SetSurfacePalette(Surface surface, IntPtr palette);
 
-        public static int LowerBlit(IntPtr src, ref Rect srcrect, IntPtr dst, ref Rect dstrect);
 
+        //public static int SetSurfaceRLE(Surface surface, int flag);
 
-        public static int LowerBlitScaled(IntPtr src, ref Rect srcrect, IntPtr dst, ref Rect dstrect);
 
+        //public static int SoftStretch(IntPtr src, ref Rect srcrect, IntPtr dst, ref Rect dstrect);
 
-        private static int SaveBMP_RW(Surface surface, IntPtr src, int freesrc);
 
-
-        public static bool SetClipRect(Surface surface, ref Rect rect);
-
-
-        public static int SetColorKey(Surface surface, int flag, uint key);
-
-
-        public static int SetSurfaceAlphaMod(Surface surface, byte alpha);
-
-
-        public static int SetSurfaceBlendMode(Surface surface, BlendMode blendMode);
-
-
-        public static int SetSurfaceColorMod(Surface surface, byte r, byte g, byte b);
-
-
-        public static int SetSurfacePalette(Surface surface, IntPtr palette);
-
-
-        public static int SetSurfaceRLE(Surface surface, int flag);
-
-
-        public static int SoftStretch(IntPtr src, ref Rect srcrect, IntPtr dst, ref Rect dstrect);
-
-
-        public static void UnlockSurface(Surface surface);
+        //public static void UnlockSurface(Surface surface);
 
         //
         // SDL_syswm.h
@@ -1621,59 +1649,86 @@ namespace SDL2
         //
         // SDL_video.h
         //
+        public const int WindowPositionUndefinedMask = 0x1FFF0000;
+        public const int WindowPositionCenteredMask = 0x2FFF0000;
+        public const int WindowPositionUndefined = 0x1FFF0000;
+        public const int WindowPositionCentered = 0x2FFF0000;
 
-        public static int GetNumVideoDrivers();
+        public static int WindowPositionUndefinedDisplay(int x) => (WindowPositionUndefinedMask | x);
 
+        public static bool WindowPositionIsUndefined(int x) => (x & 0xFFFF0000) == WindowPositionUndefinedMask;
 
-        private static IntPtr GetVideoDriver(int index);
+        public static int WindowPositionCenteredDisplay(int x) => (WindowPositionCenteredMask | x);
 
+        public static bool WindowPositionIsCentered(int x) => (x & 0xFFFF0000) == WindowPositionCenteredMask;
 
-        public static int VideoInit(IntPtr driver_name);
+        private delegate int GetNumVideoDriversDelegate();
+        private static GetNumVideoDriversDelegate _getNumVideoDrivers;
+        public static int GetNumVideoDrivers() => _getNumVideoDrivers();
 
+        private delegate string GetVideoDriverDelegate(int index);
+        private static GetVideoDriverDelegate _getVideoDriver;
+        private static string GetVideoDriver(int index) => _getVideoDriver(index);
 
-        public static void VideoQuit();
+        private delegate int VideoInitDelegate(string driverName);
+        private static VideoInitDelegate _videoInit;
+        public static int VideoInit(string driverName) => _videoInit(driverName);
 
+        private delegate void VideoQuitDelegate();
+        private static VideoQuitDelegate _videoQuit;
+        public static void VideoQuit() => _videoQuit();
 
-        public static IntPtr GetCurrentVideoDriver();
+        private delegate string GetCurrentVideoDriverDelegate();
+        private static GetCurrentVideoDriverDelegate _getCurrentVideoDriver;
+        public static string GetCurrentVideoDriver() => _getCurrentVideoDriver();
 
+        private delegate int GetNumVideoDisplaysDelegate();
+        private static GetNumVideoDisplaysDelegate _getNumVideoDisplays;
+        public static int GetNumVideoDisplays() => _getNumVideoDisplays();
 
-        public static int GetNumVideoDisplays();
+        private delegate string GetDisplayNameDelegate(int displayIndex);
+        private static GetDisplayNameDelegate _getDisplayName;
+        public static string GetDisplayName(int displayIndex) => _getDisplayName(displayIndex);
 
+        private delegate int GetDisplayBoundsDelegate(int displayIndex, out Rect rectangle);
+        private static GetDisplayBoundsDelegate _getDisplayBounds;
+        public static int GetDisplayBounds(int displayIndex, out Rect rectangle) => _getDisplayBounds(displayIndex, out rectangle);
 
-        public static IntPtr GetDisplayName(int displayIndex);
+        private delegate int GetDisplayDpiDelegate(int displayIndex, out float ddpi, out float hdpi, out float vdpi);
+        private static GetDisplayDpiDelegate _getDisplayDpi;
+        public static int GetDisplayDpi(int displayIndex, out float ddpi, out float hdpi, out float vdpi) => _getDisplayDpi(displayIndex, out ddpi, out hdpi, out vdpi);
 
+        private delegate int GetDisplayUsableBoundsDelegate(int displayIndex, out Rect rectangle);
+        private static GetDisplayUsableBoundsDelegate _getDisplayUsableBounds;
+        public static int GetDisplayUsableBounds(int displayIndex, out Rect rectangle) => _getDisplayUsableBounds(displayIndex, out rectangle);
 
-        public static int GetDisplayBounds(int displayIndex, out Rect rectangle);
+        private delegate int GetNumDisplayModesDelegate(int displayIndex);
+        private static GetNumDisplayModesDelegate _getNumDisplayModes;
+        public static int GetNumDisplayModes(int displayIndex) => _getNumDisplayModes(displayIndex);
 
+        private delegate int GetDisplayModeDelegate(int displayIndex, int modeIndex, out DisplayMode mode);
+        private static GetDisplayModeDelegate _getDisplayMode;
+        public static int GetDisplayMode(int displayIndex, int modeIndex, out DisplayMode mode) => _getDisplayMode(displayIndex, modeIndex, out mode);
 
-        public static int GetDisplayDPI(int displayIndex, out float ddpi, out float hdpi, out float vdpi);
+        private delegate int GetDesktopDisplayModeDelegate(int displayIndex, out DisplayMode mode);
+        private static GetDesktopDisplayModeDelegate _getDesktopDisplayMode;
+        public static int GetDesktopDisplayMode(int displayIndex, out DisplayMode mode) => _getDesktopDisplayMode(displayIndex, out mode);
 
+        private delegate int GetCurrentDisplayModeDelegate(int displayIndex, out DisplayMode mode);
+        private static GetCurrentDisplayModeDelegate _getCurrentDisplayMode;
+        public static int GetCurrentDisplayMode(int displayIndex, out DisplayMode mode) => _getCurrentDisplayMode(displayIndex, out mode);
 
-        public static int GetDisplayUsableBounds(int displayIndex, out Rect rectangle);
+        private delegate DisplayMode GetClosestDisplayModeDelegate(int displayIndex, ref DisplayMode mode, out DisplayMode closest);
+        private static GetClosestDisplayModeDelegate _getClosestDisplayMode;
+        public static DisplayMode GetClosestDisplayMode(int displayIndex, ref DisplayMode mode, out DisplayMode closest) => _getClosestDisplayMode(displayIndex, ref mode, out closest);
 
+        private delegate int GetWindowDisplayIndexDelegate(Window window);
+        private static GetWindowDisplayIndexDelegate _getWindowDisplayIndex;
+        public static int GetWindowDisplayIndex(Window window) => _getWindowDisplayIndex(window);
 
-        public static int GetNumDisplayModes(int displayIndex);
-
-
-        public static int GetDisplayMode(int displayIndex, int modeIndex, out DisplayMode mode);
-
-
-        public static int GetDeskTopDisplayMode(int displayIndex, out DisplayMode mode);
-
-
-        public static int GetCurrentDisplayMode(int displayIndex, out DisplayMode mode);
-
-
-        public static DisplayMode GetClosestDisplayMode(int displayIndex, ref DisplayMode mode, out DisplayMode closest);
-
-
-        public static int GetWindowDisplayIndex(Window window);
-
-
-        public static int SetWindowDisplayMode(Window window, ref DisplayMode mode);
-
-
-        public static int SetWindowDisplayMode(Window window, IntPtr mode);
+        private delegate int SetWindowDisplayModeDelegate(Window window, ref DisplayMode mode);
+        private static SetWindowDisplayModeDelegate _setWindowDisplayMode;
+        public static int SetWindowDisplayMode(Window window, ref DisplayMode mode) => _setWindowDisplayMode(window, ref mode);
 
 
         public static int GetWindowDisplayMode(Window window, out DisplayMode mode);
@@ -1717,24 +1772,12 @@ namespace SDL2
 
         public static void GetWindowPosition(Window window, out int x, out int y);
 
-
-        public static void GetWindowPosition(Window window, out int x, IntPtr y);
-
-
-        public static void GetWindowPosition(Window window, IntPtr x, out int y);
-
-
+      
         public static void SetWindowSize(Window window, int width, int height);
 
 
         public static void GetWindowSize(Window window, out int width, out int height);
-
-
-        public static void GetWindowSize(Window window, out int width, IntPtr height);
-
-
-        public static void GetWindowSize(Window window, IntPtr width, out int height);
-
+        
 
         public static int GetWindowBordersSize(Window window, out int top, out int left, out int bottom, out int right);
 
