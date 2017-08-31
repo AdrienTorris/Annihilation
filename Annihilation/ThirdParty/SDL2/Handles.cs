@@ -92,20 +92,7 @@ namespace SDL2
         {
             public IntPtr Handle;
         }
-
-        //
-        // SDL_render.h
-        //
-        public struct Renderer
-        {
-            public IntPtr Handle;
-        }
-
-        public struct Texture
-        {
-            public IntPtr Handle;
-        }
-
+        
         //
         // SDL_video.h
         //
@@ -116,6 +103,12 @@ namespace SDL2
             public Window(IntPtr handle)
             {
                 Handle = handle;
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public void CheckError()
+            {
+                if (Handle == IntPtr.Zero) LogError(LogCategory.Application, GetError());
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]

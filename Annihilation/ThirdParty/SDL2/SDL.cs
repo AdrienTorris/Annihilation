@@ -47,8 +47,7 @@ namespace SDL2
     public static unsafe partial class SDL
     {
         private static readonly NativeLibrary _library = LoadLibrary();
-
-        public const string LibraryName = "dll";
+        
         public const int ScanCodeMask = (1 << 30);
         public const int AudioCVTMaxFilters = 9;
 
@@ -57,7 +56,7 @@ namespace SDL2
             string name;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                name = "dll";
+                name = "SDL2.dll";
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
@@ -76,10 +75,8 @@ namespace SDL2
             return lib;
         }
 
-        private static T LoadFunction<T>(string name)
-        {
-            return _library.LoadFunction<T>(name);
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static T LoadFunction<T>(string name) => _library.LoadFunction<T>(name);
 
         public static void LoadFunctions(SDLModule module)
         {
@@ -401,72 +398,72 @@ namespace SDL2
                     _getRevisionNumber = LoadFunction<GetRevisionNumberDelegate>("SDL_GetRevisionNumber");
                     break;
                 case SDLModule.Video:
-                    _getNumVideoDrivers;
-                    _getVideoDriver;
-                    _videoInit;
-                    _videoQuit;
-                    _getCurrentVideoDriver;
-                    _getNumVideoDisplays;
-                    _getDisplayName;
-                    _getDisplayBounds;
-                    _getDisplayDpi;
-                    _getDisplayUsableBounds;
-                    _getNumDisplayModes;
-                    _getDisplayMode;
-                    _getDesktopDisplayMode;
-                    _getCurrentDisplayMode;
-                    _getClosestDisplayMode;
-                    _getWindowDisplayIndex;
-                    _setWindowDisplayMode;
-                    _getWindowDisplayMode;
-                    _getWindowPixelFormat;
-                    _createWindow;
-                    _createWindowFrom;
-                    _getWindowID;
-                    _getWindowFromID;
-                    _getWindowFlags;
-                    _setWindowTitle;
-                    _getWindowTitle;
-                    _setWindowIcon;
-                    _setWindowData;
-                    _getWindowData;
-                    _setWindowPosition;
-                    _getWindowPosition;
-                    _setWindowSize;
-                    _getWindowSize;
-                    _getWindowBordersSize;
-                    _setWindowMinimumSize;
-                    _getWindowMinimumSize;
-                    _setWindowMaximumSize;
-                    _getWindowMaximumSize;
-                    _setWindowBordered;
-                    _setWindowResizable;
-                    _showWindow;
-                    _hideWindow;
-                    _raiseWindow;
-                    _maximizeWindow;
-                    _minimizeWindow;
-                    _restoreWindow;
-                    _setWindowFullscreen;
-                    _getWindowSurface;
-                    _updateWindowSurface;
-                    _updateWindowSurfaceRects;
-                    _setWindowGrab;
-                    _getWindowGrab;
-                    _getGrabbedWindow;
-                    _setWindowBrightness;
-                    _getWindowBrightness;
-                    _setWindowOpacity;
-                    _getWindowOpacity;
-                    _setWindowModalFor;
-                    _setWindowInputFocus;
-                    _setWindowGammaRamp;
-                    _getWindowGammaRamp;
-                    _setWindowHitTest;
-                    _destroyWindow;
-                    _isScreenSaverEnabled;
-                    _enableScreenSaver;
-                    _disableScreenSaver;
+                    _getNumVideoDrivers = LoadFunction<GetNumVideoDriversDelegate>("SDL_GetNumVideoDrivers");
+                    _getVideoDriver = LoadFunction<GetVideoDriverDelegate>("SDL_GetVideoDriver");
+                    _videoInit = LoadFunction<VideoInitDelegate>("SDL_VideoInit");
+                    _videoQuit = LoadFunction<VideoQuitDelegate>("SDL_VideoQuit");
+                    _getCurrentVideoDriver = LoadFunction<GetCurrentVideoDriverDelegate>("SDL_GetCurrentVideoDriver");
+                    _getNumVideoDisplays = LoadFunction<GetNumVideoDisplaysDelegate>("SDL_GetNumVideoDisplays");
+                    _getDisplayName = LoadFunction<GetDisplayNameDelegate>("SDL_GetDisplayName");
+                    _getDisplayBounds = LoadFunction<GetDisplayBoundsDelegate>("SDL_GetDisplayBounds");
+                    _getDisplayDpi = LoadFunction<GetDisplayDpiDelegate>("SDL_GetDisplayDPI");
+                    _getDisplayUsableBounds = LoadFunction<GetDisplayUsableBoundsDelegate>("SDL_GetDisplayUsableBounds");
+                    _getNumDisplayModes = LoadFunction<GetNumDisplayModesDelegate>("SDL_GetNumDisplayModes");
+                    _getDisplayMode = LoadFunction<GetDisplayModeDelegate>("SDL_GetDisplayMode");
+                    _getDesktopDisplayMode = LoadFunction<GetDesktopDisplayModeDelegate>("SDL_GetDesktopDisplayMode");
+                    _getCurrentDisplayMode = LoadFunction<GetCurrentDisplayModeDelegate>("SDL_GetCurrentDisplayMode");
+                    _getClosestDisplayMode = LoadFunction<GetClosestDisplayModeDelegate>("SDL_GetClosestDisplayMode");
+                    _getWindowDisplayIndex = LoadFunction<GetWindowDisplayIndexDelegate>("SDL_GetWindowDisplayIndex");
+                    _setWindowDisplayMode = LoadFunction<SetWindowDisplayModeDelegate>("SDL_SetWindowDisplayMode");
+                    _getWindowDisplayMode = LoadFunction<GetWindowDisplayModeDelegate>("SDL_GetWindowDisplayMode");
+                    _getWindowPixelFormat = LoadFunction<GetWindowPixelFormatDelegate>("SDL_GetWindowPixelFormat");
+                    _createWindow = LoadFunction<CreateWindowDelegate>("SDL_CreateWindow");
+                    _createWindowFrom = LoadFunction<CreateWindowFromDelegate>("SDL_CreateWindowFrom");
+                    _getWindowID = LoadFunction<GetWindowIDDelegate>("SDL_GetWindowID");
+                    _getWindowFromID = LoadFunction<GetWindowFromIDDelegate>("SDL_GetWindowFromID");
+                    _getWindowFlags = LoadFunction<GetWindowFlagsDelegate>("SDL_GetWindowFlags");
+                    _setWindowTitle = LoadFunction<SetWindowTitleDelegate>("SDL_SetWindowTitle");
+                    _getWindowTitle = LoadFunction<GetWindowTitleDelegate>("SDL_GetWindowTitle");
+                    _setWindowIcon = LoadFunction<SetWindowIconDelegate>("SDL_SetWindowIcon");
+                    _setWindowData = LoadFunction<SetWindowDataDelegate>("SDL_SetWindowData");
+                    _getWindowData = LoadFunction<GetWindowDataDelegate>("SDL_GetWindowData");
+                    _setWindowPosition = LoadFunction<SetWindowPositionDelegate>("SDL_SetWindowPosition");
+                    _getWindowPosition = LoadFunction<GetWindowPositionDelegate>("SDL_GetWindowPosition");
+                    _setWindowSize = LoadFunction<SetWindowSizeDelegate>("SDL_SetWindowSize");
+                    _getWindowSize = LoadFunction<GetWindowSizeDelegate>("SDL_GetWindowSize");
+                    _getWindowBordersSize = LoadFunction<GetWindowBordersSizeDelegate>("SDL_GetWindowBordersSize");
+                    _setWindowMinimumSize = LoadFunction<SetWindowMinimumSizeDelegate>("SDL_SetWindowMinimumSize");
+                    _getWindowMinimumSize = LoadFunction<GetWindowMinimumSizeDelegate>("SDL_GetWindowMinimumSize");
+                    _setWindowMaximumSize = LoadFunction<SetWindowMaximumSizeDelegate>("SDL_SetWindowMaximumSize");
+                    _getWindowMaximumSize = LoadFunction<GetWindowMaximumSizeDelegate>("SDL_GetWindowMaximumSize");
+                    _setWindowBordered = LoadFunction<SetWindowBorderedDelegate>("SDL_SetWindowBordered");
+                    _setWindowResizable = LoadFunction<SetWindowResizableDelegate>("SDL_SetWindowResizable");
+                    _showWindow = LoadFunction<ShowWindowDelegate>("SDL_ShowWindow");
+                    _hideWindow = LoadFunction<HideWindowDelegate>("SDL_HideWindow");
+                    _raiseWindow = LoadFunction<RaiseWindowDelegate>("SDL_RaiseWindow");
+                    _maximizeWindow = LoadFunction<MaximizeWindowDelegate>("SDL_MaximizeWindow");
+                    _minimizeWindow = LoadFunction<MinimizeWindowDelegate>("SDL_MinimizeWindow");
+                    _restoreWindow = LoadFunction<RestoreWindowDelegate>("SDL_RestoreWindow");
+                    _setWindowFullscreen = LoadFunction<SetWindowFullscreenDelegate>("SDL_SetWindowFullscreen");
+                    _getWindowSurface = LoadFunction<GetWindowSurfaceDelegate>("SDL_GetWindowSurface");
+                    _updateWindowSurface = LoadFunction<UpdateWindowSurfaceDelegate>("SDL_UpdateWindowSurface");
+                    _updateWindowSurfaceRects = LoadFunction<UpdateWindowSurfaceRectsDelegate>("SDL_UpdateWindowSurfaceRects");
+                    _setWindowGrab = LoadFunction<SetWindowGrabDelegate>("SDL_SetWindowGrab");
+                    _getWindowGrab = LoadFunction<GetWindowGrabDelegate>("SDL_GetWindowGrab");
+                    _getGrabbedWindow = LoadFunction<GetGrabbedWindowDelegate>("SDL_GetGrabbedWindow");
+                    _setWindowBrightness = LoadFunction<SetWindowBrightnessDelegate>("SDL_SetWindowBrightness");
+                    _getWindowBrightness = LoadFunction<GetWindowBrightnessDelegate>("SDL_GetWindowBrightness");
+                    _setWindowOpacity = LoadFunction<SetWindowOpacityDelegate>("SDL_SetWindowOpacity");
+                    _getWindowOpacity = LoadFunction<GetWindowOpacityDelegate>("SDL_GetWindowOpacity");
+                    _setWindowModalFor = LoadFunction<SetWindowModalForDelegate>("SDL_SetWindowModalFor");
+                    _setWindowInputFocus = LoadFunction<SetWindowInputFocusDelegate>("SDL_SetWindowInputFocus");
+                    _setWindowGammaRamp = LoadFunction<SetWindowGammaRampDelegate>("SDL_SetWindowGammaRamp");
+                    _getWindowGammaRamp = LoadFunction<GetWindowGammaRampDelegate>("SDL_GetWindowGammaRamp");
+                    _setWindowHitTest = LoadFunction<SetWindowHitTestDelegate>("SDL_SetWindowHitTest");
+                    _destroyWindow = LoadFunction<DestroyWindowDelegate>("SDL_DestroyWindow");
+                    _isScreenSaverEnabled = LoadFunction<IsScreenSaverEnabledDelegate>("SDL_IsScreenSaverEnabled");
+                    _enableScreenSaver = LoadFunction<EnableScreenSaverDelegate>("SDL_EnableScreenSaver");
+                    _disableScreenSaver = LoadFunction<DisableScreenSaverDelegate>("SDL_DisableScreenSaver");
                     break;
                 case SDLModule.Vulkan:
                     _vulkanLoadLibrary = LoadFunction<VulkanLoadLibraryDelegate>("SDL_Vulkan_LoadLibrary");
@@ -477,6 +474,107 @@ namespace SDL2
                     _vulkanGetDrawableSize = LoadFunction<VulkanGetDrawableSizeDelegate>("SDL_Vulkan_GetDrawableSize");
                     break;
             }
+        }
+
+        public static class Hint
+        {
+            public const string FrameBufferAcceleration = "FRAMEBUFFER_ACCELERATION";
+            public const string RenderDriver = "RENDER_DRIVER";
+            public const string RenderOpenglShaders = "RENDER_OPENGL_SHADERS";
+            public const string RenderDirect3DThreadsafe = "RENDER_DIRECT3D_THREADSAFE";
+            public const string RenderDirect3D11Debug = "RENDER_DIRECT3D11_DEBUG";
+            public const string RenderScaleQuality = "RENDER_SCALE_QUALITY";
+            public const string RenderVsync = "RENDER_VSYNC";
+            public const string VideoAllowScreensave = "VIDEO_ALLOW_SCREENSAVER";
+            public const string VideoX11XvidMode = "VIDEO_X11_XVIDMODE";
+            public const string VideoX11Xinerama = "VIDEO_X11_XINERAMA";
+            public const string VideoX11XRandR = "VIDEO_X11_XRANDR";
+            public const string VideoX11NetWMPing = "VIDEO_X11_NET_WM_PING";
+            public const string WindowFrameUsableWhileCursorHidden = "WINDOW_FRAME_USABLE_WHILE_CURSOR_HIDDEN";
+            public const string WindowsEnableMessageLoop = "WINDOWS_ENABLE_MESSAGELOOP";
+            public const string GrabKeyboard = "GRAB_KEYBOARD";
+            public const string MouseRelativeModeWarp = "MOUSE_RELATIVE_MODE_WARP";
+            public const string MouseFocusClickThrough = "MOUSE_FOCUS_CLICKTHROUGH";
+            public const string VideoMinimizeOnFocusLoss = "VIDEO_MINIMIZE_ON_FOCUS_LOSS";
+            public const string IdleTimerDisabled = "IOS_IDLE_TIMER_DISABLED";
+            public const string Orientations = "IOS_ORIENTATIONS";
+            public const string AppleTVControllerUIEvents = "APPLE_TV_CONTROLLER_UI_EVENTS";
+            public const string AppleTVRemoteAllowRotation = "APPLE_TV_REMOTE_ALLOW_ROTATION";
+            public const string AccelerometerAsJoystick = "ACCELEROMETER_AS_JOYSTICK";
+            public const string XInputEnabled = "XINPUT_ENABLED";
+            public const string XInputUseOldJoystickMapping = "XINPUT_USE_OLD_JOYSTICK_MAPPING";
+            public const string GameControllerConfig = "GAMECONTROLLERCONFIG";
+            public const string JoystickAllowBackgroundEvents = "JOYSTICK_ALLOW_BACKGROUND_EVENTS";
+            public const string AllowTopmost = "ALLOW_TOPMOST";
+            public const string TimerResolution = "TIMER_RESOLUTION";
+            public const string ThreadStackSize = "THREAD_STACK_SIZE";
+            public const string VideoHighDPIDisabled = "VIDEO_HIGHDPI_DISABLED";
+            public const string MacCtrlClickEmulateRightClick = "MAC_CTRL_CLICK_EMULATE_RIGHT_CLICK";
+            public const string VideoWinD3DCompiler = "VIDEO_WIN_D3DCOMPILER";
+            public const string VideoWindowSharePixelFormat = "VIDEO_WINDOW_SHARE_PIXEL_FORMAT";
+            public const string WinRTPrivacyPolicyURL = "WINRT_PRIVACY_POLICY_URL";
+            public const string WinRTPrivacyPolicyLabel = "WINRT_PRIVACY_POLICY_LABEL";
+            public const string WinRTHandleBackButton = "WINRT_HANDLE_BACK_BUTTON";
+            public const string VideoMacFullscreenSpaces = "VIDEO_MAC_FULLSCREEN_SPACES";
+            public const string MacBackgroundApp = "MAC_BACKGROUND_APP";
+            public const string AndroidAPKExpansionMainFileVersion = "ANDROID_APK_EXPANSION_MAIN_FILE_VERSION";
+            public const string AndroidAPKExpansionPatchFileVersion = "ANDROID_APK_EXPANSION_PATCH_FILE_VERSION";
+            public const string IMEInternalEditing = "IME_INTERNAL_EDITING";
+            public const string AndroidSeparateMouseAndTouch = "ANDROID_SEPARATE_MOUSE_AND_TOUCH";
+            public const string EmscriptenKeyboardElement = "EMSCRIPTEN_KEYBOARD_ELEMENT";
+            public const string NoSignalHandlers = "NO_SIGNAL_HANDLERS";
+            public const string WindowsNoCloseOnAltF4 = "WINDOWS_NO_CLOSE_ON_ALT_F4";
+            public const string BMPSaveLegacyFormat = "BMP_SAVE_LEGACY_FORMAT";
+            public const string WindowsDisableThreadWarning = "WINDOWS_DISABLE_THREAD_NAMING";
+            public const string RPIVideoLayer = "RPI_VIDEO_LAYER";
+        }
+
+        public static class PixelFormats
+        {
+            public static readonly uint Unknown = 0;
+            public static readonly uint Index1LSB = DefinePixelFormat(PixelType.Index1, PixelOrder.Bitmap4321, 0, 1, 0);
+            public static readonly uint Index1MSB = DefinePixelFormat(PixelType.Index1, PixelOrder.Bitmap1234, 0, 1, 0);
+            public static readonly uint Index4LSB = DefinePixelFormat(PixelType.Index4, PixelOrder.Bitmap4321, 0, 4, 0);
+            public static readonly uint Index4MSB = DefinePixelFormat(PixelType.Index4, PixelOrder.Bitmap1234, 0, 4, 0);
+            public static readonly uint Index8 = DefinePixelFormat(PixelType.Index8, 0, 0, 8, 1);
+            public static readonly uint RGB332 = DefinePixelFormat(PixelType.Packed8, PixelOrder.PackedXRGB, PackedLayout.Layout332, 8, 1);
+            public static readonly uint RGB444 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedXRGB, PackedLayout.Layout4444, 12, 2);
+            public static readonly uint RGB555 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedXRGB, PackedLayout.Layout1555, 15, 2);
+            public static readonly uint BGR555 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedXBGR, PackedLayout.Layout1555, 15, 2);
+            public static readonly uint ARGB4444 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedARGB, PackedLayout.Layout4444, 16, 2);
+            public static readonly uint RGBA4444 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedRGBA, PackedLayout.Layout4444, 16, 2);
+            public static readonly uint ABGR4444 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedABGR, PackedLayout.Layout4444, 16, 2);
+            public static readonly uint BGRA4444 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedBGRA, PackedLayout.Layout4444, 16, 2);
+            public static readonly uint ARGB1555 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedARGB, PackedLayout.Layout1555, 16, 2);
+            public static readonly uint RGBA5551 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedRGBA, PackedLayout.Layout5551, 16, 2);
+            public static readonly uint ABGR1555 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedABGR, PackedLayout.Layout1555, 16, 2);
+            public static readonly uint BGRA5551 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedBGRA, PackedLayout.Layout5551, 16, 2);
+            public static readonly uint RGB565 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedXRGB, PackedLayout.Layout565, 16, 2);
+            public static readonly uint BGR565 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedXBGR, PackedLayout.Layout565, 16, 2);
+            public static readonly uint RGB24 = DefinePixelFormat(PixelType.ArrayU8, PixelOrder.ArrayRGB, 0, 24, 3);
+            public static readonly uint BGR24 = DefinePixelFormat(PixelType.ArrayU8, PixelOrder.ArrayBGR, 0, 24, 3);
+            public static readonly uint RGB888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedXRGB, PackedLayout.Layout8888, 24, 4);
+            public static readonly uint RGBX8888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedRGBX, PackedLayout.Layout8888, 24, 4);
+            public static readonly uint BGR888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedXBGR, PackedLayout.Layout8888, 24, 4);
+            public static readonly uint BGRX8888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedBGRX, PackedLayout.Layout8888, 24, 4);
+            public static readonly uint ARGB8888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedARGB, PackedLayout.Layout8888, 32, 4);
+            public static readonly uint RGBA8888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedARGB, PackedLayout.Layout8888, 32, 4);
+            public static readonly uint ABGR8888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedABGR, PackedLayout.Layout8888, 32, 4);
+            public static readonly uint BGRA8888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedBGRA, PackedLayout.Layout8888, 32, 4);
+            public static readonly uint ARGB2101010 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedARGB, 0, 32, 4);
+            public static readonly uint YV12 = FourCharacterCode((byte)'Y', (byte)'V', (byte)'1', (byte)'2');
+            public static readonly uint IYUV = FourCharacterCode((byte)'I', (byte)'Y', (byte)'U', (byte)'V');
+            public static readonly uint YUY2 = FourCharacterCode((byte)'Y', (byte)'U', (byte)'Y', (byte)'2');
+            public static readonly uint UYVY = FourCharacterCode((byte)'U', (byte)'Y', (byte)'V', (byte)'Y');
+            public static readonly uint YVYU = FourCharacterCode((byte)'Y', (byte)'V', (byte)'Y', (byte)'U');
+            public static readonly uint NV12 = FourCharacterCode((byte)'N', (byte)'V', (byte)'1', (byte)'2');
+            public static readonly uint NV21 = FourCharacterCode((byte)'N', (byte)'V', (byte)'2', (byte)'1');
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static uint FourCharacterCode(byte a, byte b, byte c, byte d) => (uint)(a | (b << 8) | (c << 16) | (d << 24));
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static uint DefinePixelFormat(PixelType type, PixelOrder order, PackedLayout layout, byte bits, byte bytes) => (uint)((1 << 28) | ((byte)type << 24) | ((byte)order << 20) | ((byte)layout << 16) | (bits << 8) | bytes);
         }
 
         //
@@ -2017,106 +2115,5 @@ namespace SDL2
         private delegate void VulkanGetDrawableSizeDelegate(Window window, out int? w, out int? h);
         private static VulkanGetDrawableSizeDelegate _vulkanGetDrawableSize;
         public static void VulkanGetDrawableSize(Window window, out int? w, out int? h) => _vulkanGetDrawableSize(window, out w, out h);
-
-        public static class Hints
-        {
-            public const string FrameBufferAcceleration = "FRAMEBUFFER_ACCELERATION";
-            public const string RenderDriver = "RENDER_DRIVER";
-            public const string RenderOpenglShaders = "RENDER_OPENGL_SHADERS";
-            public const string RenderDirect3DThreadsafe = "RENDER_DIRECT3D_THREADSAFE";
-            public const string RenderDirect3D11Debug = "RENDER_DIRECT3D11_DEBUG";
-            public const string RenderScaleQuality = "RENDER_SCALE_QUALITY";
-            public const string RenderVsync = "RENDER_VSYNC";
-            public const string VideoAllowScreensave = "VIDEO_ALLOW_SCREENSAVER";
-            public const string VideoX11XvidMode = "VIDEO_X11_XVIDMODE";
-            public const string VideoX11Xinerama = "VIDEO_X11_XINERAMA";
-            public const string VideoX11XRandR = "VIDEO_X11_XRANDR";
-            public const string VideoX11NetWMPing = "VIDEO_X11_NET_WM_PING";
-            public const string WindowFrameUsableWhileCursorHidden = "WINDOW_FRAME_USABLE_WHILE_CURSOR_HIDDEN";
-            public const string WindowsEnableMessageLoop = "WINDOWS_ENABLE_MESSAGELOOP";
-            public const string GrabKeyboard = "GRAB_KEYBOARD";
-            public const string MouseRelativeModeWarp = "MOUSE_RELATIVE_MODE_WARP";
-            public const string MouseFocusClickThrough = "MOUSE_FOCUS_CLICKTHROUGH";
-            public const string VideoMinimizeOnFocusLoss = "VIDEO_MINIMIZE_ON_FOCUS_LOSS";
-            public const string IdleTimerDisabled = "IOS_IDLE_TIMER_DISABLED";
-            public const string Orientations = "IOS_ORIENTATIONS";
-            public const string AppleTVControllerUIEvents = "APPLE_TV_CONTROLLER_UI_EVENTS";
-            public const string AppleTVRemoteAllowRotation = "APPLE_TV_REMOTE_ALLOW_ROTATION";
-            public const string AccelerometerAsJoystick = "ACCELEROMETER_AS_JOYSTICK";
-            public const string XInputEnabled = "XINPUT_ENABLED";
-            public const string XInputUseOldJoystickMapping = "XINPUT_USE_OLD_JOYSTICK_MAPPING";
-            public const string GameControllerConfig = "GAMECONTROLLERCONFIG";
-            public const string JoystickAllowBackgroundEvents = "JOYSTICK_ALLOW_BACKGROUND_EVENTS";
-            public const string AllowTopmost = "ALLOW_TOPMOST";
-            public const string TimerResolution = "TIMER_RESOLUTION";
-            public const string ThreadStackSize = "THREAD_STACK_SIZE";
-            public const string VideoHighDPIDisabled = "VIDEO_HIGHDPI_DISABLED";
-            public const string MacCtrlClickEmulateRightClick = "MAC_CTRL_CLICK_EMULATE_RIGHT_CLICK";
-            public const string VideoWinD3DCompiler = "VIDEO_WIN_D3DCOMPILER";
-            public const string VideoWindowSharePixelFormat = "VIDEO_WINDOW_SHARE_PIXEL_FORMAT";
-            public const string WinRTPrivacyPolicyURL = "WINRT_PRIVACY_POLICY_URL";
-            public const string WinRTPrivacyPolicyLabel = "WINRT_PRIVACY_POLICY_LABEL";
-            public const string WinRTHandleBackButton = "WINRT_HANDLE_BACK_BUTTON";
-            public const string VideoMacFullscreenSpaces = "VIDEO_MAC_FULLSCREEN_SPACES";
-            public const string MacBackgroundApp = "MAC_BACKGROUND_APP";
-            public const string AndroidAPKExpansionMainFileVersion = "ANDROID_APK_EXPANSION_MAIN_FILE_VERSION";
-            public const string AndroidAPKExpansionPatchFileVersion = "ANDROID_APK_EXPANSION_PATCH_FILE_VERSION";
-            public const string IMEInternalEditing = "IME_INTERNAL_EDITING";
-            public const string AndroidSeparateMouseAndTouch = "ANDROID_SEPARATE_MOUSE_AND_TOUCH";
-            public const string EmscriptenKeyboardElement = "EMSCRIPTEN_KEYBOARD_ELEMENT";
-            public const string NoSignalHandlers = "NO_SIGNAL_HANDLERS";
-            public const string WindowsNoCloseOnAltF4 = "WINDOWS_NO_CLOSE_ON_ALT_F4";
-            public const string BMPSaveLegacyFormat = "BMP_SAVE_LEGACY_FORMAT";
-            public const string WindowsDisableThreadWarning = "WINDOWS_DISABLE_THREAD_NAMING";
-            public const string RPIVideoLayer = "RPI_VIDEO_LAYER";
-        }
-
-        public static class PixelFormats
-        {
-            public static readonly uint Unknown = 0;
-            public static readonly uint Index1LSB = DefinePixelFormat(PixelType.Index1, PixelOrder.Bitmap4321, 0, 1, 0);
-            public static readonly uint Index1MSB = DefinePixelFormat(PixelType.Index1, PixelOrder.Bitmap1234, 0, 1, 0);
-            public static readonly uint Index4LSB = DefinePixelFormat(PixelType.Index4, PixelOrder.Bitmap4321, 0, 4, 0);
-            public static readonly uint Index4MSB = DefinePixelFormat(PixelType.Index4, PixelOrder.Bitmap1234, 0, 4, 0);
-            public static readonly uint Index8 = DefinePixelFormat(PixelType.Index8, 0, 0, 8, 1);
-            public static readonly uint RGB332 = DefinePixelFormat(PixelType.Packed8, PixelOrder.PackedXRGB, PackedLayout.Layout332, 8, 1);
-            public static readonly uint RGB444 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedXRGB, PackedLayout.Layout4444, 12, 2);
-            public static readonly uint RGB555 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedXRGB, PackedLayout.Layout1555, 15, 2);
-            public static readonly uint BGR555 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedXBGR, PackedLayout.Layout1555, 15, 2);
-            public static readonly uint ARGB4444 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedARGB, PackedLayout.Layout4444, 16, 2);
-            public static readonly uint RGBA4444 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedRGBA, PackedLayout.Layout4444, 16, 2);
-            public static readonly uint ABGR4444 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedABGR, PackedLayout.Layout4444, 16, 2);
-            public static readonly uint BGRA4444 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedBGRA, PackedLayout.Layout4444, 16, 2);
-            public static readonly uint ARGB1555 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedARGB, PackedLayout.Layout1555, 16, 2);
-            public static readonly uint RGBA5551 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedRGBA, PackedLayout.Layout5551, 16, 2);
-            public static readonly uint ABGR1555 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedABGR, PackedLayout.Layout1555, 16, 2);
-            public static readonly uint BGRA5551 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedBGRA, PackedLayout.Layout5551, 16, 2);
-            public static readonly uint RGB565 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedXRGB, PackedLayout.Layout565, 16, 2);
-            public static readonly uint BGR565 = DefinePixelFormat(PixelType.Packed16, PixelOrder.PackedXBGR, PackedLayout.Layout565, 16, 2);
-            public static readonly uint RGB24 = DefinePixelFormat(PixelType.ArrayU8, PixelOrder.ArrayRGB, 0, 24, 3);
-            public static readonly uint BGR24 = DefinePixelFormat(PixelType.ArrayU8, PixelOrder.ArrayBGR, 0, 24, 3);
-            public static readonly uint RGB888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedXRGB, PackedLayout.Layout8888, 24, 4);
-            public static readonly uint RGBX8888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedRGBX, PackedLayout.Layout8888, 24, 4);
-            public static readonly uint BGR888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedXBGR, PackedLayout.Layout8888, 24, 4);
-            public static readonly uint BGRX8888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedBGRX, PackedLayout.Layout8888, 24, 4);
-            public static readonly uint ARGB8888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedARGB, PackedLayout.Layout8888, 32, 4);
-            public static readonly uint RGBA8888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedARGB, PackedLayout.Layout8888, 32, 4);
-            public static readonly uint ABGR8888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedABGR, PackedLayout.Layout8888, 32, 4);
-            public static readonly uint BGRA8888 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedBGRA, PackedLayout.Layout8888, 32, 4);
-            public static readonly uint ARGB2101010 = DefinePixelFormat(PixelType.Packed32, PixelOrder.PackedARGB, 0, 32, 4);
-            public static readonly uint YV12 = FourCharacterCode((byte)'Y', (byte)'V', (byte)'1', (byte)'2');
-            public static readonly uint IYUV = FourCharacterCode((byte)'I', (byte)'Y', (byte)'U', (byte)'V');
-            public static readonly uint YUY2 = FourCharacterCode((byte)'Y', (byte)'U', (byte)'Y', (byte)'2');
-            public static readonly uint UYVY = FourCharacterCode((byte)'U', (byte)'Y', (byte)'V', (byte)'Y');
-            public static readonly uint YVYU = FourCharacterCode((byte)'Y', (byte)'V', (byte)'Y', (byte)'U');
-            public static readonly uint NV12 = FourCharacterCode((byte)'N', (byte)'V', (byte)'1', (byte)'2');
-            public static readonly uint NV21 = FourCharacterCode((byte)'N', (byte)'V', (byte)'2', (byte)'1');
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public static uint FourCharacterCode(byte a, byte b, byte c, byte d) => (uint)(a | (b << 8) | (c << 16) | (d << 24));
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public static uint DefinePixelFormat(PixelType type, PixelOrder order, PackedLayout layout, byte bits, byte bytes) => (uint)((1 << 28) | ((byte)type << 24) | ((byte)order << 20) | ((byte)layout << 16) | (bits << 8) | bytes);
-        }
     }
 }
