@@ -401,7 +401,72 @@ namespace SDL2
                     _getRevisionNumber = LoadFunction<GetRevisionNumberDelegate>("SDL_GetRevisionNumber");
                     break;
                 case SDLModule.Video:
-
+                    _getNumVideoDrivers;
+                    _getVideoDriver;
+                    _videoInit;
+                    _videoQuit;
+                    _getCurrentVideoDriver;
+                    _getNumVideoDisplays;
+                    _getDisplayName;
+                    _getDisplayBounds;
+                    _getDisplayDpi;
+                    _getDisplayUsableBounds;
+                    _getNumDisplayModes;
+                    _getDisplayMode;
+                    _getDesktopDisplayMode;
+                    _getCurrentDisplayMode;
+                    _getClosestDisplayMode;
+                    _getWindowDisplayIndex;
+                    _setWindowDisplayMode;
+                    _getWindowDisplayMode;
+                    _getWindowPixelFormat;
+                    _createWindow;
+                    _createWindowFrom;
+                    _getWindowID;
+                    _getWindowFromID;
+                    _getWindowFlags;
+                    _setWindowTitle;
+                    _getWindowTitle;
+                    _setWindowIcon;
+                    _setWindowData;
+                    _getWindowData;
+                    _setWindowPosition;
+                    _getWindowPosition;
+                    _setWindowSize;
+                    _getWindowSize;
+                    _getWindowBordersSize;
+                    _setWindowMinimumSize;
+                    _getWindowMinimumSize;
+                    _setWindowMaximumSize;
+                    _getWindowMaximumSize;
+                    _setWindowBordered;
+                    _setWindowResizable;
+                    _showWindow;
+                    _hideWindow;
+                    _raiseWindow;
+                    _maximizeWindow;
+                    _minimizeWindow;
+                    _restoreWindow;
+                    _setWindowFullscreen;
+                    _getWindowSurface;
+                    _updateWindowSurface;
+                    _updateWindowSurfaceRects;
+                    _setWindowGrab;
+                    _getWindowGrab;
+                    _getGrabbedWindow;
+                    _setWindowBrightness;
+                    _getWindowBrightness;
+                    _setWindowOpacity;
+                    _getWindowOpacity;
+                    _setWindowModalFor;
+                    _setWindowInputFocus;
+                    _setWindowGammaRamp;
+                    _getWindowGammaRamp;
+                    _setWindowHitTest;
+                    _destroyWindow;
+                    _isScreenSaverEnabled;
+                    _enableScreenSaver;
+                    _disableScreenSaver;
                     break;
                 case SDLModule.Vulkan:
                     _vulkanLoadLibrary = LoadFunction<VulkanLoadLibraryDelegate>("SDL_Vulkan_LoadLibrary");
@@ -1730,152 +1795,201 @@ namespace SDL2
         private static SetWindowDisplayModeDelegate _setWindowDisplayMode;
         public static int SetWindowDisplayMode(Window window, ref DisplayMode mode) => _setWindowDisplayMode(window, ref mode);
 
+        private delegate int GetWindowDisplayModeDelegate(Window window, out DisplayMode mode);
+        private static GetWindowDisplayModeDelegate _getWindowDisplayMode;
+        public static int GetWindowDisplayMode(Window window, out DisplayMode mode) => _getWindowDisplayMode(window, out mode);
 
-        public static int GetWindowDisplayMode(Window window, out DisplayMode mode);
+        private delegate uint GetWindowPixelFormatDelegate(Window window);
+        private static GetWindowPixelFormatDelegate _getWindowPixelFormat;
+        public static uint GetWindowPixelFormat(Window window) => _getWindowPixelFormat(window);
 
+        private delegate Window CreateWindowDelegate(string title, int x, int y, int width, int height, WindowFlags flags);
+        private static CreateWindowDelegate _createWindow;
+        public static Window CreateWindow(string title, int x, int y, int width, int height, WindowFlags flags) => _createWindow(title, x, y, width, height, flags);
 
-        public static uint GetWindowPixelFormat(Window window);
+        private delegate Window CreateWindowFromDelegate(IntPtr data);
+        private static CreateWindowFromDelegate _createWindowFrom;
+        public static Window CreateWindowFrom(IntPtr data) => _createWindowFrom(data);
 
+        private delegate WindowID GetWindowIDDelegate(Window window);
+        private static GetWindowIDDelegate _getWindowID;
+        public static WindowID GetWindowID(Window window) => _getWindowID(window);
 
-        public static Window CreateWindow(string title, int x, int y, int width, int height, WindowFlags flags);
+        private delegate Window GetWindowFromIDDelegate(WindowID id);
+        private static GetWindowFromIDDelegate _getWindowFromID;
+        public static Window GetWindowFromID(WindowID id) => _getWindowFromID(id);
 
+        private delegate WindowFlags GetWindowFlagsDelegate(Window window);
+        private static GetWindowFlagsDelegate _getWindowFlags;
+        public static WindowFlags GetWindowFlags(Window window) => _getWindowFlags(window);
 
-        public static Window CreateWindowFrom(IntPtr data);
+        private delegate void SetWindowTitleDelegate(Window window, string title);
+        private static SetWindowTitleDelegate _setWindowTitle;
+        public static void SetWindowTitle(Window window, string title) => _setWindowTitle(window, title);
 
+        private delegate string GetWindowTitleDelegate(Window window);
+        private static GetWindowTitleDelegate _getWindowTitle;
+        public static string GetWindowTitle(Window window) => _getWindowTitle(window);
 
-        public static WindowID GetWindowID(Window window);
+        private delegate void SetWindowIconDelegate(Window window, Surface icon);
+        private static SetWindowIconDelegate _setWindowIcon;
+        public static void SetWindowIcon(Window window, Surface icon) => _setWindowIcon(window, icon);
 
+        private delegate IntPtr SetWindowDataDelegate(Window window, string name, IntPtr userData);
+        private static SetWindowDataDelegate _setWindowData;
+        public static IntPtr SetWindowData(Window window, string name, IntPtr userData) => _setWindowData(window, name, userData);
 
-        public static Window GetWindowFromID(WindowID id);
+        private delegate IntPtr GetWindowDataDelegate(Window window, string name);
+        private static GetWindowDataDelegate _getWindowData;
+        public static IntPtr GetWindowData(Window window, string name) => _getWindowData(window, name);
 
+        private delegate void SetWindowPositionDelegate(Window window, int x, int y);
+        private static SetWindowPositionDelegate _setWindowPosition;
+        public static void SetWindowPosition(Window window, int x, int y) => _setWindowPosition(window, x, y);
 
-        public static WindowFlags GetWindowFlags(Window window);
+        private delegate void GetWindowPositionDelegate(Window window, out int x, out int y);
+        private static GetWindowPositionDelegate _getWindowPosition;
+        public static void GetWindowPosition(Window window, out int x, out int y) => _getWindowPosition(window, out x, out y);
 
+        private delegate void SetWindowSizeDelegate(Window window, int width, int height);
+        private static SetWindowSizeDelegate _setWindowSize;
+        public static void SetWindowSize(Window window, int width, int height) => _setWindowSize(window, width, height);
 
-        public static void SetWindowTitle(Window window, string title);
-
-
-        public static string GetWindowTitle(Window window);
-
-
-        public static void SetWindowIcon(Window window, Surface icon);
-
-
-        public static IntPtr SetWindowData(Window window, string name, IntPtr userData);
-
-
-        public static IntPtr GetWindowData(Window window, string name);
-
-
-        public static void SetWindowPosition(Window window, int x, int y);
-
-
-        public static void GetWindowPosition(Window window, out int x, out int y);
-
-      
-        public static void SetWindowSize(Window window, int width, int height);
-
-
-        public static void GetWindowSize(Window window, out int width, out int height);
+        private delegate void GetWindowSizeDelegate(Window window, out int width, out int height);
+        private static GetWindowSizeDelegate _getWindowSize;
+        public static void GetWindowSize(Window window, out int width, out int height) => _getWindowSize(window, out width, out height);
         
-
-        public static int GetWindowBordersSize(Window window, out int top, out int left, out int bottom, out int right);
-
-
-        public static void SetWindowMinimumSize(Window window, int minwidth, int minHeight);
-
-
-        public static void GetWindowMinimumSize(Window window, out int width, out int height);
-
-
-        public static void SetWindowMaximumSize(Window window, int maxWidth, int maxHeight);
-
-
-        public static void GetWindowMaximumSize(Window window, out int width, out int height);
-
-
-        public static void SetWindowBordered(Window window, bool bordered);
-
-
-        public static void SetWindowResizable(Window window, bool resizable);
-
-
-        public static void ShowWindow(Window window);
-
-
-        public static void HideWindow(Window window);
-
-
-        public static void RaiseWindow(Window window);
-
-
-        public static void MaximizeWindow(Window window);
-
-
-        public static void MinimizeWindow(Window window);
-
-
-        public static void RestoreWindow(Window window);
-
-
-        public static int SetWindowFullscreen(Window window, WindowFlags flags);
-
-
-        public static Surface* GetWindowSurface(Window window);
-
-
-        public static int UpdateWindowSurface(Window window);
-
-
-        public static int UpdateWindowSurfaceRects(Window window, Rect* rectangles, int numRectangles);
-
-
-        public static void SetWindowGrab(Window window, bool grabbed);
-
-
-        public static bool GetWindowGrab(Window window);
-
-
-        public static Window GetGrabbedWindow();
-
-
-        public static int SetWindowBrightness(Window window, float brightness);
-
-
-        public static float GetWindowBrightness(Window window);
-
-
-        public static int SetWindowOpacity(Window window, float opacity);
-
-
-        public static int GetWindowOpacity(Window window, out float outOpacity);
-
-
-        public static int SetWindowModalFor(Window modalWindow, Window parentWindow);
-
-
-        public static int SetWindowInputFocus(Window window);
-
-
-        public static int SetWindowGammaRamp(Window window, ushort* red, ushort* green, ushort* blue);
-
-
-        public static int GetWindowGammaRamp(Window window, ushort* red, ushort* green, ushort* blue);
-
-
-        public static int SetWindowHitTest(Window window, HitTest callback, IntPtr callbackData);
-
-
-        public static void DestroyWindow(Window window);
-
-
-        public static bool IsScreenSaverEnabled();
-
-
-        public static void EnableScreenSaver();
-
-
-        public static void DisableScreenSaver();
+        private delegate int GetWindowBordersSizeDelegate(Window window, out int top, out int left, out int bottom, out int right);
+        private static GetWindowBordersSizeDelegate _getWindowBordersSize;
+        public static int GetWindowBordersSize(Window window, out int top, out int left, out int bottom, out int right) => _getWindowBordersSize(window, out top, out left, out bottom, out right);
+
+        private delegate void SetWindowMinimumSizeDelegate(Window window, int minWidth, int minHeight);
+        private static SetWindowMinimumSizeDelegate _setWindowMinimumSize;
+        public static void SetWindowMinimumSize(Window window, int minWidth, int minHeight) => _setWindowMinimumSize(window, minWidth, minHeight);
+
+        private delegate void GetWindowMinimumSizeDelegate(Window window, out int width, out int height);
+        private static GetWindowMinimumSizeDelegate _getWindowMinimumSize;
+        public static void GetWindowMinimumSize(Window window, out int width, out int height) => _getWindowMinimumSize(window, out width, out height);
+
+        private delegate void SetWindowMaximumSizeDelegate(Window window, int maxWidth, int maxHeight);
+        private static SetWindowMaximumSizeDelegate _setWindowMaximumSize;
+        public static void SetWindowMaximumSize(Window window, int maxWidth, int maxHeight) => _setWindowMaximumSize(window, maxWidth, maxHeight);
+
+        private delegate void GetWindowMaximumSizeDelegate(Window window, out int width, out int height);
+        private static GetWindowMaximumSizeDelegate _getWindowMaximumSize;
+        public static void GetWindowMaximumSize(Window window, out int width, out int height) => _getWindowMaximumSize(window, out width, out height);
+
+        private delegate void SetWindowBorderedDelegate(Window window, bool bordered);
+        private static SetWindowBorderedDelegate _setWindowBordered;
+        public static void SetWindowBordered(Window window, bool bordered) => _setWindowBordered(window, bordered);
+
+        private delegate void SetWindowResizableDelegate(Window window, bool resizable);
+        private static SetWindowResizableDelegate _setWindowResizable;
+        public static void SetWindowResizable(Window window, bool resizable) => _setWindowResizable(window, resizable);
+
+        private delegate void ShowWindowDelegate(Window window);
+        private static ShowWindowDelegate _showWindow;
+        public static void ShowWindow(Window window) => _showWindow(window);
+
+        private delegate void HideWindowDelegate(Window window);
+        private static HideWindowDelegate _hideWindow;
+        public static void HideWindow(Window window) => _hideWindow(window);
+
+        private delegate void RaiseWindowDelegate(Window window);
+        private static RaiseWindowDelegate _raiseWindow;
+        public static void RaiseWindow(Window window) => _raiseWindow(window);
+
+        private delegate void MaximizeWindowDelegate(Window window);
+        private static MaximizeWindowDelegate _maximizeWindow;
+        public static void MaximizeWindow(Window window) => _maximizeWindow(window);
+
+        private delegate void MinimizeWindowDelegate(Window window);
+        private static MinimizeWindowDelegate _minimizeWindow;
+        public static void MinimizeWindow(Window window) => _minimizeWindow(window);
+
+        private delegate void RestoreWindowDelegate(Window window);
+        private static RestoreWindowDelegate _restoreWindow;
+        public static void RestoreWindow(Window window) => _restoreWindow(window);
+
+        private delegate int SetWindowFullscreenDelegate(Window window, WindowFlags flags);
+        private static SetWindowFullscreenDelegate _setWindowFullscreen;
+        public static int SetWindowFullscreen(Window window, WindowFlags flags) => _setWindowFullscreen(window, flags);
+
+        private delegate Surface GetWindowSurfaceDelegate(Window window);
+        private static GetWindowSurfaceDelegate _getWindowSurface;
+        public static Surface GetWindowSurface(Window window) => _getWindowSurface(window);
+
+        private delegate int UpdateWindowSurfaceDelegate(Window window);
+        private static UpdateWindowSurfaceDelegate _updateWindowSurface;
+        public static int UpdateWindowSurface(Window window) => _updateWindowSurface(window);
+
+        private delegate int UpdateWindowSurfaceRectsDelegate(Window window, Rect[] rectangles, int numRectangles);
+        private static UpdateWindowSurfaceRectsDelegate _updateWindowSurfaceRects;
+        public static int UpdateWindowSurfaceRects(Window window, Rect[] rectangles, int numRectangles) => _updateWindowSurfaceRects(window, rectangles, numRectangles);
+
+        private delegate void SetWindowGrabDelegate(Window window, bool grabbed);
+        private static SetWindowGrabDelegate _setWindowGrab;
+        public static void SetWindowGrab(Window window, bool grabbed) => _setWindowGrab(window, grabbed);
+
+        private delegate bool GetWindowGrabDelegate(Window window);
+        private static GetWindowGrabDelegate _getWindowGrab;
+        public static bool GetWindowGrab(Window window) => _getWindowGrab(window);
+
+        private delegate Window GetGrabbedWindowDelegate();
+        private static GetGrabbedWindowDelegate _getGrabbedWindow;
+        public static Window GetGrabbedWindow() => _getGrabbedWindow();
+
+        private delegate int SetWindowBrightnessDelegate(Window window, float brightness);
+        private static SetWindowBrightnessDelegate _setWindowBrightness;
+        public static int SetWindowBrightness(Window window, float brightness) => _setWindowBrightness(window, brightness);
+
+        private delegate float GetWindowBrightnessDelegate(Window window);
+        private static GetWindowBrightnessDelegate _getWindowBrightness;
+        public static float GetWindowBrightness(Window window) => _getWindowBrightness(window);
+
+        private delegate int SetWindowOpacityDelegate(Window window, float opacity);
+        private static SetWindowOpacityDelegate _setWindowOpacity;
+        public static int SetWindowOpacity(Window window, float opacity) => _setWindowOpacity(window, opacity);
+
+        private delegate int GetWindowOpacityDelegate(Window window, out float opacity);
+        private static GetWindowOpacityDelegate _getWindowOpacity;
+        public static int GetWindowOpacity(Window window, out float opacity) => _getWindowOpacity(window, out opacity);
+
+        private delegate int SetWindowModalForDelegate(Window modalWindow, Window parentWindow);
+        private static SetWindowModalForDelegate _setWindowModalFor;
+        public static int SetWindowModalFor(Window modalWindow, Window parentWindow) => _setWindowModalFor(modalWindow, parentWindow);
+
+        private delegate int SetWindowInputFocusDelegate(Window window);
+        private static SetWindowInputFocusDelegate _setWindowInputFocus;
+        public static int SetWindowInputFocus(Window window) => _setWindowInputFocus(window);
+
+        private delegate int SetWindowGammaRampDelegate(Window window, ushort[] red, ushort[] green, ushort[] blue);
+        private static SetWindowGammaRampDelegate _setWindowGammaRamp;
+        public static int SetWindowGammaRamp(Window window, ushort[] red, ushort[] green, ushort[] blue) => _setWindowGammaRamp(window, red, green, blue);
+
+        private delegate int GetWindowGammaRampDelegate(Window window, ushort[] red, ushort[] green, ushort[] blue);
+        private static GetWindowGammaRampDelegate _getWindowGammaRamp;
+        public static int GetWindowGammaRamp(Window window, ushort[] red, ushort[] green, ushort[] blue) => _getWindowGammaRamp(window, red, green, blue);
+
+        private delegate int SetWindowHitTestDelegate(Window window, HitTest callback, IntPtr callbackData);
+        private static SetWindowHitTestDelegate _setWindowHitTest;
+        public static int SetWindowHitTest(Window window, HitTest callback, IntPtr callbackData) => _setWindowHitTest(window, callback, callbackData);
+
+        private delegate void DestroyWindowDelegate(Window window);
+        private static DestroyWindowDelegate _destroyWindow;
+        public static void DestroyWindow(Window window) => _destroyWindow(window);
+
+        private delegate bool IsScreenSaverEnabledDelegate();
+        private static IsScreenSaverEnabledDelegate _isScreenSaverEnabled;
+        public static bool IsScreenSaverEnabled() => _isScreenSaverEnabled();
+
+        private delegate void EnableScreenSaverDelegate();
+        private static EnableScreenSaverDelegate _enableScreenSaver;
+        public static void EnableScreenSaver() => _enableScreenSaver();
+
+        private delegate void DisableScreenSaverDelegate();
+        private static DisableScreenSaverDelegate _disableScreenSaver;
+        public static void DisableScreenSaver() => _disableScreenSaver();
 
         //
         // SDL_vulkan.h
