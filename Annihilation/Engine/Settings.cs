@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-using Engine.Rendering;
-using Engine.Input;
-
 namespace Engine
 {
     /// <summary>
     /// Main configuration data for the engine.
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 4)]
-    public struct GameSettings
+    public class Settings
     {
         /// <summary>
         /// The name of the application.
         /// </summary>
-        public string Name;
+        public string Title;
         /// <summary>
         /// The version of the application.
         /// </summary>

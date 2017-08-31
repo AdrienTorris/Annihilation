@@ -1,15 +1,14 @@
 ﻿using System;
-using System.IO;
-using System.Security;
 using System.Runtime.InteropServices;
+using Engine.System;
 
 namespace Vulkan
 {
     public static partial class Vk
     {
-        private static IntPtr _library;
-        private static readonly GetInstanceProcAddrDelegate GetInstanceProcAddr;
-        
+        private static readonly NativeLibrary _library = LoadLibrary();
+        private static readonly GetInstanceProcAddrDelegate GetInstanceProcAddr = _library.LoadFunction< GetInstanceProcAddrDelegate>("PFN_vkGetInstanceProcAddr");
+
         // Constants
         public const float LodClampNone = 1000f;
         public const uint RemainingMipLevels = ~0U;
@@ -119,46 +118,28 @@ namespace Vulkan
         public const string FillRectangleExtensionName = "VK_NV_fill_rectangle";
         public const string PostDepthCoverageExtensionName = "VK_EXT_post_depth_coverage";
 
-        static Vk()
+        private static NativeLibrary LoadLibrary()
         {
+            string name;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                _library = Win32.LoadLibrary("vulkan-1.dll");
-                if (_library == IntPtr.Zero)
-                {
-                    throw new InvalidOperationException("Could not load Vulkan library");
-                }
-                IntPtr getProcAddr = Win32.GetProcAddress(_library, "PFN_vkGetInstanceProcAddr");
-                if (getProcAddr == IntPtr.Zero)
-                {
-                    throw new InvalidOperationException("Could not load Vulkan loading function");
-                }
-                GetInstanceProcAddr = Marshal.GetDelegateForFunctionPointer<GetInstanceProcAddrDelegate>(getProcAddr);
+                name = "vulkan-1.dll";
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                Linux.dlerror();
-                _library = Linux.dlopen("libvulkan.so.1", Linux.RTLD_NOW);
-                if (_library == IntPtr.Zero && !Path.IsPathRooted("libvulkan.so.1"))
-                {
-                    string localPath = Path.Combine(AppContext.BaseDirectory, "libvulkan.so.1");
-                    _library = Linux.dlopen(localPath, Linux.RTLD_NOW);
-                }
-                if (_library == IntPtr.Zero)
-                {
-                    throw new InvalidOperationException("Could not load Vulkan library");
-                }
-                IntPtr getProcAddr = Linux.dlsym(_library, "PFN_vkGetInstanceProcAddr");
-                if (getProcAddr == IntPtr.Zero)
-                {
-                    throw new InvalidOperationException("Could not load Vulkan loading function");
-                }
-                GetInstanceProcAddr = Marshal.GetDelegateForFunctionPointer<GetInstanceProcAddrDelegate>(getProcAddr);
+                name = "libvulkan.so.1";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                name = "libdylib";
             }
             else
             {
-                throw new PlatformNotSupportedException();
+                throw new InvalidOperationException("Unknown SDL platform.");
             }
+
+            NativeLibrary lib = new NativeLibrary(name);
+            return lib;
         }
 
         //
@@ -459,47 +440,5 @@ namespace Vulkan
         // MoltenVK
         public unsafe delegate Result CreateIOSSurfaceDelegate(Instance instance, ref IOSSurfaceCreateInfo createInfo, ref AllocationCallbacks allocator, out Surface surface);
         public unsafe delegate Result CreateMacOSSurfaceDelegate(Instance instance, ref MacOSSurfaceCreateInfo createInfo, ref AllocationCallbacks allocator, out Surface surface);
-
-        //
-        // Platforms
-        //
-        [SuppressUnmanagedCodeSecurity]
-        private static class Win32
-        {
-            [DllImport("kernel32")]
-            public static extern IntPtr LoadLibrary(string fileName);
-
-            [DllImport("kernel32")]
-            public static extern IntPtr GetProcAddress(IntPtr module, string procName);
-
-            [DllImport("kernel32")]
-            public static extern int FreeLibrary(IntPtr module);
-        }
-
-        [SuppressUnmanagedCodeSecurity]
-        private static class Linux
-        {
-            public const int RTLD_NOW = 0x002;
-
-            [DllImport("libdl.so")]
-#pragma warning disable IDE1006 // Naming Styles
-            public static extern IntPtr dlopen(string fileName, int flags);
-#pragma warning restore IDE1006 // Naming Styles
-
-            [DllImport("libdl.so")]
-#pragma warning disable IDE1006 // Naming Styles
-            public static extern IntPtr dlsym(IntPtr handle, string name);
-#pragma warning restore IDE1006 // Naming Styles
-
-            [DllImport("libdl.so")]
-#pragma warning disable IDE1006 // Naming Styles
-            public static extern int dlclose(IntPtr handle);
-#pragma warning restore IDE1006 // Naming Styles
-
-            [DllImport("libdl.so")]
-#pragma warning disable IDE1006 // Naming Styles
-            public static extern string dlerror();
-#pragma warning restore IDE1006 // Naming Styles
-        }
     }
 }

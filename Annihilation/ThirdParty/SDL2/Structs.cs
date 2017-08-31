@@ -63,7 +63,7 @@ namespace SDL2
             public EventType Type;
             public uint Timestamp;
             public uint WindowID;
-            public byte Event;
+            public WindowEventID Event;
             private byte Padding1;
             private byte Padding2;
             private byte Padding3;

@@ -39,15 +39,15 @@ namespace Engine.Rendering
             Text[] desiredExtensions = new Text[]
             {
                 Vk.SurfaceExtensionName,
-                Game.WindowType == WindowType.Win32 ? Vk.Win32SurfaceExtensionName :
-                Game.WindowType == WindowType.Xlib ? Vk.XlibSurfaceExtensionName :
-                Game.WindowType == WindowType.Xcb ? Vk.XcbSurfaceExtensionName :
-                Game.WindowType == WindowType.Mir ? Vk.MirSurfaceExtensionName :
-                Game.WindowType == WindowType.Wayland ? Vk.WaylandSurfaceExtensionName :
-                Game.WindowType == WindowType.Android ? Vk.AndroidSurfaceExtensionName :
-                Game.WindowType == WindowType.IOS ? Vk.IOSSurfaceExtensionName :
-                Game.WindowType == WindowType.MacOS ? Vk.MacOSSurfaceExtensionName :
-                Game.WindowType == WindowType.Switch ? Vk.ViSurfaceExtensionName :
+                global::Game.WindowType == WindowType.Win32 ? Vk.Win32SurfaceExtensionName :
+                global::Game.WindowType == WindowType.Xlib ? Vk.XlibSurfaceExtensionName :
+                global::Game.WindowType == WindowType.Xcb ? Vk.XcbSurfaceExtensionName :
+                global::Game.WindowType == WindowType.Mir ? Vk.MirSurfaceExtensionName :
+                global::Game.WindowType == WindowType.Wayland ? Vk.WaylandSurfaceExtensionName :
+                global::Game.WindowType == WindowType.Android ? Vk.AndroidSurfaceExtensionName :
+                global::Game.WindowType == WindowType.IOS ? Vk.IOSSurfaceExtensionName :
+                global::Game.WindowType == WindowType.MacOS ? Vk.MacOSSurfaceExtensionName :
+                global::Game.WindowType == WindowType.Switch ? Vk.ViSurfaceExtensionName :
                 throw new PlatformNotSupportedException(),
 #if ENABLE_VALIDATION
                 Vk.DebugReportExtensionName

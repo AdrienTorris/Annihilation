@@ -1,88 +1,90 @@
-﻿using Engine.Rendering;
-using Vulkan;
+﻿using System;
 using SDL2;
-using static SDL2.SDL;
 
 namespace Engine
 {
-    public class Window
+    public class Window : IDisposable
     {
-        public static SDL.Window SDLWindow;
-        public static SysWMInfo SysWMInfo;
+        public IntPtr Handle { get; private set; }
+#if PLATFORM_LINUX
+        public IntPtr Display { get; private set; }
+#endif
+        public SDL.Window SdlHandle { get; private set; }
+
+        private bool _isDisposing;
         
-        public Window()
+        public Window(string title)
         {
-            // Init SDL video subsystem
-            InitSubSystem(InitFlags.Video);
+            SDL.InitSubSystem(SDL.InitFlags.Video);
 
-            // Create SDL window
+            SdlHandle = SDL.CreateWindow(
+                Game.Settings.Title,
+                SDL.WindowPositionCentered,
+                SDL.WindowPositionCentered,
+                Game.Settings.WindowSettings.Width,
+                Game.Settings.WindowSettings.Height,
+                SDL.WindowFlags.Vulkan | SDL.WindowFlags.Shown | SDL.WindowFlags.Fullscreen | SDL.WindowFlags.Borderless
+            );
 
-            // Create Vulkan instance
-            Instance instance = new Instance("Howitzer", "Pillar Engine");
-            
-            // Create Vulkan surface
-#if WINDOW_WIN32
-            Win32SurfaceCreateInfo surfaceCreateInfo = new Win32SurfaceCreateInfo();
+            if (SdlHandle == IntPtr.Zero)
+            {
+                throw new Exception(SDL.GetError());
+            }
+
+            SDL.SysWMInfo sysWMInfo = default(SDL.SysWMInfo);
+            SDL.GetVersion(out sysWMInfo.Version);
+            if (SDL.GetWindowWMInfo(SdlHandle, ref sysWMInfo) == false)
+            {
+                throw new Exception(SDL.GetError());
+            }
+
+#if PLATFORM_WINDOWS
+            Handle = sysWMInfo.Info.Windows.Window;
+#elif PLATFORM_LINUX
+            switch(sysWMInfo.SubSystem)
+            {
+                case SDL.SysWMType.X11:
+                    Handle = sysWMInfo.Info.X11.Window;
+                    Display = sysWMInfo.Info.X11.Display;
+                    break;
+                case SDL.SysWMType.Wayland:
+                    Handle = sysWMInfo.Info.Wayland.Surface;
+                    Display = sysWMInfo.Info.Wayland.Display;
+                    break;
+                case SDL.SysWMType.Mir:
+                    Handle = sysWMInfo.Info.Mir.Connection;
+                    Display = sysWMInfo.Info.Mir.Surface;
+                    break;
+            }
+#elif PLATFORM_MACOS
+            Handle = sysWMInfo.Info.Cocoa.Window;
 #endif
         }
 
-        public static void Initialize(ref WindowSettings settings)
+        private void Dispose(bool isDisposing)
         {
-            int previousDisplay = -1;
-
-            // Init video subsystem
-            InitSubSystem(InitFlags.Video);
-            
-            // Get desktop display mode
-            GetDesktopDisplayMode(settings.Monitor, out SDL.DisplayMode displayMode);
-
-            // Create the window if needed, hidden
-            if (SDLWindow == SDL.Window.Null)
+            if (SdlHandle == IntPtr.Zero)
             {
-                WindowFlags flags = WindowFlags.Hidden;
-                if (settings.Mode == WindowMode.BorderlessWindow)
-                {
-                    flags |= WindowFlags.Borderless;
-                }
-
-                SDLWindow = new SDL.Window(settings.Name, SDL.Window.PositionUndefined, SDL.Window.PositionUndefined, settings.Width, settings.Height, flags);
-
-                GetVersion(out SysWMInfo.Version);
-                SDLWindow.GetWMInfo(ref SysWMInfo);
-            }
-            else
-            {
-                previousDisplay = SDLWindow.GetDisplayIndex();
+                return;
             }
 
-            // Ensure the window is not fullscreen
-            if (SDLWindow.GetFlags().Has(WindowFlags.Fullscreen))
+            if (_isDisposing)
             {
-                SDLWindow.SetFullscreen(0);
+
             }
 
-            // Set window size and display mode
-            SDLWindow.SetSize(settings.Width, settings.Height);
-            if (previousDisplay >= 0)
-            {
-                SDLWindow.SetPosition((int)SDL.Window.PositionCenteredDisplay((uint)previousDisplay), (int)SDL.Window.PositionCenteredDisplay((uint)previousDisplay));
-            }
-            else
-            {
-                SDLWindow.SetPosition(SDL.Window.PositionCentered, SDL.Window.PositionCentered);
-            }
-            SDLWindow.SetDefaultDisplayMode();
-            SDLWindow.SetBordered(false);
+            SDL.DestroyWindow(SdlHandle);
+            SdlHandle = IntPtr.Zero;
+            Handle = IntPtr.Zero;
+#if PLATFORM_LINUX
+            Display = IntPtr.Zero;
+#endif
         }
 
-        public static void Shutdown()
+        public void Dispose()
         {
-            SDLWindow.Destroy();
-        }
-        
-        private static void SetWindowMode(int width, int height, bool fullscreen)
-        {
-
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

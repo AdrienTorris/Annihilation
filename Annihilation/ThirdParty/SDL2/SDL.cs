@@ -1228,9 +1228,9 @@ namespace SDL2
         private static GetMouseFocusDelegate _getMouseFocus;
         public static Window GetMouseFocus() => _getMouseFocus();
 
-        private delegate MouseButtonState GetMouseStateDelegate(out int? x, out int? y);
+        private delegate MouseButtonState GetMouseStateDelegate(out int x, out int y);
         private static GetMouseStateDelegate _getMouseState;
-        public static MouseButtonState GetMouseState(out int? x, out int? y) => _getMouseState(out x, out y);
+        public static MouseButtonState GetMouseState(out int x, out int y) => _getMouseState(out x, out y);
 
         private delegate MouseButtonState GetGlobalMouseStateDelegate(out int? x, out int? y);
         private static GetGlobalMouseStateDelegate _getGlobalMouseState;
@@ -1752,9 +1752,9 @@ namespace SDL2
         //
         // SDL_syswm.h
         //
-        private delegate bool GetWindowWMInfoDelegate(Window window, out SysWMInfo info);
+        private delegate bool GetWindowWMInfoDelegate(Window window, ref SysWMInfo info);
         private static GetWindowWMInfoDelegate _getWindowWMInfo;
-        public static bool GetWindowWMInfo(Window window, out SysWMInfo info) => _getWindowWMInfo(window, out info);
+        public static bool GetWindowWMInfo(Window window, ref SysWMInfo info) => _getWindowWMInfo(window, ref info);
 
         //
         // SDL_timer.h

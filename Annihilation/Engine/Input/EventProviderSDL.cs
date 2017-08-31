@@ -178,7 +178,7 @@ namespace Engine.Input
                 switch (sdlEvent.Type)
                 {
                     case SDL_EventType.Quit:
-                        Game.Instance.Quit();
+                        global::Game.Instance.Quit();
                         break;
 
                     case SDL_EventType.KeyDown:

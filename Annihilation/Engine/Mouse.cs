@@ -49,7 +49,7 @@ namespace Engine
         public static unsafe MouseButtonState GetDeltaStateXY(out int x, out int y) => SDL.GetRelativeMouseState(out x, out y);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void WarpInWindow(int x, int y) => SDL.WarpMouseInWindow(Window.SDLWindow, x, y);
+        public static void WarpInWindow(int x, int y) => SDL.WarpMouseInWindow(Window.SdlHandle, x, y);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WarpInDesktop(int x, int y) => SDL.WarpMouseGlobal(x, y).CheckError("Could not warp mouse on desktop");

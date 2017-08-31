@@ -1130,7 +1130,7 @@ namespace SDL2
             Vulkan = 1 << 20,
         }
 
-        public enum WindowEventID
+        public enum WindowEventID : byte
         {
             None,
             Shown,

@@ -24,7 +24,7 @@
     <BaseIntermediateOutputPath>..\Temp\</BaseIntermediateOutputPath>
     <BaseOutputPath>..\Build\</BaseOutputPath>
     <DocumentationFile></DocumentationFile>
-    <DefineConstants>TRACE;DEBUG;NETCOREAPP2_0;WINDOW_WIN32;ENABLE_VALIDATION</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETCOREAPP2_0;PLATFORM_WINDOWS;ENABLE_VALIDATION;NETCOREAPP2_0</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -45,30 +45,57 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Engine\CoreDDL\Data.cs" />
-    <Compile Include="Engine\CoreDDL\DataArrayList.cs" />
-    <Compile Include="Engine\CoreDDL\DataDescription.cs" />
-    <Compile Include="Engine\CoreDDL\DataList.cs" />
-    <Compile Include="Engine\CoreDDL\Identifier.cs" />
-    <Compile Include="Engine\CoreDDL\Name.cs" />
-    <Compile Include="Engine\CoreDDL\OpenDDL.cs" />
-    <Compile Include="Engine\CoreDDL\PrimitiveStructure.cs" />
-    <Compile Include="Engine\CoreDDL\Property.cs" />
-    <Compile Include="Engine\CoreDDL\Reference.cs" />
-    <Compile Include="Engine\CoreDDL\Structure.cs" />
-    <Compile Include="Engine\CoreDDL\Symbol.cs" />
-    <Compile Include="Engine\CoreDDL\Text.cs" />
-    <Compile Include="Engine\CoreGEX\File.cs" />
     <Compile Include="Engine\Core\Map.cs" />
     <Compile Include="Engine\Core\String.cs" />
     <Compile Include="Engine\Core\Tree.cs" />
+    <Compile Include="Engine\Input\IInputHandler.cs" />
+    <Compile Include="Engine\Rendering\GraphicsManager.cs" />
     <Compile Include="Engine\System\Kernel32.cs" />
     <Compile Include="Engine\System\Libdl.cs" />
     <Compile Include="Engine\System\LibraryLoader.cs" />
     <Compile Include="Engine\System\NativeLibrary.cs" />
+    <Compile Include="Game\InputHandler.cs" />
+    <Compile Include="ThirdParty\OpenDDL\Data.cs" />
+    <Compile Include="ThirdParty\OpenDDL\DataArrayList.cs" />
+    <Compile Include="ThirdParty\OpenDDL\DataDescription.cs" />
+    <Compile Include="ThirdParty\OpenDDL\DataList.cs" />
+    <Compile Include="ThirdParty\OpenDDL\Identifier.cs" />
+    <Compile Include="ThirdParty\OpenDDL\Name.cs" />
+    <Compile Include="ThirdParty\OpenDDL\OpenDDL.cs" />
+    <Compile Include="ThirdParty\OpenDDL\PrimitiveStructure.cs" />
+    <Compile Include="ThirdParty\OpenDDL\Property.cs" />
+    <Compile Include="ThirdParty\OpenDDL\Reference.cs" />
+    <Compile Include="ThirdParty\OpenDDL\Structure.cs" />
+    <Compile Include="ThirdParty\OpenDDL\StructureRef.cs" />
+    <Compile Include="ThirdParty\OpenDDL\Symbol.cs" />
+    <Compile Include="ThirdParty\OpenDDL\Text.cs" />
+    <Compile Include="ThirdParty\OpenGEX\File.cs" />
+    <Compile Include="ThirdParty\OpenGEX\OpenGEX.cs" />
+    <Compile Include="ThirdParty\SDL2\Delegates.cs" />
+    <Compile Include="ThirdParty\SDL2\Enums.cs" />
+    <Compile Include="ThirdParty\SDL2\Handles.cs" />
+    <Compile Include="ThirdParty\SDL2\SDL.cs" />
+    <Compile Include="ThirdParty\SDL2\Structs.cs" />
+    <Compile Include="ThirdParty\SDL2\Text.cs" />
+    <Compile Include="ThirdParty\VulkanMemoryAllocator\Classes.cs" />
+    <Compile Include="ThirdParty\VulkanMemoryAllocator\Delegates.cs" />
+    <Compile Include="ThirdParty\VulkanMemoryAllocator\Enums.cs" />
+    <Compile Include="ThirdParty\VulkanMemoryAllocator\MemoryAllocatorNative.cs" />
+    <Compile Include="ThirdParty\VulkanMemoryAllocator\MemoryRequirements.cs" />
+    <Compile Include="ThirdParty\VulkanMemoryAllocator\Structs.cs" />
+    <Compile Include="ThirdParty\VulkanMemoryAllocator\Vma.cs" />
+    <Compile Include="ThirdParty\Vulkan\Enums.cs" />
+    <Compile Include="ThirdParty\Vulkan\Handles.cs" />
+    <Compile Include="ThirdParty\Vulkan\MarshalUtility.cs" />
+    <Compile Include="ThirdParty\Vulkan\Structs.cs" />
+    <Compile Include="ThirdParty\Vulkan\Types.cs" />
+    <Compile Include="ThirdParty\Vulkan\Vk.cs" />
+    <Compile Include="ThirdParty\Wwise\InitSettings.cs" />
+    <Compile Include="ThirdParty\Wwise\SoundEngine.cs" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Engine\Extensions\" />
     <Folder Include="Engine\Resources\" />
   </ItemGroup>
 

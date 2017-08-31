@@ -34,8 +34,6 @@
 // Original code: https://code.google.com/p/cityhash/
 //
 
-using System;
-
 namespace Engine.Mathematics
 {
     /// <summary>

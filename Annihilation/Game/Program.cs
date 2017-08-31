@@ -6,18 +6,25 @@ using Engine;
 using Engine.Input;
 using Engine.Rendering;
 
-namespace Game
+namespace Annihilation
 {
+    [Flags]
+    public enum GameContext : int
+    {
+        Opening = 1 << 0,
+        MainMenu = 1 << 1,
+        Game = 1 << 2,
+        GameMenu = Game | 1 << 3,
+        GameResults = 1 << 4
+    }
+
+    public enum GameAction
+    {
+        
+    }
+
     class Program
     {
-        public static class Context
-        {
-            public static readonly StringHash32 MainMenu = "MainMenu";
-
-            public static readonly StringHash32 Game = "Game";
-            public static readonly StringHash32 GameMenu = "GameMenu";
-        }
-
         public static class Action
         {
             public static readonly StringHash32 MoveHorizontal = "MoveHorizontal";
@@ -34,80 +41,55 @@ namespace Game
 
         static void Main(string[] args)
         {
-            GameSettings settings = new GameSettings
+            InputSettings inputSettings = default(InputSettings);
+            inputSettings.RepeatInterval = InputSettings.DefaultRepeatInterval;
+            inputSettings.RepeatDelay = InputSettings.DefaultRepeatDelay;
+            inputSettings.ActionMaps = new ActionMap[]
             {
-                Name = "Bomberman",
-
-                CommandLineArgs = args,
-
-                InitialContext = Context.MainMenu,
-
-                ResourcePath = GameSettings.DefaultResourcePath,
-                MaxResources = GameSettings.DefaultMaxResources,
-                MaxEntitiesPerPrefab = GameSettings.DefaultMaxEntitiesPerPrefab,
-
-                WindowSettings = new WindowSettings
+                new ActionMap()
                 {
-                    PositionX = 50,
-                    PositionY = 50,
-                    Width = 1280,
-                    Height = 720,
-                    Mode = WindowMode.Windowed,
-                    AllowHighDPI = false,
-                    AlwaysOnTop = false
-                },
-                RendererSettings = new RendererSettings
-                {
-                    Width = 1280,
-                    Height = 720,
-                },
-                InputSettings = new InputSettings
-                {
-                    RepeatInterval = InputSettings.DefaultRepeatInterval,
-                    RepeatDelay = InputSettings.DefaultRepeatDelay,
-                    ActionMaps = new ActionMap[]
+                    Context = (int)GameContext.Game,
+                    ButtonBindings = new ButtonBinding[]
                     {
-                        new ActionMap()
-                        {
-                            Context = Context.Game,
-                            ButtonBindings = new ButtonBinding[]
-                            {
-                                // Keyboard
-                                new ButtonBinding(Button.LeftArrow, Action.MoveLeft),
-                                new ButtonBinding(Button.RightArrow, Action.MoveRight),
-                                new ButtonBinding(Button.W, Action.MoveUp),
-                                new ButtonBinding(Button.S, Action.MoveDown),
-                                new ButtonBinding(Button.A, Action.MoveLeft),
-                                new ButtonBinding(Button.D, Action.MoveRight),
-                                new ButtonBinding(Button.Space, Action.PlaceBomb),
-                                // Gamepad
-                                new ButtonBinding(Button.GamepadA, Action.PlaceBomb)
-                            },
-                            AxisBindings = new AxisBinding[]
-                            {
-                                // Gamepad
-                                new AxisBinding(Axis.GamepadLeftStickX, Action.MoveHorizontal),
-                                new AxisBinding(Axis.GamepadLeftStickY, Action.MoveVertical)
-                            }
-                        },
-                        new ActionMap()
-                        {
-                            Context = Context.MainMenu,
-                            ButtonBindings = new ButtonBinding[]
-                            {
-                                // Keyboard
-                                new ButtonBinding(Button.Return, Action.Accept),
-                                new ButtonBinding(Button.Escape, Action.Cancel),
-                                // Gamepad
-                                new ButtonBinding(Button.GamepadA, Action.Accept),
-                                new ButtonBinding(Button.GamepadB, Action.Cancel)
-                            }
-                        }
+                        // Keyboard
+                        new ButtonBinding(Button.LeftArrow, Action.MoveLeft),
+                        new ButtonBinding(Button.RightArrow, Action.MoveRight),
+                        new ButtonBinding(Button.W, Action.MoveUp),
+                        new ButtonBinding(Button.S, Action.MoveDown),
+                        new ButtonBinding(Button.A, Action.MoveLeft),
+                        new ButtonBinding(Button.D, Action.MoveRight),
+                        new ButtonBinding(Button.Space, Action.PlaceBomb),
+                        // Gamepad
+                        new ButtonBinding(Button.GamepadA, Action.PlaceBomb)
+                    },
+                    AxisBindings = new AxisBinding[]
+                    {
+                        // Gamepad
+                        new AxisBinding(Axis.GamepadLeftStickX, Action.MoveHorizontal),
+                        new AxisBinding(Axis.GamepadLeftStickY, Action.MoveVertical)
+                    }
+                },
+                new ActionMap()
+                {
+                    Context = (int)GameContext.MainMenu,
+                    ButtonBindings = new ButtonBinding[]
+                    {
+                        // Keyboard
+                        new ButtonBinding(Button.Return, Action.Accept),
+                        new ButtonBinding(Button.Escape, Action.Cancel),
+                        // Gamepad
+                        new ButtonBinding(Button.GamepadA, Action.Accept),
+                        new ButtonBinding(Button.GamepadB, Action.Cancel)
                     }
                 }
             };
-            
-            Game game = new Game(settings, null, null, null);
+
+            Settings settings = default(Settings);
+            settings.Title = "Bomberman";
+            settings.CommandLineArgs = args;
+            settings.InputSettings = inputSettings;
+
+            Game.Start(settings, null, null, null);
         }
     }
 }

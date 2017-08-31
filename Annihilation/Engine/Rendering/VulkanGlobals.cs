@@ -240,18 +240,18 @@ namespace Engine.Rendering
             Text[] desiredInstanceExtensions = new Text[]
             {
                 SurfaceExtensionName,
-                Game.WindowType == WindowType.Win32 ? Win32SurfaceExtensionName :
-                Game.WindowType == WindowType.Xlib ? XlibSurfaceExtensionName :
-                Game.WindowType == WindowType.Xcb ? XcbSurfaceExtensionName :
-                Game.WindowType == WindowType.Mir ? MirSurfaceExtensionName :
-                Game.WindowType == WindowType.Wayland ? WaylandSurfaceExtensionName :
-                Game.WindowType == WindowType.Android ? AndroidSurfaceExtensionName :
-                Game.WindowType == WindowType.IOS ? IOSSurfaceExtensionName :
-                Game.WindowType == WindowType.MacOS ? MacOSSurfaceExtensionName :
-                Game.WindowType == WindowType.Switch ? ViSurfaceExtensionName :
+                global::Game.WindowType == WindowType.Win32 ? Win32SurfaceExtensionName :
+                global::Game.WindowType == WindowType.Xlib ? XlibSurfaceExtensionName :
+                global::Game.WindowType == WindowType.Xcb ? XcbSurfaceExtensionName :
+                global::Game.WindowType == WindowType.Mir ? MirSurfaceExtensionName :
+                global::Game.WindowType == WindowType.Wayland ? WaylandSurfaceExtensionName :
+                global::Game.WindowType == WindowType.Android ? AndroidSurfaceExtensionName :
+                global::Game.WindowType == WindowType.IOS ? IOSSurfaceExtensionName :
+                global::Game.WindowType == WindowType.MacOS ? MacOSSurfaceExtensionName :
+                global::Game.WindowType == WindowType.Switch ? ViSurfaceExtensionName :
                 throw new PlatformNotSupportedException(),
 #if DEBUG
-                Game.Settings.RendererSettings.EnableDebugReport ? DebugReportExtensionName : string.Empty
+                global::Game.Settings.RendererSettings.EnableDebugReport ? DebugReportExtensionName : string.Empty
 #endif
             };
             EnumerateInstanceExtensionProperties(Text.Null, out uint extensionCount, null).CheckError();
@@ -269,7 +269,7 @@ namespace Engine.Rendering
             }
 
             // Instance
-            ApplicationInfo applicationInfo = new ApplicationInfo(Game.Settings.Name, new Version(1, 0, 0), "Pillar Engine", new Version(1, 0, 0), new Version(1, 0, 0));
+            ApplicationInfo applicationInfo = new ApplicationInfo(global::Game.Settings.Name, new Version(1, 0, 0), "Pillar Engine", new Version(1, 0, 0), new Version(1, 0, 0));
             InstanceCreateInfo instanceCreateInfo = new InstanceCreateInfo(&applicationInfo, desiredInstanceExtensions);
             CreateInstance(ref instanceCreateInfo, ref AllocationCallbacks.Null, out _instance).CheckError();
 
