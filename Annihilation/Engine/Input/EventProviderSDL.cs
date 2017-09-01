@@ -193,7 +193,7 @@ namespace Engine.Input
                             InputEvent inputEvent = new InputEvent
                             {
                                 Type = InputEventType.Button,
-                                ButtonEvent = new ButtonEvent
+                                KeyEvent = new ButtonEvent
                                 {
                                     PlayerId = 0,
                                     Button = button,
@@ -219,7 +219,7 @@ namespace Engine.Input
                             InputEvent inputEvent = new InputEvent
                             {
                                 Type = InputEventType.Button,
-                                ButtonEvent = new ButtonEvent
+                                KeyEvent = new ButtonEvent
                                 {
                                     PlayerId = 0,
                                     Button = button,

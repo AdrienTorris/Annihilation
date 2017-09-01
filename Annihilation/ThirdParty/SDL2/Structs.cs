@@ -118,8 +118,8 @@ namespace SDL2
             public uint State;
             public int X;
             public int Y;
-            public int Xrel;
-            public int Yrel;
+            public int XRel;
+            public int YRel;
         }
 
         [StructLayout(LayoutKind.Sequential)]
