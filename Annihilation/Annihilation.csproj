@@ -36,19 +36,31 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Engine\Extensions\**" />
     <Compile Remove="obj\**" />
     <Compile Remove="Resources\**" />
+    <EmbeddedResource Remove="Engine\Extensions\**" />
     <EmbeddedResource Remove="obj\**" />
     <EmbeddedResource Remove="Resources\**" />
+    <None Remove="Engine\Extensions\**" />
     <None Remove="obj\**" />
     <None Remove="Resources\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Include="Engine\Core\Map.cs" />
+    <Compile Include="Engine\Core\Pool.cs" />
+    <Compile Include="Engine\Core\ReadOnlyHashSet.cs" />
     <Compile Include="Engine\Core\String.cs" />
+    <Compile Include="Engine\Core\Text.cs" />
     <Compile Include="Engine\Core\Tree.cs" />
     <Compile Include="Engine\Input\IInputHandler.cs" />
+    <Compile Include="Engine\Input\InputEventPool.cs" />
+    <Compile Include="Engine\Input\KeyEvent.cs" />
+    <Compile Include="Engine\Input\MouseButtonEvent.cs" />
+    <Compile Include="Engine\Input\MouseMoveEvent.cs" />
+    <Compile Include="Engine\Input\MouseWheelEvent.cs" />
+    <Compile Include="Engine\Input\TextInputEvent.cs" />
     <Compile Include="Engine\Rendering\GraphicsManager.cs" />
     <Compile Include="Engine\System\Kernel32.cs" />
     <Compile Include="Engine\System\Libdl.cs" />
@@ -76,7 +88,6 @@
     <Compile Include="ThirdParty\SDL2\Handles.cs" />
     <Compile Include="ThirdParty\SDL2\SDL.cs" />
     <Compile Include="ThirdParty\SDL2\Structs.cs" />
-    <Compile Include="ThirdParty\SDL2\Text.cs" />
     <Compile Include="ThirdParty\VulkanMemoryAllocator\Classes.cs" />
     <Compile Include="ThirdParty\VulkanMemoryAllocator\Delegates.cs" />
     <Compile Include="ThirdParty\VulkanMemoryAllocator\Enums.cs" />
@@ -95,7 +106,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Engine\Extensions\" />
     <Folder Include="Engine\Resources\" />
   </ItemGroup>
 
