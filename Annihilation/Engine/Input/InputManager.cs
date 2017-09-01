@@ -34,6 +34,14 @@ namespace Engine.Input
 
         private static readonly List<MouseMoveEvent> _mouseMoveEvents = new List<MouseMoveEvent>();
 
+        private static InputAction[] _actions;
+
+        private static int _currentContexts = 0;
+        private static readonly Dictionary<byte, Dictionary<SDL.KeyCode, int>> _keyActions = new Dictionary<byte, Dictionary<SDL.KeyCode, int>>();
+        private static readonly Dictionary<SDL.MouseButton, int> _mouseButtonActions = new Dictionary<SDL.MouseButton, int>();
+        private static readonly List<int> _mouseWheelActions = new List<int>();
+        private static readonly List<int> _mouseMoveActions = new List<int>();
+
         public static void Init()
         {
             SDL.InitSubSystem(SDL.InitFlags.Events);
@@ -55,6 +63,33 @@ namespace Engine.Input
         public static void EnableTextInput() => SDL.StartTextInput();
         public static void DisableTextInput() => SDL.StopTextInput();
 
+        public static void AddActions(InputAction[] actions)
+        {
+            _actions = actions;
+        }
+
+        public static void BindKeyAction(SDL.KeyCode key, int action, int context)
+        {
+            if (_keyActions.TryGetValue(context, out Dictionary<SDL.KeyCode, int> actionMap))
+            {
+                actionMap.Add(key, action);
+            }
+            else
+            {
+                _keyActions.Add(context, new Dictionary<SDL.KeyCode, int>() { { key, action } });
+            }
+        }
+
+        public static void SwitchContext(int context)
+        {
+            _currentContexts = context;
+        }
+
+        public static void AddContext(int context)
+        {
+            _currentContexts |= context;
+        }
+        
         public static void Update()
         {
             _keyEvents.Clear();
@@ -200,6 +235,8 @@ namespace Engine.Input
                         _keyEvents.Add(keyEvent);
 
                         InputHandler?.OnKeyInput(ref keyEvent);
+
+                        _keyActions[_currentContexts]
 
                         break;
                     }

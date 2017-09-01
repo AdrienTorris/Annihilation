@@ -55,6 +55,8 @@
     <Compile Include="Engine\Core\Text.cs" />
     <Compile Include="Engine\Core\Tree.cs" />
     <Compile Include="Engine\Input\IInputHandler.cs" />
+    <Compile Include="Engine\Input\InputAction.cs" />
+    <Compile Include="Engine\Input\InputContext.cs" />
     <Compile Include="Engine\Input\InputEventPool.cs" />
     <Compile Include="Engine\Input\KeyEvent.cs" />
     <Compile Include="Engine\Input\MouseButtonEvent.cs" />
@@ -62,6 +64,7 @@
     <Compile Include="Engine\Input\MouseWheelEvent.cs" />
     <Compile Include="Engine\Input\TextInputEvent.cs" />
     <Compile Include="Engine\Rendering\GraphicsManager.cs" />
+    <Compile Include="Engine\Resources\IniFile.cs" />
     <Compile Include="Engine\System\Kernel32.cs" />
     <Compile Include="Engine\System\Libdl.cs" />
     <Compile Include="Engine\System\LibraryLoader.cs" />
@@ -103,10 +106,6 @@
     <Compile Include="ThirdParty\Vulkan\Vk.cs" />
     <Compile Include="ThirdParty\Wwise\InitSettings.cs" />
     <Compile Include="ThirdParty\Wwise\SoundEngine.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Engine\Resources\" />
   </ItemGroup>
 
   <ItemGroup>

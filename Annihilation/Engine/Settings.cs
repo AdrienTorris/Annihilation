@@ -16,6 +16,7 @@ namespace Engine
     public class Settings
     {
         public string Title;
+        public string Organization;
         public string Version;
         public string[] CommandLineArgs;
         
@@ -27,7 +28,6 @@ namespace Engine
         public int MaxEntitiesPerPrefab;
         
         public WindowSettings WindowSettings;
-        public RendererSettings RendererSettings;
         public InputSettings InputSettings;
 
         public const string DefaultResourcePath = "/Resources/";

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Engine.Mathematics;
 
 namespace Engine
@@ -8,12 +9,16 @@ namespace Engine
     /// </summary>
     public struct StringHash32 : IEquatable<StringHash32>
     {
+        private static Dictionary<string, StringHash32> _map = new Dictionary<string, StringHash32>(128);
+
         private uint _hash;
         
         public StringHash32 (string text)
         {
             ulong hash = text.GetCityHash64();
             _hash = (uint)(hash >> 32);
+
+            _map.Add(text, this);
         }
 
         public bool IsValid ()
@@ -43,7 +48,14 @@ namespace Engine
         
         public static implicit operator StringHash32 (string text)
         {
-            return new StringHash32 (text);
+            if (_map.TryGetValue(text, out StringHash32 hash))
+            {
+                return hash;
+            }
+            else
+            {
+                return new StringHash32(text);
+            }
         }
 
         public override int GetHashCode ()

@@ -20,7 +20,9 @@ namespace Annihilation
 
     public enum GameAction
     {
-        
+        Accept,
+        Cancel,
+
     }
 
     class Program
