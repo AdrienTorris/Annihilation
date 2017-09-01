@@ -29,7 +29,7 @@ namespace Engine
         }
 
         [Conditional ("DEBUG")]
-        public static void IsFalse (bool value, string message)
+        public static void IsFalse (bool value, string message = "")
         {
             Trace.Assert(!value, message);
         }

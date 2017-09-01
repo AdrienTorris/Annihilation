@@ -15,7 +15,8 @@ namespace Engine
     public static class Game
     {
         public static Settings Settings;
-        public static WindowType WindowType;
+
+        public static Window Window { get; private set; }
 
         private static GameState _state;
 
@@ -32,7 +33,7 @@ namespace Engine
             SDL.LoadFunctions(SDLModule.SysWm);
 
             // Create window
-            Window window = new Window(settings.Title);
+            Window = new Window(settings.Title);
    
             initFunction?.Invoke();
 
@@ -47,7 +48,7 @@ namespace Engine
             shutdownFunction?.Invoke();
 
             // Dispose of everything
-            window.Dispose();
+            Window.Dispose();
         }
         
         public static void Quit()

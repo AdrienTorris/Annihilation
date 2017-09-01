@@ -2,43 +2,51 @@
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace SDL2
+namespace Engine.Collections
 {
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct Text
     {
-        internal byte* NativeHandle;
+        public byte* ByteArray;
 
         public Text(byte* nativeHandle)
         {
-            NativeHandle = nativeHandle;
+            ByteArray = nativeHandle;
         }
 
         public Text(IntPtr nativeHandle)
         {
-            NativeHandle = (byte*)nativeHandle;
+            ByteArray = (byte*)nativeHandle;
         }
 
         public Text(string text)
         {
             byte[] bytes = Encoding.UTF8.GetBytes(text);
-            fixed(byte* ptr = &bytes[0])
+            fixed (byte* ptr = &bytes[0])
             {
-                NativeHandle = ptr;
+                ByteArray = ptr;
             }
+        }
+
+        public string ToString(int size = 32)
+        {
+            byte[] sourceBytes = new byte[size];
+            int length = 0;
+
+            for (int i = 0; i < size; i++)
+            {
+                if (ByteArray[i] == 0)
+                    break;
+
+                sourceBytes[i] = ByteArray[i];
+                length++;
+            }
+            return Encoding.UTF8.GetString(sourceBytes, 0, length);
         }
 
         public override string ToString()
         {
-            // Count the length of the string
-            byte* counter = NativeHandle;
-            while (*counter != 0)
-            {
-                counter++;
-            }
-            int count = (int)(counter - NativeHandle);
-
-            return Encoding.UTF8.GetString(NativeHandle, count);
+            return ToString(32);
         }
 
         public static implicit operator string(Text text)

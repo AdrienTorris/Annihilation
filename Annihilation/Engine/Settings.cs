@@ -1,56 +1,33 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using Engine.Input;
 
 namespace Engine
 {
-    /// <summary>
-    /// Main configuration data for the engine.
-    /// </summary>
+    public struct InputSettings
+    {
+        public float RepeatDelay;
+        public float RepeatInterval;
+        public float GamepadDeadZone;
+        public ActionMap[] ActionMaps;
+
+        public const float DefaultRepeatDelay = 0.5f;
+        public const float DefaultRepeatInterval = 0.2f;
+    }
+    
     public class Settings
     {
-        /// <summary>
-        /// The name of the application.
-        /// </summary>
         public string Title;
-        /// <summary>
-        /// The version of the application.
-        /// </summary>
         public string Version;
-        /// <summary>
-        /// Command line arguments passed to the program.
-        /// </summary>
         public string[] CommandLineArgs;
         
-        /// <summary>
-        /// The prefab to load on initialization.
-        /// </summary>
         public StringHash32 InitialContext;
         
-        /// <summary>
-        /// Path to binary application resources.
-        /// </summary>
         public string ResourcePath;
-        /// <summary>
-        /// Maximum number of resources that can be loaded at one time.
-        /// </summary>
         public int MaxResources;
-
-        /// <summary>
-        /// Maximum number of entities in a prefab hierarchy.
-        /// </summary>
+        
         public int MaxEntitiesPerPrefab;
-
-        /// <summary>
-        /// Window settings.
-        /// </summary>
+        
         public WindowSettings WindowSettings;
-        /// <summary>
-        /// Renderer settings.
-        /// </summary>
         public RendererSettings RendererSettings;
-        /// <summary>
-        /// Input settings and default action maps.
-        /// </summary>
         public InputSettings InputSettings;
 
         public const string DefaultResourcePath = "/Resources/";

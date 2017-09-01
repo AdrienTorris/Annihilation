@@ -43,7 +43,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-using Engine.Core;
+using Engine.Collections;
 
 namespace OpenDDL
 {

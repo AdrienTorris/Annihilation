@@ -5,6 +5,8 @@ namespace Engine
 {
     public class Window : IDisposable
     {
+        public bool HasFocus = false;
+
         public IntPtr Handle { get; private set; }
 #if PLATFORM_LINUX
         public IntPtr Display { get; private set; }

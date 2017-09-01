@@ -2,7 +2,7 @@
 {
     public interface IInputHandler
     {
-        void OnKeyInput();
+        void OnKeyInput(KeyEvent keyEvent);
         void OnMouseInput();
         void OnTextInput(string text);
     }

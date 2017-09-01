@@ -512,7 +512,7 @@ namespace SDL2
         public struct KeySym
         {
             public Scancode ScanCode;
-            public Keycode Sym;
+            public KeyCode Sym;
             public KeyMod Mod;
             private uint Unused;
         }

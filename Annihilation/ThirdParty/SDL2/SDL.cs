@@ -1088,13 +1088,13 @@ namespace SDL2
         private static SetModStateDelegate _setModState;
         public static void SetModState(KeyMod modState) => _setModState(modState);
 
-        private delegate Keycode GetKeyFromScancodeDelegate(Scancode scancode);
+        private delegate KeyCode GetKeyFromScancodeDelegate(Scancode scancode);
         private static GetKeyFromScancodeDelegate _getKeyFromScancode;
-        public static Keycode GetKeyFromScancode(Scancode scancode) => _getKeyFromScancode(scancode);
+        public static KeyCode GetKeyFromScancode(Scancode scancode) => _getKeyFromScancode(scancode);
 
-        private delegate Scancode GetScancodeFromKeyDelegate(Keycode key);
+        private delegate Scancode GetScancodeFromKeyDelegate(KeyCode key);
         private static GetScancodeFromKeyDelegate _getScancodeFromKey;
-        public static Scancode GetScancodeFromKey(Keycode key) => _getScancodeFromKey(key);
+        public static Scancode GetScancodeFromKey(KeyCode key) => _getScancodeFromKey(key);
 
         private delegate string GetScancodeNameDelegate(Scancode scancode);
         private static GetScancodeNameDelegate _getScancodeName;
@@ -1104,13 +1104,13 @@ namespace SDL2
         private static GetScancodeFromNameDelegate _getScancodeFromName;
         public static Scancode GetScancodeFromName(string name) => _getScancodeFromName(name);
 
-        private delegate string GetKeyNameDelegate(Keycode key);
+        private delegate string GetKeyNameDelegate(KeyCode key);
         private static GetKeyNameDelegate _getKeyName;
-        public static string GetKeyName(Keycode key) => _getKeyName(key);
+        public static string GetKeyName(KeyCode key) => _getKeyName(key);
 
-        private delegate Keycode GetKeyFromNameDelegate(string name);
+        private delegate KeyCode GetKeyFromNameDelegate(string name);
         private static GetKeyFromNameDelegate _getKeyFromName;
-        public static Keycode GetKeyFromName(string name) => _getKeyFromName(name);
+        public static KeyCode GetKeyFromName(string name) => _getKeyFromName(name);
 
         private delegate void StartTextInputDelegate();
         private static StartTextInputDelegate _startTextInput;

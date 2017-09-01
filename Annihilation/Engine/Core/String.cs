@@ -43,7 +43,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-namespace Engine.Core
+namespace Engine.Collections
 {
     public unsafe class String
     {
