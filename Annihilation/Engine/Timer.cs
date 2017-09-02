@@ -1,4 +1,4 @@
-﻿using static SDL2.SDL;
+﻿using SDL2;
 
 namespace Engine
 {
@@ -11,15 +11,15 @@ namespace Engine
 
         public Timer()
         {
-            CurrentTime = SDL_GetPerformanceCounter ();
+            CurrentTime = SDL.GetPerformanceCounter();
             _previousTime = 0;
         }
 
-        public void Update ()
+        public void Update()
         {
             _previousTime = CurrentTime;
-            CurrentTime = SDL_GetPerformanceCounter ();
-            DeltaTime = (CurrentTime - _previousTime) * 1000 / SDL_GetPerformanceFrequency ();
+            CurrentTime = SDL.GetPerformanceCounter();
+            DeltaTime = (CurrentTime - _previousTime) * 1000 / SDL.GetPerformanceFrequency();
         }
     }
 }

@@ -750,7 +750,7 @@ namespace Engine.Mathematics
         /// <value>The value of the alpha, red, green, or blue component, depending on the index.</value>
         /// <param name="index">The index of the component to access. Use 0 for the alpha component, 1 for the red component, 2 for the green component, and 3 for the blue component.</param>
         /// <returns>The value of the component at the specified index.</returns>
-        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="index"/> is out of the range [0, 3].</exception>
+        /// <exception cref="Platform.ArgumentOutOfRangeException">Thrown when the <paramref name="index"/> is out of the range [0, 3].</exception>
         public byte this[int index]
         {
             get
@@ -1476,7 +1476,7 @@ namespace Engine.Mathematics
             return new Color(value.R, value.G, value.B, value.A);
         }
         /// <summary>
-        /// Performs an explicit conversion from <see cref="System.Int32"/> to <see cref="Color"/>.
+        /// Performs an explicit conversion from <see cref="Platform.Int32"/> to <see cref="Color"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>
@@ -1487,7 +1487,7 @@ namespace Engine.Mathematics
             return value.ToRgba();
         }
         /// <summary>
-        /// Performs an explicit conversion from <see cref="System.Int32"/> to <see cref="Color"/>.
+        /// Performs an explicit conversion from <see cref="Platform.Int32"/> to <see cref="Color"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>
@@ -1529,11 +1529,11 @@ namespace Engine.Mathematics
             return R == other.R && G == other.G && B == other.B && A == other.A;
         }
         /// <summary>
-        /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
+        /// Determines whether the specified <see cref="Platform.Object"/> is equal to this instance.
         /// </summary>
-        /// <param name="value">The <see cref="System.Object"/> to compare with this instance.</param>
+        /// <param name="value">The <see cref="Platform.Object"/> to compare with this instance.</param>
         /// <returns>
-        /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
+        /// <c>true</c> if the specified <see cref="Platform.Object"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
         public override bool Equals(object value)
         {

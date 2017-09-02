@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using Engine.System;
+using Engine;
+using Engine.Platform;
 
 namespace Vulkan
 {

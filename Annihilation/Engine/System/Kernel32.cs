@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Engine.System
+namespace Engine.Platform
 {
     public static class Kernel32
     {

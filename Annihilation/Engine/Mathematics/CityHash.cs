@@ -291,7 +291,7 @@ namespace Engine.Mathematics
         /// </summary>
         /// <param name="value">The string value.</param>
         /// <returns>A 32-bit city hash.</returns>
-        /// <exception cref="System.ArgumentNullException">value</exception>
+        /// <exception cref="Platform.ArgumentNullException">value</exception>
         /// <remarks>
         /// The city hash is designed to compute hash for STRINGs only! 
         /// The city hash "works" with other types of data, but keep in mind it was not built for it.

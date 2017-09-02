@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Engine.System
+namespace Engine.Platform
 {
     /// <summary>
     /// Represents a native shared library opened by the operating system.

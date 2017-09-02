@@ -14,10 +14,10 @@ namespace SDL2
         public delegate int EventFilter(void* userdata, Event* sdlEvent);
         
         // SDL_hints.h
-        public delegate void HintCallback(void* userData, Text name, Text oldValue, Text newValue);
+        public delegate void HintCallback(void* userData, string name, string oldValue, string newValue);
         
         // SDL_log.h
-        public delegate void LogOutputFunction(void* userData, LogCategory category, LogPriority priority, Text message);
+        public delegate void LogOutputFunction(void* userData, LogCategory category, LogPriority priority, string message);
         
         // SDL_timer.h
         public delegate TimerID TimerCallback(uint interval, IntPtr param);

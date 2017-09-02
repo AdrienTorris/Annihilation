@@ -10,16 +10,16 @@ namespace Engine.Rendering
         private Vk.Instance _instance;
         private bool _isDisposed = false;
         
-        public DebugReportFlags Flags { get; set; }
-        public DebugReportCallback Callback { get; set; }
+        public Vk.DebugReportFlags Flags { get; set; }
+        public Vk.DebugReportCallbackDelegate Callback { get; set; }
 
         // Vulkan functions
-        private static CreateDebugReportCallback CreateDebugReportCallback;
-        private static DestroyDebugReportCallback DestroyDebugReportCallback;
+        private static Vk.CreateDebugReportCallbackDelegate CreateDebugReportCallback;
+        private static Vk.DestroyDebugReportCallbackDelegate DestroyDebugReportCallback;
 
-        private static Bool32 DebugCallback(DebugReportFlags flags, DebugReportObjectType objectType, ulong @object, Size location, int messageCode, Text layerPrefix, Text message, IntPtr userData)
+        private static Vk.Bool32 DebugCallback(Vk.DebugReportFlags flags, Vk.DebugReportObjectType objectType, ulong @object, Size location, int messageCode, Text layerPrefix, Text message, IntPtr userData)
         {
-            if (objectType == DebugReportObjectType.DebugReportCallback && messageCode == 1)
+            if (objectType == Vk.DebugReportObjectType.DebugReportCallback && messageCode == 1)
             {
                 return false;
             }
@@ -28,11 +28,11 @@ namespace Engine.Rendering
 
             switch (flags)
             {
-                case DebugReportFlags.Information: Log.Info(output); return false;
-                case DebugReportFlags.Warning: Log.Warning(output); return false;
-                case DebugReportFlags.PerformanceWarning: Log.Performance(output); return false;
-                case DebugReportFlags.Error: Log.Error(output); return true;
-                case DebugReportFlags.Debug: Log.Debug(output); return false;
+                case Vk.DebugReportFlags.Information: Log.Info(output); return false;
+                case Vk.DebugReportFlags.Warning: Log.Warning(output); return false;
+                case Vk.DebugReportFlags.PerformanceWarning: Log.Performance(output); return false;
+                case Vk.DebugReportFlags.Error: Log.Error(output); return true;
+                case Vk.DebugReportFlags.Debug: Log.Info(output); return false;
                 default: return false;
             }
         }
@@ -40,22 +40,22 @@ namespace Engine.Rendering
         public DebugReport(Vk.Instance instance)
         {
             // Load functions
-            CreateDebugReportCallback = Vk.LoadInstanceFunction<CreateDebugReportCallback>(instance);
-            DestroyDebugReportCallback = Vk.LoadInstanceFunction<DestroyDebugReportCallback>(instance);
+            CreateDebugReportCallback = Vk.LoadInstanceFunction<Vk.CreateDebugReportCallbackDelegate>(instance);
+            DestroyDebugReportCallback = Vk.LoadInstanceFunction<Vk.DestroyDebugReportCallbackDelegate>(instance);
 
             _instance = instance;
             Callback = DebugCallback;
-            Flags = DebugReportFlags.Information |
-                    DebugReportFlags.Warning |
-                    DebugReportFlags.PerformanceWarning |
-                    DebugReportFlags.Error |
-                    DebugReportFlags.Debug |
+            Flags = Vk.DebugReportFlags.Information |
+                    Vk.DebugReportFlags.Warning |
+                    Vk.DebugReportFlags.PerformanceWarning |
+                    Vk.DebugReportFlags.Error |
+                    Vk.DebugReportFlags.Debug |
                     0;
 
             Set(Flags, Callback);
         }
 
-        public void Set(DebugReportFlags newFlags, DebugReportCallback newCallback)
+        public void Set(Vk.DebugReportFlags newFlags, Vk.DebugReportCallbackDelegate newCallback)
         {
             if (_instance.Handle == IntPtr.Zero)
             {
@@ -71,18 +71,18 @@ namespace Engine.Rendering
             Flags = newFlags;
 
             Destroy();
-            DebugReportCallbackCreateInfo createInfo = new DebugReportCallbackCreateInfo(
+            Vk.DebugReportCallbackCreateInfo createInfo = new Vk.DebugReportCallbackCreateInfo(
                 Flags,
-                Callback
+                _debugReportCallback
             );
-            CreateDebugReportCallback(_instance, ref createInfo, ref AllocationCallbacks.Null, out _debugReportCallback).CheckError();
+            CreateDebugReportCallback(_instance, ref createInfo, ref Vk.AllocationCallbacks.Null, out _debugReportCallback);
         }
 
         private void Destroy()
         {
             if (_debugReportCallback.Handle != 0)
             {
-                DestroyDebugReportCallback(_instance, _debugReportCallback, ref AllocationCallbacks.Null);
+                DestroyDebugReportCallback(_instance, _debugReportCallback, ref Vk.AllocationCallbacks.Null);
             }
         }
         
@@ -96,7 +96,7 @@ namespace Engine.Rendering
 
                 if (_debugReportCallback.Handle != 0)
                 {
-                    DestroyDebugReportCallback(_instance, _debugReportCallback, ref AllocationCallbacks.Null);
+                    DestroyDebugReportCallback(_instance, _debugReportCallback, ref Vk.AllocationCallbacks.Null);
                 }
                 Callback = null;
                 CreateDebugReportCallback = null;

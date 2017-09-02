@@ -6,15 +6,6 @@
     <ApplicationIcon />
     <StartupObject />
     <Platforms>x64</Platforms>
-    <PackageId>Annihilation.JeremieStAmand</PackageId>
-    <PackageVersion>0.1.0</PackageVersion>
-    <Authors>Jérémie St-Amand</Authors>
-    <Description>.Net Core RTS game with Vulkan graphics</Description>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>Prerelease</PackageReleaseNotes>
-    <Copyright>Copyright 2017 Jérémie St-Amand. All rights reserved.</Copyright>
-    <PackageTags>game engine vulkan</PackageTags>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RootNamespace></RootNamespace>
   </PropertyGroup>
 
@@ -34,79 +25,6 @@
     <BaseOutputPath>..\Build\</BaseOutputPath>
     <DefineConstants>RELEASE;NETCOREAPP2_0;WINDOW_WIN32</DefineConstants>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Engine\Extensions\**" />
-    <Compile Remove="obj\**" />
-    <Compile Remove="Resources\**" />
-    <EmbeddedResource Remove="Engine\Extensions\**" />
-    <EmbeddedResource Remove="obj\**" />
-    <EmbeddedResource Remove="Resources\**" />
-    <None Remove="Engine\Extensions\**" />
-    <None Remove="obj\**" />
-    <None Remove="Resources\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="Engine\Core\Map.cs" />
-    <Compile Include="Engine\Core\Pool.cs" />
-    <Compile Include="Engine\Core\ReadOnlyHashSet.cs" />
-    <Compile Include="Engine\Core\String.cs" />
-    <Compile Include="Engine\Core\Text.cs" />
-    <Compile Include="Engine\Core\Tree.cs" />
-    <Compile Include="Engine\Input\IInputHandler.cs" />
-    <Compile Include="Engine\Input\InputAction.cs" />
-    <Compile Include="Engine\Input\InputContext.cs" />
-    <Compile Include="Engine\Input\InputEventPool.cs" />
-    <Compile Include="Engine\Input\KeyEvent.cs" />
-    <Compile Include="Engine\Input\MouseButtonEvent.cs" />
-    <Compile Include="Engine\Input\MouseMoveEvent.cs" />
-    <Compile Include="Engine\Input\MouseWheelEvent.cs" />
-    <Compile Include="Engine\Input\TextInputEvent.cs" />
-    <Compile Include="Engine\Rendering\GraphicsManager.cs" />
-    <Compile Include="Engine\Resources\IniFile.cs" />
-    <Compile Include="Engine\System\Kernel32.cs" />
-    <Compile Include="Engine\System\Libdl.cs" />
-    <Compile Include="Engine\System\LibraryLoader.cs" />
-    <Compile Include="Engine\System\NativeLibrary.cs" />
-    <Compile Include="Game\InputHandler.cs" />
-    <Compile Include="ThirdParty\OpenDDL\Data.cs" />
-    <Compile Include="ThirdParty\OpenDDL\DataArrayList.cs" />
-    <Compile Include="ThirdParty\OpenDDL\DataDescription.cs" />
-    <Compile Include="ThirdParty\OpenDDL\DataList.cs" />
-    <Compile Include="ThirdParty\OpenDDL\Identifier.cs" />
-    <Compile Include="ThirdParty\OpenDDL\Name.cs" />
-    <Compile Include="ThirdParty\OpenDDL\OpenDDL.cs" />
-    <Compile Include="ThirdParty\OpenDDL\PrimitiveStructure.cs" />
-    <Compile Include="ThirdParty\OpenDDL\Property.cs" />
-    <Compile Include="ThirdParty\OpenDDL\Reference.cs" />
-    <Compile Include="ThirdParty\OpenDDL\Structure.cs" />
-    <Compile Include="ThirdParty\OpenDDL\StructureRef.cs" />
-    <Compile Include="ThirdParty\OpenDDL\Symbol.cs" />
-    <Compile Include="ThirdParty\OpenDDL\Text.cs" />
-    <Compile Include="ThirdParty\OpenGEX\File.cs" />
-    <Compile Include="ThirdParty\OpenGEX\OpenGEX.cs" />
-    <Compile Include="ThirdParty\SDL2\Delegates.cs" />
-    <Compile Include="ThirdParty\SDL2\Enums.cs" />
-    <Compile Include="ThirdParty\SDL2\Handles.cs" />
-    <Compile Include="ThirdParty\SDL2\SDL.cs" />
-    <Compile Include="ThirdParty\SDL2\Structs.cs" />
-    <Compile Include="ThirdParty\VulkanMemoryAllocator\Classes.cs" />
-    <Compile Include="ThirdParty\VulkanMemoryAllocator\Delegates.cs" />
-    <Compile Include="ThirdParty\VulkanMemoryAllocator\Enums.cs" />
-    <Compile Include="ThirdParty\VulkanMemoryAllocator\MemoryAllocatorNative.cs" />
-    <Compile Include="ThirdParty\VulkanMemoryAllocator\MemoryRequirements.cs" />
-    <Compile Include="ThirdParty\VulkanMemoryAllocator\Structs.cs" />
-    <Compile Include="ThirdParty\VulkanMemoryAllocator\Vma.cs" />
-    <Compile Include="ThirdParty\Vulkan\Enums.cs" />
-    <Compile Include="ThirdParty\Vulkan\Handles.cs" />
-    <Compile Include="ThirdParty\Vulkan\MarshalUtility.cs" />
-    <Compile Include="ThirdParty\Vulkan\Structs.cs" />
-    <Compile Include="ThirdParty\Vulkan\Types.cs" />
-    <Compile Include="ThirdParty\Vulkan\Vk.cs" />
-    <Compile Include="ThirdParty\Wwise\InitSettings.cs" />
-    <Compile Include="ThirdParty\Wwise\SoundEngine.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.4.0" />

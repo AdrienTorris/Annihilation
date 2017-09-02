@@ -103,7 +103,7 @@ namespace Engine.Wwise
             public static extern bool IsInitialized();
 
             [DllImport(LibraryName)]
-            public static extern Result Init()
+            public static extern Result Init();
         }
     }
 }

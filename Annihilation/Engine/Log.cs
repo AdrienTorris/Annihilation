@@ -1,39 +1,42 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Engine
 {
     public static class Log
     {
+        static Log()
+        {
+            Trace.Listeners.Add(new TextWriterTraceListener(Console.Out));
+        }
+
+        [Conditional("DEBUG")]
         public static void Info(string text)
         {
-            System.Diagnostics.Debug.WriteLine(text, "[Info]");
+            Trace.TraceInformation(text);
         }
 
-        public static void Debug(string text)
-        {
-            Console.ForegroundColor = ConsoleColor.Blue;
-            System.Diagnostics.Debug.WriteLine(text, "[Debug]");
-            Console.ResetColor();
-        }
-
+        [Conditional("DEBUG")]
         public static void Warning(string text)
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
-            System.Diagnostics.Debug.WriteLine(text, "[Warning]");
+            Trace.TraceWarning(text);
             Console.ResetColor();
         }
 
+        [Conditional("DEBUG")]
         public static void Error(string text)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            System.Diagnostics.Debug.WriteLine(text, "[Error]");
+            Trace.TraceError(text);
             Console.ResetColor();
         }
 
+        [Conditional("DEBUG")]
         public static void Performance(string text)
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
-            System.Diagnostics.Debug.WriteLine(text, "[Performance]");
+            Trace.TraceWarning(text);
             Console.ResetColor();
         }
     }

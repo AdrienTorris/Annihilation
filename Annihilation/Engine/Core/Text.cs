@@ -2,7 +2,7 @@
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace Engine.Collections
+namespace Engine
 {
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct Text

@@ -68,7 +68,7 @@ namespace Engine.Input
             _actions = actions;
         }
 
-        public static void BindKeyAction(SDL.KeyCode key, int action, int context)
+        /*public static void BindKeyAction(SDL.KeyCode key, int action, int context)
         {
             if (_keyActions.TryGetValue(context, out Dictionary<SDL.KeyCode, int> actionMap))
             {
@@ -78,7 +78,7 @@ namespace Engine.Input
             {
                 _keyActions.Add(context, new Dictionary<SDL.KeyCode, int>() { { key, action } });
             }
-        }
+        }*/
 
         public static void SwitchContext(int context)
         {
@@ -236,7 +236,7 @@ namespace Engine.Input
 
                         InputHandler?.OnKeyInput(ref keyEvent);
 
-                        _keyActions[_currentContexts]
+                        //_keyActions[_currentContexts]
 
                         break;
                     }

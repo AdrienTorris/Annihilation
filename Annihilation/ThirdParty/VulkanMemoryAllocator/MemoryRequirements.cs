@@ -68,12 +68,12 @@ namespace Vulkan.MemoryAllocator
         /// Flags that must be set in a Memory Type chosen for an allocation.
         /// <para/> Leave 0 if you specify requirement via usage.
         /// </summary>
-        public MemoryPropertyFlags RequiredFlags;
+        public Vk.MemoryPropertyFlags RequiredFlags;
         /// <summary>
         /// Flags that preferably should be set in a Memory Type chosen for an allocation.
         /// <para/> Set to 0 if no additional flags are prefered and only <see cref="RequiredFlags"/> should be used. If not 0, it must be a superset or equal to <see cref="RequiredFlags"/>.
         /// </summary>
-        public MemoryPropertyFlags PreferredFlags;
+        public Vk.MemoryPropertyFlags PreferredFlags;
         /// <summary>
         /// Custom general-purpose pointer that will be stored in <see cref="Allocation"/>, can be read as <see cref="AllocationInfo.UserData"/> and changed using <see cref="MemoryAllocator.SetAllocationUserData"/>.
         /// </summary>

@@ -1,99 +1,99 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Runtime.InteropServices;
 
-using Vulkan;
-using static Vulkan.Vk;
+//using Vulkan;
+//using static Vulkan.Vk;
 
-namespace Engine.Rendering
-{
-    public struct RendererCreateInfo
-    {
-        public string ApplicationName;
-        public bool EnableValidation;
-    }
+//namespace Engine.Rendering
+//{
+//    public struct RendererCreateInfo
+//    {
+//        public string ApplicationName;
+//        public bool EnableValidation;
+//    }
 
-    public unsafe class RendererVulkan
-    {
-        private Instance instance;
+//    public unsafe class RendererVulkan
+//    {
+//        private Instance instance;
 
-        public RendererVulkan(ref RendererCreateInfo createInfo)
-        {
-            // Allocate strings
-            IntPtr applicationName = Marshal.StringToHGlobalAnsi(createInfo.ApplicationName);
-            IntPtr engineName = Marshal.StringToHGlobalAnsi("Tundra Engine");
-            IntPtr[] layers = new IntPtr[]
-            {
-                Marshal.StringToHGlobalAnsi("VK_LAYER_LUNARG_standard_validation")
-            };
-            IntPtr[] extensions = new IntPtr[]
-            {
-                Marshal.StringToHGlobalAnsi("VK_KHR_surface"),
-                Marshal.StringToHGlobalAnsi("VK_KHR_win32_surface"),
-                Marshal.StringToHGlobalAnsi("VK_EXT_debug_report"),
-            };
+//        public RendererVulkan(ref RendererCreateInfo createInfo)
+//        {
+//            // Allocate strings
+//            IntPtr applicationName = Marshal.StringToHGlobalAnsi(createInfo.ApplicationName);
+//            IntPtr engineName = Marshal.StringToHGlobalAnsi("Tundra Engine");
+//            IntPtr[] layers = new IntPtr[]
+//            {
+//                Marshal.StringToHGlobalAnsi("VK_LAYER_LUNARG_standard_validation")
+//            };
+//            IntPtr[] extensions = new IntPtr[]
+//            {
+//                Marshal.StringToHGlobalAnsi("VK_KHR_surface"),
+//                Marshal.StringToHGlobalAnsi("VK_KHR_win32_surface"),
+//                Marshal.StringToHGlobalAnsi("VK_EXT_debug_report"),
+//            };
 
-            List<IntPtr> strings = new List<IntPtr>(6);
-            strings.Add(applicationName);
-            strings.Add(engineName);
-            strings.AddRange(layers);
-            strings.AddRange(extensions);
+//            List<IntPtr> strings = new List<IntPtr>(6);
+//            strings.Add(applicationName);
+//            strings.Add(engineName);
+//            strings.AddRange(layers);
+//            strings.AddRange(extensions);
 
-            // Application info
-            var applicationInfo = new ApplicationInfo
-            {
-                Type = StructureType.ApplicationInfo,
-                ApplicationName = applicationName,
-                ApplicationVersion = new Version(1, 0, 0),
-                EngineName = engineName,
-                EngineVersion = new Version(1, 0, 0),
-                ApiVersion = new Version(1, 0, 0)
-            };
+//            // Application info
+//            var applicationInfo = new ApplicationInfo
+//            {
+//                Type = StructureType.ApplicationInfo,
+//                ApplicationName = applicationName,
+//                ApplicationVersion = new Version(1, 0, 0),
+//                EngineName = engineName,
+//                EngineVersion = new Version(1, 0, 0),
+//                ApiVersion = new Version(1, 0, 0)
+//            };
             
-            // Create the instance
-            fixed (void* layersPointer = &layers[0])
-            fixed (void* extensionsPointer = &extensions[0])
-            {
-                var instanceCreateInfo = new InstanceCreateInfo
-                {
-                    Type = StructureType.InstanceCreateInfo,
-                    ApplicationInfo = new IntPtr(&applicationInfo),
-                    EnabledExtensionCount = (uint)extensions.Length,
-                    EnabledExtensionNames = new IntPtr(extensionsPointer),
-                };
+//            // Create the instance
+//            fixed (void* layersPointer = &layers[0])
+//            fixed (void* extensionsPointer = &extensions[0])
+//            {
+//                var instanceCreateInfo = new InstanceCreateInfo
+//                {
+//                    Type = StructureType.InstanceCreateInfo,
+//                    ApplicationInfo = new IntPtr(&applicationInfo),
+//                    EnabledExtensionCount = (uint)extensions.Length,
+//                    EnabledExtensionNames = new IntPtr(extensionsPointer),
+//                };
 
-                if (createInfo.EnableValidation)
-                {
-                    instanceCreateInfo.EnabledLayerCount = (uint)layers.Length;
-                    instanceCreateInfo.EnabledLayerNames = new IntPtr(layersPointer);
-                }
+//                if (createInfo.EnableValidation)
+//                {
+//                    instanceCreateInfo.EnabledLayerCount = (uint)layers.Length;
+//                    instanceCreateInfo.EnabledLayerNames = new IntPtr(layersPointer);
+//                }
 
-                instance = new Instance(ref instanceCreateInfo, null);
-            }
+//                instance = new Instance(ref instanceCreateInfo, null);
+//            }
 
-            if (createInfo.EnableValidation)
-            {
+//            if (createInfo.EnableValidation)
+//            {
 
-            }
+//            }
             
-            // Free memory
-            foreach(var pointer in strings)
-            {
-                Marshal.FreeHGlobal(pointer);
-            }
-        }
+//            // Free memory
+//            foreach(var pointer in strings)
+//            {
+//                Marshal.FreeHGlobal(pointer);
+//            }
+//        }
 
-        public void Dispose()
-        {
-            instance.Destroy();
-        }
+//        public void Dispose()
+//        {
+//            instance.Destroy();
+//        }
 
-        public void Render()
-        {
+//        public void Render()
+//        {
 
-        }
-    }
-}
+//        }
+//    }
+//}
 
 //using System;
 //using System.Runtime.InteropServices;

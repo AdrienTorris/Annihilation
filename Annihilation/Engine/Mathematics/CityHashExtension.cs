@@ -76,7 +76,7 @@ namespace Engine.Mathematics
         /// </summary>
         /// <param name="value">The string to evaluate.</param>
         /// <returns>The computed 32-bit CityHash.</returns>
-        /// <exception cref="System.ArgumentNullException">value</exception>
+        /// <exception cref="Platform.ArgumentNullException">value</exception>
         /// <remarks>This function encodes the string using the unicode block (ISO/IEC 8859-1).</remarks>
         public static uint GetCityHash32(this string value)
         {
@@ -89,7 +89,7 @@ namespace Engine.Mathematics
         /// </summary>
         /// <param name="value">The string value.</param>
         /// <returns>The computed 64-bit CityHash.</returns>
-        /// <exception cref="System.ArgumentNullException">value</exception>
+        /// <exception cref="Platform.ArgumentNullException">value</exception>
         /// <remarks>This function encodes the string using the unicode block (ISO/IEC 8859-1).</remarks>
         public static ulong GetCityHash64(this string value)
         {
@@ -103,7 +103,7 @@ namespace Engine.Mathematics
         /// <param name="value">The string value.</param>
         /// <param name="seed">Specifies the seed for the CityHash algorithm.</param>
         /// <returns>The computed 64-bit CityHash.</returns>
-        /// <exception cref="System.ArgumentNullException">value</exception>
+        /// <exception cref="Platform.ArgumentNullException">value</exception>
         /// <remarks>This function encodes the string using the unicode block (ISO/IEC 8859-1).</remarks>
         public static ulong GetCityHash64(this string value, ulong seed)
         {
@@ -118,7 +118,7 @@ namespace Engine.Mathematics
         /// <param name="seed0">The low-order 64-bits seed used by the algorithm.</param>
         /// <param name="seed1">The high-order 64-bits seed used by the algorithm.</param>
         /// <returns>The computed 64-bit city hash.</returns>
-        /// <exception cref="System.ArgumentNullException">value</exception>
+        /// <exception cref="Platform.ArgumentNullException">value</exception>
         /// <remarks>This function encodes the string using the unicode block (ISO/IEC 8859-1).</remarks>
         public static ulong GetCityHash64(this string value, ulong seed0, ulong seed1)
         {

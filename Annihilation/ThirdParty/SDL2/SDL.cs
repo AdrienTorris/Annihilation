@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Security;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
-using Engine.System;
+
+
+using Engine;
+using Engine.Platform;
 
 namespace SDL2
 {
@@ -43,17 +47,38 @@ namespace SDL2
         Vulkan
     }
 
+    public static class SDLExtensions
+    {
+        [Conditional("DEBUG")]
+        public static void CheckError(this int value)
+        {
+            if (value != 0)
+            {
+                Log.Error(SDL.GetError());
+            }
+        }
+
+        [Conditional("DEBUG")]
+        public static void CheckError(this IntPtr value)
+        {
+            if (value == IntPtr.Zero)
+            {
+                Log.Error(SDL.GetError());
+            }
+        }
+    }
+
     [SuppressUnmanagedCodeSecurity]
     public static unsafe partial class SDL
     {
         private static readonly NativeLibrary _library = LoadLibrary();
-        
+
         public const int ScanCodeMask = (1 << 30);
         public const int AudioCVTMaxFilters = 9;
 
         private static NativeLibrary LoadLibrary()
         {
-            string name;
+            Text name;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 name = "SDL2.dll";
@@ -76,29 +101,39 @@ namespace SDL2
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static T LoadFunction<T>(string name) => _library.LoadFunction<T>(name);
+        private static T LoadFunction<T>(Text name) => _library.LoadFunction<T>(name);
 
         public static void LoadFunctions(SDLModule module)
         {
             switch (module)
             {
                 case SDLModule.SDL:
+                {
+                    _init = LoadFunction<InitDelegate>("SDL_Init");
                     _initSubSystem = LoadFunction<InitSubSystemDelegate>("SDL_InitSubSystem");
                     _quitSubSystem = LoadFunction<QuitSubSystemDelegate>("SDL_QuitSubSystem");
                     _wasInit = LoadFunction<WasInitDelegate>("SDL_WasInit");
                     _quit = LoadFunction<QuitDelegate>("SDL_Quit");
                     break;
+                }
                 case SDLModule.Audio:
+                {
                     throw new NotImplementedException();
+                }
                 case SDLModule.BlendMode:
+                {
                     _composeCustomBlendMode = LoadFunction<ComposeCustomBlendModeDelegate>("SDL_ComposeCustomBlendMode");
                     break;
+                }
                 case SDLModule.Clipboard:
-                    _setClipboardstring = LoadFunction<SetClipboardstringDelegate>("SDL_SetClipboardstring");
-                    _getClipboardstring = LoadFunction<GetClipboardstringDelegate>("SDL_GetClipboardstring");
-                    _hasClipboardstring = LoadFunction<HasClipboardstringDelegate>("SDL_HasClipboardstring");
+                {
+                    _setClipboardText = LoadFunction<SetClipboardTextDelegate>("SDL_SetClipboardText");
+                    _getClipboardText = LoadFunction<GetClipboardTextDelegate>("SDL_GetClipboardText");
+                    _hasClipboardText = LoadFunction<HasClipboardTextDelegate>("SDL_HasClipboardText");
                     break;
+                }
                 case SDLModule.CpuInfo:
+                {
                     _getCpuCount = LoadFunction<GetCpuCountDelegate>("SDL_GetCPUCount");
                     _getCpuCacheLineSize = LoadFunction<GetCpuCacheLineSizeDelegate>("SDL_GetCPUCacheLineSize");
                     _hasRdtsc = LoadFunction<HasRdtscDelegate>("SDL_HasRDTSC");
@@ -115,12 +150,16 @@ namespace SDL2
                     _hasNeon = LoadFunction<HasNeonDelegate>("SDL_HasNEON");
                     _getSystemRam = LoadFunction<GetSystemRamDelegate>("SDL_GetSystemRAM");
                     break;
+                }
                 case SDLModule.Error:
+                {
                     _setError = LoadFunction<SetErrorDelegate>("SDL_SetError");
                     _getError = LoadFunction<GetErrorDelegate>("SDL_GetError");
                     _clearError = LoadFunction<ClearErrorDelegate>("SDL_ClearError");
                     break;
+                }
                 case SDLModule.Events:
+                {
                     _pumpEvents = LoadFunction<PumpEventsDelegate>("SDL_PumpEvents");
                     _peepEvents = LoadFunction<PeepEventsDelegate>("SDL_PeepEvents");
                     _hasEvent = LoadFunction<HasEventDelegate>("SDL_HasEvent");
@@ -139,11 +178,15 @@ namespace SDL2
                     _eventState = LoadFunction<EventStateDelegate>("SDL_EventState");
                     _registerEvents = LoadFunction<RegisterEventsDelegate>("SDL_RegisterEvents");
                     break;
+                }
                 case SDLModule.FileSystem:
+                {
                     _getBasePath = LoadFunction<GetBasePathDelegate>("SDL_GetBasePath");
                     _getPrefPath = LoadFunction<GetPrefPathDelegate>("SDL_GetPrefPath");
                     break;
+                }
                 case SDLModule.GameController:
+                {
                     _gameControllerAddMappingsFromRW = LoadFunction<GameControllerAddMappingsFromRWDelegate>("SDL_GameControllerAddMappingsFromRW");
                     _gameControllerAddMapping = LoadFunction<GameControllerAddMappingDelegate>("SDL_GameControllerAddMapping");
                     _gameControllerNumMappings = LoadFunction<GameControllerNumMappingsDelegate>("SDL_GameControllerNumMappings");
@@ -162,28 +205,38 @@ namespace SDL2
                     _gameControllerGetJoystick = LoadFunction<GameControllerGetJoystickDelegate>("SDL_GameControllerGetJoystick");
                     _gameControllerEventState = LoadFunction<GameControllerEventStateDelegate>("SDL_GameControllerEventState");
                     _gameControllerUpdate = LoadFunction<GameControllerUpdateDelegate>("SDL_GameControllerUpdate");
-                    _gameControllerGetAxisFromString = LoadFunction<GameControllerGetAxisFromStringDelegate>("SDL_GameControllerGetAxisFromString");
-                    _gameControllerGetStringForAxis = LoadFunction<GameControllerGetStringForAxisDelegate>("SDL_GameControllerGetStringForAxis");
+                    _gameControllerGetAxisFromText = LoadFunction<GameControllerGetAxisFromTextDelegate>("SDL_GameControllerGetAxisFromText");
+                    _gameControllerGetTextForAxis = LoadFunction<GameControllerGetTextForAxisDelegate>("SDL_GameControllerGetTextForAxis");
                     _gameControllerGetBindForAxis = LoadFunction<GameControllerGetBindForAxisDelegate>("SDL_GameControllerGetBindForAxis");
                     _gameControllerGetAxis = LoadFunction<GameControllerGetAxisDelegate>("SDL_GameControllerGetAxis");
-                    _gameControllerGetButtonFromString = LoadFunction<GameControllerGetButtonFromStringDelegate>("SDL_GameControllerGetButtonFromString");
-                    _gameControllerGetStringForButton = LoadFunction<GameControllerGetStringForButtonDelegate>("SDL_GameControllerGetStringForButton");
+                    _gameControllerGetButtonFromText = LoadFunction<GameControllerGetButtonFromTextDelegate>("SDL_GameControllerGetButtonFromText");
+                    _gameControllerGetTextForButton = LoadFunction<GameControllerGetTextForButtonDelegate>("SDL_GameControllerGetTextForButton");
                     _gameControllerGetBindForButton = LoadFunction<GameControllerGetBindForButtonDelegate>("SDL_GameControllerGetBindForButton");
                     _gameControllerGetButton = LoadFunction<GameControllerGetButtonDelegate>("SDL_GameControllerGetButton");
                     _gameControllerClose = LoadFunction<GameControllerCloseDelegate>("SDL_GameControllerClose");
                     break;
+                }
                 case SDLModule.Gesture:
+                {
                     throw new NotImplementedException();
+                }
                 case SDLModule.Haptic:
+                {
                     throw new NotImplementedException();
+                }
                 case SDLModule.Hints:
+                {
                     _setHintWithPriority = LoadFunction<SetHintWithPriorityDelegate>("SDL_SetHintWithPriority");
                     _setHint = LoadFunction<SetHintDelegate>("SDL_SetHint");
                     _getHint = LoadFunction<GetHintDelegate>("SDL_GetHint");
-                    _getHintBoolean = LoadFunction<GetHintBooleanDelegate>("SDL_GetHintBoolean");                    _addHintCallback = LoadFunction<AddHintCallbackDelegate>("SDL_AddHintCallback");
-                    _delHintCallback = LoadFunction<DelHintCallbackDelegate>("SDL_DelHintCallback");                    _clearHints = LoadFunction<ClearHintsDelegate>("SDL_ClearHints");
+                    _getHintBoolean = LoadFunction<GetHintBooleanDelegate>("SDL_GetHintBoolean");
+                    _addHintCallback = LoadFunction<AddHintCallbackDelegate>("SDL_AddHintCallback");
+                    _delHintCallback = LoadFunction<DelHintCallbackDelegate>("SDL_DelHintCallback");
+                    _clearHints = LoadFunction<ClearHintsDelegate>("SDL_ClearHints");
                     break;
+                }
                 case SDLModule.Joystick:
+                {
                     _numJoysticks = LoadFunction<NumJoysticksDelegate>("SDL_NumJoysticks");
                     _joystickNameForIndex = LoadFunction<JoystickNameForIndexDelegate>("SDL_JoystickNameForIndex");
                     _joystickGetDeviceGuid = LoadFunction<JoystickGetDeviceGuidDelegate>("SDL_JoystickGetDeviceGUID");
@@ -200,8 +253,8 @@ namespace SDL2
                     _joystickGetProduct = LoadFunction<JoystickGetProductDelegate>("SDL_JoystickGetProduct");
                     _joystickGetProductVersion = LoadFunction<JoystickGetProductVersionDelegate>("SDL_JoystickGetProductVersion");
                     _joystickGetType = LoadFunction<JoystickGetTypeDelegate>("SDL_JoystickGetType");
-                    _joystickGetGuidString = LoadFunction<JoystickGetGuidStringDelegate>("SDL_JoystickGetGUIDString");
-                    _joystickGetGuidFromString = LoadFunction<JoystickGetGuidFromStringDelegate>("SDL_JoystickGetGUIDFromString");
+                    _joystickGetGuidText = LoadFunction<JoystickGetGuidTextDelegate>("SDL_JoystickGetGUIDText");
+                    _joystickGetGuidFromText = LoadFunction<JoystickGetGuidFromTextDelegate>("SDL_JoystickGetGUIDFromText");
                     _joystickGetAttached = LoadFunction<JoystickGetAttachedDelegate>("SDL_JoystickGetAttached");
                     _joystickInstanceID = LoadFunction<JoystickInstanceIDDelegate>("SDL_JoystickInstanceID");
                     _joystickNumAxes = LoadFunction<JoystickNumAxesDelegate>("SDL_JoystickNumAxes");
@@ -218,7 +271,9 @@ namespace SDL2
                     _joystickClose = LoadFunction<JoystickCloseDelegte>("SDL_JoystickClose");
                     _joystickCurrentPowerLevel = LoadFunction<JoystickCurrentPowerLevelDelegate>("SDL_JoystickCurrentPowerLevel");
                     break;
+                }
                 case SDLModule.Keyboard:
+                {
                     _getKeyboardFocus = LoadFunction<GetKeyboardFocusDelegate>("SDL_GetKeyboardFocus");
                     _getKeyboardState = LoadFunction<GetKeyboardStateDelegate>("SDL_GetKeyboardState");
                     _getModState = LoadFunction<GetModStateDelegate>("SDL_GetModState");
@@ -236,12 +291,16 @@ namespace SDL2
                     _hasScreenKeyboardSupport = LoadFunction<HasScreenKeyboardSupportDelegate>("SDL_HasScreenKeyboardSupport");
                     _isScreenKeyboardShown = LoadFunction<IsScreenKeyboardShownDelegate>("SDL_IsScreenKeyboardShown");
                     break;
+                }
                 case SDLModule.LoadSO:
+                {
                     _loadObject = LoadFunction<LoadObjectDelegate>("SDL_LoadObject");
                     _loadFunction = LoadFunction<LoadFunctionDelegate>("SDL_LoadFunction");
                     _unloadObject = LoadFunction<UnloadObjectDelegate>("SDL_UnloadObject");
                     break;
+                }
                 case SDLModule.Log:
+                {
                     _logSetAllPriority = LoadFunction<LogSetAllPriorityDelegate>("SDL_LogSetAllPriority");
                     _logSetPriority = LoadFunction<LogSetPriorityDelegate>("SDL_LogSetPriority");
                     _logGetPriority = LoadFunction<LogGetPriorityDelegate>("SDL_LogGetPriority");
@@ -257,11 +316,15 @@ namespace SDL2
                     _logGetOutputFunction = LoadFunction<LogGetOutputFunctionDelegate>("SDL_LogGetOutputFunction");
                     _logSetOutputFunction = LoadFunction<LogSetOutputFunctionDelegate>("SDL_LogSetOutputFunction");
                     break;
+                }
                 case SDLModule.MessageBox:
+                {
                     _showMessageBox = LoadFunction<ShowMessageBoxDelegate>("SDL_ShowMessageBox");
                     _showSimpleMessageBox = LoadFunction<ShowSimpleMessageBoxDelegate>("SDL_ShowSimpleMessageBox");
                     break;
+                }
                 case SDLModule.Mouse:
+                {
                     _getMouseFocus = LoadFunction<GetMouseFocusDelegate>("SDL_GetMouseFocus");
                     _getMouseState = LoadFunction<GetMouseStateDelegate>("SDL_GetMouseState");
                     _getGlobalMouseState = LoadFunction<GetGlobalMouseStateDelegate>("SDL_GetGlobalMouseState");
@@ -276,11 +339,13 @@ namespace SDL2
                     _createSystemCursor = LoadFunction<CreateSystemCursorDelegate>("SDL_CreateSystemCursor");
                     _setCursor = LoadFunction<SetCursorDelegate>("SDL_SetCursor");
                     _getCursor = LoadFunction<GetCursorDelegate>("SDL_GetCursor");
-                    _getDefaultCursor = LoadFunction<GetDefaultCursorDelegate>("SDL_GetDefaultCusror");
+                    _getDefaultCursor = LoadFunction<GetDefaultCursorDelegate>("SDL_GetDefaultCursor");
                     _freeCursor = LoadFunction<FreeCursorDelegate>("SDL_FreeCursor");
                     _showCursor = LoadFunction<ShowCursorDelegate>("SDL_ShowCursor");
                     break;
+                }
                 case SDLModule.Pixels:
+                {
                     _getPixelFormatName = LoadFunction<GetPixelFormatNameDelegate>("SDL_GetPixelFormatName");
                     _pixelFormatEnumToMasks = LoadFunction<PixelFormatEnumToMasksDelegate>("SDL_PixelFormatEnumToMasks");
                     _masksToPixelFormatEnum = LoadFunction<MasksToPixelFormatEnumDelegate>("SDL_MasksToPixelFormatEnum");
@@ -296,20 +361,28 @@ namespace SDL2
                     _getRgba = LoadFunction<GetRgbaDelegate>("SDL_GetRGBA");
                     _calculateGammaRamp = LoadFunction<CalculateGammaRampDelegate>("SDL_CalculateGammaRamp");
                     break;
+                }
                 case SDLModule.Platform:
+                {
                     _getPlatform = LoadFunction<GetPlatformDelegate>("SDL_GetPlatform");
                     break;
+                }
                 case SDLModule.Power:
+                {
                     _getPowerInfo = LoadFunction<GetPowerInfoDelegate>("SDL_GetPowerInfo");
                     break;
+                }
                 case SDLModule.Rect:
+                {
                     _hasIntersection = LoadFunction<HasIntersectionDelegate>("SDL_HasIntersection");
                     _intersectRect = LoadFunction<IntersectRectDelegate>("SDL_IntersectRect");
                     _unionRect = LoadFunction<UnionRectDelegate>("SDL_UnionRect");
                     _enclosePoints = LoadFunction<EnclosePointsDelegate>("SDL_EnclosePoints");
                     _intersectRectAndLine = LoadFunction<IntersectRectAndLineDelegate>("SDL_IntersectRectAndLine");
                     break;
+                }
                 case SDLModule.Render:
+                {
                     _getNumRenderDrivers = LoadFunction<GetNumRenderDriversDelegate>("SDL_GetNumRenderDrivers");
                     _getRenderDriverInfo = LoadFunction<GetRenderDriverInfoDelegate>("SDL_GetRenderDriverInfo");
                     _createWindowAndRenderer = LoadFunction<CreateWindowAndRendererDelegate>("SDL_CreateWindowAndRenderer");
@@ -365,24 +438,35 @@ namespace SDL2
                     _destroyTexture = LoadFunction<DestroyTextureDelegate>("SDL_DestroyTexture");
                     _destroyRenderer = LoadFunction<DestroyRendererDelegate>("SDL_DestroyRenderer");
                     break;
+                }
                 case SDLModule.Rwops:
+                {
                     _rwFromFile = LoadFunction<RWFromFileDelegate>("SDL_RWFromFile");
                     break;
+                }
                 case SDLModule.Shape:
+                {
                     _createShapedWindow = LoadFunction<CreateShapedWindowDelegate>("SDL_CreateShapedWindow");
                     _isShapedWindow = LoadFunction<IsShapedWindowDelegate>("SDL_IsShapedWindow");
                     _setWindowShape = LoadFunction<SetWindowShapeDelegate>("SDL_SetWindowShape");
                     _getShapedWindowMode = LoadFunction<GetShapedWindowModeDelegate>("SDL_GetShapedWindowMode");
                     break;
+                }
                 case SDLModule.Surface:
-
-                    break;
-                case SDLModule.System:
+                {
                     throw new NotImplementedException();
+                }
+                case SDLModule.System:
+                {
+                    throw new NotImplementedException();
+                }
                 case SDLModule.SysWm:
+                {
                     _getWindowWMInfo = LoadFunction<GetWindowWMInfoDelegate>("SDL_GetWindowWMInfo");
                     break;
+                }
                 case SDLModule.Timer:
+                {
                     _getTicks = LoadFunction<GetTicksDelegate>("SDL_GetTicks");
                     _getPerformanceCounter = LoadFunction<GetPerformanceCounterDelegate>("SDL_GetPerformanceCounter");
                     _getPerformanceFrequency = LoadFunction<GetPerformanceFrequencyDelegate>("SDL_GetPerformanceFrequency");
@@ -390,14 +474,20 @@ namespace SDL2
                     _addTimer = LoadFunction<AddTimerDelegate>("SDL_AddTimer");
                     _removeTimer = LoadFunction<RemoveTimerDelegate>("SDL_RemoveTimer");
                     break;
+                }
                 case SDLModule.Touch:
+                {
                     throw new NotImplementedException();
+                }
                 case SDLModule.Version:
+                {
                     _getVersion = LoadFunction<GetVersionDelegate>("SDL_GetVersion");
                     _getRevision = LoadFunction<GetRevisionDelegate>("SDL_GetRevision");
                     _getRevisionNumber = LoadFunction<GetRevisionNumberDelegate>("SDL_GetRevisionNumber");
                     break;
+                }
                 case SDLModule.Video:
+                {
                     _getNumVideoDrivers = LoadFunction<GetNumVideoDriversDelegate>("SDL_GetNumVideoDrivers");
                     _getVideoDriver = LoadFunction<GetVideoDriverDelegate>("SDL_GetVideoDriver");
                     _videoInit = LoadFunction<VideoInitDelegate>("SDL_VideoInit");
@@ -465,7 +555,9 @@ namespace SDL2
                     _enableScreenSaver = LoadFunction<EnableScreenSaverDelegate>("SDL_EnableScreenSaver");
                     _disableScreenSaver = LoadFunction<DisableScreenSaverDelegate>("SDL_DisableScreenSaver");
                     break;
+                }
                 case SDLModule.Vulkan:
+                {
                     _vulkanLoadLibrary = LoadFunction<VulkanLoadLibraryDelegate>("SDL_Vulkan_LoadLibrary");
                     _vulkanGetVkGetInstanceProcAddr = LoadFunction<VulkanGetVkGetInstanceProcAddrDelegate>("SDL_Vulkan_GetVkGetInstanceProcAddr");
                     _vulkanUnloadLibrary = LoadFunction<VulkanUnloadLibraryDelegate>("SDL_Vulkan_UnloadLibrary");
@@ -473,6 +565,7 @@ namespace SDL2
                     _vulkanCreateSurface = LoadFunction<VulkanCreateSurfaceDelegate>("SDL_Vulkan_CreateSurface");
                     _vulkanGetDrawableSize = LoadFunction<VulkanGetDrawableSizeDelegate>("SDL_Vulkan_GetDrawableSize");
                     break;
+                }
             }
         }
 
@@ -576,7 +669,7 @@ namespace SDL2
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public static uint DefinePixelFormat(PixelType type, PixelOrder order, PackedLayout layout, byte bits, byte bytes) => (uint)((1 << 28) | ((byte)type << 24) | ((byte)order << 20) | ((byte)layout << 16) | (bits << 8) | bytes);
         }
-
+        
         //
         // SDL.h
         //
@@ -586,7 +679,8 @@ namespace SDL2
 
         private delegate int InitSubSystemDelegate(InitFlags flags);
         private static InitSubSystemDelegate _initSubSystem;
-        public static int InitSubSystem(InitFlags flags) => _initSubSystem(flags);
+        // TODO: Find a way to skip verification in RELEASE
+        public static int InitSubSystem(InitFlags flags) => _initSubSystem != null ? _initSubSystem(flags) : throw new NullReferenceException($"You need to call {nameof(LoadFunctions)}({nameof(SDLModule)}.{SDLModule.SDL}) before calling this method.");
 
         private delegate void QuitSubSystemDelegate(InitFlags flags);
         private static QuitSubSystemDelegate _quitSubSystem;
@@ -612,17 +706,17 @@ namespace SDL2
         //
         // SDL_clipboard.h
         //
-        private delegate int SetClipboardstringDelegate(string text);
-        private static SetClipboardstringDelegate _setClipboardstring;
-        public static int SetClipboardstring(string text) => _setClipboardstring(text);
+        private delegate int SetClipboardTextDelegate(Text text);
+        private static SetClipboardTextDelegate _setClipboardText;
+        public static int SetClipboardText(Text text) => _setClipboardText(text);
 
-        private delegate string GetClipboardstringDelegate();
-        private static GetClipboardstringDelegate _getClipboardstring;
-        public static string GetClipboardstring() => _getClipboardstring();
+        private delegate Text GetClipboardTextDelegate();
+        private static GetClipboardTextDelegate _getClipboardText;
+        public static Text GetClipboardText() => _getClipboardText();
 
-        private delegate bool HasClipboardstringDelegate();
-        private static HasClipboardstringDelegate _hasClipboardstring;
-        public static bool HasClipboardstring() => _hasClipboardstring();
+        private delegate bool HasClipboardTextDelegate();
+        private static HasClipboardTextDelegate _hasClipboardText;
+        public static bool HasClipboardText() => _hasClipboardText();
 
         //
         // SDL_cpuinfo.h
@@ -690,13 +784,13 @@ namespace SDL2
         //
         // SDL_error.h
         //
-        private delegate string GetErrorDelegate();
+        private delegate Text GetErrorDelegate();
         private static GetErrorDelegate _getError;
-        public static string GetError() => _getError();
+        public static Text GetError() => _getError();
 
-        private delegate int SetErrorDelegate(string format, params object[] objects);
+        private delegate int SetErrorDelegate(Text format, params object[] objects);
         private static SetErrorDelegate _setError;
-        public static int SetError(string format, params object[] objects) => _setError(format, objects);
+        public static int SetError(Text format, params object[] objects) => _setError(format, objects);
 
         private delegate void ClearErrorDelegate();
         private static ClearErrorDelegate _clearError;
@@ -729,21 +823,21 @@ namespace SDL2
         private static FlushEventsDelegate _flushEvents;
         public static void FlushEvents(EventType minType, EventType maxType) => _flushEvents(minType, maxType);
 
-        private delegate int PollEventDelegate(out Event sdlEvent);
+        private delegate int PollEventDelegate(out Event @event);
         private static PollEventDelegate _pollEvent;
-        public static int PollEvent(out Event sdlEvent) => _pollEvent(out sdlEvent);
+        public static int PollEvent(out Event @event) => _pollEvent(out @event);
 
-        private delegate int WaitEventDelegate(out Event sdlEvent);
+        private delegate int WaitEventDelegate(out Event @event);
         private static WaitEventDelegate _waitEvent;
-        public static int WaitEvent(out Event sdlEvent) => _waitEvent(out sdlEvent);
+        public static int WaitEvent(out Event @event) => _waitEvent(out @event);
 
-        private delegate int WaitEventTimeoutDelegate(out Event sdlEvent, int timeout);
+        private delegate int WaitEventTimeoutDelegate(out Event @event, int timeout);
         private static WaitEventTimeoutDelegate _waitEventTimeout;
-        public static int WaitEventTimeout(out Event sdlEvent, int timeout) => _waitEventTimeout(out sdlEvent, timeout);
+        public static int WaitEventTimeout(out Event @event, int timeout) => _waitEventTimeout(out @event, timeout);
 
-        private delegate int PushEventDelegate(ref Event sdlEvent);
+        private delegate int PushEventDelegate(ref Event @event);
         private static PushEventDelegate _pushEvent;
-        public static int PushEvent(ref Event sdlEvent) => _pushEvent(ref sdlEvent);
+        public static int PushEvent(ref Event @event) => _pushEvent(ref @event);
 
         private delegate void SetEventFilterDelegate(EventFilter filter, IntPtr userData);
         private static SetEventFilterDelegate _setEventFilter;
@@ -778,50 +872,50 @@ namespace SDL2
         //
         // SDL_filesystem.h
         //
-        private delegate string GetBasePathDelegate();
+        private delegate Text GetBasePathDelegate();
         private static GetBasePathDelegate _getBasePath;
-        public static string GetBasePath() => _getBasePath();
+        public static Text GetBasePath() => _getBasePath();
 
-        private delegate string GetPrefPathDelegate(string org, string app);
+        private delegate Text GetPrefPathDelegate(Text org, Text app);
         private static GetPrefPathDelegate _getPrefPath;
-        public static string GetPrefPath(string org, string app) => _getPrefPath(org, app);
+        public static Text GetPrefPath(Text org, Text app) => _getPrefPath(org, app);
 
         //
-        // SDL_gamecontroller.h
+        // SDL_gamecontroller.h56tr
         //
         private delegate int GameControllerAddMappingsFromRWDelegate(RWops rwOps, int freeRW);
         private static GameControllerAddMappingsFromRWDelegate _gameControllerAddMappingsFromRW;
         public static int GameControllerAddMappingsFromRW(RWops rwOps, int freeRW) => _gameControllerAddMappingsFromRW(rwOps, freeRW);
 
-        public static int GameControllerAddMappingsFromFile(string file) => _gameControllerAddMappingsFromRW(RWFromFile(file, "rb"), 1);
+        public static int GameControllerAddMappingsFromFile(Text file) => _gameControllerAddMappingsFromRW(RWFromFile(file, "rb"), 1);
 
-        private delegate int GameControllerAddMappingDelegate(string mappginString);
+        private delegate int GameControllerAddMappingDelegate(Text mappginText);
         private static GameControllerAddMappingDelegate _gameControllerAddMapping;
-        public static int GameControllerAddMapping(string mappingString) => _gameControllerAddMapping(mappingString);
+        public static int GameControllerAddMapping(Text mappingText) => _gameControllerAddMapping(mappingText);
 
         private delegate int GameControllerNumMappingsDelegate();
         private static GameControllerNumMappingsDelegate _gameControllerNumMappings;
         public static int GameControllerNumMappings() => _gameControllerNumMappings();
 
-        private delegate string GameControllerMappingForIndexDelegate(int mappingIndex);
+        private delegate Text GameControllerMappingForIndexDelegate(int mappingIndex);
         private static GameControllerMappingForIndexDelegate _gameControllerMappingForIndex;
-        public static string GameControllerMappingForIndex(int mappingIndex) => _gameControllerMappingForIndex(mappingIndex);
+        public static Text GameControllerMappingForIndex(int mappingIndex) => _gameControllerMappingForIndex(mappingIndex);
 
-        private delegate string GameControllerMappingForGuidDelegate(Guid guid);
+        private delegate Text GameControllerMappingForGuidDelegate(Guid guid);
         private static GameControllerMappingForGuidDelegate _gameControllerMappingForGuid;
-        public static string GameControllerMappingForGuid(Guid guid) => _gameControllerMappingForGuid(guid);
+        public static Text GameControllerMappingForGuid(Guid guid) => _gameControllerMappingForGuid(guid);
 
-        private delegate string GameControllerMappingDelegate(GameController gameController);
+        private delegate Text GameControllerMappingDelegate(GameController gameController);
         private static GameControllerMappingDelegate _gameControllerMapping;
-        public static string GameControllerMapping(GameController gameController) => _gameControllerMapping(gameController);
+        public static Text GameControllerMapping(GameController gameController) => _gameControllerMapping(gameController);
 
         private delegate bool IsGameControllerDelegate(int joystickIndex);
         private static IsGameControllerDelegate _isGameController;
         public static bool IsGameController(int joystickIndex) => _isGameController(joystickIndex);
 
-        private delegate string GameControllerNameForIndexDelegate(int joystickIndex);
+        private delegate Text GameControllerNameForIndexDelegate(int joystickIndex);
         private static GameControllerNameForIndexDelegate _gameControllerNameForIndex;
-        public static string GameControllerNameForIndex(int joystickIndex) => _gameControllerNameForIndex(joystickIndex);
+        public static Text GameControllerNameForIndex(int joystickIndex) => _gameControllerNameForIndex(joystickIndex);
 
         private delegate GameController GameControllerOpenDelegate(int joystickIndex);
         private static GameControllerOpenDelegate _gameControllerOpen;
@@ -831,9 +925,9 @@ namespace SDL2
         private static GameControllerFromInstanceIDDelegate _gameControllerFromInstanceID;
         public static GameController GameControllerFromInstanceID(JoystickID joystickID) => _gameControllerFromInstanceID(joystickID);
 
-        private delegate string GameControllerNameDelegate(GameController gameController);
+        private delegate Text GameControllerNameDelegate(GameController gameController);
         private static GameControllerNameDelegate _gameControllerName;
-        public static string GameControllerName(GameController gameController) => _gameControllerName(gameController);
+        public static Text GameControllerName(GameController gameController) => _gameControllerName(gameController);
 
         private delegate ushort GameControllerGetVendorDelegate(GameController gameController);
         private static GameControllerGetVendorDelegate _gameControllerGetVendor;
@@ -863,13 +957,13 @@ namespace SDL2
         private static GameControllerUpdateDelegate _gameControllerUpdate;
         public static void GameControllerUpdate() => _gameControllerUpdate();
 
-        private delegate GameControllerAxis GameControllerGetAxisFromStringDelegate(string pchString);
-        private static GameControllerGetAxisFromStringDelegate _gameControllerGetAxisFromString;
-        public static GameControllerAxis GameControllerGetAxisFromString(string pchString) => _gameControllerGetAxisFromString(pchString);
+        private delegate GameControllerAxis GameControllerGetAxisFromTextDelegate(Text pchText);
+        private static GameControllerGetAxisFromTextDelegate _gameControllerGetAxisFromText;
+        public static GameControllerAxis GameControllerGetAxisFromText(Text pchText) => _gameControllerGetAxisFromText(pchText);
 
-        private delegate string GameControllerGetStringForAxisDelegate(GameControllerAxis axis);
-        private static GameControllerGetStringForAxisDelegate _gameControllerGetStringForAxis;
-        public static string GameControllerGetStringForAxis(GameControllerAxis axis) => _gameControllerGetStringForAxis(axis);
+        private delegate Text GameControllerGetTextForAxisDelegate(GameControllerAxis axis);
+        private static GameControllerGetTextForAxisDelegate _gameControllerGetTextForAxis;
+        public static Text GameControllerGetTextForAxis(GameControllerAxis axis) => _gameControllerGetTextForAxis(axis);
 
         private delegate GameControllerButtonBind GameControllerGetBindForAxisDelegate(GameController gameController, GameControllerAxis axis);
         private static GameControllerGetBindForAxisDelegate _gameControllerGetBindForAxis;
@@ -879,13 +973,13 @@ namespace SDL2
         private static GameControllerGetAxisDelegate _gameControllerGetAxis;
         public static short GameControllerGetAxis(GameController gameController, GameControllerAxis axis) => _gameControllerGetAxis(gameController, axis);
 
-        private delegate GameControllerButton GameControllerGetButtonFromStringDelegate(string pchString);
-        private static GameControllerGetButtonFromStringDelegate _gameControllerGetButtonFromString;
-        public static GameControllerButton GameControllerGetButtonFromString(string pchString) => _gameControllerGetButtonFromString(pchString);
+        private delegate GameControllerButton GameControllerGetButtonFromTextDelegate(Text pchText);
+        private static GameControllerGetButtonFromTextDelegate _gameControllerGetButtonFromText;
+        public static GameControllerButton GameControllerGetButtonFromText(Text pchText) => _gameControllerGetButtonFromText(pchText);
 
-        private delegate string GameControllerGetStringForButtonDelegate(GameControllerButton button);
-        private static GameControllerGetStringForButtonDelegate _gameControllerGetStringForButton;
-        public static string GameControllerGetStringForButton(GameControllerButton button) => _gameControllerGetStringForButton(button);
+        private delegate Text GameControllerGetTextForButtonDelegate(GameControllerButton button);
+        private static GameControllerGetTextForButtonDelegate _gameControllerGetTextForButton;
+        public static Text GameControllerGetTextForButton(GameControllerButton button) => _gameControllerGetTextForButton(button);
 
         private delegate GameControllerButtonBind GameControllerGetBindForButtonDelegate(GameController gameController, GameControllerButton button);
         private static GameControllerGetBindForButtonDelegate _gameControllerGetBindForButton;
@@ -905,29 +999,29 @@ namespace SDL2
         //
         // SDL_hints.h
         //
-        private delegate bool SetHintWithPriorityDelegate(string name, string value, HintPriority priority);
+        private delegate bool SetHintWithPriorityDelegate(Text name, Text value, HintPriority priority);
         private static SetHintWithPriorityDelegate _setHintWithPriority;
-        public static bool SetHintWithPriority(string name, string value, HintPriority priority) => _setHintWithPriority(name, value, priority);
+        public static bool SetHintWithPriority(Text name, Text value, HintPriority priority) => _setHintWithPriority(name, value, priority);
 
-        private delegate bool SetHintDelegate(string name, string value);
+        private delegate bool SetHintDelegate(Text name, Text value);
         private static SetHintDelegate _setHint;
-        public static bool SetHint(string name, string value) => _setHint(name, value);
+        public static bool SetHint(Text name, Text value) => _setHint(name, value);
 
-        private delegate string GetHintDelegate(string name);
+        private delegate Text GetHintDelegate(Text name);
         private static GetHintDelegate _getHint;
-        private static string GetHint(string name) => _getHint(name);
+        private static Text GetHint(Text name) => _getHint(name);
 
-        private delegate bool GetHintBooleanDelegate(string name, bool defaultValue);
+        private delegate bool GetHintBooleanDelegate(Text name, bool defaultValue);
         private static GetHintBooleanDelegate _getHintBoolean;
-        public static bool GetHintBoolean(string name, bool defaultValue) => _getHintBoolean(name, defaultValue);
+        public static bool GetHintBoolean(Text name, bool defaultValue) => _getHintBoolean(name, defaultValue);
 
-        private delegate void AddHintCallbackDelegate(string name, HintCallback callback, IntPtr userData);
+        private delegate void AddHintCallbackDelegate(Text name, HintCallback callback, IntPtr userData);
         private static AddHintCallbackDelegate _addHintCallback;
-        public static void AddHintCallback(string name, HintCallback callback, IntPtr userData) => _addHintCallback(name, callback, userData);
+        public static void AddHintCallback(Text name, HintCallback callback, IntPtr userData) => _addHintCallback(name, callback, userData);
 
-        private delegate void DelHintCallbackDelegate(string name, HintCallback callback, IntPtr userData);
+        private delegate void DelHintCallbackDelegate(Text name, HintCallback callback, IntPtr userData);
         private static DelHintCallbackDelegate _delHintCallback;
-        public static void DelHintCallback(string name, HintCallback callback, IntPtr userData) => _delHintCallback(name, callback, userData);
+        public static void DelHintCallback(Text name, HintCallback callback, IntPtr userData) => _delHintCallback(name, callback, userData);
 
         private delegate void ClearHintsDelegate();
         private static ClearHintsDelegate _clearHints;
@@ -940,9 +1034,9 @@ namespace SDL2
         private static NumJoysticksDelegate _numJoysticks;
         public static int NumJoysticks() => _numJoysticks();
 
-        private delegate string JoystickNameForIndexDelegate(int deviceIndex);
+        private delegate Text JoystickNameForIndexDelegate(int deviceIndex);
         private static JoystickNameForIndexDelegate _joystickNameForIndex;
-        public static string JoystickNameForIndex(int deviceIndex) => _joystickNameForIndex(deviceIndex);
+        public static Text JoystickNameForIndex(int deviceIndex) => _joystickNameForIndex(deviceIndex);
 
         private delegate Guid JoystickGetDeviceGuidDelegate(int deviceIndex);
         private static JoystickGetDeviceGuidDelegate _joystickGetDeviceGuid;
@@ -976,9 +1070,9 @@ namespace SDL2
         private static JoystickFromInstanceIDDelegate _joystickFromInstanceID;
         public static Joystick JoystickFromInstanceID(JoystickID joystickID) => _joystickFromInstanceID(joystickID);
 
-        private delegate string JoystickNameDelegate(Joystick joystick);
+        private delegate Text JoystickNameDelegate(Joystick joystick);
         private static JoystickNameDelegate _joystickName;
-        public static string JoystickName(Joystick joystick) => _joystickName(joystick);
+        public static Text JoystickName(Joystick joystick) => _joystickName(joystick);
 
         private delegate Guid JoystickGetGuidDelegate(Joystick joystick);
         private static JoystickGetGuidDelegate _joystickGetGuid;
@@ -1001,13 +1095,13 @@ namespace SDL2
         private static JoystickGetTypeDelegate _joystickGetType;
         public static JoystickType JoystickGetType(Joystick joystick) => _joystickGetType(joystick);
 
-        private delegate void JoystickGetGuidStringDelegate(Guid guid, string pszGuid, int cbGuid);
-        private static JoystickGetGuidStringDelegate _joystickGetGuidString;
-        public static void JoystickGetGuidString(Guid guid, string pszGUID, int cbGUID) => _joystickGetGuidString(guid, pszGUID, cbGUID);
+        private delegate void JoystickGetGuidTextDelegate(Guid guid, Text pszGuid, int cbGuid);
+        private static JoystickGetGuidTextDelegate _joystickGetGuidText;
+        public static void JoystickGetGuidText(Guid guid, Text pszGUID, int cbGUID) => _joystickGetGuidText(guid, pszGUID, cbGUID);
 
-        private delegate Guid JoystickGetGuidFromStringDelegate(string pchGuid);
-        private static JoystickGetGuidFromStringDelegate _joystickGetGuidFromString;
-        public static Guid JoystickGetGUIDFromString(string pchGUID) => _joystickGetGuidFromString(pchGUID);
+        private delegate Guid JoystickGetGuidFromTextDelegate(Text pchGuid);
+        private static JoystickGetGuidFromTextDelegate _joystickGetGuidFromText;
+        public static Guid JoystickGetGUIDFromText(Text pchGUID) => _joystickGetGuidFromText(pchGUID);
 
         private delegate bool JoystickGetAttachedDelegate(Joystick joystick);
         private static JoystickGetAttachedDelegate _joystickGetAttached;
@@ -1076,9 +1170,9 @@ namespace SDL2
         private static GetKeyboardFocusDelegate _getKeyboardFocus;
         public static Window GetKeyboardFocus() => _getKeyboardFocus();
 
-        private delegate string GetKeyboardStateDelegate(out int numKeys);
+        private delegate Text GetKeyboardStateDelegate(out int numKeys);
         private static GetKeyboardStateDelegate _getKeyboardState;
-        public static string GetKeyboardState(out int numkeys) => _getKeyboardState(out numkeys);
+        public static Text GetKeyboardState(out int numkeys) => _getKeyboardState(out numkeys);
 
         private delegate KeyMod GetModStateDelegate();
         private static GetModStateDelegate _getModState;
@@ -1096,21 +1190,21 @@ namespace SDL2
         private static GetScancodeFromKeyDelegate _getScancodeFromKey;
         public static Scancode GetScancodeFromKey(KeyCode key) => _getScancodeFromKey(key);
 
-        private delegate string GetScancodeNameDelegate(Scancode scancode);
+        private delegate Text GetScancodeNameDelegate(Scancode scancode);
         private static GetScancodeNameDelegate _getScancodeName;
-        public static string GetScancodeName(Scancode scancode) => _getScancodeName(scancode);
+        public static Text GetScancodeName(Scancode scancode) => _getScancodeName(scancode);
 
-        private delegate Scancode GetScancodeFromNameDelegate(string name);
+        private delegate Scancode GetScancodeFromNameDelegate(Text name);
         private static GetScancodeFromNameDelegate _getScancodeFromName;
-        public static Scancode GetScancodeFromName(string name) => _getScancodeFromName(name);
+        public static Scancode GetScancodeFromName(Text name) => _getScancodeFromName(name);
 
-        private delegate string GetKeyNameDelegate(KeyCode key);
+        private delegate Text GetKeyNameDelegate(KeyCode key);
         private static GetKeyNameDelegate _getKeyName;
-        public static string GetKeyName(KeyCode key) => _getKeyName(key);
+        public static Text GetKeyName(KeyCode key) => _getKeyName(key);
 
-        private delegate KeyCode GetKeyFromNameDelegate(string name);
+        private delegate KeyCode GetKeyFromNameDelegate(Text name);
         private static GetKeyFromNameDelegate _getKeyFromName;
-        public static KeyCode GetKeyFromName(string name) => _getKeyFromName(name);
+        public static KeyCode GetKeyFromName(Text name) => _getKeyFromName(name);
 
         private delegate void StartTextInputDelegate();
         private static StartTextInputDelegate _startTextInput;
@@ -1139,13 +1233,13 @@ namespace SDL2
         //
         // SDL_loadso.h
         //
-        private delegate IntPtr LoadObjectDelegate(string file);
+        private delegate IntPtr LoadObjectDelegate(Text file);
         private static LoadObjectDelegate _loadObject;
-        public static IntPtr LoadObject(string file) => _loadObject(file);
+        public static IntPtr LoadObject(Text file) => _loadObject(file);
 
-        private delegate IntPtr LoadFunctionDelegate(IntPtr handle, string name);
+        private delegate IntPtr LoadFunctionDelegate(IntPtr handle, Text name);
         private static LoadFunctionDelegate _loadFunction;
-        public static IntPtr LoadFunction(IntPtr handle, string name) => _loadFunction(handle, name);
+        public static IntPtr LoadFunction(IntPtr handle, Text name) => _loadFunction(handle, name);
 
         private delegate void UnloadObjectDelegate(IntPtr handle);
         private static UnloadObjectDelegate _unloadObject;
@@ -1170,37 +1264,37 @@ namespace SDL2
         private static LogResetPrioritiesDelegate _logResetPriorities;
         public static void LogResetPriorities() => _logResetPriorities();
 
-        private delegate void LogDelegate(string fmt, params object[] objects);
+        private delegate void LogDelegate(Text fmt, params object[] objects);
         private static LogDelegate _log;
-        public static void Log(string fmt, params object[] objects) => _log(fmt, objects);
+        public static void Log(Text fmt, params object[] objects) => _log(fmt, objects);
 
-        private delegate void LogVerboseDelegate(LogCategory category, string fmt, params object[] objects);
+        private delegate void LogVerboseDelegate(LogCategory category, Text fmt, params object[] objects);
         private static LogVerboseDelegate _logVerbose;
-        public static void LogVerbose(LogCategory category, string fmt, params object[] objects) => _logVerbose(category, fmt, objects);
+        public static void LogVerbose(LogCategory category, Text fmt, params object[] objects) => _logVerbose(category, fmt, objects);
 
-        private delegate void LogDebugDelegate(LogCategory category, string fmt, params object[] objects);
+        private delegate void LogDebugDelegate(LogCategory category, Text fmt, params object[] objects);
         private static LogDebugDelegate _logDebug;
-        public static void LogDebug(LogCategory category, string fmt, params object[] objects) => _logDebug(category, fmt, objects);
+        public static void LogDebug(LogCategory category, Text fmt, params object[] objects) => _logDebug(category, fmt, objects);
 
-        private delegate void LogInfoDelegate(LogCategory category, string fmt, params object[] objects);
+        private delegate void LogInfoDelegate(LogCategory category, Text fmt, params object[] objects);
         private static LogInfoDelegate _logInfo;
-        public static void LogInfo(LogCategory category, string fmt, params object[] objects) => _logInfo(category, fmt, objects);
+        public static void LogInfo(LogCategory category, Text fmt, params object[] objects) => _logInfo(category, fmt, objects);
 
-        private delegate void LogWarnDelegate(LogCategory category, string fmt, params object[] objects);
+        private delegate void LogWarnDelegate(LogCategory category, Text fmt, params object[] objects);
         private static LogWarnDelegate _logWarn;
-        public static void LogWarn(LogCategory category, string fmt, params object[] objects) => _logWarn(category, fmt, objects);
+        public static void LogWarn(LogCategory category, Text fmt, params object[] objects) => _logWarn(category, fmt, objects);
 
-        private delegate void LogErrorDelegate(LogCategory category, string fmt, params object[] objects);
+        private delegate void LogErrorDelegate(LogCategory category, Text fmt, params object[] objects);
         private static LogErrorDelegate _logError;
-        public static void LogError(LogCategory category, string fmt, params object[] objects) => _logError(category, fmt, objects);
+        public static void LogError(LogCategory category, Text fmt, params object[] objects) => _logError(category, fmt, objects);
 
-        private delegate void LogCriticalDelegate(LogCategory category, string fmt, params object[] objects);
+        private delegate void LogCriticalDelegate(LogCategory category, Text fmt, params object[] objects);
         private static LogCriticalDelegate _logCritical;
-        public static void LogCritical(LogCategory category, string fmt, params object[] objects) => _logCritical(category, fmt, objects);
+        public static void LogCritical(LogCategory category, Text fmt, params object[] objects) => _logCritical(category, fmt, objects);
 
-        private delegate void LogMessageDelegate(LogCategory category, string fmt, params object[] objects);
+        private delegate void LogMessageDelegate(LogCategory category, Text fmt, params object[] objects);
         private static LogMessageDelegate _logMessage;
-        public static void LogMessage(LogCategory category, string fmt, params object[] objects) => _logMessage(category, fmt, objects);
+        public static void LogMessage(LogCategory category, Text fmt, params object[] objects) => _logMessage(category, fmt, objects);
 
         private delegate void LogGetOutputFunctionDelegate(LogOutputFunction callback, IntPtr userData);
         private static LogGetOutputFunctionDelegate _logGetOutputFunction;
@@ -1217,9 +1311,9 @@ namespace SDL2
         private static ShowMessageBoxDelegate _showMessageBox;
         public static int ShowMessageBox(ref MessageBoxData messageBoxData, out int buttonID) => _showMessageBox(ref messageBoxData, out buttonID);
 
-        private delegate int ShowSimpleMessageBoxDelegate(MessageBoxFlags flags, string title, string message, Window window);
+        private delegate int ShowSimpleMessageBoxDelegate(MessageBoxFlags flags, Text title, Text message, Window window);
         private static ShowSimpleMessageBoxDelegate _showSimpleMessageBox;
-        public static int ShowSimpleMessageBox(MessageBoxFlags flags, string title, string message, Window window) => _showSimpleMessageBox(flags, title, message, window);
+        public static int ShowSimpleMessageBox(MessageBoxFlags flags, Text title, Text message, Window window) => _showSimpleMessageBox(flags, title, message, window);
 
         //
         // SDL_mouse.h
@@ -1232,13 +1326,13 @@ namespace SDL2
         private static GetMouseStateDelegate _getMouseState;
         public static MouseButtonState GetMouseState(out int x, out int y) => _getMouseState(out x, out y);
 
-        private delegate MouseButtonState GetGlobalMouseStateDelegate(out int? x, out int? y);
+        private delegate MouseButtonState GetGlobalMouseStateDelegate(out int x, out int y);
         private static GetGlobalMouseStateDelegate _getGlobalMouseState;
-        public static MouseButtonState GetGlobalMouseState(out int? x, out int? y) => _getGlobalMouseState(out x, out y);
+        public static MouseButtonState GetGlobalMouseState(out int x, out int y) => _getGlobalMouseState(out x, out y);
 
-        private delegate MouseButtonState GetRelativeMouseStateDelegate(out int? x, out int? y);
+        private delegate MouseButtonState GetRelativeMouseStateDelegate(out int x, out int y);
         private static GetRelativeMouseStateDelegate _getRelativeMouseState;
-        public static MouseButtonState GetRelativeMouseState(out int? x, out int? y) => _getRelativeMouseState(out x, out y);
+        public static MouseButtonState GetRelativeMouseState(out int x, out int y) => _getRelativeMouseState(out x, out y);
 
         private delegate void WarpMouseInWindowDelegate(Window window, int x, int y);
         private static WarpMouseInWindowDelegate _warpMouseInWindow;
@@ -1295,9 +1389,9 @@ namespace SDL2
         //
         // SDL_pixels.h
         //
-        private delegate string GetPixelFormatNameDelegate(uint format);
+        private delegate Text GetPixelFormatNameDelegate(uint format);
         private static GetPixelFormatNameDelegate _getPixelFormatName;
-        public static string GetPixelFormatName(uint format) => _getPixelFormatName(format);
+        public static Text GetPixelFormatName(uint format) => _getPixelFormatName(format);
 
         private delegate bool PixelFormatEnumToMasksDelegate(uint format, out int bpp, out uint rMask, out uint gMask, out uint bMask, out uint aMask);
         private static PixelFormatEnumToMasksDelegate _pixelFormatEnumToMasks;
@@ -1354,9 +1448,9 @@ namespace SDL2
         //
         // SDL_platform.h
         //
-        private delegate string GetPlatformDelegate();
+        private delegate Text GetPlatformDelegate();
         private static GetPlatformDelegate _getPlatform;
-        public static string GetPlatform() => _getPlatform();
+        public static Text GetPlatform() => _getPlatform();
 
         //
         // SDL_power.h
@@ -1479,17 +1573,17 @@ namespace SDL2
         private static GetTextureBlendModeDelegate _getTextureBlendMode;
         public static int GetTextureBlendMode(Texture texture, out BlendMode blendMode) => _getTextureBlendMode(texture, out blendMode);
 
-        private delegate int UpdateTextureDelegate(Texture texture, ref Rect? rect, IntPtr pixels, int pitch);
+        private delegate int UpdateTextureDelegate(Texture texture, ref Rect rect, IntPtr pixels, int pitch);
         private static UpdateTextureDelegate _updateTexture;
-        public static int UpdateTexture(Texture texture, ref Rect? rect, IntPtr pixels, int pitch) => _updateTexture(texture, ref rect, pixels, pitch);
+        public static int UpdateTexture(Texture texture, ref Rect rect, IntPtr pixels, int pitch) => _updateTexture(texture, ref rect, pixels, pitch);
 
-        private delegate int UpdateYUVTextureDelegate(Texture texture, ref Rect? rect, byte[] yPlane, int yPitch, byte[] uPlane, int uPitch, byte[] vPlane, int vPitch);
+        private delegate int UpdateYUVTextureDelegate(Texture texture, ref Rect rect, byte[] yPlane, int yPitch, byte[] uPlane, int uPitch, byte[] vPlane, int vPitch);
         private static UpdateYUVTextureDelegate _updateYUVTexture;
-        public static int UpdateYUVTexture(Texture texture, ref Rect? rect, byte[] yPlane, int yPitch, byte[] uPlane, int uPitch, byte[] vPlane, int vPitch) => _updateYUVTexture(texture, ref rect, yPlane, yPitch, uPlane, uPitch, vPlane, vPitch);
+        public static int UpdateYUVTexture(Texture texture, ref Rect rect, byte[] yPlane, int yPitch, byte[] uPlane, int uPitch, byte[] vPlane, int vPitch) => _updateYUVTexture(texture, ref rect, yPlane, yPitch, uPlane, uPitch, vPlane, vPitch);
 
-        private delegate int LockTextureDelegate(Texture texture, ref Rect? rect, out IntPtr pixels, out int pitch);
+        private delegate int LockTextureDelegate(Texture texture, ref Rect rect, out IntPtr pixels, out int pitch);
         private static LockTextureDelegate _lockTexture;
-        public static int LockTexture(Texture texture, ref Rect? rect, out IntPtr pixels, out int pitch) => _lockTexture(texture, ref rect, out pixels, out pitch);
+        public static int LockTexture(Texture texture, ref Rect rect, out IntPtr pixels, out int pitch) => _lockTexture(texture, ref rect, out pixels, out pitch);
 
         private delegate void UnlockTextureDelegate(Texture texture);
         private static UnlockTextureDelegate _unlockTexture;
@@ -1603,13 +1697,13 @@ namespace SDL2
         private static RenderFillRectsDelegate _renderFillRects;
         public static int RenderFillRects(Renderer renderer, Rect[] rects, int count) => _renderFillRects(renderer, rects, count);
 
-        private delegate int RenderCopyDelegate(Renderer renderer, Texture texture, ref Rect? srcRect, ref Rect? dstRect);
+        private delegate int RenderCopyDelegate(Renderer renderer, Texture texture, ref Rect srcRect, ref Rect dstRect);
         private static RenderCopyDelegate _renderCopy;
-        public static int RenderCopy(Renderer renderer, Texture texture, ref Rect? srcRect, ref Rect? dstRect) => _renderCopy(renderer, texture, ref srcRect, ref dstRect);
+        public static int RenderCopy(Renderer renderer, Texture texture, ref Rect srcRect, ref Rect dstRect) => _renderCopy(renderer, texture, ref srcRect, ref dstRect);
 
-        private delegate int RenderCopyExDelegate(Renderer renderer, Texture texture, ref Rect? srcrect, ref Rect? dstrect, double angle, ref Point center, RendererFlip flip);
+        private delegate int RenderCopyExDelegate(Renderer renderer, Texture texture, ref Rect srcrect, ref Rect dstrect, double angle, ref Point center, RendererFlip flip);
         private static RenderCopyExDelegate _renderCopyEx;
-        public static int RenderCopyEx(Renderer renderer, Texture texture, ref Rect? srcRect, ref Rect? dstRect, double angle, ref Point center, RendererFlip flip) => _renderCopyEx(renderer, texture, ref srcRect, ref dstRect, angle, ref center, flip);
+        public static int RenderCopyEx(Renderer renderer, Texture texture, ref Rect srcRect, ref Rect dstRect, double angle, ref Point center, RendererFlip flip) => _renderCopyEx(renderer, texture, ref srcRect, ref dstRect, angle, ref center, flip);
 
         private delegate int RenderReadPixelsDelegate(Renderer renderer, ref Rect rect, uint format, IntPtr pixels, int pitch);
         private static RenderReadPixelsDelegate _renderReadPixels;
@@ -1630,16 +1724,16 @@ namespace SDL2
         //
         // SDL_rwops.h
         //
-        private delegate RWops RWFromFileDelegate(string file, string mode);
+        private delegate RWops RWFromFileDelegate(Text file, Text mode);
         private static RWFromFileDelegate _rwFromFile;
-        public static RWops RWFromFile(string file, string mode) => _rwFromFile(file, mode);
+        public static RWops RWFromFile(Text file, Text mode) => _rwFromFile(file, mode);
 
         //
         // SDL_shape.h
         //
-        private delegate Window CreateShapedWindowDelegate(string title, uint x, uint y, uint w, uint h, WindowFlags flags);
+        private delegate Window CreateShapedWindowDelegate(Text title, uint x, uint y, uint w, uint h, WindowFlags flags);
         private static CreateShapedWindowDelegate _createShapedWindow;
-        public static Window CreateShapedWindow(string title, uint x, uint y, uint w, uint h, WindowFlags flags) => _createShapedWindow(title, x, y, w, h, flags);
+        public static Window CreateShapedWindow(Text title, uint x, uint y, uint w, uint h, WindowFlags flags) => _createShapedWindow(title, x, y, w, h, flags);
 
         private delegate bool IsShapedWindowDelegate(Window window);
         private static IsShapedWindowDelegate _isShapedWindow;
@@ -1658,10 +1752,10 @@ namespace SDL2
         //
 
         //public static int UpperBlit(Surface src, ref Rect srcrect, Surface dst, ref Rect dstrect);
-        
+
 
         //public static int UpperBlitScaled(Surface src, ref Rect srcrect, Surface dst, ref Rect dstrect);
-        
+
 
         //public static int ConvertPixels(int width, int height, uint src_format, Surface src, int src_pitch, uint dst_format, Surface dst, int dst_pitch);
 
@@ -1685,7 +1779,7 @@ namespace SDL2
 
 
         //public static int FillRect(IntPtr dst, ref Rect rect, uint color);
-        
+
 
         //public static int FillRects(IntPtr dst, Rect[] rects, int count, uint color);
 
@@ -1801,9 +1895,9 @@ namespace SDL2
         private static GetVersionDelegate _getVersion;
         public static void GetVersion(out Version version) => _getVersion(out version);
 
-        private delegate string GetRevisionDelegate();
+        private delegate Text GetRevisionDelegate();
         private static GetRevisionDelegate _getRevision;
-        public static string GetRevision() => _getRevision();
+        public static Text GetRevision() => _getRevision();
 
         private delegate int GetRevisionNumberDelegate();
         private static GetRevisionNumberDelegate _getRevisionNumber;
@@ -1829,29 +1923,29 @@ namespace SDL2
         private static GetNumVideoDriversDelegate _getNumVideoDrivers;
         public static int GetNumVideoDrivers() => _getNumVideoDrivers();
 
-        private delegate string GetVideoDriverDelegate(int index);
+        private delegate Text GetVideoDriverDelegate(int index);
         private static GetVideoDriverDelegate _getVideoDriver;
-        private static string GetVideoDriver(int index) => _getVideoDriver(index);
+        private static Text GetVideoDriver(int index) => _getVideoDriver(index);
 
-        private delegate int VideoInitDelegate(string driverName);
+        private delegate int VideoInitDelegate(Text driverName);
         private static VideoInitDelegate _videoInit;
-        public static int VideoInit(string driverName) => _videoInit(driverName);
+        public static int VideoInit(Text driverName) => _videoInit(driverName);
 
         private delegate void VideoQuitDelegate();
         private static VideoQuitDelegate _videoQuit;
         public static void VideoQuit() => _videoQuit();
 
-        private delegate string GetCurrentVideoDriverDelegate();
+        private delegate Text GetCurrentVideoDriverDelegate();
         private static GetCurrentVideoDriverDelegate _getCurrentVideoDriver;
-        public static string GetCurrentVideoDriver() => _getCurrentVideoDriver();
+        public static Text GetCurrentVideoDriver() => _getCurrentVideoDriver();
 
         private delegate int GetNumVideoDisplaysDelegate();
         private static GetNumVideoDisplaysDelegate _getNumVideoDisplays;
         public static int GetNumVideoDisplays() => _getNumVideoDisplays();
 
-        private delegate string GetDisplayNameDelegate(int displayIndex);
+        private delegate Text GetDisplayNameDelegate(int displayIndex);
         private static GetDisplayNameDelegate _getDisplayName;
-        public static string GetDisplayName(int displayIndex) => _getDisplayName(displayIndex);
+        public static Text GetDisplayName(int displayIndex) => _getDisplayName(displayIndex);
 
         private delegate int GetDisplayBoundsDelegate(int displayIndex, out Rect rectangle);
         private static GetDisplayBoundsDelegate _getDisplayBounds;
@@ -1901,9 +1995,9 @@ namespace SDL2
         private static GetWindowPixelFormatDelegate _getWindowPixelFormat;
         public static uint GetWindowPixelFormat(Window window) => _getWindowPixelFormat(window);
 
-        private delegate Window CreateWindowDelegate(string title, int x, int y, int width, int height, WindowFlags flags);
+        private delegate Window CreateWindowDelegate(Text title, int x, int y, int width, int height, WindowFlags flags);
         private static CreateWindowDelegate _createWindow;
-        public static Window CreateWindow(string title, int x, int y, int width, int height, WindowFlags flags) => _createWindow(title, x, y, width, height, flags);
+        public static Window CreateWindow(Text title, int x, int y, int width, int height, WindowFlags flags) => _createWindow(title, x, y, width, height, flags);
 
         private delegate Window CreateWindowFromDelegate(IntPtr data);
         private static CreateWindowFromDelegate _createWindowFrom;
@@ -1921,25 +2015,25 @@ namespace SDL2
         private static GetWindowFlagsDelegate _getWindowFlags;
         public static WindowFlags GetWindowFlags(Window window) => _getWindowFlags(window);
 
-        private delegate void SetWindowTitleDelegate(Window window, string title);
+        private delegate void SetWindowTitleDelegate(Window window, Text title);
         private static SetWindowTitleDelegate _setWindowTitle;
-        public static void SetWindowTitle(Window window, string title) => _setWindowTitle(window, title);
+        public static void SetWindowTitle(Window window, Text title) => _setWindowTitle(window, title);
 
-        private delegate string GetWindowTitleDelegate(Window window);
+        private delegate Text GetWindowTitleDelegate(Window window);
         private static GetWindowTitleDelegate _getWindowTitle;
-        public static string GetWindowTitle(Window window) => _getWindowTitle(window);
+        public static Text GetWindowTitle(Window window) => _getWindowTitle(window);
 
         private delegate void SetWindowIconDelegate(Window window, Surface icon);
         private static SetWindowIconDelegate _setWindowIcon;
         public static void SetWindowIcon(Window window, Surface icon) => _setWindowIcon(window, icon);
 
-        private delegate IntPtr SetWindowDataDelegate(Window window, string name, IntPtr userData);
+        private delegate IntPtr SetWindowDataDelegate(Window window, Text name, IntPtr userData);
         private static SetWindowDataDelegate _setWindowData;
-        public static IntPtr SetWindowData(Window window, string name, IntPtr userData) => _setWindowData(window, name, userData);
+        public static IntPtr SetWindowData(Window window, Text name, IntPtr userData) => _setWindowData(window, name, userData);
 
-        private delegate IntPtr GetWindowDataDelegate(Window window, string name);
+        private delegate IntPtr GetWindowDataDelegate(Window window, Text name);
         private static GetWindowDataDelegate _getWindowData;
-        public static IntPtr GetWindowData(Window window, string name) => _getWindowData(window, name);
+        public static IntPtr GetWindowData(Window window, Text name) => _getWindowData(window, name);
 
         private delegate void SetWindowPositionDelegate(Window window, int x, int y);
         private static SetWindowPositionDelegate _setWindowPosition;
@@ -1956,7 +2050,7 @@ namespace SDL2
         private delegate void GetWindowSizeDelegate(Window window, out int width, out int height);
         private static GetWindowSizeDelegate _getWindowSize;
         public static void GetWindowSize(Window window, out int width, out int height) => _getWindowSize(window, out width, out height);
-        
+
         private delegate int GetWindowBordersSizeDelegate(Window window, out int top, out int left, out int bottom, out int right);
         private static GetWindowBordersSizeDelegate _getWindowBordersSize;
         public static int GetWindowBordersSize(Window window, out int top, out int left, out int bottom, out int right) => _getWindowBordersSize(window, out top, out left, out bottom, out right);
@@ -2092,9 +2186,9 @@ namespace SDL2
         //
         // SDL_vulkan.h
         //
-        private delegate int VulkanLoadLibraryDelegate(string path);
+        private delegate int VulkanLoadLibraryDelegate(Text path);
         private static VulkanLoadLibraryDelegate _vulkanLoadLibrary;
-        public static int VulkanLoadLibrary(string path) => _vulkanLoadLibrary(path);
+        public static int VulkanLoadLibrary(Text path) => _vulkanLoadLibrary(path);
 
         private delegate IntPtr VulkanGetVkGetInstanceProcAddrDelegate();
         private static VulkanGetVkGetInstanceProcAddrDelegate _vulkanGetVkGetInstanceProcAddr;
@@ -2104,16 +2198,16 @@ namespace SDL2
         private static VulkanUnloadLibraryDelegate _vulkanUnloadLibrary;
         public static void VulkanUnloadLibrary() => _vulkanUnloadLibrary();
 
-        private delegate bool VulkanGetInstanceExtensionsDelegate(Window window, ref uint count, string[] names);
+        private delegate bool VulkanGetInstanceExtensionsDelegate(Window window, ref uint count, Text[] names);
         private static VulkanGetInstanceExtensionsDelegate _vulkanGetInstanceExtensions;
-        public static bool VulkanGetInstanceExtensions(Window window, ref uint count, string[] names) => _vulkanGetInstanceExtensions(window, ref count, names);
+        public static bool VulkanGetInstanceExtensions(Window window, ref uint count, Text[] names) => _vulkanGetInstanceExtensions(window, ref count, names);
 
         private delegate bool VulkanCreateSurfaceDelegate(Window window, Vulkan.Vk.Instance instance, out Vulkan.Vk.Surface surface);
         private static VulkanCreateSurfaceDelegate _vulkanCreateSurface;
         public static bool VulkanCreateSurface(Window window, Vulkan.Vk.Instance instance, out Vulkan.Vk.Surface surface) => _vulkanCreateSurface(window, instance, out surface);
 
-        private delegate void VulkanGetDrawableSizeDelegate(Window window, out int? w, out int? h);
+        private delegate void VulkanGetDrawableSizeDelegate(Window window, out int w, out int h);
         private static VulkanGetDrawableSizeDelegate _vulkanGetDrawableSize;
-        public static void VulkanGetDrawableSize(Window window, out int? w, out int? h) => _vulkanGetDrawableSize(window, out w, out h);
+        public static void VulkanGetDrawableSize(Window window, out int w, out int h) => _vulkanGetDrawableSize(window, out w, out h);
     }
 }

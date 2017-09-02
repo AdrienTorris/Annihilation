@@ -13,7 +13,5 @@ namespace OpenDDL
         {
 
         }
-
-        public abstract Result ParseData(string text);
     }
 }

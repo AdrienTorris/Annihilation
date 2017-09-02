@@ -5,6 +5,8 @@ namespace Engine
 {
     public class Window : IDisposable
     {
+        private static bool _videoSubsystemInitialized = false;
+
         public bool HasFocus = false;
 
         public IntPtr Handle { get; private set; }
@@ -15,24 +17,24 @@ namespace Engine
 
         private bool _isDisposing;
         
-        public Window(string title)
+        public Window(string title, int width, int height)
         {
-            SDL.InitSubSystem(SDL.InitFlags.Video);
+            if (_videoSubsystemInitialized == false)
+            {
+                SDL.InitSubSystem(SDL.InitFlags.Video).CheckError();
+                _videoSubsystemInitialized = true;
+            }
 
             SdlHandle = SDL.CreateWindow(
                 Game.Settings.Title,
-                SDL.WindowPositionCentered,
-                SDL.WindowPositionCentered,
-                Game.Settings.WindowSettings.Width,
-                Game.Settings.WindowSettings.Height,
-                SDL.WindowFlags.Vulkan | SDL.WindowFlags.Shown | SDL.WindowFlags.Fullscreen | SDL.WindowFlags.Borderless
+                SDL.WindowPositionUndefined,
+                SDL.WindowPositionUndefined,
+                width, 
+                height,
+                SDL.WindowFlags.Shown | SDL.WindowFlags.Vulkan
             );
-
-            if (SdlHandle == IntPtr.Zero)
-            {
-                throw new Exception(SDL.GetError());
-            }
-
+            SdlHandle.Handle.CheckError();
+            
             SDL.SysWMInfo sysWMInfo = default(SDL.SysWMInfo);
             SDL.GetVersion(out sysWMInfo.Version);
             if (SDL.GetWindowWMInfo(SdlHandle, ref sysWMInfo) == false)

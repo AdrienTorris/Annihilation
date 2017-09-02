@@ -1,6 +1,6 @@
 ﻿using Engine.Input;
 
-namespace Game
+namespace Annihilation
 {
     public class InputHandler : IInputHandler
     {
