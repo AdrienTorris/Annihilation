@@ -42,7 +42,7 @@ namespace Annihilation
         private static void Init()
         {
             GraphicsOptions graphicsOptions = new GraphicsOptions();
-            InitFile.Write(graphicsOptions, Game.PreferencePath + "settings.init");
+            ConfigFile.Write(graphicsOptions, Game.PreferencePath + "settings.init");
             Log.Info("File written at " + Game.PreferencePath + "settings.init");
         }
     }

@@ -9,7 +9,7 @@ namespace Annihilation
         BorderlessWindowed
     }
 
-    public class GraphicsOptions : IInitFileData
+    public class GraphicsOptions : IConfigData
     {
         public DisplayMode DisplayMode = DisplayMode.Fullscreen;
         public int ResolutionX = 1920;
@@ -18,17 +18,17 @@ namespace Annihilation
         public int RefreshRate = 144;
         public float Gamma = 1.0f;
 
-        public void GetInitFields(out string category, out InitField[] fields)
+        public void GetConfigFields(out string category, out ConfigField[] fields)
         {
             category = nameof(GraphicsOptions);
-            fields = new InitField[]
+            fields = new ConfigField[]
             {
-                new InitField(nameof(DisplayMode), InitFile.TypeUint8, ((int)DisplayMode).ToString()),
-                new InitField(nameof(ResolutionX), InitFile.TypeInt32, ResolutionX.ToString()),
-                new InitField(nameof(ResolutionY), InitFile.TypeInt32, ResolutionY.ToString()),
-                new InitField(nameof(VerticalSync), InitFile.TypeBool, VerticalSync.ToString()),
-                new InitField(nameof(RefreshRate), InitFile.TypeInt32, RefreshRate.ToString()),
-                new InitField(nameof(Gamma), InitFile.TypeFloat, Gamma.ToString())
+                new ConfigField(nameof(DisplayMode), ConfigFile.TypeUint8, ((int)DisplayMode).ToString()),
+                new ConfigField(nameof(ResolutionX), ConfigFile.TypeInt32, ResolutionX.ToString()),
+                new ConfigField(nameof(ResolutionY), ConfigFile.TypeInt32, ResolutionY.ToString()),
+                new ConfigField(nameof(VerticalSync), ConfigFile.TypeBool, VerticalSync.ToString()),
+                new ConfigField(nameof(RefreshRate), ConfigFile.TypeInt32, RefreshRate.ToString()),
+                new ConfigField(nameof(Gamma), ConfigFile.TypeFloat, Gamma.ToString())
             };
         }
     }
