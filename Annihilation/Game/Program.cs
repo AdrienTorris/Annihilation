@@ -3,7 +3,7 @@ using System.Numerics;
 using System.Threading.Tasks;
 
 using Engine;
-using Engine.IO;
+using Engine.Config;
 
 namespace Annihilation
 {
@@ -37,13 +37,15 @@ namespace Annihilation
             settings.Version = "0.1.0";
 
             Game.Start(settings, Init, null, null);
+
+            // Do not put any code here
         }
 
         private static void Init()
         {
-            GraphicsOptions graphicsOptions = new GraphicsOptions();
-            ConfigFile.Write(graphicsOptions, Game.PreferencePath + "settings.init");
-            Log.Info("File written at " + Game.PreferencePath + "settings.init");
+            string configPath = Game.PreferencePath + "settings.init";
+
+            Config.AddVarsFromFile(configPath);
         }
     }
 }

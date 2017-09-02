@@ -1,4 +1,4 @@
-﻿using Engine.IO;
+﻿using Engine.Config;
 
 namespace Annihilation
 {
@@ -9,7 +9,7 @@ namespace Annihilation
         BorderlessWindowed
     }
 
-    public class GraphicsOptions : IConfigData
+    public class GraphicsOptions
     {
         public DisplayMode DisplayMode = DisplayMode.Fullscreen;
         public int ResolutionX = 1920;
@@ -18,7 +18,7 @@ namespace Annihilation
         public int RefreshRate = 144;
         public float Gamma = 1.0f;
 
-        public void GetConfigFields(out string category, out ConfigField[] fields)
+        /*public void GetConfigFields(out string category, out ConfigField[] fields)
         {
             category = nameof(GraphicsOptions);
             fields = new ConfigField[]
@@ -30,6 +30,6 @@ namespace Annihilation
                 new ConfigField(nameof(RefreshRate), ConfigFile.TypeInt32, RefreshRate.ToString()),
                 new ConfigField(nameof(Gamma), ConfigFile.TypeFloat, Gamma.ToString())
             };
-        }
+        }*/
     }
 }

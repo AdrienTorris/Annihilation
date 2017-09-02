@@ -1,6 +1,6 @@
 ﻿namespace Engine.Config
 {
-    public enum ConfigValueType : byte
+    public enum ConfigVarType : byte
     {
         Uint8,
         Uint16,
