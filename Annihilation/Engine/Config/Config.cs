@@ -137,6 +137,7 @@ namespace Engine.Config
             _vars.Add(name, new ConfigVar(value));
         }
 
+        // PERF: Remove dictionary lookup. How?
         public static ConfigVar GetVar(string name) => _vars[name];
 
         public static bool TryGetVar(string name, out ConfigVar value)
@@ -189,6 +190,7 @@ namespace Engine.Config
             }
         }
 
+        // PERF: Use char* marching instead of readlines
         public static void AddVarsFromFile(string path)
         {
             string line;
