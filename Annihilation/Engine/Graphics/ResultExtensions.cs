@@ -1,6 +1,6 @@
 ﻿using Vulkan;
 
-namespace Engine.Rendering
+namespace Engine.Graphics
 {
     public static class ResultExtensions
     {

@@ -7,8 +7,10 @@ namespace Vulkan
 {
     public static partial class Vk
     {
+        public static GetInstanceProcAddrDelegate GetInstanceProcAddr { get; set; }
+        public static GetDeviceProcAddrDelegate GetDeviceProcAddr { get; set; }
+
         private static NativeLibrary _library;
-        private static GetInstanceProcAddrDelegate GetInstanceProcAddr;
 
         // Constants
         public const float LodClampNone = 1000f;
@@ -155,7 +157,8 @@ namespace Vulkan
         public unsafe static T LoadInstanceFunction<T>(Instance instance)
         {
             string name = "vk" + typeof(T).Name;
-            IntPtr function = GetInstanceProcAddr(instance, name);
+            name = name.Replace("Delegate", "");
+            IntPtr function = GetInstanceProcAddr(instance, new Text(name));
             if (function == IntPtr.Zero)
             {
                 throw new NullReferenceException();
@@ -163,9 +166,9 @@ namespace Vulkan
             return Marshal.GetDelegateForFunctionPointer<T>(function);
         }
 
-        public unsafe static T LoadInstanceFunctionFromExtension<T>(Instance instance, Text extension, Text[] enabledExtensions)
+        public unsafe static T LoadInstanceFunctionFromExtension<T>(Instance instance, byte* extension, byte*[] enabledExtensions)
         {
-            foreach (Text enabledExtension in enabledExtensions)
+            foreach (byte* enabledExtension in enabledExtensions)
             {
                 if (enabledExtension == extension)
                 {
@@ -175,6 +178,18 @@ namespace Vulkan
             return default(T);
         }
         
+        public unsafe static T LoadDeviceFunction<T>(Device device)
+        {
+            string name = "vk" + typeof(T).Name;
+            name.Replace("Delegate", "");
+            IntPtr function = GetDeviceProcAddr(device, new Text(name));
+            if (function == IntPtr.Zero)
+            {
+                throw new NullReferenceException();
+            }
+            return Marshal.GetDelegateForFunctionPointer<T>(function);
+        }
+
         //
         // Delegates
         //
@@ -188,8 +203,8 @@ namespace Vulkan
         //
         // Function delegates
         //
-        public unsafe delegate Result CreateInstanceDelegate(ref InstanceCreateInfo createInfo, ref AllocationCallbacks allocator, out Instance instance);
-        public unsafe delegate void DestroyInstanceDelegate(Instance instance, ref AllocationCallbacks allocator);
+        public unsafe delegate Result CreateInstanceDelegate(ref InstanceCreateInfo createInfo, AllocationCallbacks* allocator, out Instance instance);
+        public unsafe delegate void DestroyInstanceDelegate(Instance instance, AllocationCallbacks* allocator);
         public unsafe delegate Result EnumeratePhysicalDevicesDelegate(Instance instance, out uint physicalDeviceCount, PhysicalDevice[] physicalDevices);
         public unsafe delegate void GetPhysicalDeviceFeaturesDelegate(PhysicalDevice physicalDevice, out PhysicalDeviceFeatures features);
         public unsafe delegate void GetPhysicalDeviceFormatPropertiesDelegate(PhysicalDevice physicalDevice, Format format, out FormatProperties formatProperties);
@@ -197,20 +212,20 @@ namespace Vulkan
         public unsafe delegate void GetPhysicalDevicePropertiesDelegate(PhysicalDevice physicalDevice, out PhysicalDeviceProperties properties);
         public unsafe delegate void GetPhysicalDeviceQueueFamilyPropertiesDelegate(PhysicalDevice physicalDevice, out uint queueFamilyPropertyCount, QueueFamilyProperties[] queueFamilyProperties);
         public unsafe delegate void GetPhysicalDeviceMemoryPropertiesDelegate(PhysicalDevice physicalDevice, out PhysicalDeviceMemoryProperties memoryProperties);
-        public unsafe delegate IntPtr GetInstanceProcAddrDelegate(Instance instance, Text name);
-        public unsafe delegate IntPtr GetDeviceProcAddrDelegate(Device device, Text name);
-        public unsafe delegate Result CreateDeviceDelegate(PhysicalDevice physicalDevice, ref DeviceCreateInfo createInfo, ref AllocationCallbacks allocator, out Device device);
-        public unsafe delegate void DestroyDeviceDelegate(Device device, ref AllocationCallbacks allocator);
-        public unsafe delegate Result EnumerateInstanceExtensionPropertiesDelegate(Text layerName, out uint propertyCount, ExtensionProperties[] properties);
-        public unsafe delegate Result EnumerateDeviceExtensionPropertiesDelegate(PhysicalDevice physicalDevice, Text layerName, out uint propertyCount, ExtensionProperties[] properties);
+        public unsafe delegate IntPtr GetInstanceProcAddrDelegate(Instance instance, byte* name);
+        public unsafe delegate IntPtr GetDeviceProcAddrDelegate(Device device, byte* name);
+        public unsafe delegate Result CreateDeviceDelegate(PhysicalDevice physicalDevice, ref DeviceCreateInfo createInfo, AllocationCallbacks* allocator, out Device device);
+        public unsafe delegate void DestroyDeviceDelegate(Device device, AllocationCallbacks* allocator);
+        public unsafe delegate Result EnumerateInstanceExtensionPropertiesDelegate(byte* layerName, out uint propertyCount, ExtensionProperties[] properties);
+        public unsafe delegate Result EnumerateDeviceExtensionPropertiesDelegate(PhysicalDevice physicalDevice, byte* layerName, out uint propertyCount, ExtensionProperties[] properties);
         public unsafe delegate Result EnumerateInstanceLayerPropertiesDelegate(out uint propertyCount, LayerProperties[] properties);
         public unsafe delegate Result EnumerateDeviceLayerPropertiesDelegate(PhysicalDevice physicalDevice, out uint propertyCount, LayerProperties[] properties);
         public unsafe delegate void GetDeviceQueueDelegate(Device device, uint queueFamilyIndex, uint queueIndex, out Queue queue);
         public unsafe delegate Result QueueSubmitDelegate(Queue queue, uint submitCount, SubmitInfo[] submits, Fence fence);
         public unsafe delegate Result QueueWaitIdleDelegate(Queue queue);
         public unsafe delegate Result DeviceWaitIdleDelegate(Device device);
-        public unsafe delegate Result AllocateMemoryDelegate(Device device, ref MemoryAllocateInfo allocateInfo, ref AllocationCallbacks allocator, out DeviceMemory memory);
-        public unsafe delegate void FreeMemoryDelegate(Device device, DeviceMemory memory, ref AllocationCallbacks allocator);
+        public unsafe delegate Result AllocateMemoryDelegate(Device device, ref MemoryAllocateInfo allocateInfo, AllocationCallbacks* allocator, out DeviceMemory memory);
+        public unsafe delegate void FreeMemoryDelegate(Device device, DeviceMemory memory, AllocationCallbacks* allocator);
         public unsafe delegate Result MapMemoryDelegate(Device device, DeviceMemory memory, DeviceSize offset, DeviceSize size, MemoryMapFlags flags, void** data);
         public unsafe delegate void UnmapMemoryDelegate(Device device, DeviceMemory memory);
         public unsafe delegate Result FlushMappedMemoryRangesDelegate(Device device, uint memoryRangeCount, MappedMemoryRange[] memoryRanges);
@@ -223,58 +238,58 @@ namespace Vulkan
         public unsafe delegate void GetImageSparseMemoryRequirementsDelegate(Device device, Image image, out uint sparseMemoryRequirementCount, SparseImageMemoryRequirements[] sparseMemoryRequirements);
         public unsafe delegate void GetPhysicalDeviceSparseImageFormatPropertiesDelegate(PhysicalDevice physicalDevice, Format format, ImageType type, SampleCountFlags samples, ImageUsageFlags usage, ImageTiling tiling, out uint propertyCount, SparseImageFormatProperties[] properties);
         public unsafe delegate Result QueueBindSparseDelegate(Queue queue, uint bindInfoCount, ref BindSparseInfo bindInfo, Fence fence);
-        public unsafe delegate Result CreateFenceDelegate(Device device, ref FenceCreateInfo createInfo, ref AllocationCallbacks allocator, out Fence fence);
-        public unsafe delegate void DestroyFenceDelegate(Device device, Fence fence, ref AllocationCallbacks allocator);
+        public unsafe delegate Result CreateFenceDelegate(Device device, ref FenceCreateInfo createInfo, AllocationCallbacks* allocator, out Fence fence);
+        public unsafe delegate void DestroyFenceDelegate(Device device, Fence fence, AllocationCallbacks* allocator);
         public unsafe delegate Result ResetFencesDelegate(Device device, uint fenceCount, Fence[] fences);
         public unsafe delegate Result GetFenceStatusDelegate(Device device, Fence fence);
         public unsafe delegate Result WaitForFencesDelegate(Device device, uint fenceCount, Fence[] fences, Bool32 waitAll, ulong timeout);
-        public unsafe delegate Result CreateSemaphoreDelegate(Device device, ref SemaphoreCreateInfo createInfo, ref AllocationCallbacks allocator, out Semaphore semaphore);
-        public unsafe delegate void DestroySemaphoreDelegate(Device device, Semaphore semaphore, ref AllocationCallbacks allocator);
-        public unsafe delegate Result CreateEventDelegate(Device device, ref EventCreateInfo createInfo, ref AllocationCallbacks allocator, out Event evnt);
-        public unsafe delegate void DestroyEventDelegate(Device device, Event evt, ref AllocationCallbacks allocator);
+        public unsafe delegate Result CreateSemaphoreDelegate(Device device, ref SemaphoreCreateInfo createInfo, AllocationCallbacks* allocator, out Semaphore semaphore);
+        public unsafe delegate void DestroySemaphoreDelegate(Device device, Semaphore semaphore, AllocationCallbacks* allocator);
+        public unsafe delegate Result CreateEventDelegate(Device device, ref EventCreateInfo createInfo, AllocationCallbacks* allocator, out Event evnt);
+        public unsafe delegate void DestroyEventDelegate(Device device, Event evt, AllocationCallbacks* allocator);
         public unsafe delegate Result GetEventStatusDelegate(Device device, Event evt);
         public unsafe delegate Result SetEventDelegate(Device device, Event evt);
         public unsafe delegate Result ResetEventDelegate(Device device, Event evt);
-        public unsafe delegate Result CreateQueryPoolDelegate(Device device, ref QueryPoolCreateInfo createInfo, ref AllocationCallbacks allocator, out QueryPool queryPool);
-        public unsafe delegate void DestroyQueryPoolDelegate(Device device, QueryPool queryPool, ref AllocationCallbacks allocator);
+        public unsafe delegate Result CreateQueryPoolDelegate(Device device, ref QueryPoolCreateInfo createInfo, AllocationCallbacks* allocator, out QueryPool queryPool);
+        public unsafe delegate void DestroyQueryPoolDelegate(Device device, QueryPool queryPool, AllocationCallbacks* allocator);
         public unsafe delegate Result GetQueryPoolResultsDelegate(Device device, QueryPool queryPool, uint firstQuery, uint queryCount, Size dataSize, void* data, DeviceSize stride, QueryResultFlags flags);
-        public unsafe delegate Result CreateBufferDelegate(Device device, ref BufferCreateInfo createInfo, ref AllocationCallbacks allocator, out Buffer buffer);
-        public unsafe delegate void DestroyBufferDelegate(Device device, Buffer buffer, ref AllocationCallbacks allocator);
-        public unsafe delegate Result CreateBufferViewDelegate(Device device, ref BufferViewCreateInfo createInfo, ref AllocationCallbacks allocator, out BufferView view);
-        public unsafe delegate void DestroyBufferViewDelegate(Device device, BufferView bufferView, ref AllocationCallbacks allocator);
-        public unsafe delegate Result CreateImageDelegate(Device device, ref ImageCreateInfo createInfo, ref AllocationCallbacks allocator, out Image image);
-        public unsafe delegate void DestroyImageDelegate(Device device, Image image, ref AllocationCallbacks allocator);
+        public unsafe delegate Result CreateBufferDelegate(Device device, ref BufferCreateInfo createInfo, AllocationCallbacks* allocator, out Buffer buffer);
+        public unsafe delegate void DestroyBufferDelegate(Device device, Buffer buffer, AllocationCallbacks* allocator);
+        public unsafe delegate Result CreateBufferViewDelegate(Device device, ref BufferViewCreateInfo createInfo, AllocationCallbacks* allocator, out BufferView view);
+        public unsafe delegate void DestroyBufferViewDelegate(Device device, BufferView bufferView, AllocationCallbacks* allocator);
+        public unsafe delegate Result CreateImageDelegate(Device device, ref ImageCreateInfo createInfo, AllocationCallbacks* allocator, out Image image);
+        public unsafe delegate void DestroyImageDelegate(Device device, Image image, AllocationCallbacks* allocator);
         public unsafe delegate void GetImageSubresourceLayoutDelegate(Device device, Image image, ref ImageSubresource subresource, out SubresourceLayout layout);
-        public unsafe delegate Result CreateImageViewDelegate(Device device, ref ImageViewCreateInfo createInfo, ref AllocationCallbacks allocator, out ImageView view);
-        public unsafe delegate void DestroyImageViewDelegate(Device device, ImageView imageView, ref AllocationCallbacks allocator);
-        public unsafe delegate Result CreateShaderModuleDelegate(Device device, ref ShaderModuleCreateInfo createInfo, ref AllocationCallbacks allocator, out ShaderModule shaderModule);
-        public unsafe delegate void DestroyShaderModuleDelegate(Device device, ShaderModule shaderModule, ref AllocationCallbacks allocator);
-        public unsafe delegate Result CreatePipelineCacheDelegate(Device device, ref PipelineCacheCreateInfo createInfo, ref AllocationCallbacks allocator, out PipelineCache pipelineCache);
-        public unsafe delegate void DestroyPipelineCacheDelegate(Device device, PipelineCache pipelineCache, ref AllocationCallbacks allocator);
+        public unsafe delegate Result CreateImageViewDelegate(Device device, ref ImageViewCreateInfo createInfo, AllocationCallbacks* allocator, out ImageView view);
+        public unsafe delegate void DestroyImageViewDelegate(Device device, ImageView imageView, AllocationCallbacks* allocator);
+        public unsafe delegate Result CreateShaderModuleDelegate(Device device, ref ShaderModuleCreateInfo createInfo, AllocationCallbacks* allocator, out ShaderModule shaderModule);
+        public unsafe delegate void DestroyShaderModuleDelegate(Device device, ShaderModule shaderModule, AllocationCallbacks* allocator);
+        public unsafe delegate Result CreatePipelineCacheDelegate(Device device, ref PipelineCacheCreateInfo createInfo, AllocationCallbacks* allocator, out PipelineCache pipelineCache);
+        public unsafe delegate void DestroyPipelineCacheDelegate(Device device, PipelineCache pipelineCache, AllocationCallbacks* allocator);
         public unsafe delegate Result GetPipelineCacheDataDelegate(Device device, PipelineCache pipelineCache, out Size dataSize, void* data);
         public unsafe delegate Result MergePipelineCachesDelegate(Device device, PipelineCache dstCache, uint srcCacheCount, ref PipelineCache[] srcCaches);
-        public unsafe delegate Result CreateGraphicsPipelinesDelegate(Device device, PipelineCache pipelineCache, uint createInfoCount, GraphicsPipelineCreateInfo[] createInfos, ref AllocationCallbacks allocator, Pipeline[] pipelines);
-        public unsafe delegate Result CreateComputePipelinesDelegate(Device device, PipelineCache pipelineCache, uint createInfoCount, ComputePipelineCreateInfo[] createInfos, ref AllocationCallbacks allocator, Pipeline[] pipelines);
-        public unsafe delegate void DestroyPipelineDelegate(Device device, Pipeline pipeline, ref AllocationCallbacks allocator);
-        public unsafe delegate Result CreatePipelineLayoutDelegate(Device device, ref PipelineLayoutCreateInfo createInfo, ref AllocationCallbacks allocator, out PipelineLayout pipelineLayout);
-        public unsafe delegate void DestroyPipelineLayoutDelegate(Device device, PipelineLayout pipelineLayout, ref AllocationCallbacks allocator);
-        public unsafe delegate Result CreateSamplerDelegate(Device device, ref SamplerCreateInfo createInfo, ref AllocationCallbacks allocator, out Sampler sampler);
-        public unsafe delegate void DestroySamplerDelegate(Device device, Sampler sampler, ref AllocationCallbacks allocator);
-        public unsafe delegate Result CreateDescriptorSetLayoutDelegate(Device device, ref DescriptorSetLayoutCreateInfo createInfo, ref AllocationCallbacks allocator, out DescriptorSetLayout setLayout);
-        public unsafe delegate void DestroyDescriptorSetLayoutDelegate(Device device, DescriptorSetLayout descriptorSetLayout, ref AllocationCallbacks allocator);
-        public unsafe delegate Result CreateDescriptorPoolDelegate(Device device, ref DescriptorPoolCreateInfo createInfo, ref AllocationCallbacks allocator, out DescriptorPool descriptorPool);
-        public unsafe delegate void DestroyDescriptorPoolDelegate(Device device, DescriptorPool descriptorPool, ref AllocationCallbacks allocator);
+        public unsafe delegate Result CreateGraphicsPipelinesDelegate(Device device, PipelineCache pipelineCache, uint createInfoCount, GraphicsPipelineCreateInfo[] createInfos, AllocationCallbacks* allocator, Pipeline[] pipelines);
+        public unsafe delegate Result CreateComputePipelinesDelegate(Device device, PipelineCache pipelineCache, uint createInfoCount, ComputePipelineCreateInfo[] createInfos, AllocationCallbacks* allocator, Pipeline[] pipelines);
+        public unsafe delegate void DestroyPipelineDelegate(Device device, Pipeline pipeline, AllocationCallbacks* allocator);
+        public unsafe delegate Result CreatePipelineLayoutDelegate(Device device, ref PipelineLayoutCreateInfo createInfo, AllocationCallbacks* allocator, out PipelineLayout pipelineLayout);
+        public unsafe delegate void DestroyPipelineLayoutDelegate(Device device, PipelineLayout pipelineLayout, AllocationCallbacks* allocator);
+        public unsafe delegate Result CreateSamplerDelegate(Device device, ref SamplerCreateInfo createInfo, AllocationCallbacks* allocator, out Sampler sampler);
+        public unsafe delegate void DestroySamplerDelegate(Device device, Sampler sampler, AllocationCallbacks* allocator);
+        public unsafe delegate Result CreateDescriptorSetLayoutDelegate(Device device, ref DescriptorSetLayoutCreateInfo createInfo, AllocationCallbacks* allocator, out DescriptorSetLayout setLayout);
+        public unsafe delegate void DestroyDescriptorSetLayoutDelegate(Device device, DescriptorSetLayout descriptorSetLayout, AllocationCallbacks* allocator);
+        public unsafe delegate Result CreateDescriptorPoolDelegate(Device device, ref DescriptorPoolCreateInfo createInfo, AllocationCallbacks* allocator, out DescriptorPool descriptorPool);
+        public unsafe delegate void DestroyDescriptorPoolDelegate(Device device, DescriptorPool descriptorPool, AllocationCallbacks* allocator);
         public unsafe delegate Result ResetDescriptorPoolDelegate(Device device, DescriptorPool descriptorPool, DescriptorPoolResetFlags flags);
         public unsafe delegate Result AllocateDescriptorSetsDelegate(Device device, ref DescriptorSetAllocateInfo allocateInfo, DescriptorSet[] descriptorSets);
         public unsafe delegate Result FreeDescriptorSetsDelegate(Device device, DescriptorPool descriptorPool, uint descriptorSetCount, DescriptorSet[] descriptorSets);
         public unsafe delegate void UpdateDescriptorSetsDelegate(Device device, uint descriptorWriteCount, WriteDescriptorSet[] descriptorWrites, uint descriptorCopyCount, CopyDescriptorSet[] descriptorCopies);
-        public unsafe delegate Result CreateFramebufferDelegate(Device device, ref FramebufferCreateInfo createInfo, ref AllocationCallbacks allocator, out Framebuffer framebuffer);
-        public unsafe delegate void DestroyFramebufferDelegate(Device device, Framebuffer framebuffer, ref AllocationCallbacks allocator);
-        public unsafe delegate Result CreateRenderPassDelegate(Device device, ref RenderPassCreateInfo createInfo, ref AllocationCallbacks allocator, out RenderPass renderPass);
-        public unsafe delegate void DestroyRenderPassDelegate(Device device, RenderPass renderPass, ref AllocationCallbacks allocator);
+        public unsafe delegate Result CreateFramebufferDelegate(Device device, ref FramebufferCreateInfo createInfo, AllocationCallbacks* allocator, out Framebuffer framebuffer);
+        public unsafe delegate void DestroyFramebufferDelegate(Device device, Framebuffer framebuffer, AllocationCallbacks* allocator);
+        public unsafe delegate Result CreateRenderPassDelegate(Device device, ref RenderPassCreateInfo createInfo, AllocationCallbacks* allocator, out RenderPass renderPass);
+        public unsafe delegate void DestroyRenderPassDelegate(Device device, RenderPass renderPass, AllocationCallbacks* allocator);
         public unsafe delegate void GetRenderAreaGranularityDelegate(Device device, RenderPass renderPass, out Extent2D granularity);
-        public unsafe delegate Result CreateCommandPoolDelegate(Device device, ref CommandPoolCreateInfo createInfo, ref AllocationCallbacks allocator, out CommandPool commandPool);
-        public unsafe delegate void DestroyCommandPoolDelegate(Device device, CommandPool commandPool, ref AllocationCallbacks allocator);
+        public unsafe delegate Result CreateCommandPoolDelegate(Device device, ref CommandPoolCreateInfo createInfo, AllocationCallbacks* allocator, out CommandPool commandPool);
+        public unsafe delegate void DestroyCommandPoolDelegate(Device device, CommandPool commandPool, AllocationCallbacks* allocator);
         public unsafe delegate Result ResetCommandPoolDelegate(Device device, CommandPool commandPool, CommandPoolResetFlags flags);
         public unsafe delegate Result AllocateCommandBuffersDelegate(Device device, ref CommandBufferAllocateInfo allocateInfo, CommandBuffer[] commandBuffers);
         public unsafe delegate void FreeCommandBuffersDelegate(Device device, CommandPool commandPool, uint commandBufferCount, CommandBuffer[] commandBuffers);
@@ -326,124 +341,124 @@ namespace Vulkan
         public unsafe delegate void CmdEndRenderPassDelegate(CommandBuffer commandBuffer);
         public unsafe delegate void CmdExecuteCommandsDelegate(CommandBuffer commandBuffer, uint commandBufferCount, CommandBuffer[] commandBuffers);
         // Khronos
-        public unsafe delegate void DestroySurfaceDelegate(Instance instance, Surface surface, ref AllocationCallbacks allocator);
-        public unsafe delegate Result GetPhysicalDeviceSurfaceSupportDelegate(PhysicalDevice physicalDevice, uint queueFamilyIndex, Surface surface, out Bool32 supported);
-        public unsafe delegate Result GetPhysicalDeviceSurfaceCapabilitiesDelegate(PhysicalDevice physicalDevice, Surface surface, SurfaceCapabilities[] surfaceCapabilities);
-        public unsafe delegate Result GetPhysicalDeviceSurfaceFormatsDelegate(PhysicalDevice physicalDevice, Surface surface, out uint surfaceFormatCount, SurfaceFormat[] surfaceFormats);
-        public unsafe delegate Result GetPhysicalDeviceSurfacePresentModesDelegate(PhysicalDevice physicalDevice, Surface surface, out uint presentModeCount, PresentMode[] presentModes);
-        public unsafe delegate Result CreateSwapchainDelegate(Device device, ref SwapchainCreateInfo createInfo, ref AllocationCallbacks allocator, out Swapchain swapchain);
-        public unsafe delegate void DestroySwapchainDelegate(Device device, Swapchain swapchain, ref AllocationCallbacks allocator);
-        public unsafe delegate Result GetSwapchainImagesDelegate(Device device, Swapchain swapchain, out uint swapchainImageCount, Image[] swapchainImages);
-        public unsafe delegate Result AcquireNextImageDelegate(Device device, Swapchain swapchain, ulong timeout, Semaphore semaphore, Fence fence, out uint imageIndex);
-        public unsafe delegate Result QueuePresentDelegate(Queue queue, ref PresentInfo presentInfo);
-        public unsafe delegate Result GetPhysicalDeviceDisplayPropertiesDelegate(PhysicalDevice physicalDevice, out uint propertyCount, DisplayProperties[] properties);
-        public unsafe delegate Result GetPhysicalDeviceDisplayPlanePropertiesDelegate(PhysicalDevice physicalDevice, out uint propertyCount, DisplayPlaneProperties[] properties);
-        public unsafe delegate Result GetDisplayPlaneSupportedDisplaysDelegate(PhysicalDevice physicalDevice, uint planeIndex, out uint displayCount, Display[] displays);
-        public unsafe delegate Result GetDisplayModePropertiesDelegate(PhysicalDevice physicalDevice, Display display, out uint propertyCount, DisplayModeProperties[] properties);
-        public unsafe delegate Result CreateDisplayModeDelegate(PhysicalDevice physicalDevice, Display display, ref DisplayModeCreateInfo createInfo, ref AllocationCallbacks allocator, out DisplayMode mode);
-        public unsafe delegate Result GetDisplayPlaneCapabilitiesDelegate(PhysicalDevice physicalDevice, DisplayMode mode, uint planeIndex, out DisplayPlaneCapabilities capabilities);
-        public unsafe delegate Result CreateDisplayPlaneSurfaceDelegate(Instance instance, ref DisplaySurfaceCreateInfo createInfo, ref AllocationCallbacks allocator, out Surface surface);
-        public unsafe delegate Result CreateSharedSwapchainsDelegate(Device device, uint swapchainCount, SwapchainCreateInfo[] createInfos, ref AllocationCallbacks allocator, Swapchain[] swapchains);
-        public unsafe delegate Result CreateXlibSurfaceDelegate(Instance instance, ref XlibSurfaceCreateInfo createInfo, ref AllocationCallbacks allocator, out Surface surface);
-        public unsafe delegate Bool32 GetPhysicalDeviceXlibPresentationSupportDelegate(PhysicalDevice physicalDevice, uint queueFamilyIndex, IntPtr dpy, IntPtr visualID);
-        public unsafe delegate Result CreateXcbSurfaceDelegate(Instance instance, ref XcbSurfaceCreateInfo createInfo, ref AllocationCallbacks allocator, out Surface surface);
-        public unsafe delegate Bool32 GetPhysicalDeviceXcbPresentationSupportDelegate(PhysicalDevice physicalDevice, uint queueFamilyIndex, IntPtr connection, IntPtr visualId);
-        public unsafe delegate Result CreateWaylandSurfaceDelegate(Instance instance, ref WaylandSurfaceCreateInfo createInfo, ref AllocationCallbacks allocator, out Surface surface);
-        public unsafe delegate Bool32 GetPhysicalDeviceWaylandPresentationSupportDelegate(PhysicalDevice physicalDevice, uint queueFamilyIndex, IntPtr display);
-        public unsafe delegate Result CreateMirSurfaceDelegate(Instance instance, ref MirSurfaceCreateInfo createInfo, ref AllocationCallbacks allocator, out Surface surface);
-        public unsafe delegate Bool32 GetPhysicalDeviceMirPresentationSupportDelegate(PhysicalDevice physicalDevice, uint queueFamilyIndex, IntPtr connection);
-        public unsafe delegate Result CreateAndroidSurfaceDelegate(Instance instance, ref AndroidSurfaceCreateInfo createInfo, ref AllocationCallbacks allocator, out Surface surface);
-        public unsafe delegate Result CreateWin32SurfaceDelegate(Instance instance, ref Win32SurfaceCreateInfo createInfo, ref AllocationCallbacks allocator, out Surface surface);
-        public unsafe delegate Bool32 GetPhysicalDeviceWin32PresentationSupportDelegate(PhysicalDevice physicalDevice, uint queueFamilyIndex);
-        public unsafe delegate void GetPhysicalDeviceFeatures2Delegate(PhysicalDevice physicalDevice, out PhysicalDeviceFeatures2 features);
-        public unsafe delegate void GetPhysicalDeviceProperties2Delegate(PhysicalDevice physicalDevice, out PhysicalDeviceProperties2 properties);
-        public unsafe delegate void GetPhysicalDeviceFormatProperties2Delegate(PhysicalDevice physicalDevice, Format format, out FormatProperties2 formatProperties);
-        public unsafe delegate Result GetPhysicalDeviceImageFormatProperties2Delegate(PhysicalDevice physicalDevice, ref PhysicalDeviceImageFormatInfo2 imageFormatInfo, out ImageFormatProperties2 imageFormatProperties);
-        public unsafe delegate void GetPhysicalDeviceQueueFamilyProperties2Delegate(PhysicalDevice physicalDevice, out uint queueFamilyPropertyCount, QueueFamilyProperties2[] queueFamilyProperties);
-        public unsafe delegate void GetPhysicalDeviceMemoryProperties2Delegate(PhysicalDevice physicalDevice, out PhysicalDeviceMemoryProperties2 memoryProperties);
-        public unsafe delegate void GetPhysicalDeviceSparseImageFormatProperties2Delegate(PhysicalDevice physicalDevice, ref PhysicalDeviceSparseImageFormatInfo2 formatInfo, out uint propertyCount, SparseImageFormatProperties2[] properties);
-        public unsafe delegate void TrimCommandPoolDelegate(Device device, CommandPool commandPool, CommandPoolTrimFlags flags);
-        public unsafe delegate void GetPhysicalDeviceExternalBufferPropertiesDelegate(PhysicalDevice physicalDevice, ref PhysicalDeviceExternalBufferInfo externalBufferInfo, out ExternalBufferProperties externalBufferProperties);
-        public unsafe delegate Result GetMemoryWin32HandleDelegate(Device device, ref MemoryGetWin32HandleInfo getWin32HandleInfo, IntPtr handle);
-        public unsafe delegate Result GetMemoryWin32HandlePropertiesDelegate(Device device, ExternalMemoryHandleTypeFlags handleType, IntPtr handle, out MemoryWin32HandleProperties memoryWin32HandleProperties);
-        public unsafe delegate Result GetMemoryFdDelegate(Device device, ref MemoryGetFdInfo getFdInfo, out int fd);
-        public unsafe delegate Result GetMemoryFdPropertiesDelegate(Device device, ExternalMemoryHandleTypeFlags handleType, int fd, out MemoryFdProperties pMemoryFdProperties);
-        public unsafe delegate void GetPhysicalDeviceExternalSemaphorePropertiesDelegate(PhysicalDevice physicalDevice, ref PhysicalDeviceExternalSemaphoreInfo externalSemaphoreInfo, out ExternalSemaphoreProperties externalSemaphoreProperties);
-        public unsafe delegate Result ImportSemaphoreWin32HandleDelegate(Device device, ref ImportSemaphoreWin32HandleInfo importSemaphoreWin32HandleInfo);
-        public unsafe delegate Result GetSemaphoreWin32HandleDelegate(Device device, ref SemaphoreGetWin32HandleInfo getWin32HandleInfo, IntPtr handle);
-        public unsafe delegate Result ImportSemaphoreFdDelegate(Device device, ref ImportSemaphoreFdInfo importSemaphoreFdInfo);
-        public unsafe delegate Result GetSemaphoreFdDelegate(Device device, ref SemaphoreGetFdInfo getFdInfo, out int fd);
-        public unsafe delegate void CmdPushDescriptorSetDelegate(CommandBuffer commandBuffer, PipelineBindPoint pipelineBindPoint, PipelineLayout layout, uint set, uint descriptorWriteCount, WriteDescriptorSet[] descriptorWrites);
-        public unsafe delegate Result CreateDescriptorUpdateTemplateDelegate(Device device, ref DescriptorUpdateTemplateCreateInfo createInfo, ref AllocationCallbacks allocator, out DescriptorUpdateTemplate descriptorUpdateTemplate);
-        public unsafe delegate void DestroyDescriptorUpdateTemplateDelegate(Device device, DescriptorUpdateTemplate descriptorUpdateTemplate, ref AllocationCallbacks allocator);
-        public unsafe delegate void UpdateDescriptorSetWithTemplateDelegate(Device device, DescriptorSet descriptorSet, DescriptorUpdateTemplate descriptorUpdateTemplate, void* data);
-        public unsafe delegate void CmdPushDescriptorSetWithTemplateDelegate(CommandBuffer commandBuffer, DescriptorUpdateTemplate descriptorUpdateTemplate, PipelineLayout layout, uint set, void* data);
-        public unsafe delegate Result GetSwapchainStatusDelegate(Device device, Swapchain swapchain);
-        public unsafe delegate void GetPhysicalDeviceExternalFencePropertiesDelegate(PhysicalDevice physicalDevice, ref PhysicalDeviceExternalFenceInfo externalFenceInfo, out ExternalFenceProperties externalFenceProperties);
-        public unsafe delegate Result ImportFenceWin32HandleDelegate(Device device, ref ImportFenceWin32HandleInfo importFenceWin32HandleInfo);
-        public unsafe delegate Result GetFenceWin32HandleDelegate(Device device, ref FenceGetWin32HandleInfo getWin32HandleInfo, IntPtr pHandle);
-        public unsafe delegate Result ImportFenceFdDelegate(Device device, ref ImportFenceFdInfo importFenceFdInfo);
-        public unsafe delegate Result GetFenceFdDelegate(Device device, ref FenceGetFdInfo getFdInfo, out int fd);
-        public unsafe delegate Result GetPhysicalDeviceSurfaceCapabilities2Delegate(PhysicalDevice physicalDevice, ref PhysicalDeviceSurfaceInfo2 surfaceInfo, out SurfaceCapabilities2 surfaceCapabilities);
-        public unsafe delegate Result GetPhysicalDeviceSurfaceFormats2Delegate(PhysicalDevice physicalDevice, ref PhysicalDeviceSurfaceInfo2 surfaceInfo, out uint surfaceFormatCount, SurfaceFormat2[] surfaceFormats);
-        public unsafe delegate void GetImageMemoryRequirements2Delegate(Device device, ref ImageMemoryRequirementsInfo2 info, out MemoryRequirements2 memoryRequirements);
-        public unsafe delegate void GetBufferMemoryRequirements2Delegate(Device device, ref BufferMemoryRequirementsInfo2 info, out MemoryRequirements2 memoryRequirements);
-        public unsafe delegate void GetImageSparseMemoryRequirements2Delegate(Device device, ref ImageSparseMemoryRequirementsInfo2 info, out uint sparseMemoryRequirementCount, SparseImageMemoryRequirements2[] sparseMemoryRequirements);
+        public unsafe delegate void DestroySurfaceKHRDelegate(Instance instance, Surface surface, AllocationCallbacks* allocator);
+        public unsafe delegate Result GetPhysicalDeviceSurfaceSupportKHRDelegate(PhysicalDevice physicalDevice, uint queueFamilyIndex, Surface surface, out Bool32 supported);
+        public unsafe delegate Result GetPhysicalDeviceSurfaceCapabilitiesKHRDelegate(PhysicalDevice physicalDevice, Surface surface, SurfaceCapabilities[] surfaceCapabilities);
+        public unsafe delegate Result GetPhysicalDeviceSurfaceFormatsKHRDelegate(PhysicalDevice physicalDevice, Surface surface, out uint surfaceFormatCount, SurfaceFormat[] surfaceFormats);
+        public unsafe delegate Result GetPhysicalDeviceSurfacePresentModesKHRDelegate(PhysicalDevice physicalDevice, Surface surface, out uint presentModeCount, PresentMode[] presentModes);
+        public unsafe delegate Result CreateSwapchainKHRDelegate(Device device, ref SwapchainCreateInfo createInfo, AllocationCallbacks* allocator, out Swapchain swapchain);
+        public unsafe delegate void DestroySwapchainKHRDelegate(Device device, Swapchain swapchain, AllocationCallbacks* allocator);
+        public unsafe delegate Result GetSwapchainImagesKHRDelegate(Device device, Swapchain swapchain, out uint swapchainImageCount, Image[] swapchainImages);
+        public unsafe delegate Result AcquireNextImageKHRDelegate(Device device, Swapchain swapchain, ulong timeout, Semaphore semaphore, Fence fence, out uint imageIndex);
+        public unsafe delegate Result QueuePresentKHRDelegate(Queue queue, ref PresentInfo presentInfo);
+        public unsafe delegate Result GetPhysicalDeviceDisplayPropertiesKHRDelegate(PhysicalDevice physicalDevice, out uint propertyCount, DisplayProperties[] properties);
+        public unsafe delegate Result GetPhysicalDeviceDisplayPlanePropertiesKHRDelegate(PhysicalDevice physicalDevice, out uint propertyCount, DisplayPlaneProperties[] properties);
+        public unsafe delegate Result GetDisplayPlaneSupportedDisplaysKHRDelegate(PhysicalDevice physicalDevice, uint planeIndex, out uint displayCount, Display[] displays);
+        public unsafe delegate Result GetDisplayModePropertiesKHRDelegate(PhysicalDevice physicalDevice, Display display, out uint propertyCount, DisplayModeProperties[] properties);
+        public unsafe delegate Result CreateDisplayModeKHRDelegate(PhysicalDevice physicalDevice, Display display, ref DisplayModeCreateInfo createInfo, AllocationCallbacks* allocator, out DisplayMode mode);
+        public unsafe delegate Result GetDisplayPlaneCapabilitiesKHRDelegate(PhysicalDevice physicalDevice, DisplayMode mode, uint planeIndex, out DisplayPlaneCapabilities capabilities);
+        public unsafe delegate Result CreateDisplayPlaneSurfaceKHRDelegate(Instance instance, ref DisplaySurfaceCreateInfo createInfo, AllocationCallbacks* allocator, out Surface surface);
+        public unsafe delegate Result CreateSharedSwapchainsKHRDelegate(Device device, uint swapchainCount, SwapchainCreateInfo[] createInfos, AllocationCallbacks* allocator, Swapchain[] swapchains);
+        public unsafe delegate Result CreateXlibSurfaceKHRDelegate(Instance instance, ref XlibSurfaceCreateInfo createInfo, AllocationCallbacks* allocator, out Surface surface);
+        public unsafe delegate Bool32 GetPhysicalDeviceXlibPresentationSupportKHRDelegate(PhysicalDevice physicalDevice, uint queueFamilyIndex, IntPtr dpy, IntPtr visualID);
+        public unsafe delegate Result CreateXcbSurfaceKHRDelegate(Instance instance, ref XcbSurfaceCreateInfo createInfo, AllocationCallbacks* allocator, out Surface surface);
+        public unsafe delegate Bool32 GetPhysicalDeviceXcbPresentationSupportKHRDelegate(PhysicalDevice physicalDevice, uint queueFamilyIndex, IntPtr connection, IntPtr visualId);
+        public unsafe delegate Result CreateWaylandSurfaceKHRDelegate(Instance instance, ref WaylandSurfaceCreateInfo createInfo, AllocationCallbacks* allocator, out Surface surface);
+        public unsafe delegate Bool32 GetPhysicalDeviceWaylandPresentationSupportKHRDelegate(PhysicalDevice physicalDevice, uint queueFamilyIndex, IntPtr display);
+        public unsafe delegate Result CreateMirSurfaceKHRDelegate(Instance instance, ref MirSurfaceCreateInfo createInfo, AllocationCallbacks* allocator, out Surface surface);
+        public unsafe delegate Bool32 GetPhysicalDeviceMirPresentationSupportKHRDelegate(PhysicalDevice physicalDevice, uint queueFamilyIndex, IntPtr connection);
+        public unsafe delegate Result CreateAndroidSurfaceKHRDelegate(Instance instance, ref AndroidSurfaceCreateInfo createInfo, AllocationCallbacks* allocator, out Surface surface);
+        public unsafe delegate Result CreateWin32SurfaceKHRDelegate(Instance instance, ref Win32SurfaceCreateInfo createInfo, AllocationCallbacks* allocator, out Surface surface);
+        public unsafe delegate Bool32 GetPhysicalDeviceWin32PresentationSupportKHRDelegate(PhysicalDevice physicalDevice, uint queueFamilyIndex);
+        public unsafe delegate void GetPhysicalDeviceFeatures2KHRDelegate(PhysicalDevice physicalDevice, out PhysicalDeviceFeatures2 features);
+        public unsafe delegate void GetPhysicalDeviceProperties2KHRDelegate(PhysicalDevice physicalDevice, out PhysicalDeviceProperties2 properties);
+        public unsafe delegate void GetPhysicalDeviceFormatProperties2KHRDelegate(PhysicalDevice physicalDevice, Format format, out FormatProperties2 formatProperties);
+        public unsafe delegate Result GetPhysicalDeviceImageFormatProperties2KHRDelegate(PhysicalDevice physicalDevice, ref PhysicalDeviceImageFormatInfo2 imageFormatInfo, out ImageFormatProperties2 imageFormatProperties);
+        public unsafe delegate void GetPhysicalDeviceQueueFamilyProperties2KHRDelegate(PhysicalDevice physicalDevice, out uint queueFamilyPropertyCount, QueueFamilyProperties2[] queueFamilyProperties);
+        public unsafe delegate void GetPhysicalDeviceMemoryProperties2KHRDelegate(PhysicalDevice physicalDevice, out PhysicalDeviceMemoryProperties2 memoryProperties);
+        public unsafe delegate void GetPhysicalDeviceSparseImageFormatProperties2KHRDelegate(PhysicalDevice physicalDevice, ref PhysicalDeviceSparseImageFormatInfo2 formatInfo, out uint propertyCount, SparseImageFormatProperties2[] properties);
+        public unsafe delegate void TrimCommandPoolKHRDelegate(Device device, CommandPool commandPool, CommandPoolTrimFlags flags);
+        public unsafe delegate void GetPhysicalDeviceExternalBufferPropertiesKHRDelegate(PhysicalDevice physicalDevice, ref PhysicalDeviceExternalBufferInfo externalBufferInfo, out ExternalBufferProperties externalBufferProperties);
+        public unsafe delegate Result GetMemoryWin32HandleKHRDelegate(Device device, ref MemoryGetWin32HandleInfo getWin32HandleInfo, IntPtr handle);
+        public unsafe delegate Result GetMemoryWin32HandlePropertiesKHRDelegate(Device device, ExternalMemoryHandleTypeFlags handleType, IntPtr handle, out MemoryWin32HandleProperties memoryWin32HandleProperties);
+        public unsafe delegate Result GetMemoryFdKHRDelegate(Device device, ref MemoryGetFdInfo getFdInfo, out int fd);
+        public unsafe delegate Result GetMemoryFdPropertiesKHRDelegate(Device device, ExternalMemoryHandleTypeFlags handleType, int fd, out MemoryFdProperties pMemoryFdProperties);
+        public unsafe delegate void GetPhysicalDeviceExternalSemaphorePropertiesKHRDelegate(PhysicalDevice physicalDevice, ref PhysicalDeviceExternalSemaphoreInfo externalSemaphoreInfo, out ExternalSemaphoreProperties externalSemaphoreProperties);
+        public unsafe delegate Result ImportSemaphoreWin32HandleKHRDelegate(Device device, ref ImportSemaphoreWin32HandleInfo importSemaphoreWin32HandleInfo);
+        public unsafe delegate Result GetSemaphoreWin32HandleKHRDelegate(Device device, ref SemaphoreGetWin32HandleInfo getWin32HandleInfo, IntPtr handle);
+        public unsafe delegate Result ImportSemaphoreFdKHRDelegate(Device device, ref ImportSemaphoreFdInfo importSemaphoreFdInfo);
+        public unsafe delegate Result GetSemaphoreFdKHRDelegate(Device device, ref SemaphoreGetFdInfo getFdInfo, out int fd);
+        public unsafe delegate void CmdPushDescriptorSetKHRDelegate(CommandBuffer commandBuffer, PipelineBindPoint pipelineBindPoint, PipelineLayout layout, uint set, uint descriptorWriteCount, WriteDescriptorSet[] descriptorWrites);
+        public unsafe delegate Result CreateDescriptorUpdateTemplateKHRDelegate(Device device, ref DescriptorUpdateTemplateCreateInfo createInfo, AllocationCallbacks* allocator, out DescriptorUpdateTemplate descriptorUpdateTemplate);
+        public unsafe delegate void DestroyDescriptorUpdateTemplateKHRDelegate(Device device, DescriptorUpdateTemplate descriptorUpdateTemplate, AllocationCallbacks* allocator);
+        public unsafe delegate void UpdateDescriptorSetWithTemplateKHRDelegate(Device device, DescriptorSet descriptorSet, DescriptorUpdateTemplate descriptorUpdateTemplate, void* data);
+        public unsafe delegate void CmdPushDescriptorSetWithTemplateKHRDelegate(CommandBuffer commandBuffer, DescriptorUpdateTemplate descriptorUpdateTemplate, PipelineLayout layout, uint set, void* data);
+        public unsafe delegate Result GetSwapchainStatusKHRDelegate(Device device, Swapchain swapchain);
+        public unsafe delegate void GetPhysicalDeviceExternalFencePropertiesKHRDelegate(PhysicalDevice physicalDevice, ref PhysicalDeviceExternalFenceInfo externalFenceInfo, out ExternalFenceProperties externalFenceProperties);
+        public unsafe delegate Result ImportFenceWin32HandleKHRDelegate(Device device, ref ImportFenceWin32HandleInfo importFenceWin32HandleInfo);
+        public unsafe delegate Result GetFenceWin32HandleKHRDelegate(Device device, ref FenceGetWin32HandleInfo getWin32HandleInfo, IntPtr pHandle);
+        public unsafe delegate Result ImportFenceFdKHRDelegate(Device device, ref ImportFenceFdInfo importFenceFdInfo);
+        public unsafe delegate Result GetFenceFdKHRDelegate(Device device, ref FenceGetFdInfo getFdInfo, out int fd);
+        public unsafe delegate Result GetPhysicalDeviceSurfaceCapabilities2KHRDelegate(PhysicalDevice physicalDevice, ref PhysicalDeviceSurfaceInfo2 surfaceInfo, out SurfaceCapabilities2 surfaceCapabilities);
+        public unsafe delegate Result GetPhysicalDeviceSurfaceFormats2KHRDelegate(PhysicalDevice physicalDevice, ref PhysicalDeviceSurfaceInfo2 surfaceInfo, out uint surfaceFormatCount, SurfaceFormat2[] surfaceFormats);
+        public unsafe delegate void GetImageMemoryRequirements2KHRDelegate(Device device, ref ImageMemoryRequirementsInfo2 info, out MemoryRequirements2 memoryRequirements);
+        public unsafe delegate void GetBufferMemoryRequirements2KHRDelegate(Device device, ref BufferMemoryRequirementsInfo2 info, out MemoryRequirements2 memoryRequirements);
+        public unsafe delegate void GetImageSparseMemoryRequirements2KHRDelegate(Device device, ref ImageSparseMemoryRequirementsInfo2 info, out uint sparseMemoryRequirementCount, SparseImageMemoryRequirements2[] sparseMemoryRequirements);
         // Khronos X
-        public unsafe delegate void GetDeviceGroupPeerMemoryFeaturesDelegate(Device device, uint heapIndex, uint localDeviceIndex, uint remoteDeviceIndex, out PeerMemoryFeatureFlags peerMemoryFeatures);
-        public unsafe delegate Result BindBufferMemory2Delegate(Device device, uint bindInfoCount, BindBufferMemoryInfo[] bindInfos);
-        public unsafe delegate Result BindImageMemory2Delegate(Device device, uint bindInfoCount, BindImageMemoryInfo[] bindInfos);
-        public unsafe delegate void CmdSetDeviceMaskDelegate(CommandBuffer commandBuffer, uint deviceMask);
-        public unsafe delegate Result GetDeviceGroupPresentCapabilitiesDelegate(Device device, out DeviceGroupPresentCapabilities deviceGroupPresentCapabilities);
-        public unsafe delegate Result GetDeviceGroupSurfacePresentModesDelegate(Device device, Surface surface, out DeviceGroupPresentModeFlags modes);
-        public unsafe delegate Result AcquireNextImage2Delegate(Device device, ref AcquireNextImageInfo acquireInfo, out uint imageIndex);
-        public unsafe delegate void CmdDispatchBaseDelegate(CommandBuffer commandBuffer, uint baseGroupX, uint baseGroupY, uint baseGroupZ, uint groupCountX, uint groupCountY, uint groupCountZ);
-        public unsafe delegate Result GetPhysicalDevicePresentRectanglesDelegate(PhysicalDevice physicalDevice, Surface surface, ref uint rectCount, Rect2D[] rects);
-        public unsafe delegate Result EnumeratePhysicalDeviceGroupsDelegate(Instance instance, ref uint physicalDeviceGroupCount, PhysicalDeviceGroupProperties[] physicalDeviceGroupProperties);
+        public unsafe delegate void GetDeviceGroupPeerMemoryFeaturesKHXDelegate(Device device, uint heapIndex, uint localDeviceIndex, uint remoteDeviceIndex, out PeerMemoryFeatureFlags peerMemoryFeatures);
+        public unsafe delegate Result BindBufferMemory2KHXDelegate(Device device, uint bindInfoCount, BindBufferMemoryInfo[] bindInfos);
+        public unsafe delegate Result BindImageMemory2KHXDelegate(Device device, uint bindInfoCount, BindImageMemoryInfo[] bindInfos);
+        public unsafe delegate void CmdSetDeviceMaskKHXDelegate(CommandBuffer commandBuffer, uint deviceMask);
+        public unsafe delegate Result GetDeviceGroupPresentCapabilitiesKHXDelegate(Device device, out DeviceGroupPresentCapabilities deviceGroupPresentCapabilities);
+        public unsafe delegate Result GetDeviceGroupSurfacePresentModesKHXDelegate(Device device, Surface surface, out DeviceGroupPresentModeFlags modes);
+        public unsafe delegate Result AcquireNextImage2KHXDelegate(Device device, ref AcquireNextImageInfo acquireInfo, out uint imageIndex);
+        public unsafe delegate void CmdDispatchBaseKHXDelegate(CommandBuffer commandBuffer, uint baseGroupX, uint baseGroupY, uint baseGroupZ, uint groupCountX, uint groupCountY, uint groupCountZ);
+        public unsafe delegate Result GetPhysicalDevicePresentRectanglesKHXDelegate(PhysicalDevice physicalDevice, Surface surface, ref uint rectCount, Rect2D[] rects);
+        public unsafe delegate Result EnumeratePhysicalDeviceGroupsKHXDelegate(Instance instance, ref uint physicalDeviceGroupCount, PhysicalDeviceGroupProperties[] physicalDeviceGroupProperties);
         // Multi-vendor
-        public unsafe delegate Bool32 DebugReportCallbackDelegate(DebugReportFlags flags, DebugReportObjectType objectType, ulong objectHandle, Size location, int messageCode, Text layerPrefix, Text message, IntPtr userData);
-        public unsafe delegate Result CreateDebugReportCallbackDelegate(Instance instance, ref DebugReportCallbackCreateInfo createInfo, ref AllocationCallbacks allocator, out DebugReportCallback callback);
-        public unsafe delegate void DestroyDebugReportCallbackDelegate(Instance instance, DebugReportCallback callback, ref AllocationCallbacks allocator);
-        public unsafe delegate void DebugReportMessageDelegate(Instance instance, DebugReportFlags flags, DebugReportObjectType objectType, ulong obj, Size location, int messageCode, Text layerPrefix, Text message);
-        public unsafe delegate Result DebugMarkerSetObjectTagDelegate(Device device, ref DebugMarkerObjectTagInfo tagInfo);
-        public unsafe delegate Result DebugMarkerSetObjectNameDelegate(Device device, ref DebugMarkerObjectNameInfo nameInfo);
-        public unsafe delegate void CmdDebugMarkerBeginDelegate(CommandBuffer commandBuffer, ref DebugMarkerMarkerInfo markerInfo);
-        public unsafe delegate void CmdDebugMarkerEndDelegate(CommandBuffer commandBuffer);
-        public unsafe delegate void CmdDebugMarkerInsertDelegate(CommandBuffer commandBuffer, ref DebugMarkerMarkerInfo markerInfo);
-        public unsafe delegate Result ReleaseDisplayDelegate(PhysicalDevice physicalDevice, Display display);
-        public unsafe delegate Result AcquireXlibDisplayDelegate(PhysicalDevice physicalDevice, IntPtr dpy, Display display);
-        public unsafe delegate Result GetRandROutputDisplayDelegate(PhysicalDevice physicalDevice, IntPtr dpy, IntPtr rrOutput, out Display display);
+        public unsafe delegate Bool32 DebugReportCallbackEXTDelegate(DebugReportFlags flags, DebugReportObjectType objectType, ulong objectHandle, Size location, int messageCode, byte* layerPrefix, byte* message, IntPtr userData);
+        public unsafe delegate Result CreateDebugReportCallbackEXTDelegate(Instance instance, ref DebugReportCallbackCreateInfo createInfo, AllocationCallbacks* allocator, out DebugReportCallback callback);
+        public unsafe delegate void DestroyDebugReportCallbackEXTDelegate(Instance instance, DebugReportCallback callback, AllocationCallbacks* allocator);
+        public unsafe delegate void DebugReportMessageEXTDelegate(Instance instance, DebugReportFlags flags, DebugReportObjectType objectType, ulong obj, Size location, int messageCode, byte* layerPrefix, byte* message);
+        public unsafe delegate Result DebugMarkerSetObjectTagEXTDelegate(Device device, ref DebugMarkerObjectTagInfo tagInfo);
+        public unsafe delegate Result DebugMarkerSetObjectNameEXTDelegate(Device device, ref DebugMarkerObjectNameInfo nameInfo);
+        public unsafe delegate void CmdDebugMarkerBeginEXTDelegate(CommandBuffer commandBuffer, ref DebugMarkerMarkerInfo markerInfo);
+        public unsafe delegate void CmdDebugMarkerEndEXTDelegate(CommandBuffer commandBuffer);
+        public unsafe delegate void CmdDebugMarkerInsertEXTDelegate(CommandBuffer commandBuffer, ref DebugMarkerMarkerInfo markerInfo);
+        public unsafe delegate Result ReleaseDisplayEXTDelegate(PhysicalDevice physicalDevice, Display display);
+        public unsafe delegate Result AcquireXlibDisplayEXTDelegate(PhysicalDevice physicalDevice, IntPtr dpy, Display display);
+        public unsafe delegate Result GetRandROutputDisplayEXTDelegate(PhysicalDevice physicalDevice, IntPtr dpy, IntPtr rrOutput, out Display display);
         public unsafe delegate Result GetPhysicalDeviceSurfaceCapabilities2EXTDelegate(PhysicalDevice physicalDevice, Surface surface, out SurfaceCapabilities2EXT surfaceCapabilities);
-        public unsafe delegate Result DisplayPowerControlDelegate(Device device, Display display, ref DisplayPowerInfo displayPowerInfo);
-        public unsafe delegate Result RegisterDeviceEventDelegate(Device device, ref DeviceEventInfo deviceEventInfo, ref AllocationCallbacks allocator, out Fence fence);
-        public unsafe delegate Result RegisterDisplayEventDelegate(Device device, Display display, ref DisplayEventInfo displayEventInfo, ref AllocationCallbacks allocator, out Fence fence);
-        public unsafe delegate Result GetSwapchainCounterDelegate(Device device, Swapchain swapchain, SurfaceCounterFlags counter, out ulong counterValue);
-        public unsafe delegate void CmdSetDiscardRectangleDelegate(CommandBuffer commandBuffer, uint firstDiscardRectangle, uint discardRectangleCount, Rect2D[] discardRectangles);
-        public unsafe delegate void SetHdrMetadataDelegate(Device device, uint swapchainCount, Swapchain[] swapchains, HdrMetadata[] metadata);
+        public unsafe delegate Result DisplayPowerControlEXTDelegate(Device device, Display display, ref DisplayPowerInfo displayPowerInfo);
+        public unsafe delegate Result RegisterDeviceEventEXTDelegate(Device device, ref DeviceEventInfo deviceEventInfo, AllocationCallbacks* allocator, out Fence fence);
+        public unsafe delegate Result RegisterDisplayEventEXTDelegate(Device device, Display display, ref DisplayEventInfo displayEventInfo, AllocationCallbacks* allocator, out Fence fence);
+        public unsafe delegate Result GetSwapchainCounterEXTDelegate(Device device, Swapchain swapchain, SurfaceCounterFlags counter, out ulong counterValue);
+        public unsafe delegate void CmdSetDiscardRectangleEXTDelegate(CommandBuffer commandBuffer, uint firstDiscardRectangle, uint discardRectangleCount, Rect2D[] discardRectangles);
+        public unsafe delegate void SetHdrMetadataEXTDelegate(Device device, uint swapchainCount, Swapchain[] swapchains, HdrMetadata[] metadata);
         // AMD
-        public unsafe delegate void CmdDrawIndirectCountDelegate(CommandBuffer commandBuffer, Buffer buffer, DeviceSize offset, Buffer countBuffer, DeviceSize countBufferOffset, uint maxDrawCount, uint stride);
-        public unsafe delegate void CmdDrawIndexedIndirectCountDelegate(CommandBuffer commandBuffer, Buffer buffer, DeviceSize offset, Buffer countBuffer, DeviceSize countBufferOffset, uint maxDrawCount, uint stride);
+        public unsafe delegate void CmdDrawIndirectCountAMDDelegate(CommandBuffer commandBuffer, Buffer buffer, DeviceSize offset, Buffer countBuffer, DeviceSize countBufferOffset, uint maxDrawCount, uint stride);
+        public unsafe delegate void CmdDrawIndexedIndirectCountAMDDelegate(CommandBuffer commandBuffer, Buffer buffer, DeviceSize offset, Buffer countBuffer, DeviceSize countBufferOffset, uint maxDrawCount, uint stride);
         // Nvidia
-        public unsafe delegate Result GetPhysicalDeviceExternalImageFormatPropertiesDelegate(PhysicalDevice physicalDevice, Format format, ImageType type, ImageTiling tiling, ImageUsageFlags usage, ImageCreateFlags flags, ExternalMemoryHandleTypeFlagsNV ExternalHandleType, out ExternalImageFormatPropertiesNV externalImageFormatProperties);
+        public unsafe delegate Result GetPhysicalDeviceExternalImageFormatPropertiesNVDelegate(PhysicalDevice physicalDevice, Format format, ImageType type, ImageTiling tiling, ImageUsageFlags usage, ImageCreateFlags flags, ExternalMemoryHandleTypeFlagsNV ExternalHandleType, out ExternalImageFormatPropertiesNV externalImageFormatProperties);
         public unsafe delegate Result GetMemoryWin32HandleNVDelegate(Device device, DeviceMemory memory, ExternalMemoryHandleTypeFlagsNV handleType, IntPtr handle);
-        public unsafe delegate void CmdSetViewportWScalingDelegate(CommandBuffer commandBuffer, uint firstViewport, uint viewportCount, ViewportWScaling[] viewportWScalings);
+        public unsafe delegate void CmdSetViewportWScalingNVDelegate(CommandBuffer commandBuffer, uint firstViewport, uint viewportCount, ViewportWScaling[] viewportWScalings);
         // Nvidia X
-        public unsafe delegate void CmdProcessCommandsDelegate(CommandBuffer commandBuffer, ref CmdProcessCommandsInfo processCommandsInfo);
-        public unsafe delegate void CmdReserveSpaceForCommandsDelegate(CommandBuffer commandBuffer, ref CmdReserveSpaceForCommandsInfo reserveSpaceInfo);
-        public unsafe delegate Result CreateIndirectCommandsLayoutDelegate(Device device, ref IndirectCommandsLayoutCreateInfo createInfo, ref AllocationCallbacks allocator, out IndirectCommandsLayout indirectCommandsLayout);
-        public unsafe delegate void DestroyIndirectCommandsLayoutDelegate(Device device, IndirectCommandsLayout indirectCommandsLayout, ref AllocationCallbacks allocator);
-        public unsafe delegate Result CreateObjectTableDelegate(Device device, ref ObjectTableCreateInfo createInfo, ref AllocationCallbacks allocator, out ObjectTable objectTable);
-        public unsafe delegate void DestroyObjectTableDelegate(Device device, ObjectTable objectTable, ref AllocationCallbacks allocator);
-        public unsafe delegate Result RegisterObjectsDelegate(Device device, ObjectTable objectTable, uint objectCount, ref ObjectTableEntry[] objectTableEntries, uint[] objectIndices);
-        public unsafe delegate Result UnregisterObjectsDelegate(Device device, ObjectTable objectTable, uint objectCount, ObjectEntryType[] objectEntryTypes, uint[] objectIndices);
-        public unsafe delegate void GetPhysicalDeviceGeneratedCommandsPropertiesDelegate(PhysicalDevice physicalDevice, out DeviceGeneratedCommandsFeatures features, out DeviceGeneratedCommandsLimits limits);
+        public unsafe delegate void CmdProcessCommandsNVXDelegate(CommandBuffer commandBuffer, ref CmdProcessCommandsInfo processCommandsInfo);
+        public unsafe delegate void CmdReserveSpaceForCommandsNVXDelegate(CommandBuffer commandBuffer, ref CmdReserveSpaceForCommandsInfo reserveSpaceInfo);
+        public unsafe delegate Result CreateIndirectCommandsLayoutNVXDelegate(Device device, ref IndirectCommandsLayoutCreateInfo createInfo, AllocationCallbacks* allocator, out IndirectCommandsLayout indirectCommandsLayout);
+        public unsafe delegate void DestroyIndirectCommandsLayoutNVXDelegate(Device device, IndirectCommandsLayout indirectCommandsLayout, AllocationCallbacks* allocator);
+        public unsafe delegate Result CreateObjectTableNVXDelegate(Device device, ref ObjectTableCreateInfo createInfo, AllocationCallbacks* allocator, out ObjectTable objectTable);
+        public unsafe delegate void DestroyObjectTableNVXDelegate(Device device, ObjectTable objectTable, AllocationCallbacks* allocator);
+        public unsafe delegate Result RegisterObjectsNVXDelegate(Device device, ObjectTable objectTable, uint objectCount, ref ObjectTableEntry[] objectTableEntries, uint[] objectIndices);
+        public unsafe delegate Result UnregisterObjectsNVXDelegate(Device device, ObjectTable objectTable, uint objectCount, ObjectEntryType[] objectEntryTypes, uint[] objectIndices);
+        public unsafe delegate void GetPhysicalDeviceGeneratedCommandsPropertiesNVXDelegate(PhysicalDevice physicalDevice, out DeviceGeneratedCommandsFeatures features, out DeviceGeneratedCommandsLimits limits);
         // Nintendo
-        public unsafe delegate Result CreateViSurfaceDelegate(Instance instance, ref ViSurfaceCreateInfo createInfo, ref AllocationCallbacks allocator, out Surface surface);
+        public unsafe delegate Result CreateViSurfaceNNDelegate(Instance instance, ref ViSurfaceCreateInfo createInfo, AllocationCallbacks* allocator, out Surface surface);
         // Google
-        public unsafe delegate Result GetRefreshCycleDurationDelegate(Device device, Swapchain swapchain, ref RefreshCycleDuration displayTimingProperties);
-        public unsafe delegate Result GetPastPresentationTimingDelegate(Device device, Swapchain swapchain, ref uint presentationTimingCount, PastPresentationTiming[] presentationTimings);
+        public unsafe delegate Result GetRefreshCycleDurationGOOGLEDelegate(Device device, Swapchain swapchain, ref RefreshCycleDuration displayTimingProperties);
+        public unsafe delegate Result GetPastPresentationTimingGOOGLEDelegate(Device device, Swapchain swapchain, ref uint presentationTimingCount, PastPresentationTiming[] presentationTimings);
         // MoltenVK
-        public unsafe delegate Result CreateIOSSurfaceDelegate(Instance instance, ref IOSSurfaceCreateInfo createInfo, ref AllocationCallbacks allocator, out Surface surface);
-        public unsafe delegate Result CreateMacOSSurfaceDelegate(Instance instance, ref MacOSSurfaceCreateInfo createInfo, ref AllocationCallbacks allocator, out Surface surface);
+        public unsafe delegate Result CreateIOSSurfaceMVKDelegate(Instance instance, ref IOSSurfaceCreateInfo createInfo, AllocationCallbacks* allocator, out Surface surface);
+        public unsafe delegate Result CreateMacOSSurfaceMVKDelegate(Instance instance, ref MacOSSurfaceCreateInfo createInfo, AllocationCallbacks* allocator, out Surface surface);
     }
 }

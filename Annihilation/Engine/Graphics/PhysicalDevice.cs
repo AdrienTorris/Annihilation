@@ -14,7 +14,7 @@ namespace Engine.Rendering
         private bool _isDisposed = false;
 
         // Vulkan instance functions
-        private static Vk.GetPhysicalDeviceSurfaceSupportDelegate GetPhysicalDeviceSurfaceSupport;
+        private static Vk.GetPhysicalDeviceSurfaceSupportKHRDelegate GetPhysicalDeviceSurfaceSupport;
 
         private static readonly Dictionary<uint, string> _vendorMap = new Dictionary<uint, string>
         {

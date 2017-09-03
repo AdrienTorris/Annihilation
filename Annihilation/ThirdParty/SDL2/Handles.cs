@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace SDL2
 {
-    public static partial class SDL
+    public static unsafe partial class SDL
     {
         public struct Size
         {

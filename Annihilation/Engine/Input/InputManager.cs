@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Numerics;
 using System.Collections.Generic;
+using Engine.Graphics;
 using SDL2;
 
 namespace Engine.Input
 {
+    // TODO: Make this non-static so we're sure every dependency (application) is filled at creation
     public static class InputManager
     {
         public static IInputHandler InputHandler;
@@ -16,6 +18,8 @@ namespace Engine.Input
         public static IReadOnlyList<MouseMoveEvent> MouseMoveEvents => _mouseMoveEvents;
         public static Vector2 MousePosition { get; private set; }
         public static Vector2 MouseDelta { get; private set; }
+
+        private static Application _application;
 
         private static readonly List<KeyEvent> _keyEvents = new List<KeyEvent>();
         private static readonly HashSet<SDL.KeyCode> _pressedKeys = new HashSet<SDL.KeyCode>();
@@ -42,9 +46,14 @@ namespace Engine.Input
         private static readonly List<int> _mouseWheelActions = new List<int>();
         private static readonly List<int> _mouseMoveActions = new List<int>();
 
-        public static void Init()
+        public static void Init(Application application)
         {
-            SDL.InitSubSystem(SDL.InitFlags.Events);
+            _application = application;
+
+            if (Window.VideoSubSystemInitialized == false)
+            {
+                SDL.InitSubSystem(SDL.InitFlags.Events);
+            }
         }
 
         public static void Shutdown()
@@ -110,7 +119,7 @@ namespace Engine.Input
                 {
                     case SDL.EventType.Quit:
                     {
-                        Application.Quit();
+                        _application.Quit();
                         break;
                     }
                     case SDL.EventType.WindowEvent:
@@ -119,12 +128,12 @@ namespace Engine.Input
                         {
                             case SDL.WindowEventID.FocusLost:
                             {
-                                Application.Window.HasFocus = false;
+                                _application.Window.HasFocus = false;
                                 break;
                             }
                             case SDL.WindowEventID.FocusGained:
                             {
-                                Application.Window.HasFocus = true;
+                                _application.Window.HasFocus = true;
                                 break;
                             }
                             case SDL.WindowEventID.SizeChanged:

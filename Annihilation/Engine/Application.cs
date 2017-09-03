@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 
 using Engine.Input;
 using Engine.Config;
+using Engine.Graphics;
 
 using SDL2;
 
@@ -14,11 +15,14 @@ namespace Engine
         Quitting,
     }
 
-    public class Application : IDisposable
+    public unsafe class Application : IDisposable
     {
+        public const int MaxPathLength = 256;
+
         // TODO: Best place/best name for these?
         public const string ConfigResolutionX = "ResolutionX";
         public const string ConfigResolutionY = "ResolutionY";
+        public const string ConfigEnableVulkanValidation = "EnableVulkanValidation";
 
         /// <summary>
         /// The platform-specific path where you can write files. Perfect for save games.
@@ -31,6 +35,7 @@ namespace Engine
         public ApplicationSettings ApplicationSettings { get; private set; }
         public GraphicsSettings GraphicsSettings { get; private set; }
         public InputSettings InputSettings { get; private set; }
+        // TODO: Support multiple windows per application
         public Window Window { get; private set; }
 
         private GameState _state = GameState.Running;
@@ -52,8 +57,6 @@ namespace Engine
         public void Start(Action initFunction, Action<double> updateFunction, Action shutdownFunction)
         {
             Log.Info("Loading SDL functions.");
-            
-            // Load required SDL functions if not already done
             SDL.LoadFunctions(SDLModule.SDL);
             SDL.LoadFunctions(SDLModule.Video);
             SDL.LoadFunctions(SDLModule.Events);
@@ -62,32 +65,30 @@ namespace Engine
             SDL.LoadFunctions(SDLModule.Version);
             SDL.LoadFunctions(SDLModule.SysWm);
             SDL.LoadFunctions(SDLModule.FileSystem);
-            Log.Info("SDL functions loaded.");
+            SDL.LoadFunctions(SDLModule.Vulkan);
 
-            // Get the "pref" directory if not already done
-            PreferencePath = PreferencePath ?? SDL.GetPrefPath(ApplicationSettings.Organization, ApplicationSettings.Title).ToString(128);
+            Log.Info("Getting preference path.");
+            PreferencePath = PreferencePath ?? new Text(SDL.GetPrefPath(ApplicationSettings.Organization, ApplicationSettings.Title), MaxPathLength);
             Log.Info("Preference path found: " + PreferencePath);
             
-            // Create window
+            Log.Info("Creating window.");
             Window = new Window(this);
-            Log.Info("Window created.");
-   
-            // Init game
-            initFunction?.Invoke();
-            Log.Info("Init function called.");
 
-            // Main loop
+            Log.Info("Creating input manager.");
+            InputManager.Init(this);
+            
+            Log.Info("Calling game init callback.");
+            initFunction?.Invoke();
+            
             while (_state == GameState.Running)
             {
                 InputManager.Update();
-
-                // Update game
+                
                 updateFunction?.Invoke(1f / 144);
             }
             
-            // Shutdown game
+            Log.Info("Calling game shutdown callback.");
             shutdownFunction?.Invoke();
-            Log.Info("Shutdown function called.");
         }
         
         public void Quit()

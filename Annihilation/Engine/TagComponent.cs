@@ -4,6 +4,6 @@
     {
         public StringHash32[] Tags;
 
-        public static readonly StringHash32 Type = "Tag";
+        //public static readonly StringHash32 Type = "Tag";
     }
 }

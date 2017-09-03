@@ -8,6 +8,6 @@ namespace Engine.EntityComponent
         public Quaternion Rotation;
         public Vector3 Scale;
 
-        public static readonly StringHash32 Type = "Transform3D";
+        //public static readonly StringHash32 Type = "Transform3D";
     }
 }

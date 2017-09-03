@@ -86,13 +86,13 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public Text ApplicationName;
+            public byte* ApplicationName;
             public Version ApplicationVersion;
-            public Text EngineName;
+            public byte* EngineName;
             public Version EngineVersion;
             public Version ApiVersion;
 
-            public ApplicationInfo(Text applicationName, Version applicationVersion, Text engineName, Version engineVersion, Version apiVersion)
+            public ApplicationInfo(byte* applicationName, Version applicationVersion, byte* engineName, Version engineVersion, Version apiVersion)
             {
                 Type = StructureType.ApplicationInfo;
                 Next = null;
@@ -112,11 +112,11 @@ namespace Vulkan
             public InstanceCreateFlags Flags;
             public ApplicationInfo* ApplicationInfo;
             public uint EnabledLayerCount;
-            public Text* EnabledLayerNames;
+            public byte** EnabledLayerNames;
             public uint EnabledExtensionCount;
-            public Text* EnabledExtensionNames;
+            public byte** EnabledExtensionNames;
 
-            public InstanceCreateInfo(ApplicationInfo* applicationInfo, Text[] extensionNames)
+            public InstanceCreateInfo(ApplicationInfo* applicationInfo, uint extensionCount, byte*[] extensionNames)
             {
                 Type = StructureType.InstanceCreateInfo;
                 Next = null;
@@ -124,34 +124,8 @@ namespace Vulkan
                 ApplicationInfo = applicationInfo;
                 EnabledLayerCount = 0;
                 EnabledLayerNames = null;
-                EnabledExtensionCount = (uint)extensionNames.Length;
-                fixed (Text* ptr = &extensionNames[0])
-                {
-                    EnabledExtensionNames = ptr;
-                }
-            }
-
-            public InstanceCreateInfo(ApplicationInfo* applicationInfo, Text[] layerNames, Text[] extensionNames)
-            {
-                Type = StructureType.InstanceCreateInfo;
-                Next = null;
-                Flags = InstanceCreateFlags.None;
-                ApplicationInfo = applicationInfo;
-                if (layerNames == null)
-                {
-                    EnabledLayerCount = 0;
-                    EnabledLayerNames = null;
-                }
-                else
-                {
-                    EnabledLayerCount = (uint)layerNames.Length;
-                    fixed (Text* ptr = &layerNames[0])
-                    {
-                        EnabledLayerNames = ptr;
-                    }
-                }
-                EnabledExtensionCount = (uint)extensionNames.Length;
-                fixed (Text* ptr = &extensionNames[0])
+                EnabledExtensionCount = extensionCount;
+                fixed (byte** ptr = &extensionNames[0])
                 {
                     EnabledExtensionNames = ptr;
                 }
@@ -446,9 +420,9 @@ namespace Vulkan
             public uint QueueCreateInfoCount;
             public DeviceQueueCreateInfo* QueueCreateInfos;
             public uint EnabledLayerCount;
-            public Text* EnabledLayerNames;
+            public byte*[] EnabledLayerNames;
             public uint EnabledExtensionCount;
-            public Text* EnabledExtensionNames;
+            public byte*[] EnabledExtensionNames;
             public PhysicalDeviceFeatures* EnabledFeatures;
         }
 
@@ -772,7 +746,7 @@ namespace Vulkan
             public PipelineShaderStageCreateFlags Flags;
             public ShaderStageFlags Stage;
             public ShaderModule Module;
-            public Text Name;
+            public byte* Name;
             public SpecializationInfo* SpecializationInfo;
         }
 
@@ -1499,7 +1473,7 @@ namespace Vulkan
         public unsafe struct DisplayProperties
         {
             public Display Display;
-            public Text DisplayName;
+            public byte* DisplayName;
             public Extent2D PhysicalDimensions;
             public Extent2D PhysicalResolution;
             public SurfaceTransformFlags SupportedTransforms;
@@ -2242,16 +2216,16 @@ namespace Vulkan
             public StructureType Type;
             public void* Next;
             public DebugReportFlags Flags;
-            public DebugReportCallback Callback;
-            public void* UserData;
+            public IntPtr Callback;
+            public IntPtr UserData;
 
-            public DebugReportCallbackCreateInfo(DebugReportFlags flags, DebugReportCallback callback)
+            public DebugReportCallbackCreateInfo(DebugReportFlags flags, DebugReportCallbackEXTDelegate callback)
             {
                 Type = StructureType.DebugReportCallbackCreateInfo;
                 Next = null;
                 Flags = flags;
-                Callback = callback;
-                UserData = null;
+                Callback = Marshal.GetFunctionPointerForDelegate(callback);
+                UserData = IntPtr.Zero;
             }
         }
 
@@ -2276,7 +2250,7 @@ namespace Vulkan
             public void* Next;
             public DebugReportObjectType ObjectType;
             public ulong Object;
-            public Text ObjectName;
+            public byte* ObjectName;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -2296,7 +2270,7 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public Text MarkerName;
+            public byte* MarkerName;
             public fixed float Color[4];
         }
 

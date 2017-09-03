@@ -18,9 +18,9 @@ namespace Engine
 
     public struct ApplicationSettings
     {
-        public string Title;
-        public string Organization;
-        public string Version;
+        public Text Title;
+        public Text Organization;
+        public Text Version;
 
         [Conditional("DEBUG")]
         public void CheckError()

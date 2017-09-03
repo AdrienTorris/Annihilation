@@ -140,12 +140,122 @@ namespace Engine.Config
         // PERF: Remove dictionary lookup. How?
         public static ConfigVar GetVar(string name) => _vars[name];
 
+        public static byte GetVar(string name, byte defaultValue)
+        {
+            if (_vars.TryGetValue(name, out ConfigVar value))
+            {
+                Assert.IsTrue(value.Type == ConfigVarType.Uint8, "Trying to get an byte value for var of type " + value.Type);
+                return value.Uint8;
+            }
+            return defaultValue;
+        }
+
+        public static ushort GetVar(string name, ushort defaultValue)
+        {
+            if (_vars.TryGetValue(name, out ConfigVar value))
+            {
+                Assert.IsTrue(value.Type == ConfigVarType.Uint16, "Trying to get an ushort value for var of type " + value.Type);
+                return value.Uint16;
+            }
+            return defaultValue;
+        }
+
+        public static uint GetVar(string name, uint defaultValue)
+        {
+            if (_vars.TryGetValue(name, out ConfigVar value))
+            {
+                Assert.IsTrue(value.Type == ConfigVarType.Uint32, "Trying to get an uint value for var of type " + value.Type);
+                return value.Uint32;
+            }
+            return defaultValue;
+        }
+
+        public static ulong GetVar(string name, ulong defaultValue)
+        {
+            if (_vars.TryGetValue(name, out ConfigVar value))
+            {
+                Assert.IsTrue(value.Type == ConfigVarType.Uint64, "Trying to get an ulong value for var of type " + value.Type);
+                return value.Uint64;
+            }
+            return defaultValue;
+        }
+
+        public static sbyte GetVar(string name, sbyte defaultValue)
+        {
+            if (_vars.TryGetValue(name, out ConfigVar value))
+            {
+                Assert.IsTrue(value.Type == ConfigVarType.Int8, "Trying to get an sbyte value for var of type " + value.Type);
+                return value.Int8;
+            }
+            return defaultValue;
+        }
+
+        public static short GetVar(string name, short defaultValue)
+        {
+            if (_vars.TryGetValue(name, out ConfigVar value))
+            {
+                Assert.IsTrue(value.Type == ConfigVarType.Int16, "Trying to get a short value for var of type " + value.Type);
+                return value.Int16;
+            }
+            return defaultValue;
+        }
+
         public static int GetVar(string name, int defaultValue)
         {
             if (_vars.TryGetValue(name, out ConfigVar value))
             {
                 Assert.IsTrue(value.Type == ConfigVarType.Int32, "Trying to get an int value for var of type " + value.Type);
                 return value.Int32;
+            }
+            return defaultValue;
+        }
+
+        public static long GetVar(string name, long defaultValue)
+        {
+            if (_vars.TryGetValue(name, out ConfigVar value))
+            {
+                Assert.IsTrue(value.Type == ConfigVarType.Int64, "Trying to get a long value for var of type " + value.Type);
+                return value.Int64;
+            }
+            return defaultValue;
+        }
+
+        public static float GetVar(string name, float defaultValue)
+        {
+            if (_vars.TryGetValue(name, out ConfigVar value))
+            {
+                Assert.IsTrue(value.Type == ConfigVarType.Float, "Trying to get a float value for var of type " + value.Type);
+                return value.Float;
+            }
+            return defaultValue;
+        }
+
+        public static double GetVar(string name, double defaultValue)
+        {
+            if (_vars.TryGetValue(name, out ConfigVar value))
+            {
+                Assert.IsTrue(value.Type == ConfigVarType.Double, "Trying to get a double value for var of type " + value.Type);
+                return value.Double;
+            }
+            return defaultValue;
+        }
+
+        public static bool GetVar(string name, bool defaultValue)
+        {
+            if (_vars.TryGetValue(name, out ConfigVar value))
+            {
+                Assert.IsTrue(value.Type == ConfigVarType.Bool, "Trying to get a bool value for var of type " + value.Type);
+                return value.Bool;
+            }
+            return defaultValue;
+        }
+
+        public static unsafe string GetVar(string name, string defaultValue)
+        {
+            if (_vars.TryGetValue(name, out ConfigVar value))
+            {
+                Assert.IsTrue(value.Type == ConfigVarType.String, "Trying to get a string value for var of type " + value.Type);
+                return new string(value.String);
             }
             return defaultValue;
         }
@@ -201,8 +311,13 @@ namespace Engine.Config
         }
 
         // PERF: Use char* marching instead of readlines
-        public static void AddVarsFromFile(string path)
+        public static bool AddVarsFromFile(string path)
         {
+            if (File.Exists(path) == false)
+            {
+                return false;
+            }
+
             string line;
             using (StreamReader reader = new StreamReader(path))
             {
@@ -214,8 +329,8 @@ namespace Engine.Config
                     if (line == null)
                     {
                         break;
-                    }   
-                    
+                    }
+
                     if (line[0] == '/' ||   // Skip comment
                         line[0] == '[' ||   // Skip category
                         line.Length == 0)   // Skip empty line
@@ -388,6 +503,8 @@ namespace Engine.Config
                     }
                 }
             }
+
+            return true;
         }
     }
 }

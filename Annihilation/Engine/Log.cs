@@ -17,11 +17,23 @@ namespace Engine
         }
 
         [Conditional("DEBUG")]
+        public static void Info(Text text)
+        {
+            Info(text);
+        }
+
+        [Conditional("DEBUG")]
         public static void Warning(string text)
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
             Trace.TraceWarning(text);
             Console.ResetColor();
+        }
+
+        [Conditional("DEBUG")]
+        public static void Warning(Text text)
+        {
+            Warning(text);
         }
 
         [Conditional("DEBUG")]
@@ -33,11 +45,23 @@ namespace Engine
         }
 
         [Conditional("DEBUG")]
+        public static void Error(Text text)
+        {
+            Error(text);
+        }
+
+        [Conditional("DEBUG")]
         public static void Performance(string text)
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
             Trace.TraceWarning(text);
             Console.ResetColor();
+        }
+
+        [Conditional("DEBUG")]
+        public static void Performance(Text text)
+        {
+            Performance(text);
         }
     }
 }
