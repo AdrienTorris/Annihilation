@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security;
 using System.Diagnostics;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
@@ -44,12 +45,24 @@ namespace SDL2
         Touch,
         Version,
         Video,
-        Vulkan
+        Vulkan,
+        Count
     }
 
     public static class SDLExtensions
     {
         [Conditional("DEBUG")]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CheckError(this bool value)
+        {
+            if (value == false)
+            {
+                Log.Error(SDL.GetError());
+            }
+        }
+
+        [Conditional("DEBUG")]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CheckError(this int value)
         {
             if (value != 0)
@@ -59,7 +72,18 @@ namespace SDL2
         }
 
         [Conditional("DEBUG")]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CheckError(this IntPtr value)
+        {
+            if (value == IntPtr.Zero)
+            {
+                Log.Error(SDL.GetError());
+            }
+        }
+
+        [Conditional("DEBUG")]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CheckError(this SDL.Window value)
         {
             if (value == IntPtr.Zero)
             {
@@ -71,10 +95,11 @@ namespace SDL2
     [SuppressUnmanagedCodeSecurity]
     public static unsafe partial class SDL
     {
-        private static readonly NativeLibrary _library = LoadLibrary();
-
         public const int ScanCodeMask = (1 << 30);
         public const int AudioCVTMaxFilters = 9;
+
+        private static readonly NativeLibrary _library = LoadLibrary();
+        private static readonly HashSet<SDLModule> _loadedModules = new HashSet<SDLModule>((int)SDLModule.Count);
 
         private static NativeLibrary LoadLibrary()
         {
@@ -105,6 +130,13 @@ namespace SDL2
 
         public static void LoadFunctions(SDLModule module)
         {
+            if (_loadedModules.Contains(module))
+            {
+                return;
+            }
+
+            _loadedModules.Add(module);
+
             switch (module)
             {
                 case SDLModule.SDL:

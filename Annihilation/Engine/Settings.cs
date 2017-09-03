@@ -12,7 +12,11 @@ namespace Engine
         public const float DefaultRepeatInterval = 0.2f;
     }
     
-    public struct Settings
+    public struct GraphicsSettings
+    {
+    }
+
+    public struct ApplicationSettings
     {
         public string Title;
         public string Organization;
@@ -23,6 +27,7 @@ namespace Engine
         {
             if (Title == null) Log.Error($"Settings must have non-null {nameof(Title)}");
             if (Organization == null) Log.Error($"Settings must have non-null {nameof(Organization)}");
+            if (Version == null) Log.Error($"Settings must have non-null {nameof(Version)}");
         }
     }
 }

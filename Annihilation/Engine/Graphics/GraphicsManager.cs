@@ -7,12 +7,11 @@ namespace Engine.Rendering
     {
         public static void Init()
         {
-
         }
         
         public static void Shutdown()
         {
-            SDL.QuitSubSystem(SDL.InitFlags.Video);
+
         }
     }
 }

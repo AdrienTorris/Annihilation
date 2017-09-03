@@ -23,29 +23,33 @@ namespace Annihilation
         Cancel,
     }
 
-    class Program
+    class Game
     {
         static void Main(string[] args)
         {
+            ApplicationSettings applicationSettings = default(ApplicationSettings);
+            applicationSettings.Title = "Annihilation";
+            applicationSettings.Organization = "Illogika";
+            applicationSettings.Version = "0.1.0";
+
+            GraphicsSettings graphicsSettings = new GraphicsSettings();
+
             InputSettings inputSettings = default(InputSettings);
             inputSettings.RepeatInterval = InputSettings.DefaultRepeatInterval;
             inputSettings.RepeatDelay = InputSettings.DefaultRepeatDelay;
+            
+            Application application = new Application(ref applicationSettings, ref graphicsSettings, ref inputSettings);
 
-            Settings settings = default(Settings);
-            settings.Title = "Annihilation";
-            settings.Organization = "Illogika";
-            settings.Version = "0.1.0";
-
-            Game.Start(settings, Init, null, null);
+            application.Start(Init, null, null);
 
             // Do not put any code here
         }
 
         private static void Init()
         {
-            string configPath = Game.PreferencePath + "settings.init";
+            string configPath = Application.PreferencePath + "settings.init";
 
-            Config.AddVarsFromFile(configPath);
+            ConfigManager.AddVarsFromFile(configPath);
         }
     }
 }

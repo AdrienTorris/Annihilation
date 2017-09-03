@@ -7,8 +7,8 @@ namespace Vulkan
 {
     public static partial class Vk
     {
-        private static readonly NativeLibrary _library = LoadLibrary();
-        private static readonly GetInstanceProcAddrDelegate GetInstanceProcAddr = _library.LoadFunction< GetInstanceProcAddrDelegate>("PFN_vkGetInstanceProcAddr");
+        private static NativeLibrary _library;
+        private static GetInstanceProcAddrDelegate GetInstanceProcAddr;
 
         // Constants
         public const float LodClampNone = 1000f;
@@ -66,7 +66,7 @@ namespace Vulkan
         public const string StorageBufferStorageClassExtensionName = "VK_KHR_storage_buffer_storage_class";
         public const string RelaxedBlockLayoutExtensionName = "VK_KHR_relaxed_block_layout";
         public const string GetMemoryRequirements2ExtensionName = "VK_KHR_get_memory_requirements2";
-        public const string DebugReportExtensionName = "VK_EXT_debug_report";
+        public const string ExtDebugReportExtensionName = "VK_EXT_debug_report";
         public const string GlslShaderExtensionName = "VK_NV_glsl_shader";
         public const string DepthRangeUnrestrictedExtensionName = "VK_EXT_depth_range_unrestricted";
         public const string FilterCubicExtensionName = "VK_IMG_filter_cubic";
@@ -119,7 +119,7 @@ namespace Vulkan
         public const string FillRectangleExtensionName = "VK_NV_fill_rectangle";
         public const string PostDepthCoverageExtensionName = "VK_EXT_post_depth_coverage";
 
-        private static NativeLibrary LoadLibrary()
+        public static void LoadLibrary()
         {
             string name;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -136,11 +136,15 @@ namespace Vulkan
             }
             else
             {
-                throw new InvalidOperationException("Unknown SDL platform.");
+                throw new InvalidOperationException("Unknown Vulkan platform.");
             }
 
-            NativeLibrary lib = new NativeLibrary(name);
-            return lib;
+            _library = new NativeLibrary(name);
+        }
+
+        public static void LoadGetInstanceProcAddrFunction()
+        {
+            GetInstanceProcAddr = _library.LoadFunction<GetInstanceProcAddrDelegate>("PFN_vkGetInstanceProcAddr");
         }
 
         //

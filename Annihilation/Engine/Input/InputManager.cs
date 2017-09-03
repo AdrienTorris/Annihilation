@@ -110,7 +110,7 @@ namespace Engine.Input
                 {
                     case SDL.EventType.Quit:
                     {
-                        Game.Quit();
+                        Application.Quit();
                         break;
                     }
                     case SDL.EventType.WindowEvent:
@@ -119,12 +119,12 @@ namespace Engine.Input
                         {
                             case SDL.WindowEventID.FocusLost:
                             {
-                                Game.Window.HasFocus = false;
+                                Application.Window.HasFocus = false;
                                 break;
                             }
                             case SDL.WindowEventID.FocusGained:
                             {
-                                Game.Window.HasFocus = true;
+                                Application.Window.HasFocus = true;
                                 break;
                             }
                             case SDL.WindowEventID.SizeChanged:

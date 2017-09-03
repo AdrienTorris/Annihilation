@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Engine.Config
 {
-    public static class Config
+    public static class ConfigManager
     {
         public const string TypeUint8 = "uint8";
         public const string TypeUint16 = "uint16";
@@ -139,6 +139,16 @@ namespace Engine.Config
 
         // PERF: Remove dictionary lookup. How?
         public static ConfigVar GetVar(string name) => _vars[name];
+
+        public static int GetVar(string name, int defaultValue)
+        {
+            if (_vars.TryGetValue(name, out ConfigVar value))
+            {
+                Assert.IsTrue(value.Type == ConfigVarType.Int32, "Trying to get an int value for var of type " + value.Type);
+                return value.Int32;
+            }
+            return defaultValue;
+        }
 
         public static bool TryGetVar(string name, out ConfigVar value)
         {
