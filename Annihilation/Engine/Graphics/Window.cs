@@ -117,11 +117,26 @@ namespace Engine.Graphics
 #elif PLATFORM_MACOS
             Handle = sysWMInfo.Info.Cocoa.Window;
 #endif
-            Log.Info("Initializing Vulkan instance.");
-            InitVulkanInstance();
+            Log.Info("Initializing Vulkan.");
+            InitInstance();
+            InitDevice();
+            InitCommandBuffers();
+            CreateSwapchain();
+            CreateColorBuffer();
+            CreateDepthBuffer();
+            CreateRenderPasses();
+            CreateFramebuffers();
+            InitStagingBuffers();
+            CreateDescriptorSetLayouts();
+            CreateDescriptorPool();
+            InitDynamicBuffers();
+            InitSamplers();
+            CreatePipelineLayouts();
+            CreatePipelines();
+            CreateDescriptorSets();
         }
 
-        private void InitVulkanInstance()
+        private void InitInstance()
         {
             Log.Info("Loading Vulkan getInstanceProcAddr function.");
             Vk.GetInstanceProcAddr = Vk.GetInstanceProcAddr ?? Marshal.GetDelegateForFunctionPointer<Vk.GetInstanceProcAddrDelegate>(SDL.VulkanGetVkGetInstanceProcAddr());
@@ -201,9 +216,85 @@ namespace Engine.Graphics
             }
 #endif
 
-            // TODO: Free allocated Texts
+            // TODO: Free allocated Texts?
         }
 
+        private void InitDevice()
+        {
+
+        }
+
+        private void InitCommandBuffers()
+        {
+
+        }
+
+        private void CreateSwapchain()
+        {
+
+        }
+
+        private void CreateColorBuffer()
+        {
+
+        }
+
+        private void CreateDepthBuffer()
+        {
+
+        }
+
+        private void CreateRenderPasses()
+        {
+
+        }
+
+        private void CreateFramebuffers()
+        {
+
+        }
+
+        private void InitStagingBuffers()
+        {
+
+        }
+
+        private void CreateDescriptorSetLayouts()
+        {
+
+        }
+
+        private void CreateDescriptorPool()
+        {
+
+        }
+
+        private void InitDynamicBuffers()
+        {
+
+        }
+
+        private void InitSamplers()
+        {
+
+        }
+
+        private void CreatePipelineLayouts()
+        {
+
+        }
+
+        private void CreatePipelines()
+        {
+
+        }
+
+        private void CreateDescriptorSets()
+        {
+
+        }
+
+        // TODO: Dispose of Vulkan stuff
         private void Dispose(bool isDisposing)
         {
             if (_sdlWindow == IntPtr.Zero)
