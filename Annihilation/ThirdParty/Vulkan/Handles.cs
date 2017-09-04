@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace Vulkan
 {
@@ -40,7 +41,8 @@ namespace Vulkan
                 return Handle.ToString();
             }
         }
-
+        
+        [StructLayout(LayoutKind.Sequential)]
         public struct PhysicalDevice : IEquatable<PhysicalDevice>
         {
             public IntPtr Handle;

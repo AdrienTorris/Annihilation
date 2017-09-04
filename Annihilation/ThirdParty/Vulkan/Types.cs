@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Text;
-using Engine;
 
 namespace Vulkan
 {
@@ -31,54 +29,5 @@ namespace Vulkan
         public static implicit operator uint(Version version) => version._value;
 
         public override string ToString() => $"{Major}.{Minor}.{Patch}";
-    }
-    
-    public unsafe struct ExtensionName
-    {
-        public fixed byte Name[Vk.MaxExtensionNameSize];
-
-        public bool Compare(Text text)
-        {
-            fixed (byte* namePtr = Name)
-            {
-                for (int i = 0; i < Vk.MaxExtensionNameSize; ++i)
-                {
-                    if (*(namePtr + i) == 0)
-                    {
-                        return true;
-                    }
-
-                    if (*(namePtr + i) != *(text.ByteArray + i))
-                    {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-        
-        public bool Compare(string str)
-        {
-            int strByteCount = Encoding.UTF8.GetMaxByteCount(str.Length);
-            byte[] strBytes = new byte[strByteCount];
-            Encoding.UTF8.GetBytes(str, 0, str.Length, strBytes, 0);
-            fixed (byte* namePtr = Name)
-            fixed (byte* strPtr = &strBytes[0])
-            {
-                for (int i = 0; i < Vk.MaxExtensionNameSize; ++i)
-                {
-                    if (*(namePtr + i) == 0)
-                    {
-                        return true;
-                    }
-
-                    if (*(namePtr + i) != *(strPtr + i))
-                    {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
     }
 }

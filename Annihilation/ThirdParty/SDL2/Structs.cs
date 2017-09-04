@@ -302,7 +302,7 @@ namespace SDL2
         {
             public EventType Type;
             public uint Timestamp;
-            public Text File;
+            public byte* File;
             public uint WindowID;
         }
 
@@ -526,7 +526,7 @@ namespace SDL2
         {
             public MessageBoxButtonFlags Flags;
             public int ButtonID;
-            public Text Text;
+            public byte* Text;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -549,8 +549,8 @@ namespace SDL2
         {
             public MessageBoxFlags Flags;
             public Window Window;
-            public Text Title;
-            public Text Message;
+            public byte* Title;
+            public byte* Message;
             public int NumButtons;
             public MessageBoxButtonData[] Buttons;
             public MessageBoxColorScheme? ColorScheme;
@@ -626,7 +626,7 @@ namespace SDL2
         [StructLayout(LayoutKind.Sequential)]
         public unsafe struct RendererInfo
         {
-            public Text Name;
+            public byte* Name;
             public RendererFlags Flags;
             public uint NumTextureFormats;
             public fixed uint TextureFormats[16];

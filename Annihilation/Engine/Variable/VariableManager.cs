@@ -2,9 +2,9 @@
 using System.Text;
 using System.Collections.Generic;
 
-namespace Engine.Config
+namespace Engine
 {
-    public static class ConfigManager
+    public static unsafe class VariableManager
     {
         public const string TypeUint8 = "uint8";
         public const string TypeUint16 = "uint16";
@@ -21,130 +21,249 @@ namespace Engine.Config
 
         private const int ApproximateCharsPerLine = 24;
 
-        private static readonly Dictionary<ConfigVarType, string> _typeStrings = new Dictionary<ConfigVarType, string>
+        private static readonly Dictionary<ValueType, string> _typeStrings = new Dictionary<ValueType, string>
         {
-            [ConfigVarType.Uint8] = TypeUint8,
-            [ConfigVarType.Uint16] = TypeUint16,
-            [ConfigVarType.Uint32] = TypeUint32,
-            [ConfigVarType.Uint64] = TypeUint64,
-            [ConfigVarType.Int8] = TypeInt8,
-            [ConfigVarType.Int16] = TypeInt16,
-            [ConfigVarType.Int32] = TypeInt32,
-            [ConfigVarType.Int64] = TypeInt64,
-            [ConfigVarType.Float] = TypeFloat,
-            [ConfigVarType.Double] = TypeDouble,
-            [ConfigVarType.Bool] = TypeBool,
-            [ConfigVarType.String] = TypeString,
+            [ValueType.Uint8] = TypeUint8,
+            [ValueType.Uint16] = TypeUint16,
+            [ValueType.Uint32] = TypeUint32,
+            [ValueType.Uint64] = TypeUint64,
+            [ValueType.Int8] = TypeInt8,
+            [ValueType.Int16] = TypeInt16,
+            [ValueType.Int32] = TypeInt32,
+            [ValueType.Int64] = TypeInt64,
+            [ValueType.Float] = TypeFloat,
+            [ValueType.Double] = TypeDouble,
+            [ValueType.Bool] = TypeBool,
+            [ValueType.String] = TypeString,
         };
 
-        private static readonly List<string> _varsToWrite = new List<string>(128);
-        private static readonly Dictionary<string, ConfigVar> _vars = new Dictionary<string, ConfigVar>(128);
+        private static Variable* _variables;
 
-        public static void AddVar(string name, byte value = 0, ConfigVarFlags flags = ConfigVarFlags.None)
+        private static readonly List<string> _varsToWrite = new List<string>(128);
+        private static readonly Dictionary<string, Value> _vars = new Dictionary<string, Value>(128);
+
+        static VariableManager()
         {
-            if ((flags & ConfigVarFlags.WriteToFile) != 0)
-            {
-                _varsToWrite.Add(name);
-            }
-            _vars.Add(name, new ConfigVar(value));
+            // Add the engine's default variable-related commands
+            CommandManager.AddCommand("ListVariables", )
         }
-        public static void AddVar(string name, ushort value = 0, ConfigVarFlags flags = ConfigVarFlags.None)
+
+        public static Variable* Find(char* name)
         {
-            if ((flags & ConfigVarFlags.WriteToFile) != 0)
+            Variable* var;
+            
+            for (var = _variables; var != null; var = var->Next)
             {
-                _varsToWrite.Add(name);
+                if (!StringUtility.Compare(name, var->Name))
+                {
+                    return var;
+                }
             }
-            _vars.Add(name, new ConfigVar(value));
+            return null;
         }
-        public static void AddVar(string name, uint value = 0, ConfigVarFlags flags = ConfigVarFlags.None)
+
+        public static string GetValueString(char* name)
         {
-            if ((flags & ConfigVarFlags.WriteToFile) != 0)
-            {
-                _varsToWrite.Add(name);
-            }
-            _vars.Add(name, new ConfigVar(value));
+            Variable* var = Find(name);
+            if (var == null) return "";
+            return new string(var->ValueString);
         }
-        public static void AddVar(string name, ulong value = 0, ConfigVarFlags flags = ConfigVarFlags.None)
+
+        public static string CompleteVariable(char* partial)
         {
-            if ((flags & ConfigVarFlags.WriteToFile) != 0)
+            int length = StringUtility.GetLength(partial);
+            if (length == 0) return null;
+
+            for (Variable* var = _variables; var != null; var = var->Next)
             {
-                _varsToWrite.Add(name);
+                if (!StringUtility.Compare(partial, var->Name, length))
+                {
+                    return new string(var->Name);
+                }
             }
-            _vars.Add(name, new ConfigVar(value));
+            return null;
         }
-        public static void AddVar(string name, sbyte value = 0, ConfigVarFlags flags = ConfigVarFlags.None)
+
+        public static void Reset(char* name)
         {
-            if ((flags & ConfigVarFlags.WriteToFile) != 0)
+            Variable* var = Find(name);
+            if (var == null)
             {
-                _varsToWrite.Add(name);
+                Log.Warning($"Variable {new string(name)} not found.");
             }
-            _vars.Add(name, new ConfigVar(value));
+            else
+            {
+
+            }
         }
-        public static void AddVar(string name, short value = 0, ConfigVarFlags flags = ConfigVarFlags.None)
+
+        public static void Set(char* name, char* value)
         {
-            if ((flags & ConfigVarFlags.WriteToFile) != 0)
+            Variable* var = Find(name);
+            if (var == null)
             {
-                _varsToWrite.Add(name);
+                Log.Warning($"Variable {new string(name)} not found.");
+                return;
             }
-            _vars.Add(name, new ConfigVar(value));
+
+
         }
-        public static void AddVar(string name, int value = 0, ConfigVarFlags flags = ConfigVarFlags.None)
+
+        public static void Set(Variable* var, char* value)
         {
-            if ((flags & ConfigVarFlags.WriteToFile) != 0)
+            if ((var->Flags & VariableFlags.Registered) == 0)
             {
-                _varsToWrite.Add(name);
+                return;
             }
-            _vars.Add(name, new ConfigVar(value));
+
+            if (var->ValueString == null)
+            {
+                var->ValueString = value;
+            }
+            else
+            {
+                if (StringUtility.Compare(var->ValueString, value))
+                {
+                    return;
+                }
+            }
+
+            ValueType type = StringUtility.GetType(var->ValueString);
+            switch (type)
+            {
+                case ValueType.Bool:
+                {
+                    var->Value = new Value(StringUtility.ToBool(var->ValueString));
+                    break;
+                }
+                case ValueType.Int32:
+                {
+                    var->Value = new Value(StringUtility.ToInt(var->ValueString));
+                    break;
+                }
+                case ValueType.Float:
+                {
+                    var->Value = new Value(StringUtility.ToFloat(var->ValueString));
+                    break;
+                }
+                case ValueType.String:
+                {
+                    var->Value = new Value(var->ValueString);
+                    break;
+                }
+            }
+
+            if (var->DefaultValueString == null)
+            {
+                var->DefaultValueString = var->ValueString;
+            }
         }
-        public static void AddVar(string name, long value = 0, ConfigVarFlags flags = ConfigVarFlags.None)
+
+        public static void AddVar(string name, byte value = 0, VariableFlags flags = VariableFlags.None)
         {
-            if ((flags & ConfigVarFlags.WriteToFile) != 0)
+            if ((flags & VariableFlags.Archive) != 0)
             {
                 _varsToWrite.Add(name);
             }
-            _vars.Add(name, new ConfigVar(value));
+            _vars.Add(name, new Value(value));
         }
-        public static void AddVar(string name, float value = 0, ConfigVarFlags flags = ConfigVarFlags.None)
+        public static void AddVar(string name, ushort value = 0, VariableFlags flags = VariableFlags.None)
         {
-            if ((flags & ConfigVarFlags.WriteToFile) != 0)
+            if ((flags & VariableFlags.Archive) != 0)
             {
                 _varsToWrite.Add(name);
             }
-            _vars.Add(name, new ConfigVar(value));
+            _vars.Add(name, new Value(value));
         }
-        public static void AddVar(string name, double value = 0, ConfigVarFlags flags = ConfigVarFlags.None)
+        public static void AddVar(string name, uint value = 0, VariableFlags flags = VariableFlags.None)
         {
-            if ((flags & ConfigVarFlags.WriteToFile) != 0)
+            if ((flags & VariableFlags.Archive) != 0)
             {
                 _varsToWrite.Add(name);
             }
-            _vars.Add(name, new ConfigVar(value));
+            _vars.Add(name, new Value(value));
         }
-        public static void AddVar(string name, bool value = false, ConfigVarFlags flags = ConfigVarFlags.None)
+        public static void AddVar(string name, ulong value = 0, VariableFlags flags = VariableFlags.None)
         {
-            if ((flags & ConfigVarFlags.WriteToFile) != 0)
+            if ((flags & VariableFlags.Archive) != 0)
             {
                 _varsToWrite.Add(name);
             }
-            _vars.Add(name, new ConfigVar(value));
+            _vars.Add(name, new Value(value));
         }
-        public static void AddVar(string name, string value = "", ConfigVarFlags flags = ConfigVarFlags.None)
+        public static void AddVar(string name, sbyte value = 0, VariableFlags flags = VariableFlags.None)
         {
-            if ((flags & ConfigVarFlags.WriteToFile) != 0)
+            if ((flags & VariableFlags.Archive) != 0)
             {
                 _varsToWrite.Add(name);
             }
-            _vars.Add(name, new ConfigVar(value));
+            _vars.Add(name, new Value(value));
+        }
+        public static void AddVar(string name, short value = 0, VariableFlags flags = VariableFlags.None)
+        {
+            if ((flags & VariableFlags.Archive) != 0)
+            {
+                _varsToWrite.Add(name);
+            }
+            _vars.Add(name, new Value(value));
+        }
+        public static void AddVar(string name, int value = 0, VariableFlags flags = VariableFlags.None)
+        {
+            if ((flags & VariableFlags.Archive) != 0)
+            {
+                _varsToWrite.Add(name);
+            }
+            _vars.Add(name, new Value(value));
+        }
+        public static void AddVar(string name, long value = 0, VariableFlags flags = VariableFlags.None)
+        {
+            if ((flags & VariableFlags.Archive) != 0)
+            {
+                _varsToWrite.Add(name);
+            }
+            _vars.Add(name, new Value(value));
+        }
+        public static void AddVar(string name, float value = 0, VariableFlags flags = VariableFlags.None)
+        {
+            if ((flags & VariableFlags.Archive) != 0)
+            {
+                _varsToWrite.Add(name);
+            }
+            _vars.Add(name, new Value(value));
+        }
+        public static void AddVar(string name, double value = 0, VariableFlags flags = VariableFlags.None)
+        {
+            if ((flags & VariableFlags.Archive) != 0)
+            {
+                _varsToWrite.Add(name);
+            }
+            _vars.Add(name, new Value(value));
+        }
+        public static void AddVar(string name, bool value = false, VariableFlags flags = VariableFlags.None)
+        {
+            if ((flags & VariableFlags.Archive) != 0)
+            {
+                _varsToWrite.Add(name);
+            }
+            _vars.Add(name, new Value(value));
+        }
+        public static void AddVar(string name, string value = "", VariableFlags flags = VariableFlags.None)
+        {
+            if ((flags & VariableFlags.Archive) != 0)
+            {
+                _varsToWrite.Add(name);
+            }
+            _vars.Add(name, new Value(value));
         }
 
         // PERF: Remove dictionary lookup. How?
-        public static ConfigVar GetVar(string name) => _vars[name];
+        public static Value GetVar(string name) => _vars[name];
 
         public static byte GetVar(string name, byte defaultValue)
         {
-            if (_vars.TryGetValue(name, out ConfigVar value))
+            if (_vars.TryGetValue(name, out Value value))
             {
-                Assert.IsTrue(value.Type == ConfigVarType.Uint8, "Trying to get an byte value for var of type " + value.Type);
+                Assert.IsTrue(value.Type == ValueType.Uint8, "Trying to get an byte value for var of type " + value.Type);
                 return value.Uint8;
             }
             return defaultValue;
@@ -152,9 +271,9 @@ namespace Engine.Config
 
         public static ushort GetVar(string name, ushort defaultValue)
         {
-            if (_vars.TryGetValue(name, out ConfigVar value))
+            if (_vars.TryGetValue(name, out Value value))
             {
-                Assert.IsTrue(value.Type == ConfigVarType.Uint16, "Trying to get an ushort value for var of type " + value.Type);
+                Assert.IsTrue(value.Type == ValueType.Uint16, "Trying to get an ushort value for var of type " + value.Type);
                 return value.Uint16;
             }
             return defaultValue;
@@ -162,9 +281,9 @@ namespace Engine.Config
 
         public static uint GetVar(string name, uint defaultValue)
         {
-            if (_vars.TryGetValue(name, out ConfigVar value))
+            if (_vars.TryGetValue(name, out Value value))
             {
-                Assert.IsTrue(value.Type == ConfigVarType.Uint32, "Trying to get an uint value for var of type " + value.Type);
+                Assert.IsTrue(value.Type == ValueType.Uint32, "Trying to get an uint value for var of type " + value.Type);
                 return value.Uint32;
             }
             return defaultValue;
@@ -172,9 +291,9 @@ namespace Engine.Config
 
         public static ulong GetVar(string name, ulong defaultValue)
         {
-            if (_vars.TryGetValue(name, out ConfigVar value))
+            if (_vars.TryGetValue(name, out Value value))
             {
-                Assert.IsTrue(value.Type == ConfigVarType.Uint64, "Trying to get an ulong value for var of type " + value.Type);
+                Assert.IsTrue(value.Type == ValueType.Uint64, "Trying to get an ulong value for var of type " + value.Type);
                 return value.Uint64;
             }
             return defaultValue;
@@ -182,9 +301,9 @@ namespace Engine.Config
 
         public static sbyte GetVar(string name, sbyte defaultValue)
         {
-            if (_vars.TryGetValue(name, out ConfigVar value))
+            if (_vars.TryGetValue(name, out Value value))
             {
-                Assert.IsTrue(value.Type == ConfigVarType.Int8, "Trying to get an sbyte value for var of type " + value.Type);
+                Assert.IsTrue(value.Type == ValueType.Int8, "Trying to get an sbyte value for var of type " + value.Type);
                 return value.Int8;
             }
             return defaultValue;
@@ -192,9 +311,9 @@ namespace Engine.Config
 
         public static short GetVar(string name, short defaultValue)
         {
-            if (_vars.TryGetValue(name, out ConfigVar value))
+            if (_vars.TryGetValue(name, out Value value))
             {
-                Assert.IsTrue(value.Type == ConfigVarType.Int16, "Trying to get a short value for var of type " + value.Type);
+                Assert.IsTrue(value.Type == ValueType.Int16, "Trying to get a short value for var of type " + value.Type);
                 return value.Int16;
             }
             return defaultValue;
@@ -202,9 +321,9 @@ namespace Engine.Config
 
         public static int GetVar(string name, int defaultValue)
         {
-            if (_vars.TryGetValue(name, out ConfigVar value))
+            if (_vars.TryGetValue(name, out Value value))
             {
-                Assert.IsTrue(value.Type == ConfigVarType.Int32, "Trying to get an int value for var of type " + value.Type);
+                Assert.IsTrue(value.Type == ValueType.Int32, "Trying to get an int value for var of type " + value.Type);
                 return value.Int32;
             }
             return defaultValue;
@@ -212,9 +331,9 @@ namespace Engine.Config
 
         public static long GetVar(string name, long defaultValue)
         {
-            if (_vars.TryGetValue(name, out ConfigVar value))
+            if (_vars.TryGetValue(name, out Value value))
             {
-                Assert.IsTrue(value.Type == ConfigVarType.Int64, "Trying to get a long value for var of type " + value.Type);
+                Assert.IsTrue(value.Type == ValueType.Int64, "Trying to get a long value for var of type " + value.Type);
                 return value.Int64;
             }
             return defaultValue;
@@ -222,9 +341,9 @@ namespace Engine.Config
 
         public static float GetVar(string name, float defaultValue)
         {
-            if (_vars.TryGetValue(name, out ConfigVar value))
+            if (_vars.TryGetValue(name, out Value value))
             {
-                Assert.IsTrue(value.Type == ConfigVarType.Float, "Trying to get a float value for var of type " + value.Type);
+                Assert.IsTrue(value.Type == ValueType.Float, "Trying to get a float value for var of type " + value.Type);
                 return value.Float;
             }
             return defaultValue;
@@ -232,9 +351,9 @@ namespace Engine.Config
 
         public static double GetVar(string name, double defaultValue)
         {
-            if (_vars.TryGetValue(name, out ConfigVar value))
+            if (_vars.TryGetValue(name, out Value value))
             {
-                Assert.IsTrue(value.Type == ConfigVarType.Double, "Trying to get a double value for var of type " + value.Type);
+                Assert.IsTrue(value.Type == ValueType.Double, "Trying to get a double value for var of type " + value.Type);
                 return value.Double;
             }
             return defaultValue;
@@ -242,9 +361,9 @@ namespace Engine.Config
 
         public static bool GetVar(string name, bool defaultValue)
         {
-            if (_vars.TryGetValue(name, out ConfigVar value))
+            if (_vars.TryGetValue(name, out Value value))
             {
-                Assert.IsTrue(value.Type == ConfigVarType.Bool, "Trying to get a bool value for var of type " + value.Type);
+                Assert.IsTrue(value.Type == ValueType.Bool, "Trying to get a bool value for var of type " + value.Type);
                 return value.Bool;
             }
             return defaultValue;
@@ -252,15 +371,15 @@ namespace Engine.Config
 
         public static unsafe string GetVar(string name, string defaultValue)
         {
-            if (_vars.TryGetValue(name, out ConfigVar value))
+            if (_vars.TryGetValue(name, out Value value))
             {
-                Assert.IsTrue(value.Type == ConfigVarType.String, "Trying to get a string value for var of type " + value.Type);
+                Assert.IsTrue(value.Type == ValueType.String, "Trying to get a string value for var of type " + value.Type);
                 return new string(value.String);
             }
             return defaultValue;
         }
 
-        public static bool TryGetVar(string name, out ConfigVar value)
+        public static bool TryGetVar(string name, out Value value)
         {
             if (_vars.TryGetValue(name, out value))
             {
@@ -269,18 +388,18 @@ namespace Engine.Config
             return false;
         }
 
-        public static void SetVar(string name, byte value) => _vars[name] = new ConfigVar(value);
-        public static void SetVar(string name, ushort value) => _vars[name] = new ConfigVar(value);
-        public static void SetVar(string name, uint value) => _vars[name] = new ConfigVar(value);
-        public static void SetVar(string name, ulong value) => _vars[name] = new ConfigVar(value);
-        public static void SetVar(string name, sbyte value) => _vars[name] = new ConfigVar(value);
-        public static void SetVar(string name, short value) => _vars[name] = new ConfigVar(value);
-        public static void SetVar(string name, int value) => _vars[name] = new ConfigVar(value);
-        public static void SetVar(string name, long value) => _vars[name] = new ConfigVar(value);
-        public static void SetVar(string name, float value) => _vars[name] = new ConfigVar(value);
-        public static void SetVar(string name, double value) => _vars[name] = new ConfigVar(value);
-        public static void SetVar(string name, bool value) => _vars[name] = new ConfigVar(value);
-        public static void SetVar(string name, string value) => _vars[name] = new ConfigVar(value);
+        public static void SetVar(string name, byte value) => _vars[name] = new Value(value);
+        public static void SetVar(string name, ushort value) => _vars[name] = new Value(value);
+        public static void SetVar(string name, uint value) => _vars[name] = new Value(value);
+        public static void SetVar(string name, ulong value) => _vars[name] = new Value(value);
+        public static void SetVar(string name, sbyte value) => _vars[name] = new Value(value);
+        public static void SetVar(string name, short value) => _vars[name] = new Value(value);
+        public static void SetVar(string name, int value) => _vars[name] = new Value(value);
+        public static void SetVar(string name, long value) => _vars[name] = new Value(value);
+        public static void SetVar(string name, float value) => _vars[name] = new Value(value);
+        public static void SetVar(string name, double value) => _vars[name] = new Value(value);
+        public static void SetVar(string name, bool value) => _vars[name] = new Value(value);
+        public static void SetVar(string name, string value) => _vars[name] = new Value(value);
 
         public static void WriteVarsToFile(string path)
         {
@@ -294,7 +413,7 @@ namespace Engine.Config
             for (int i = 0; i < _varsToWrite.Count; i++)
             {
                 string name = _varsToWrite[i];
-                ConfigVar value = _vars[name];
+                Value value = _vars[name];
 
                 if (i > 0)
                 {
@@ -355,7 +474,7 @@ namespace Engine.Config
                         {
                             if (byte.TryParse(value, out byte result))
                             {
-                                AddVar(key, result, ConfigVarFlags.WriteToFile);
+                                AddVar(key, result, VariableFlags.Archive);
                             }
                             else
                             {
@@ -368,7 +487,7 @@ namespace Engine.Config
                         {
                             if (ushort.TryParse(value, out ushort result))
                             {
-                                AddVar(key, result, ConfigVarFlags.WriteToFile);
+                                AddVar(key, result, VariableFlags.Archive);
                             }
                             else
                             {
@@ -381,7 +500,7 @@ namespace Engine.Config
                         {
                             if (uint.TryParse(value, out uint result))
                             {
-                                AddVar(key, result, ConfigVarFlags.WriteToFile);
+                                AddVar(key, result, VariableFlags.Archive);
                             }
                             else
                             {
@@ -394,7 +513,7 @@ namespace Engine.Config
                         {
                             if (ulong.TryParse(value, out ulong result))
                             {
-                                AddVar(key, result, ConfigVarFlags.WriteToFile);
+                                AddVar(key, result, VariableFlags.Archive);
                             }
                             else
                             {
@@ -407,7 +526,7 @@ namespace Engine.Config
                         {
                             if (sbyte.TryParse(value, out sbyte result))
                             {
-                                AddVar(key, result, ConfigVarFlags.WriteToFile);
+                                AddVar(key, result, VariableFlags.Archive);
                             }
                             else
                             {
@@ -420,7 +539,7 @@ namespace Engine.Config
                         {
                             if (short.TryParse(value, out short result))
                             {
-                                AddVar(key, result, ConfigVarFlags.WriteToFile);
+                                AddVar(key, result, VariableFlags.Archive);
                             }
                             else
                             {
@@ -433,7 +552,7 @@ namespace Engine.Config
                         {
                             if (int.TryParse(value, out int result))
                             {
-                                AddVar(key, result, ConfigVarFlags.WriteToFile);
+                                AddVar(key, result, VariableFlags.Archive);
                             }
                             else
                             {
@@ -446,7 +565,7 @@ namespace Engine.Config
                         {
                             if (long.TryParse(value, out long result))
                             {
-                                AddVar(key, result, ConfigVarFlags.WriteToFile);
+                                AddVar(key, result, VariableFlags.Archive);
                             }
                             else
                             {
@@ -459,7 +578,7 @@ namespace Engine.Config
                         {
                             if (float.TryParse(value, out float result))
                             {
-                                AddVar(key, result, ConfigVarFlags.WriteToFile);
+                                AddVar(key, result, VariableFlags.Archive);
                             }
                             else
                             {
@@ -472,7 +591,7 @@ namespace Engine.Config
                         {
                             if (double.TryParse(value, out double result))
                             {
-                                AddVar(key, result, ConfigVarFlags.WriteToFile);
+                                AddVar(key, result, VariableFlags.Archive);
                             }
                             else
                             {
@@ -485,7 +604,7 @@ namespace Engine.Config
                         {
                             if (bool.TryParse(value, out bool result))
                             {
-                                AddVar(key, result, ConfigVarFlags.WriteToFile);
+                                AddVar(key, result, VariableFlags.Archive);
                             }
                             else
                             {
@@ -496,7 +615,7 @@ namespace Engine.Config
                         }
                         case TypeString:
                         {
-                            AddVar(key, value, ConfigVarFlags.WriteToFile);
+                            AddVar(key, value, VariableFlags.Archive);
 
                             break;
                         }

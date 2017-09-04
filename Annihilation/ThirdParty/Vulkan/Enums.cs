@@ -941,6 +941,7 @@ namespace Vulkan
         [Flags]
         public enum FenceCreateFlags : uint
         {
+            None = 0,
             Signaled = 1 << 0
         }
 

@@ -10,14 +10,43 @@ namespace Engine.Graphics
     {
         public const int DefaultWidth = 1280;
         public const int DefaultHeight = 720;
+        private const Vk.FormatFeatureFlags RequiredColorBufferFeatures =
+            Vk.FormatFeatureFlags.ColorAttachment |
+            Vk.FormatFeatureFlags.ColorAttachmentBlend |
+            Vk.FormatFeatureFlags.SampledImage |
+            Vk.FormatFeatureFlags.StorageImage |
+            Vk.FormatFeatureFlags.SampledImageFilterLinear;
+        private const int CommandBufferCount = 2;
+        private const int ColorBufferCount = 2;
+        private const int MaxSwapchainImages = 8;
 
         public static bool VideoSubSystemInitialized { get; private set; }
 
         private static Vk.CreateInstanceDelegate vkCreateInstance;
+        private static Vk.DestroyInstanceDelegate vkDestroyInstance;
+
+        private static Vk.EnumeratePhysicalDevicesDelegate vkEnumeratePhysicalDevices;
+        private static Vk.EnumerateDeviceExtensionPropertiesDelegate vkEnumerateDeviceExtensionProperties;
+
+        private static Vk.GetPhysicalDevicePropertiesDelegate vkGetPhysicalDeviceProperties;
+        private static Vk.GetPhysicalDeviceMemoryPropertiesDelegate vkGetPhysicalDeviceMemoryProperties;
+        private static Vk.GetPhysicalDeviceQueueFamilyPropertiesDelegate vkGetPhysicalDeviceQueueFamilyProperties;
+        private static Vk.GetPhysicalDeviceFeaturesDelegate vkGetPhysicalDeviceFeatures;
+        private static Vk.GetPhysicalDeviceFormatPropertiesDelegate vkGetPhysicalDeviceFormatProperties;
+
         private static Vk.GetPhysicalDeviceSurfaceSupportKHRDelegate vkGetPhysicalDeviceSurfaceSupport;
         private static Vk.GetPhysicalDeviceSurfaceCapabilitiesKHRDelegate vkGetPhysicalDeviceSurfaceCapabilities;
         private static Vk.GetPhysicalDeviceSurfaceFormatsKHRDelegate vkGetPhysicalDeviceSurfaceFormats;
         private static Vk.GetPhysicalDeviceSurfacePresentModesKHRDelegate vkGetPhysicalDeviceSurfacePresentModes;
+
+        private static Vk.CreateDeviceDelegate vkCreateDevice;
+
+        private static Vk.GetDeviceQueueDelegate vkGetDeviceQueue;
+        private static Vk.CreateCommandPoolDelegate vkCreateCommandPool;
+        private static Vk.AllocateCommandBuffersDelegate vkAllocateCommandBuffers;
+        private static Vk.CreateFenceDelegate vkCreateFence;
+        private static Vk.CreateSemaphoreDelegate vkCreateSemaphore;
+
         private static Vk.CreateSwapchainKHRDelegate vkCreateSwapchain;
         private static Vk.DestroySwapchainKHRDelegate vkDestroySwapchain;
         private static Vk.GetSwapchainImagesKHRDelegate vkGetSwapchainImages;
@@ -26,12 +55,13 @@ namespace Engine.Graphics
 #if DEBUG
         private static Vk.CreateDebugReportCallbackEXTDelegate vkCreateDebugReportCallback;
         private static Vk.DestroyDebugReportCallbackEXTDelegate vkDestroyDebugReportCallback;
-        private static Vk.DebugMarkerObjectNameInfo vkDebugMarkerObjectName;
+        private static Vk.DebugMarkerSetObjectNameEXTDelegate vkDebugMarkerSetObjectName;
 #endif
 
         public bool HasFocus { get; set; }
-
-        private Application _application;
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+        
         private IntPtr _handle;
 #if PLATFORM_LINUX
         private IntPtr _display;
@@ -39,6 +69,19 @@ namespace Engine.Graphics
         private SDL.Window _sdlWindow;
         private Vk.Instance _vulkanInstance;
         private Vk.Surface _vulkanSurface;
+        private Vk.PhysicalDevice _vulkanPhysicalDevice;
+        private Vk.PhysicalDeviceFeatures _vulkanPhysicalDeviceFeatures;
+
+        private Vk.CommandPool _commandPool;
+        private Vk.CommandPool _transientCommandPool;
+        private Vk.CommandBuffer[] _commandBuffers = new Vk.CommandBuffer[CommandBufferCount];
+        private Vk.Fence[] _commandBufferFences = new Vk.Fence[CommandBufferCount];
+        private Vk.Semaphore[] _drawCompleteSemaphores = new Vk.Semaphore[CommandBufferCount];
+
+        private Vk.SurfaceCapabilities _vulkanSurfaceCapabilities;
+        private Vk.Swapchain _vulkanSwapchain;
+
+        private bool[] _isCommandBufferSubmitted = new bool[CommandBufferCount];
         private uint _currentSwapchainBuffer;
 #if DEBUG
         private Vk.DebugReportCallback _debugReportCallback;
@@ -50,9 +93,7 @@ namespace Engine.Graphics
                 return false;
             }
 
-            Text layerPrefixText = new Text(layerPrefix, 32);
-            Text messageText = new Text(message, 64);
-            string output = "[" + layerPrefixText + "] Code " + messageCode + ": " + messageText;
+            string output = "[" + StringUtility.GetString(layerPrefix) + "] Code " + messageCode + ": " + StringUtility.GetString(message);
 
             switch (flags)
             {
@@ -66,27 +107,25 @@ namespace Engine.Graphics
         }
 #endif
 
-        public Window(Application application)
+        public Window(byte* title)
         {
-            _application = application;
-            
             Log.Info("Initializing SDL video subsystem.");
             if (VideoSubSystemInitialized == false)
             {
                 SDL.InitSubSystem(SDL.InitFlags.Video).CheckError();
                 VideoSubSystemInitialized = true;
             }
-            
+
             Log.Info("Loading Vulkan loader library.");
             SDL.VulkanLoadLibrary(null);
-            
+
             Log.Info("Creating SDL window.");
             _sdlWindow = SDL.CreateWindow(
-                application.ApplicationSettings.Title,
+                title,
                 SDL.WindowPositionUndefined,
-                SDL.WindowPositionUndefined, 
-                ConfigManager.GetVar(Application.ConfigResolutionX, 1280), 
-                ConfigManager.GetVar(Application.ConfigResolutionY, 720),
+                SDL.WindowPositionUndefined,
+                VariableManager.GetVar(Application.ConfigResolutionX, 1280),
+                VariableManager.GetVar(Application.ConfigResolutionY, 720),
                 SDL.WindowFlags.Shown | SDL.WindowFlags.Vulkan
             );
             _sdlWindow.CheckError();
@@ -118,7 +157,7 @@ namespace Engine.Graphics
             Handle = sysWMInfo.Info.Cocoa.Window;
 #endif
             Log.Info("Initializing Vulkan.");
-            InitInstance();
+            InitInstance(title);
             InitDevice();
             InitCommandBuffers();
             CreateSwapchain();
@@ -136,7 +175,36 @@ namespace Engine.Graphics
             CreateDescriptorSets();
         }
 
-        private void InitInstance()
+
+        public void SetMode(int width, int height, int refreshRate, int bpp, bool fullscreen)
+        {
+            Log.Info("Creating SDL window.");
+            if (_sdlWindow.Handle == IntPtr.Zero)
+            {
+                SDL.WindowFlags flags = SDL.WindowFlags.Hidden | SDL.WindowFlags.Vulkan;
+
+                if (VariableManager.GetVar(""))
+            }
+        }
+
+        private void GetCurrentSize(out int width, out int height)
+        {
+            SDL.VulkanGetDrawableSize(_sdlWindow, out width, out height);
+        }
+
+        private int GetCurrentWidth()
+        {
+            SDL.VulkanGetDrawableSize(_sdlWindow, out int width, out int height);
+            return width;
+        }
+
+        private int GetCurrentHeight()
+        {
+            SDL.VulkanGetDrawableSize(_sdlWindow, out int width, out int height);
+            return height;
+        }
+
+        private void InitInstance(byte* title)
         {
             Log.Info("Loading Vulkan getInstanceProcAddr function.");
             Vk.GetInstanceProcAddr = Vk.GetInstanceProcAddr ?? Marshal.GetDelegateForFunctionPointer<Vk.GetInstanceProcAddrDelegate>(SDL.VulkanGetVkGetInstanceProcAddr());
@@ -149,10 +217,10 @@ namespace Engine.Graphics
             SDL.VulkanGetInstanceExtensions(_sdlWindow, ref extensionCount, extensionNames).CheckError();
 
 #if DEBUG
-            bool enableValidation = ConfigManager.GetVar(Application.ConfigEnableVulkanValidation, true);
+            bool enableValidation = VariableManager.GetVar(Application.ConfigEnableVulkanValidation, true);
             if (enableValidation)
             {
-                extensionNames[extensionCount] = new Text(Vk.ExtDebugReportExtensionName);
+                extensionNames[extensionCount] = Vk.ExtDebugReportExtensionName.ToBytes();
             }
 #endif
             Log.Info("Loading Vulkan createInstance function.");
@@ -160,9 +228,9 @@ namespace Engine.Graphics
 
             Log.Info("Creating Vulkan instance.");
             Vk.ApplicationInfo applicationInfo = new Vk.ApplicationInfo(
-                _application.ApplicationSettings.Title,
+                title,
                 Vulkan.Version.One,
-                _application.ApplicationSettings.Title,
+                title,
                 Vulkan.Version.One,
                 Vulkan.Version.One
             );
@@ -175,7 +243,7 @@ namespace Engine.Graphics
 #if DEBUG
             if (enableValidation)
             {
-                byte*[] layerNames = new byte*[] { "VK_LAYER_LUNARG_standard_validation".ToText() };
+                byte*[] layerNames = new byte*[] { "VK_LAYER_LUNARG_standard_validation".ToBytes() };
 
                 instanceCreateInfo.EnabledExtensionCount = extensionCount + 1;
                 instanceCreateInfo.EnabledLayerCount = 1;
@@ -187,18 +255,36 @@ namespace Engine.Graphics
 #endif
             vkCreateInstance(ref instanceCreateInfo, null, out _vulkanInstance).CheckError();
 
+            if (_vulkanInstance == Vk.Instance.Null)
+            {
+                Log.Error("Vulkan instance is null.");
+            }
+
             Log.Info("Creating Vulkan surface.");
             SDL.VulkanCreateSurface(_sdlWindow, _vulkanInstance, out _vulkanSurface).CheckError();
 
-            Log.Info("Loading Vulkan getDeviceProcAddr function.");
-            Vk.GetDeviceProcAddr = Vk.LoadInstanceFunction<Vk.GetDeviceProcAddrDelegate>(_vulkanInstance);
+            Log.Info("Loading Vulkan instance functions.");
+            Vk.GetDeviceProcAddr = Vk.GetDeviceProcAddr ?? Vk.LoadInstanceFunction<Vk.GetDeviceProcAddrDelegate>(_vulkanInstance);
 
-            Log.Info("Loading other Vulkan instance functions.");
-            vkGetPhysicalDeviceSurfaceSupport = Vk.LoadInstanceFunction<Vk.GetPhysicalDeviceSurfaceSupportKHRDelegate>(_vulkanInstance);
-            vkGetPhysicalDeviceSurfaceCapabilities = Vk.LoadInstanceFunction<Vk.GetPhysicalDeviceSurfaceCapabilitiesKHRDelegate>(_vulkanInstance);
-            vkGetPhysicalDeviceSurfaceFormats = Vk.LoadInstanceFunction<Vk.GetPhysicalDeviceSurfaceFormatsKHRDelegate>(_vulkanInstance);
-            vkGetPhysicalDeviceSurfacePresentModes = Vk.LoadInstanceFunction<Vk.GetPhysicalDeviceSurfacePresentModesKHRDelegate>(_vulkanInstance);
-            vkGetSwapchainImages = Vk.LoadInstanceFunction<Vk.GetSwapchainImagesKHRDelegate>(_vulkanInstance);
+            vkDestroyInstance = vkDestroyInstance ?? Vk.LoadInstanceFunction<Vk.DestroyInstanceDelegate>(_vulkanInstance);
+
+            vkEnumeratePhysicalDevices = vkEnumeratePhysicalDevices ?? Vk.LoadInstanceFunction<Vk.EnumeratePhysicalDevicesDelegate>(_vulkanInstance);
+            vkEnumerateDeviceExtensionProperties = vkEnumerateDeviceExtensionProperties ?? Vk.LoadInstanceFunction<Vk.EnumerateDeviceExtensionPropertiesDelegate>(_vulkanInstance);
+
+            vkGetPhysicalDeviceProperties = vkGetPhysicalDeviceProperties ?? Vk.LoadInstanceFunction<Vk.GetPhysicalDevicePropertiesDelegate>(_vulkanInstance);
+            vkGetPhysicalDeviceMemoryProperties = vkGetPhysicalDeviceMemoryProperties ?? Vk.LoadInstanceFunction<Vk.GetPhysicalDeviceMemoryPropertiesDelegate>(_vulkanInstance);
+            vkGetPhysicalDeviceQueueFamilyProperties = vkGetPhysicalDeviceQueueFamilyProperties ?? Vk.LoadInstanceFunction<Vk.GetPhysicalDeviceQueueFamilyPropertiesDelegate>(_vulkanInstance);
+            vkGetPhysicalDeviceFeatures = vkGetPhysicalDeviceFeatures ?? Vk.LoadInstanceFunction<Vk.GetPhysicalDeviceFeaturesDelegate>(_vulkanInstance);
+            vkGetPhysicalDeviceFormatProperties = vkGetPhysicalDeviceFormatProperties ?? Vk.LoadInstanceFunction<Vk.GetPhysicalDeviceFormatPropertiesDelegate>(_vulkanInstance);
+
+            vkGetPhysicalDeviceSurfaceSupport = vkGetPhysicalDeviceSurfaceSupport ?? Vk.LoadInstanceFunction<Vk.GetPhysicalDeviceSurfaceSupportKHRDelegate>(_vulkanInstance);
+            vkGetPhysicalDeviceSurfaceCapabilities = vkGetPhysicalDeviceSurfaceCapabilities ?? Vk.LoadInstanceFunction<Vk.GetPhysicalDeviceSurfaceCapabilitiesKHRDelegate>(_vulkanInstance);
+            vkGetPhysicalDeviceSurfaceFormats = vkGetPhysicalDeviceSurfaceFormats ?? Vk.LoadInstanceFunction<Vk.GetPhysicalDeviceSurfaceFormatsKHRDelegate>(_vulkanInstance);
+            vkGetPhysicalDeviceSurfacePresentModes = vkGetPhysicalDeviceSurfacePresentModes ?? Vk.LoadInstanceFunction<Vk.GetPhysicalDeviceSurfacePresentModesKHRDelegate>(_vulkanInstance);
+
+            vkCreateDevice = vkCreateDevice ?? Vk.LoadInstanceFunction<Vk.CreateDeviceDelegate>(_vulkanInstance);
+
+            vkGetSwapchainImages = vkGetSwapchainImages ?? Vk.LoadInstanceFunction<Vk.GetSwapchainImagesKHRDelegate>(_vulkanInstance);
 
 #if DEBUG
             if (enableValidation)
@@ -221,17 +307,259 @@ namespace Engine.Graphics
 
         private void InitDevice()
         {
+            Log.Info("Enumerating physical devices.");
+            uint physicalDeviceCount = 0;
+            vkEnumeratePhysicalDevices(_vulkanInstance, ref physicalDeviceCount, null).CheckError();
+            //vkEnumeratePhysicalDevices(_vulkanInstance, &physicalDeviceCount, null).CheckError();
 
+            if (physicalDeviceCount == 0)
+            {
+                Log.Error("No Vulkan physical device found.");
+            }
+
+            // TODO: This should be user-configurable through command line args and settings
+            int deviceIndex = 0;
+            Vk.PhysicalDevice[] physicalDevices = new Vk.PhysicalDevice[(int)physicalDeviceCount];
+            vkEnumeratePhysicalDevices(_vulkanInstance, ref physicalDeviceCount, physicalDevices).CheckError();
+            /*IntPtr[] physicalDevices = new IntPtr[physicalDeviceCount];
+            fixed (IntPtr* ptr = &physicalDevices[0])
+            {
+                vkEnumeratePhysicalDevices(_vulkanInstance, &physicalDeviceCount, ptr).CheckError();
+                _vulkanPhysicalDevice = new Vk.PhysicalDevice
+                {
+                    Handle = *ptr
+                };
+            }*/
+            _vulkanPhysicalDevice = physicalDevices[deviceIndex];
+
+            if (_vulkanPhysicalDevice == Vk.PhysicalDevice.Null)
+            {
+                Log.Error("Vulkan physical device is null.");
+            }
+
+            Log.Info("Getting device memory properties.");
+            vkGetPhysicalDeviceMemoryProperties(_vulkanPhysicalDevice, out Graphics.DeviceMemoryProperties);
+
+            Log.Info("Enumerating device extensions.");
+            uint deviceExtensionCount = 0;
+            vkEnumerateDeviceExtensionProperties(_vulkanPhysicalDevice, null, ref deviceExtensionCount, null).CheckError();
+
+            if (deviceExtensionCount == 0)
+            {
+                Log.Error("No device extensions found.");
+            }
+
+            Vk.ExtensionProperties[] extensionProperties = new Vk.ExtensionProperties[deviceExtensionCount];
+            vkEnumerateDeviceExtensionProperties(_vulkanPhysicalDevice, null, ref deviceExtensionCount, extensionProperties).CheckError();
+
+            bool foundSwapchainExtension = false;
+#if DEBUG
+            bool foundDebugMarkerExtension = false;
+#endif
+            Graphics.DedicatedAllocation = false;
+
+            foreach (Vk.ExtensionProperties extension in extensionProperties)
+            {
+                if (extension.IsNamed(Vk.SwapchainExtensionName))
+                {
+                    foundSwapchainExtension = true;
+                }
+#if DEBUG
+                else if (extension.IsNamed(Vk.DebugMarkerExtensionName))
+                {
+                    foundDebugMarkerExtension = true;
+                }
+#endif
+                else if (extension.IsNamed(Vk.DedicatedAllocationExtensionName))
+                {
+                    Graphics.DedicatedAllocation = true;
+                }
+            }
+
+            if (!foundSwapchainExtension)
+            {
+                Log.Error($"Couldn't find {Vk.SwapchainExtensionName} extension.");
+            }
+
+            Log.Info("Getting device properties.");
+            vkGetPhysicalDeviceProperties(_vulkanPhysicalDevice, out Graphics.DeviceProperties);
+            Log.Info($"Device: {Graphics.VendorNames[Graphics.DeviceProperties.VendorId]} {Graphics.DeviceProperties.GetDeviceName()}");
+
+            Log.Info("Getting queue family properties.");
+            uint queueFamilyCount = 0;
+            vkGetPhysicalDeviceQueueFamilyProperties(_vulkanPhysicalDevice, ref queueFamilyCount, null);
+
+            if (queueFamilyCount == 0)
+            {
+                Log.Error("No Vulkan queues found.");
+            }
+
+            Vk.QueueFamilyProperties[] queueFamilyProperties = new Vk.QueueFamilyProperties[queueFamilyCount];
+            vkGetPhysicalDeviceQueueFamilyProperties(_vulkanPhysicalDevice, ref queueFamilyCount, queueFamilyProperties);
+
+            Log.Info("Finding queues with present support.");
+            Vk.Bool32[] queueSupportsPresent = new Vk.Bool32[queueFamilyCount];
+            for (uint i = 0; i < queueFamilyCount; ++i)
+            {
+                vkGetPhysicalDeviceSurfaceSupport(_vulkanPhysicalDevice, i, _vulkanSurface, out queueSupportsPresent[i]);
+            }
+
+            Log.Info("Finding queue with graphics and present support.");
+            bool foundGraphicsQueue = false;
+
+            for (uint i = 0; i < queueFamilyCount; ++i)
+            {
+                if ((queueFamilyProperties[i].QueueFlags & Vk.QueueFlags.Graphics) != 0 && queueSupportsPresent[i])
+                {
+                    foundGraphicsQueue = true;
+                    Graphics.GraphicsQueueFamily = i;
+                }
+            }
+
+            if (!foundGraphicsQueue)
+            {
+                Log.Error("No graphics+present queue found.");
+            }
+
+            // TODO: Find exclusive compute and transfer queues
+
+            Log.Info("Getting Vulkan physical device features.");
+            vkGetPhysicalDeviceFeatures(_vulkanPhysicalDevice, out _vulkanPhysicalDeviceFeatures);
+
+            Vk.PhysicalDeviceFeatures physicalDeviceFeatures = new Vk.PhysicalDeviceFeatures
+            {
+                ShaderStorageImageExtendedFormats = _vulkanPhysicalDeviceFeatures.ShaderStorageImageExtendedFormats,
+                SamplerAnisotropy = _vulkanPhysicalDeviceFeatures.SamplerAnisotropy
+            };
+
+            Log.Info("Creating Vulkan device.");
+            Vk.DeviceQueueCreateInfo deviceQueueCreateInfo = new Vk.DeviceQueueCreateInfo(
+                Graphics.GraphicsQueueFamily,
+                1,
+                new float[] { 0f }
+            );
+
+            byte*[] deviceExtensions = new byte*[] { Vk.SwapchainExtensionName.ToBytes(), Vk.DebugMarkerExtensionName.ToBytes() };
+
+            Vk.DeviceCreateInfo deviceCreateInfo = new Vk.DeviceCreateInfo(
+                deviceQueueCreateInfo,
+                1,
+                deviceExtensions,
+                physicalDeviceFeatures
+            );
+#if DEBUG
+            if (foundDebugMarkerExtension)
+            {
+                deviceCreateInfo.EnabledExtensionCount = 2;
+            }
+#endif
+            vkCreateDevice(_vulkanPhysicalDevice, ref deviceCreateInfo, null, out Graphics.Device).CheckError();
+
+            if (Graphics.Device == Vk.Device.Null)
+            {
+                Log.Error("Vulkan device is null.");
+            }
+
+            Log.Info("Loading Vulkan device functions.");
+            vkGetDeviceQueue = vkGetDeviceQueue ?? Vk.LoadDeviceFunction<Vk.GetDeviceQueueDelegate>(Graphics.Device);
+            vkCreateCommandPool = vkCreateCommandPool ?? Vk.LoadDeviceFunction<Vk.CreateCommandPoolDelegate>(Graphics.Device);
+            vkAllocateCommandBuffers = vkAllocateCommandBuffers ?? Vk.LoadDeviceFunction<Vk.AllocateCommandBuffersDelegate>(Graphics.Device);
+            vkCreateFence = vkCreateFence ?? Vk.LoadDeviceFunction<Vk.CreateFenceDelegate>(Graphics.Device);
+            vkCreateSemaphore = vkCreateSemaphore ?? Vk.LoadDeviceFunction<Vk.CreateSemaphoreDelegate>(Graphics.Device);
+
+            vkCreateSwapchain = vkCreateSwapchain ?? Vk.LoadDeviceFunction<Vk.CreateSwapchainKHRDelegate>(Graphics.Device);
+            vkDestroySwapchain = vkDestroySwapchain ?? Vk.LoadDeviceFunction<Vk.DestroySwapchainKHRDelegate>(Graphics.Device);
+            vkGetSwapchainImages = vkGetSwapchainImages ?? Vk.LoadDeviceFunction<Vk.GetSwapchainImagesKHRDelegate>(Graphics.Device);
+            vkAcquireNextImage = vkAcquireNextImage ?? Vk.LoadDeviceFunction<Vk.AcquireNextImageKHRDelegate>(Graphics.Device);
+            vkQueuePresent = vkQueuePresent ?? Vk.LoadDeviceFunction<Vk.QueuePresentKHRDelegate>(Graphics.Device);
+#if DEBUG
+            if (foundDebugMarkerExtension)
+            {
+                Log.Info($"Using {Vk.DebugMarkerExtensionName}.");
+                vkDebugMarkerSetObjectName = vkDebugMarkerSetObjectName ?? Vk.LoadDeviceFunction<Vk.DebugMarkerSetObjectNameEXTDelegate>(Graphics.Device);
+            }
+#endif
+            if (Graphics.DedicatedAllocation)
+            {
+                Log.Info($"Using {Vk.DedicatedAllocationExtensionName}.");
+            }
+
+            Log.Info("Getting graphics queue.");
+            vkGetDeviceQueue(Graphics.Device, Graphics.GraphicsQueueFamily, 0, out Graphics.GraphicsQueue);
+
+            Log.Info("Finding color buffer format.");
+            Vk.FormatProperties formatProperties;
+            Graphics.ColorFormat = Vk.Format.R8G8B8A8UNorm;
+
+            if (_vulkanPhysicalDeviceFeatures.ShaderStorageImageExtendedFormats)
+            {
+                vkGetPhysicalDeviceFormatProperties(_vulkanPhysicalDevice, Vk.Format.A2B10G10R10UNormPack32, out formatProperties);
+                bool a2b10g10r10Support = (formatProperties.OptimalTilingFeatures & RequiredColorBufferFeatures) == RequiredColorBufferFeatures;
+
+                if (a2b10g10r10Support)
+                {
+                    Log.Info("Using A2B10G10R10 color buffer format.");
+                    Graphics.ColorFormat = Vk.Format.A2B10G10R10UNormPack32;
+                }
+            }
+
+            Log.Info("Finding depth buffer format.");
+            vkGetPhysicalDeviceFormatProperties(_vulkanPhysicalDevice, Vk.Format.X8D24UNormPack32, out formatProperties);
+            bool x8d24Support = (formatProperties.OptimalTilingFeatures & Vk.FormatFeatureFlags.DepthStencilAttachment) != 0;
+            vkGetPhysicalDeviceFormatProperties(_vulkanPhysicalDevice, Vk.Format.D32SFloat, out formatProperties);
+            bool d32Support = (formatProperties.OptimalTilingFeatures & Vk.FormatFeatureFlags.DepthStencilAttachment) != 0;
+
+            Graphics.DepthFormat = Vk.Format.D16UNorm;
+            if (x8d24Support)
+            {
+                Log.Info("Using X8_D24 depth buffer format.");
+                Graphics.DepthFormat = Vk.Format.X8D24UNormPack32;
+            }
+            else if (d32Support)
+            {
+                Log.Info("Using D32 depth buffer format.");
+                Graphics.DepthFormat = Vk.Format.D32SFloat;
+            }
         }
 
         private void InitCommandBuffers()
         {
+            Log.Info("Creating Vulkan command pool.");
+            Vk.CommandPoolCreateInfo commandPoolCreateInfo = new Vk.CommandPoolCreateInfo(
+                Vk.CommandPoolCreateFlags.ResetCommandBuffer,
+                Graphics.GraphicsQueueFamily
+            );
 
+            vkCreateCommandPool(Graphics.Device, ref commandPoolCreateInfo, null, out _commandPool).CheckError();
+
+            commandPoolCreateInfo.Flags = Vk.CommandPoolCreateFlags.Transient;
+            vkCreateCommandPool(Graphics.Device, ref commandPoolCreateInfo, null, out _transientCommandPool).CheckError();
+
+            Log.Info("Creating Vulkan command buffers.");
+            Vk.CommandBufferAllocateInfo commandBufferAllocateInfo = new Vk.CommandBufferAllocateInfo(_commandPool, CommandBufferCount);
+
+            vkAllocateCommandBuffers(Graphics.Device, ref commandBufferAllocateInfo, _commandBuffers).CheckError();
+
+            Log.Info("Creating Vulkan command buffer fences and semaphores.");
+            Vk.FenceCreateInfo fenceCreateInfo = new Vk.FenceCreateInfo(Vk.FenceCreateFlags.None);
+
+            for (int i = 0; i < CommandBufferCount; ++i)
+            {
+                vkCreateFence(Graphics.Device, ref fenceCreateInfo, null, out _commandBufferFences[i]).CheckError();
+
+                Vk.SemaphoreCreateInfo semaphoreCreateInfo = new Vk.SemaphoreCreateInfo(Vk.SemaphoreCreateFlags.None);
+
+                vkCreateSemaphore(Graphics.Device, ref semaphoreCreateInfo, null, out _drawCompleteSemaphores[i]).CheckError();
+            }
         }
 
         private void CreateSwapchain()
         {
+            Log.Info("Creating Vulkan swapchain.");
 
+            vkGetPhysicalDeviceSurfaceCapabilities(_vulkanPhysicalDevice, _vulkanSurface, out _vulkanSurfaceCapabilities).CheckError();
+
+            if (_vulkanSurfaceCapabilities.CurrentExtent.Width != )
         }
 
         private void CreateColorBuffer()
@@ -300,11 +628,6 @@ namespace Engine.Graphics
             if (_sdlWindow == IntPtr.Zero)
             {
                 return;
-            }
-
-            if (isDisposing)
-            {
-                _application = null;
             }
 
             SDL.DestroyWindow(_sdlWindow);

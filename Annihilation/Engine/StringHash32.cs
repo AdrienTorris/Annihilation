@@ -1,5 +1,4 @@
 ﻿using System;
-using Engine.Mathematics;
 
 namespace Engine
 {
@@ -13,8 +12,7 @@ namespace Engine
         
         public StringHash32 (string text)
         {
-            ulong hash = text.GetCityHash64();
-            _hash = (uint)(hash >> 32);
+            _hash = text.ToHash32();
         }
 
         public bool IsValid ()

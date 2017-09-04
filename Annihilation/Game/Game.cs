@@ -37,19 +37,18 @@ namespace Annihilation
             InputSettings inputSettings = default(InputSettings);
             inputSettings.RepeatInterval = InputSettings.DefaultRepeatInterval;
             inputSettings.RepeatDelay = InputSettings.DefaultRepeatDelay;
-            
-            Application application = new Application(ref applicationSettings, ref graphicsSettings, ref inputSettings);
 
-            application.Start(Init, null, null);
-
-            // Do not put any code here
+            using (Application application = new Application(args, ref applicationSettings, ref graphicsSettings, ref inputSettings))
+            {
+                application.Run(Init, null, null);
+            }
         }
 
         private static void Init()
         {
             string configPath = Application.PreferencePath + "settings.init";
 
-            ConfigManager.AddVarsFromFile(configPath);
+            VariableManager.AddVarsFromFile(configPath);
         }
     }
 }

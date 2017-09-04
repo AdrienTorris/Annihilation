@@ -1,20 +1,29 @@
-﻿namespace Engine
+﻿using System.Text;
+using Engine.Mathematics;
+
+namespace Engine
 {
     public static class StringExtensions
     {
-        public static Text ToText(this string str)
+        public static unsafe byte* ToBytes(this string text)
         {
-            return new Text(str);
+            byte* bytes = null;
+            int maxBytes = Encoding.UTF8.GetMaxByteCount(text.Length);
+            fixed (char* chars = text)
+            {
+                Encoding.UTF8.GetBytes(chars, text.Length, bytes, maxBytes);
+                return bytes;
+            }
         }
 
-        public static StringHash32 ToHash32(this string str)
+        public static uint ToHash32(this string str)
         {
-            return new StringHash32(str);
+            return MetroHash.Hash32(str);
         }
 
-        public static StringHash64 ToHash64(this string str)
+        public static ulong ToHash64(this string str)
         {
-            return new StringHash64(str);
+            return MetroHash.Hash64(str);
         }
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Engine
 {
+    // TODO: Need to handle beign able to set some of these as options
     public struct InputSettings
     {
         public float RepeatDelay;
@@ -14,13 +15,14 @@ namespace Engine
     
     public struct GraphicsSettings
     {
+        public int DeviceIndex;
     }
 
     public struct ApplicationSettings
     {
-        public Text Title;
-        public Text Organization;
-        public Text Version;
+        public string Title;
+        public string Organization;
+        public string Version;
 
         [Conditional("DEBUG")]
         public void CheckError()

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Engine.Input;
@@ -15,6 +16,7 @@ namespace Engine
         Quitting,
     }
 
+    // TODO: Should be singleton?
     public unsafe class Application : IDisposable
     {
         public const int MaxPathLength = 256;
@@ -28,25 +30,46 @@ namespace Engine
         /// The platform-specific path where you can write files. Perfect for save games.
         /// </summary>
         /// <remarks>
-        /// Must be called after <see cref="Start(Action, Action{double}, Action)"/>.
+        /// Must be called after <see cref="Run(Action, Action{double}, Action)"/>.
         /// </remarks>
         public static string PreferencePath { get; private set; }
+        
+        public string[] Args { get; private set; }
+        public HashSet<string> ArgsSet { get; private set; }
 
         public ApplicationSettings ApplicationSettings { get; private set; }
         public GraphicsSettings GraphicsSettings { get; private set; }
         public InputSettings InputSettings { get; private set; }
+
         // TODO: Support multiple windows per application
         public Window Window { get; private set; }
+        public GraphicsManager GraphicsManager { get; private set; }
 
         private GameState _state = GameState.Running;
         private bool _isDisposed = false;
         
         private Application() { }
 
-        public Application(ref ApplicationSettings applicationSettings,
+        public Application(string[] args,
+                           ref ApplicationSettings applicationSettings,
                            ref GraphicsSettings graphicsSettings,
                            ref InputSettings inputSettings)
         {
+            if (args != null)
+            {
+                Args = args;
+                ArgsSet = new HashSet<string>(args.Length);
+                foreach (string arg in args)
+                {
+                    ArgsSet.Add(arg);
+                }
+            }
+            else
+            {
+                Args = new string[0];
+                ArgsSet = new HashSet<string>(0);
+            }
+
             applicationSettings.CheckError();
 
             ApplicationSettings = applicationSettings;
@@ -54,7 +77,7 @@ namespace Engine
             InputSettings = inputSettings;
         }
 
-        public void Start(Action initFunction, Action<double> updateFunction, Action shutdownFunction)
+        public void Run(Action initFunction, Action<double> updateFunction, Action shutdownFunction)
         {
             Log.Info("Loading SDL functions.");
             SDL.LoadFunctions(SDLModule.SDL);
@@ -67,12 +90,15 @@ namespace Engine
             SDL.LoadFunctions(SDLModule.FileSystem);
             SDL.LoadFunctions(SDLModule.Vulkan);
 
+            byte* title = ApplicationSettings.Title.ToBytes();
+            byte* organization = ApplicationSettings.Organization.ToBytes();
+
             Log.Info("Getting preference path.");
-            PreferencePath = PreferencePath ?? new Text(SDL.GetPrefPath(ApplicationSettings.Organization, ApplicationSettings.Title), MaxPathLength);
+            PreferencePath = PreferencePath ?? StringUtility.GetString(SDL.GetPrefPath(title, organization));
             Log.Info("Preference path found: " + PreferencePath);
             
             Log.Info("Creating window.");
-            Window = new Window(this);
+            Window = new Window(title);
 
             Log.Info("Creating input manager.");
             InputManager.Init(this);

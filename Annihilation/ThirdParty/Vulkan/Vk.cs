@@ -158,31 +158,19 @@ namespace Vulkan
         {
             string name = "vk" + typeof(T).Name;
             name = name.Replace("Delegate", "");
-            IntPtr function = GetInstanceProcAddr(instance, new Text(name));
+            IntPtr function = GetInstanceProcAddr(instance, name.ToBytes());
             if (function == IntPtr.Zero)
             {
                 throw new NullReferenceException();
             }
             return Marshal.GetDelegateForFunctionPointer<T>(function);
         }
-
-        public unsafe static T LoadInstanceFunctionFromExtension<T>(Instance instance, byte* extension, byte*[] enabledExtensions)
-        {
-            foreach (byte* enabledExtension in enabledExtensions)
-            {
-                if (enabledExtension == extension)
-                {
-                    return LoadInstanceFunction<T>(instance);
-                }
-            }
-            return default(T);
-        }
         
         public unsafe static T LoadDeviceFunction<T>(Device device)
         {
             string name = "vk" + typeof(T).Name;
-            name.Replace("Delegate", "");
-            IntPtr function = GetDeviceProcAddr(device, new Text(name));
+            name = name.Replace("Delegate", "");
+            IntPtr function = GetDeviceProcAddr(device, name.ToBytes());
             if (function == IntPtr.Zero)
             {
                 throw new NullReferenceException();
@@ -205,21 +193,21 @@ namespace Vulkan
         //
         public unsafe delegate Result CreateInstanceDelegate(ref InstanceCreateInfo createInfo, AllocationCallbacks* allocator, out Instance instance);
         public unsafe delegate void DestroyInstanceDelegate(Instance instance, AllocationCallbacks* allocator);
-        public unsafe delegate Result EnumeratePhysicalDevicesDelegate(Instance instance, out uint physicalDeviceCount, PhysicalDevice[] physicalDevices);
+        public unsafe delegate Result EnumeratePhysicalDevicesDelegate(Instance instance, ref uint physicalDeviceCount, [Out] PhysicalDevice[] physicalDevices);
         public unsafe delegate void GetPhysicalDeviceFeaturesDelegate(PhysicalDevice physicalDevice, out PhysicalDeviceFeatures features);
         public unsafe delegate void GetPhysicalDeviceFormatPropertiesDelegate(PhysicalDevice physicalDevice, Format format, out FormatProperties formatProperties);
         public unsafe delegate Result GetPhysicalDeviceImageFormatPropertiesDelegate(PhysicalDevice physicalDevice, Format format, ImageType type, ImageTiling tiling, ImageUsageFlags usage, ImageCreateFlags flags, out ImageFormatProperties imageFormatProperties);
         public unsafe delegate void GetPhysicalDevicePropertiesDelegate(PhysicalDevice physicalDevice, out PhysicalDeviceProperties properties);
-        public unsafe delegate void GetPhysicalDeviceQueueFamilyPropertiesDelegate(PhysicalDevice physicalDevice, out uint queueFamilyPropertyCount, QueueFamilyProperties[] queueFamilyProperties);
+        public unsafe delegate void GetPhysicalDeviceQueueFamilyPropertiesDelegate(PhysicalDevice physicalDevice, ref uint queueFamilyPropertyCount, [Out] QueueFamilyProperties[] queueFamilyProperties);
         public unsafe delegate void GetPhysicalDeviceMemoryPropertiesDelegate(PhysicalDevice physicalDevice, out PhysicalDeviceMemoryProperties memoryProperties);
         public unsafe delegate IntPtr GetInstanceProcAddrDelegate(Instance instance, byte* name);
         public unsafe delegate IntPtr GetDeviceProcAddrDelegate(Device device, byte* name);
         public unsafe delegate Result CreateDeviceDelegate(PhysicalDevice physicalDevice, ref DeviceCreateInfo createInfo, AllocationCallbacks* allocator, out Device device);
         public unsafe delegate void DestroyDeviceDelegate(Device device, AllocationCallbacks* allocator);
-        public unsafe delegate Result EnumerateInstanceExtensionPropertiesDelegate(byte* layerName, out uint propertyCount, ExtensionProperties[] properties);
-        public unsafe delegate Result EnumerateDeviceExtensionPropertiesDelegate(PhysicalDevice physicalDevice, byte* layerName, out uint propertyCount, ExtensionProperties[] properties);
-        public unsafe delegate Result EnumerateInstanceLayerPropertiesDelegate(out uint propertyCount, LayerProperties[] properties);
-        public unsafe delegate Result EnumerateDeviceLayerPropertiesDelegate(PhysicalDevice physicalDevice, out uint propertyCount, LayerProperties[] properties);
+        public unsafe delegate Result EnumerateInstanceExtensionPropertiesDelegate(byte* layerName, ref uint propertyCount, [Out] ExtensionProperties[] properties);
+        public unsafe delegate Result EnumerateDeviceExtensionPropertiesDelegate(PhysicalDevice physicalDevice, byte* layerName, ref uint propertyCount, [Out] ExtensionProperties[] properties);
+        public unsafe delegate Result EnumerateInstanceLayerPropertiesDelegate(ref uint propertyCount, [Out] LayerProperties[] properties);
+        public unsafe delegate Result EnumerateDeviceLayerPropertiesDelegate(PhysicalDevice physicalDevice, ref uint propertyCount, [Out] LayerProperties[] properties);
         public unsafe delegate void GetDeviceQueueDelegate(Device device, uint queueFamilyIndex, uint queueIndex, out Queue queue);
         public unsafe delegate Result QueueSubmitDelegate(Queue queue, uint submitCount, SubmitInfo[] submits, Fence fence);
         public unsafe delegate Result QueueWaitIdleDelegate(Queue queue);
@@ -236,7 +224,7 @@ namespace Vulkan
         public unsafe delegate void GetBufferMemoryRequirementsDelegate(Device device, Buffer buffer, out MemoryRequirements memoryRequirements);
         public unsafe delegate void GetImageMemoryRequirementsDelegate(Device device, Image image, out MemoryRequirements memoryRequirements);
         public unsafe delegate void GetImageSparseMemoryRequirementsDelegate(Device device, Image image, out uint sparseMemoryRequirementCount, SparseImageMemoryRequirements[] sparseMemoryRequirements);
-        public unsafe delegate void GetPhysicalDeviceSparseImageFormatPropertiesDelegate(PhysicalDevice physicalDevice, Format format, ImageType type, SampleCountFlags samples, ImageUsageFlags usage, ImageTiling tiling, out uint propertyCount, SparseImageFormatProperties[] properties);
+        public unsafe delegate void GetPhysicalDeviceSparseImageFormatPropertiesDelegate(PhysicalDevice physicalDevice, Format format, ImageType type, SampleCountFlags samples, ImageUsageFlags usage, ImageTiling tiling, out uint propertyCount, [Out] SparseImageFormatProperties[] properties);
         public unsafe delegate Result QueueBindSparseDelegate(Queue queue, uint bindInfoCount, ref BindSparseInfo bindInfo, Fence fence);
         public unsafe delegate Result CreateFenceDelegate(Device device, ref FenceCreateInfo createInfo, AllocationCallbacks* allocator, out Fence fence);
         public unsafe delegate void DestroyFenceDelegate(Device device, Fence fence, AllocationCallbacks* allocator);
@@ -343,18 +331,18 @@ namespace Vulkan
         // Khronos
         public unsafe delegate void DestroySurfaceKHRDelegate(Instance instance, Surface surface, AllocationCallbacks* allocator);
         public unsafe delegate Result GetPhysicalDeviceSurfaceSupportKHRDelegate(PhysicalDevice physicalDevice, uint queueFamilyIndex, Surface surface, out Bool32 supported);
-        public unsafe delegate Result GetPhysicalDeviceSurfaceCapabilitiesKHRDelegate(PhysicalDevice physicalDevice, Surface surface, SurfaceCapabilities[] surfaceCapabilities);
-        public unsafe delegate Result GetPhysicalDeviceSurfaceFormatsKHRDelegate(PhysicalDevice physicalDevice, Surface surface, out uint surfaceFormatCount, SurfaceFormat[] surfaceFormats);
-        public unsafe delegate Result GetPhysicalDeviceSurfacePresentModesKHRDelegate(PhysicalDevice physicalDevice, Surface surface, out uint presentModeCount, PresentMode[] presentModes);
+        public unsafe delegate Result GetPhysicalDeviceSurfaceCapabilitiesKHRDelegate(PhysicalDevice physicalDevice, Surface surface, out SurfaceCapabilities surfaceCapabilities);
+        public unsafe delegate Result GetPhysicalDeviceSurfaceFormatsKHRDelegate(PhysicalDevice physicalDevice, Surface surface, out uint surfaceFormatCount, [Out] SurfaceFormat[] surfaceFormats);
+        public unsafe delegate Result GetPhysicalDeviceSurfacePresentModesKHRDelegate(PhysicalDevice physicalDevice, Surface surface, out uint presentModeCount, [Out] PresentMode[] presentModes);
         public unsafe delegate Result CreateSwapchainKHRDelegate(Device device, ref SwapchainCreateInfo createInfo, AllocationCallbacks* allocator, out Swapchain swapchain);
         public unsafe delegate void DestroySwapchainKHRDelegate(Device device, Swapchain swapchain, AllocationCallbacks* allocator);
-        public unsafe delegate Result GetSwapchainImagesKHRDelegate(Device device, Swapchain swapchain, out uint swapchainImageCount, Image[] swapchainImages);
+        public unsafe delegate Result GetSwapchainImagesKHRDelegate(Device device, Swapchain swapchain, out uint swapchainImageCount, [Out] Image[] swapchainImages);
         public unsafe delegate Result AcquireNextImageKHRDelegate(Device device, Swapchain swapchain, ulong timeout, Semaphore semaphore, Fence fence, out uint imageIndex);
         public unsafe delegate Result QueuePresentKHRDelegate(Queue queue, ref PresentInfo presentInfo);
-        public unsafe delegate Result GetPhysicalDeviceDisplayPropertiesKHRDelegate(PhysicalDevice physicalDevice, out uint propertyCount, DisplayProperties[] properties);
-        public unsafe delegate Result GetPhysicalDeviceDisplayPlanePropertiesKHRDelegate(PhysicalDevice physicalDevice, out uint propertyCount, DisplayPlaneProperties[] properties);
-        public unsafe delegate Result GetDisplayPlaneSupportedDisplaysKHRDelegate(PhysicalDevice physicalDevice, uint planeIndex, out uint displayCount, Display[] displays);
-        public unsafe delegate Result GetDisplayModePropertiesKHRDelegate(PhysicalDevice physicalDevice, Display display, out uint propertyCount, DisplayModeProperties[] properties);
+        public unsafe delegate Result GetPhysicalDeviceDisplayPropertiesKHRDelegate(PhysicalDevice physicalDevice, out uint propertyCount, [Out] DisplayProperties[] properties);
+        public unsafe delegate Result GetPhysicalDeviceDisplayPlanePropertiesKHRDelegate(PhysicalDevice physicalDevice, out uint propertyCount, [Out] DisplayPlaneProperties[] properties);
+        public unsafe delegate Result GetDisplayPlaneSupportedDisplaysKHRDelegate(PhysicalDevice physicalDevice, uint planeIndex, out uint displayCount, [Out] Display[] displays);
+        public unsafe delegate Result GetDisplayModePropertiesKHRDelegate(PhysicalDevice physicalDevice, Display display, out uint propertyCount, [Out] DisplayModeProperties[] properties);
         public unsafe delegate Result CreateDisplayModeKHRDelegate(PhysicalDevice physicalDevice, Display display, ref DisplayModeCreateInfo createInfo, AllocationCallbacks* allocator, out DisplayMode mode);
         public unsafe delegate Result GetDisplayPlaneCapabilitiesKHRDelegate(PhysicalDevice physicalDevice, DisplayMode mode, uint planeIndex, out DisplayPlaneCapabilities capabilities);
         public unsafe delegate Result CreateDisplayPlaneSurfaceKHRDelegate(Instance instance, ref DisplaySurfaceCreateInfo createInfo, AllocationCallbacks* allocator, out Surface surface);
@@ -374,9 +362,9 @@ namespace Vulkan
         public unsafe delegate void GetPhysicalDeviceProperties2KHRDelegate(PhysicalDevice physicalDevice, out PhysicalDeviceProperties2 properties);
         public unsafe delegate void GetPhysicalDeviceFormatProperties2KHRDelegate(PhysicalDevice physicalDevice, Format format, out FormatProperties2 formatProperties);
         public unsafe delegate Result GetPhysicalDeviceImageFormatProperties2KHRDelegate(PhysicalDevice physicalDevice, ref PhysicalDeviceImageFormatInfo2 imageFormatInfo, out ImageFormatProperties2 imageFormatProperties);
-        public unsafe delegate void GetPhysicalDeviceQueueFamilyProperties2KHRDelegate(PhysicalDevice physicalDevice, out uint queueFamilyPropertyCount, QueueFamilyProperties2[] queueFamilyProperties);
+        public unsafe delegate void GetPhysicalDeviceQueueFamilyProperties2KHRDelegate(PhysicalDevice physicalDevice, out uint queueFamilyPropertyCount, [Out] QueueFamilyProperties2[] queueFamilyProperties);
         public unsafe delegate void GetPhysicalDeviceMemoryProperties2KHRDelegate(PhysicalDevice physicalDevice, out PhysicalDeviceMemoryProperties2 memoryProperties);
-        public unsafe delegate void GetPhysicalDeviceSparseImageFormatProperties2KHRDelegate(PhysicalDevice physicalDevice, ref PhysicalDeviceSparseImageFormatInfo2 formatInfo, out uint propertyCount, SparseImageFormatProperties2[] properties);
+        public unsafe delegate void GetPhysicalDeviceSparseImageFormatProperties2KHRDelegate(PhysicalDevice physicalDevice, ref PhysicalDeviceSparseImageFormatInfo2 formatInfo, out uint propertyCount, [Out] SparseImageFormatProperties2[] properties);
         public unsafe delegate void TrimCommandPoolKHRDelegate(Device device, CommandPool commandPool, CommandPoolTrimFlags flags);
         public unsafe delegate void GetPhysicalDeviceExternalBufferPropertiesKHRDelegate(PhysicalDevice physicalDevice, ref PhysicalDeviceExternalBufferInfo externalBufferInfo, out ExternalBufferProperties externalBufferProperties);
         public unsafe delegate Result GetMemoryWin32HandleKHRDelegate(Device device, ref MemoryGetWin32HandleInfo getWin32HandleInfo, IntPtr handle);
@@ -400,10 +388,10 @@ namespace Vulkan
         public unsafe delegate Result ImportFenceFdKHRDelegate(Device device, ref ImportFenceFdInfo importFenceFdInfo);
         public unsafe delegate Result GetFenceFdKHRDelegate(Device device, ref FenceGetFdInfo getFdInfo, out int fd);
         public unsafe delegate Result GetPhysicalDeviceSurfaceCapabilities2KHRDelegate(PhysicalDevice physicalDevice, ref PhysicalDeviceSurfaceInfo2 surfaceInfo, out SurfaceCapabilities2 surfaceCapabilities);
-        public unsafe delegate Result GetPhysicalDeviceSurfaceFormats2KHRDelegate(PhysicalDevice physicalDevice, ref PhysicalDeviceSurfaceInfo2 surfaceInfo, out uint surfaceFormatCount, SurfaceFormat2[] surfaceFormats);
+        public unsafe delegate Result GetPhysicalDeviceSurfaceFormats2KHRDelegate(PhysicalDevice physicalDevice, ref PhysicalDeviceSurfaceInfo2 surfaceInfo, out uint surfaceFormatCount, [Out] SurfaceFormat2[] surfaceFormats);
         public unsafe delegate void GetImageMemoryRequirements2KHRDelegate(Device device, ref ImageMemoryRequirementsInfo2 info, out MemoryRequirements2 memoryRequirements);
         public unsafe delegate void GetBufferMemoryRequirements2KHRDelegate(Device device, ref BufferMemoryRequirementsInfo2 info, out MemoryRequirements2 memoryRequirements);
-        public unsafe delegate void GetImageSparseMemoryRequirements2KHRDelegate(Device device, ref ImageSparseMemoryRequirementsInfo2 info, out uint sparseMemoryRequirementCount, SparseImageMemoryRequirements2[] sparseMemoryRequirements);
+        public unsafe delegate void GetImageSparseMemoryRequirements2KHRDelegate(Device device, ref ImageSparseMemoryRequirementsInfo2 info, out uint sparseMemoryRequirementCount, [Out] SparseImageMemoryRequirements2[] sparseMemoryRequirements);
         // Khronos X
         public unsafe delegate void GetDeviceGroupPeerMemoryFeaturesKHXDelegate(Device device, uint heapIndex, uint localDeviceIndex, uint remoteDeviceIndex, out PeerMemoryFeatureFlags peerMemoryFeatures);
         public unsafe delegate Result BindBufferMemory2KHXDelegate(Device device, uint bindInfoCount, BindBufferMemoryInfo[] bindInfos);
@@ -456,7 +444,7 @@ namespace Vulkan
         public unsafe delegate Result CreateViSurfaceNNDelegate(Instance instance, ref ViSurfaceCreateInfo createInfo, AllocationCallbacks* allocator, out Surface surface);
         // Google
         public unsafe delegate Result GetRefreshCycleDurationGOOGLEDelegate(Device device, Swapchain swapchain, ref RefreshCycleDuration displayTimingProperties);
-        public unsafe delegate Result GetPastPresentationTimingGOOGLEDelegate(Device device, Swapchain swapchain, ref uint presentationTimingCount, PastPresentationTiming[] presentationTimings);
+        public unsafe delegate Result GetPastPresentationTimingGOOGLEDelegate(Device device, Swapchain swapchain, ref uint presentationTimingCount, [Out] PastPresentationTiming[] presentationTimings);
         // MoltenVK
         public unsafe delegate Result CreateIOSSurfaceMVKDelegate(Instance instance, ref IOSSurfaceCreateInfo createInfo, AllocationCallbacks* allocator, out Surface surface);
         public unsafe delegate Result CreateMacOSSurfaceMVKDelegate(Instance instance, ref MacOSSurfaceCreateInfo createInfo, AllocationCallbacks* allocator, out Surface surface);

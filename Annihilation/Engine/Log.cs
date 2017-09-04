@@ -17,7 +17,7 @@ namespace Engine
         }
 
         [Conditional("DEBUG")]
-        public static void Info(Text text)
+        public static unsafe void Info(byte* text)
         {
             Info(text);
         }
@@ -31,7 +31,7 @@ namespace Engine
         }
 
         [Conditional("DEBUG")]
-        public static void Warning(Text text)
+        public static unsafe void Warning(byte* text)
         {
             Warning(text);
         }
@@ -45,7 +45,7 @@ namespace Engine
         }
 
         [Conditional("DEBUG")]
-        public static void Error(Text text)
+        public static unsafe void Error(byte* text)
         {
             Error(text);
         }
@@ -59,7 +59,7 @@ namespace Engine
         }
 
         [Conditional("DEBUG")]
-        public static void Performance(Text text)
+        public static unsafe void Performance(byte* text)
         {
             Performance(text);
         }

@@ -1,17 +1,14 @@
-﻿using SDL2;
+﻿using System;
+using SDL2;
 using Vulkan;
 
-namespace Engine.Rendering
+namespace Engine.Graphics
 {
-    public static class GraphicsManager
+    public class GraphicsManager : IDisposable
     {
-        public static void Init()
+        public void Dispose()
         {
-        }
-        
-        public static void Shutdown()
-        {
-
+            throw new NotImplementedException();
         }
     }
 }

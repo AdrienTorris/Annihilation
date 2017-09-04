@@ -913,13 +913,13 @@ namespace SDL2
         public static byte* GetPrefPath(byte* org, byte* app) => _getPrefPath(org, app);
 
         //
-        // SDL_gamecontroller.h56tr
+        // SDL_gamecontroller.h
         //
         private delegate int GameControllerAddMappingsFromRWDelegate(RWops rwOps, int freeRW);
         private static GameControllerAddMappingsFromRWDelegate _gameControllerAddMappingsFromRW;
         public static int GameControllerAddMappingsFromRW(RWops rwOps, int freeRW) => _gameControllerAddMappingsFromRW(rwOps, freeRW);
 
-        public static int GameControllerAddMappingsFromFile(byte* file) => _gameControllerAddMappingsFromRW(RWFromFile(file, new Text("rb")), 1);
+        public static int GameControllerAddMappingsFromFile(byte* file) => _gameControllerAddMappingsFromRW(RWFromFile(file, "rb".ToBytes()), 1);
 
         private delegate int GameControllerAddMappingDelegate(byte* mappginText);
         private static GameControllerAddMappingDelegate _gameControllerAddMapping;

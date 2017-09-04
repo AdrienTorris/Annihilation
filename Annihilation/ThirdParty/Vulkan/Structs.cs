@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Text;
 using System.Runtime.InteropServices;
-using Engine;
 
 namespace Vulkan
 {
@@ -364,6 +364,14 @@ namespace Vulkan
             public fixed byte PipelineCacheUuid[(int)UUIDSize];
             public PhysicalDeviceLimits Limits;
             public PhysicalDeviceSparseProperties SparseProperties;
+
+            public string GetDeviceName()
+            {
+                fixed (byte* ptr = DeviceName)
+                {
+                    return Encoding.UTF8.GetString(ptr, MaxPhysicalDeviceNameSize);
+                }
+            }
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -409,6 +417,19 @@ namespace Vulkan
             public uint QueueFamilyIndex;
             public uint QueueCount;
             public float* QueuePriorities;
+
+            public DeviceQueueCreateInfo(uint queueFamilyIndex, uint queueCount, float[] queuePriorities)
+            {
+                Type = StructureType.DeviceQueueCreateInfo;
+                Next = null;
+                Flags = DeviceQueueCreateFlags.None;
+                QueueFamilyIndex = queueFamilyIndex;
+                QueueCount = queueCount;
+                fixed (float* ptr = &queuePriorities[0])
+                {
+                    QueuePriorities = ptr;
+                }
+            }
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -420,23 +441,65 @@ namespace Vulkan
             public uint QueueCreateInfoCount;
             public DeviceQueueCreateInfo* QueueCreateInfos;
             public uint EnabledLayerCount;
-            public byte*[] EnabledLayerNames;
+            public byte** EnabledLayerNames;
             public uint EnabledExtensionCount;
-            public byte*[] EnabledExtensionNames;
+            public byte** EnabledExtensionNames;
             public PhysicalDeviceFeatures* EnabledFeatures;
+
+            public DeviceCreateInfo(DeviceQueueCreateInfo queueCreateInfo, uint enabledExtensionCount, byte*[] enabledExtensionNames, PhysicalDeviceFeatures enabledFeatures)
+            {
+                Type = StructureType.DeviceCreateInfo;
+                Next = null;
+                Flags = DeviceCreateFlags.None;
+                QueueCreateInfoCount = 1;
+                QueueCreateInfos = &queueCreateInfo;
+                EnabledLayerCount = 0;
+                EnabledLayerNames = null;
+                EnabledExtensionCount = enabledExtensionCount;
+                fixed (byte** ptr = &enabledExtensionNames[0])
+                {
+                    EnabledExtensionNames = ptr;
+                }
+                EnabledFeatures = &enabledFeatures;
+            }
         }
 
         [StructLayout(LayoutKind.Sequential)]
         public unsafe struct ExtensionProperties
         {
-            public ExtensionName ExtensionName;
+            public fixed byte ExtensionName[Vk.MaxExtensionNameSize];
             public Version SpecVersion;
+
+            public bool IsNamed(string name)
+            {
+                int strByteCount = Encoding.UTF8.GetMaxByteCount(name.Length);
+                byte[] strBytes = new byte[strByteCount];
+                Encoding.UTF8.GetBytes(name, 0, name.Length, strBytes, 0);
+
+                fixed (byte* namePtr = ExtensionName)
+                fixed (byte* strPtr = &strBytes[0])
+                {
+                    for (int i = 0; i < MaxExtensionNameSize; ++i)
+                    {
+                        if (*(namePtr + i) == 0)
+                        {
+                            return true;
+                        }
+
+                        if (*(namePtr + i) != *(strPtr + i))
+                        {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
         }
 
         [StructLayout(LayoutKind.Sequential)]
         public unsafe struct LayerProperties
         {
-            public ExtensionName LayerName;
+            public fixed byte LayerName[Vk.MaxExtensionNameSize];
             public Version SpecVersion;
             public Version ImplementationVersion;
             public fixed byte Description[MaxDescriptionSize];
@@ -585,6 +648,13 @@ namespace Vulkan
             public StructureType Type;
             public void* Next;
             public FenceCreateFlags Flags;
+
+            public FenceCreateInfo(FenceCreateFlags flags)
+            {
+                Type = StructureType.FenceCreateInfo;
+                Next = null;
+                Flags = flags;
+            }
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -593,6 +663,13 @@ namespace Vulkan
             public StructureType Type;
             public void* Next;
             public SemaphoreCreateFlags Flags;
+
+            public SemaphoreCreateInfo(SemaphoreCreateFlags flags = SemaphoreCreateFlags.None)
+            {
+                Type = StructureType.SemaphoreCreateInfo;
+                Next = null;
+                Flags = flags;
+            }
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -1194,6 +1271,14 @@ namespace Vulkan
             public void* Next;
             public CommandPoolCreateFlags Flags;
             public uint QueueFamilyIndex;
+
+            public CommandPoolCreateInfo(CommandPoolCreateFlags flags, uint queueFamilyIndex)
+            {
+                Type = StructureType.CommandPoolCreateInfo;
+                Next = null;
+                Flags = flags;
+                QueueFamilyIndex = queueFamilyIndex;
+            }
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -1204,6 +1289,15 @@ namespace Vulkan
             public CommandPool CommandPool;
             public CommandBufferLevel Level;
             public uint CommandBufferCount;
+
+            public CommandBufferAllocateInfo(CommandPool commandPool, uint commandBufferCount)
+            {
+                Type = StructureType.CommandBufferAllocateInfo;
+                Next = null;
+                CommandPool = commandPool;
+                Level = CommandBufferLevel.Primary;
+                CommandBufferCount = commandBufferCount;
+            }
         }
 
         [StructLayout(LayoutKind.Sequential)]
