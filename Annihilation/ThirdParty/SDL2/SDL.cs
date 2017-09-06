@@ -3,52 +3,11 @@ using System.Security;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
-
-
-using Engine;
+using System.Runtime.CompilerServices;using Engine;
 using Engine.Platform;
 
 namespace SDL2
 {
-    public enum SDLModule
-    {
-        SDL,
-        Audio,
-        BlendMode,
-        Clipboard,
-        CpuInfo,
-        Error,
-        Events,
-        FileSystem,
-        GameController,
-        Gesture,
-        Haptic,
-        Hints,
-        Joystick,
-        Keyboard,
-        LoadSO,
-        Log,
-        MessageBox,
-        Mouse,
-        Pixels,
-        Platform,
-        Power,
-        Rect,
-        Render,
-        Rwops,
-        Shape,
-        Surface,
-        System,
-        SysWm,
-        Timer,
-        Touch,
-        Version,
-        Video,
-        Vulkan,
-        Count
-    }
-
     public static unsafe class SDLExtensions
     {
         [Conditional("DEBUG")]
@@ -105,509 +64,6 @@ namespace SDL2
 
         public const int ScanCodeMask = (1 << 30);
         public const int AudioCVTMaxFilters = 9;
-
-        private static readonly NativeLibrary _library = LoadLibrary();
-        private static readonly HashSet<SDLModule> _loadedModules = new HashSet<SDLModule>((int)SDLModule.Count);
-
-        private static NativeLibrary LoadLibrary()
-        {
-            string name;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                name = "SDL2.dll";
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                name = "libSDL2-2.0.so";
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                name = "libdylib";
-            }
-            else
-            {
-                throw new InvalidOperationException("Unknown SDL platform.");
-            }
-
-            NativeLibrary lib = new NativeLibrary(name);
-            return lib;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static T LoadFunction<T>(string name) => _library.LoadFunction<T>(name);
-
-        public static void LoadFunctions(SDLModule module)
-        {
-            if (_loadedModules.Contains(module))
-            {
-                return;
-            }
-
-            _loadedModules.Add(module);
-
-            switch (module)
-            {
-                case SDLModule.SDL:
-                {
-                    _init = LoadFunction<InitDelegate>("SDL_Init");
-                    _initSubSystem = LoadFunction<InitSubSystemDelegate>("SDL_InitSubSystem");
-                    _quitSubSystem = LoadFunction<QuitSubSystemDelegate>("SDL_QuitSubSystem");
-                    _wasInit = LoadFunction<WasInitDelegate>("SDL_WasInit");
-                    _quit = LoadFunction<QuitDelegate>("SDL_Quit");
-                    break;
-                }
-                case SDLModule.Audio:
-                {
-                    throw new NotImplementedException();
-                }
-                case SDLModule.BlendMode:
-                {
-                    _composeCustomBlendMode = LoadFunction<ComposeCustomBlendModeDelegate>("SDL_ComposeCustomBlendMode");
-                    break;
-                }
-                case SDLModule.Clipboard:
-                {
-                    _setClipboardText = LoadFunction<SetClipboardTextDelegate>("SDL_SetClipboardText");
-                    _getClipboardText = LoadFunction<GetClipboardTextDelegate>("SDL_GetClipboardText");
-                    _hasClipboardText = LoadFunction<HasClipboardTextDelegate>("SDL_HasClipboardText");
-                    break;
-                }
-                case SDLModule.CpuInfo:
-                {
-                    _getCpuCount = LoadFunction<GetCpuCountDelegate>("SDL_GetCPUCount");
-                    _getCpuCacheLineSize = LoadFunction<GetCpuCacheLineSizeDelegate>("SDL_GetCPUCacheLineSize");
-                    _hasRdtsc = LoadFunction<HasRdtscDelegate>("SDL_HasRDTSC");
-                    _hasAltiVec = LoadFunction<HasAltiVecDelegate>("SDL_HasAltiVec");
-                    _hasMmx = LoadFunction<HasMmxDelegate>("SDL_HasMMX");
-                    _has3DNow = LoadFunction<Has3DNowDelegate>("SDL_Has3DNow");
-                    _hasSse = LoadFunction<HasSseDelegate>("SDL_HasSSE");
-                    _hasSse2 = LoadFunction<HasSse2Delegate>("SDL_HasSSE2");
-                    _hasSse3 = LoadFunction<HasSse3Delegate>("SDL_HasSSE3");
-                    _hasSse41 = LoadFunction<HasSse41Delegate>("SDL_HasSSE41");
-                    _hasSse42 = LoadFunction<HasSse42Delegate>("SDL_HasSSE42");
-                    _hasAvx = LoadFunction<HasAvxDelegate>("SDL_HasAVX");
-                    _hasAvx2 = LoadFunction<HasAvx2Delegate>("SDL_HasAVX2");
-                    _hasNeon = LoadFunction<HasNeonDelegate>("SDL_HasNEON");
-                    _getSystemRam = LoadFunction<GetSystemRamDelegate>("SDL_GetSystemRAM");
-                    break;
-                }
-                case SDLModule.Error:
-                {
-                    _setError = LoadFunction<SetErrorDelegate>("SDL_SetError");
-                    _getError = LoadFunction<GetErrorDelegate>("SDL_GetError");
-                    _clearError = LoadFunction<ClearErrorDelegate>("SDL_ClearError");
-                    break;
-                }
-                case SDLModule.Events:
-                {
-                    _pumpEvents = LoadFunction<PumpEventsDelegate>("SDL_PumpEvents");
-                    _peepEvents = LoadFunction<PeepEventsDelegate>("SDL_PeepEvents");
-                    _hasEvent = LoadFunction<HasEventDelegate>("SDL_HasEvent");
-                    _hasEvents = LoadFunction<HasEventsDelegate>("SDL_HasEvents");
-                    _flushEvent = LoadFunction<FlushEventDelegate>("SDL_FlushEvent");
-                    _flushEvents = LoadFunction<FlushEventsDelegate>("SDL_FlushEvents");
-                    _pollEvent = LoadFunction<PollEventDelegate>("SDL_PollEvent");
-                    _waitEvent = LoadFunction<WaitEventDelegate>("SDL_WaitEvent");
-                    _waitEventTimeout = LoadFunction<WaitEventTimeoutDelegate>("SDL_WaitEventTimeout");
-                    _pushEvent = LoadFunction<PushEventDelegate>("SDL_PushEvent");
-                    _setEventFilter = LoadFunction<SetEventFilterDelegate>("SDL_SetEventFilter");
-                    _getEventFilter = LoadFunction<GetEventFilterDelegate>("SDL_GetEventFilter");
-                    _addEventWatch = LoadFunction<AddEventWatchDelegate>("SDL_AddEventWatch");
-                    _delEventWatch = LoadFunction<DelEventWatchDelegate>("SDL_DelEventWatch");
-                    _filterEvents = LoadFunction<FilterEventsDelegate>("SDL_FilterEvents");
-                    _eventState = LoadFunction<EventStateDelegate>("SDL_EventState");
-                    _registerEvents = LoadFunction<RegisterEventsDelegate>("SDL_RegisterEvents");
-                    break;
-                }
-                case SDLModule.FileSystem:
-                {
-                    _getBasePath = LoadFunction<GetBasePathDelegate>("SDL_GetBasePath");
-                    _getPrefPath = LoadFunction<GetPrefPathDelegate>("SDL_GetPrefPath");
-                    break;
-                }
-                case SDLModule.GameController:
-                {
-                    _gameControllerAddMappingsFromRW = LoadFunction<GameControllerAddMappingsFromRWDelegate>("SDL_GameControllerAddMappingsFromRW");
-                    _gameControllerAddMapping = LoadFunction<GameControllerAddMappingDelegate>("SDL_GameControllerAddMapping");
-                    _gameControllerNumMappings = LoadFunction<GameControllerNumMappingsDelegate>("SDL_GameControllerNumMappings");
-                    _gameControllerMappingForIndex = LoadFunction<GameControllerMappingForIndexDelegate>("SDL_GameControllerMappingForIndex");
-                    _gameControllerMappingForGuid = LoadFunction<GameControllerMappingForGuidDelegate>("SDL_GameControllerMappingForGUID");
-                    _gameControllerMapping = LoadFunction<GameControllerMappingDelegate>("SDL_GameControllerMapping");
-                    _isGameController = LoadFunction<IsGameControllerDelegate>("SDL_IsGameController");
-                    _gameControllerNameForIndex = LoadFunction<GameControllerNameForIndexDelegate>("SDL_GameControllerNameForIndex");
-                    _gameControllerOpen = LoadFunction<GameControllerOpenDelegate>("SDL_GameControllerOpen");
-                    _gameControllerFromInstanceID = LoadFunction<GameControllerFromInstanceIDDelegate>("SDL_GameControllerFromInstanceID");
-                    _gameControllerName = LoadFunction<GameControllerNameDelegate>("SDL_GameControllerName");
-                    _gameControllerGetVendor = LoadFunction<GameControllerGetVendorDelegate>("SDL_GameControllerGetVendor");
-                    _gameControllerGetProduct = LoadFunction<GameControllerGetProductDelegate>("SDL_GameControllerGetProduct");
-                    _gameControllerGetProductVersion = LoadFunction<GameControllerGetProductVersionDelegate>("SDL_GameControllerGetProductVersion");
-                    _gameControllerGetAttached = LoadFunction<GameControllerGetAttachedDelegate>("SDL_GameControllerGetAttached");
-                    _gameControllerGetJoystick = LoadFunction<GameControllerGetJoystickDelegate>("SDL_GameControllerGetJoystick");
-                    _gameControllerEventState = LoadFunction<GameControllerEventStateDelegate>("SDL_GameControllerEventState");
-                    _gameControllerUpdate = LoadFunction<GameControllerUpdateDelegate>("SDL_GameControllerUpdate");
-                    _gameControllerGetAxisFromText = LoadFunction<GameControllerGetAxisFromTextDelegate>("SDL_GameControllerGetAxisFromText");
-                    _gameControllerGetTextForAxis = LoadFunction<GameControllerGetTextForAxisDelegate>("SDL_GameControllerGetTextForAxis");
-                    _gameControllerGetBindForAxis = LoadFunction<GameControllerGetBindForAxisDelegate>("SDL_GameControllerGetBindForAxis");
-                    _gameControllerGetAxis = LoadFunction<GameControllerGetAxisDelegate>("SDL_GameControllerGetAxis");
-                    _gameControllerGetButtonFromText = LoadFunction<GameControllerGetButtonFromTextDelegate>("SDL_GameControllerGetButtonFromText");
-                    _gameControllerGetTextForButton = LoadFunction<GameControllerGetTextForButtonDelegate>("SDL_GameControllerGetTextForButton");
-                    _gameControllerGetBindForButton = LoadFunction<GameControllerGetBindForButtonDelegate>("SDL_GameControllerGetBindForButton");
-                    _gameControllerGetButton = LoadFunction<GameControllerGetButtonDelegate>("SDL_GameControllerGetButton");
-                    _gameControllerClose = LoadFunction<GameControllerCloseDelegate>("SDL_GameControllerClose");
-                    break;
-                }
-                case SDLModule.Gesture:
-                {
-                    throw new NotImplementedException();
-                }
-                case SDLModule.Haptic:
-                {
-                    throw new NotImplementedException();
-                }
-                case SDLModule.Hints:
-                {
-                    _setHintWithPriority = LoadFunction<SetHintWithPriorityDelegate>("SDL_SetHintWithPriority");
-                    _setHint = LoadFunction<SetHintDelegate>("SDL_SetHint");
-                    _getHint = LoadFunction<GetHintDelegate>("SDL_GetHint");
-                    _getHintBoolean = LoadFunction<GetHintBooleanDelegate>("SDL_GetHintBoolean");
-                    _addHintCallback = LoadFunction<AddHintCallbackDelegate>("SDL_AddHintCallback");
-                    _delHintCallback = LoadFunction<DelHintCallbackDelegate>("SDL_DelHintCallback");
-                    _clearHints = LoadFunction<ClearHintsDelegate>("SDL_ClearHints");
-                    break;
-                }
-                case SDLModule.Joystick:
-                {
-                    _numJoysticks = LoadFunction<NumJoysticksDelegate>("SDL_NumJoysticks");
-                    _joystickNameForIndex = LoadFunction<JoystickNameForIndexDelegate>("SDL_JoystickNameForIndex");
-                    _joystickGetDeviceGuid = LoadFunction<JoystickGetDeviceGuidDelegate>("SDL_JoystickGetDeviceGUID");
-                    _joystickGetDeviceVendor = LoadFunction<JoystickGetDeviceVendorDelegate>("SDL_JoystickGetDeviceVendor");
-                    _joystickGetDeviceProduct = LoadFunction<JoystickGetDeviceProductDelegate>("SDL_JoystickGetDeviceProduct");
-                    _joystickGetDeviceProductVersion = LoadFunction<JoystickGetDeviceProductVersionDelegate>("SDL_JoystickGetDeviceProductVersion");
-                    _joystickGetDeviceType = LoadFunction<JoystickGetDeviceTypeDelegate>("SDL_JoystickGetDeviceType");
-                    _joystickGetDeviceInstanceID = LoadFunction<JoystickGetDeviceInstanceIDDelegate>("SDL_JoystickGetDeviceInstanceID");
-                    _joystickOpen = LoadFunction<JoystickOpenDelegate>("SDL_JoystickOpen");
-                    _joystickFromInstanceID = LoadFunction<JoystickFromInstanceIDDelegate>("SDL_JoystickFromInstanceID");
-                    _joystickName = LoadFunction<JoystickNameDelegate>("SDL_JoystickName");
-                    _joystickGetGuid = LoadFunction<JoystickGetGuidDelegate>("SDL_JoystickGetGUID");
-                    _joystickGetVendor = LoadFunction<JoystickGetVendorDelegate>("SDL_JoystickGetVendor");
-                    _joystickGetProduct = LoadFunction<JoystickGetProductDelegate>("SDL_JoystickGetProduct");
-                    _joystickGetProductVersion = LoadFunction<JoystickGetProductVersionDelegate>("SDL_JoystickGetProductVersion");
-                    _joystickGetType = LoadFunction<JoystickGetTypeDelegate>("SDL_JoystickGetType");
-                    _joystickGetGuidText = LoadFunction<JoystickGetGuidTextDelegate>("SDL_JoystickGetGUIDText");
-                    _joystickGetGuidFromText = LoadFunction<JoystickGetGuidFromTextDelegate>("SDL_JoystickGetGUIDFromText");
-                    _joystickGetAttached = LoadFunction<JoystickGetAttachedDelegate>("SDL_JoystickGetAttached");
-                    _joystickInstanceID = LoadFunction<JoystickInstanceIDDelegate>("SDL_JoystickInstanceID");
-                    _joystickNumAxes = LoadFunction<JoystickNumAxesDelegate>("SDL_JoystickNumAxes");
-                    _joystickNumBalls = LoadFunction<JoystickNumBallsDelegate>("SDL_JoystickNumBalls");
-                    _joystickNumHats = LoadFunction<JoystickNumHatsDelegate>("SDL_JoystickNumHats");
-                    _joystickNumButtons = LoadFunction<JoystickNumButtonsDelegate>("SDL_JoystickNumButtons");
-                    _joystickUpdate = LoadFunction<JoystickUpdateDelegate>("SDL_JoystickUpdate");
-                    _joystickEventState = LoadFunction<JoystickEventStateDelegate>("SDL_JoystickEventState");
-                    _joystickGetAxis = LoadFunction<JoystickGetAxisDelegate>("SDL_JoystickGetAxis");
-                    _joystickGetAxisInitialState = LoadFunction<JoystickGetAxisInitialStateDelegate>("SDL_JoystickGetAxisInitialState");
-                    _joystickGetHat = LoadFunction<JoystickGetHatDelegate>("SDL_JoystickGetHat");
-                    _joystickGetBall = LoadFunction<JoystickGetBallDelegate>("SDL_JoystickGetBallDelegate");
-                    _joystickGetButton = LoadFunction<JoystickGetButtonDelegate>("SDL_JoystickGetButton");
-                    _joystickClose = LoadFunction<JoystickCloseDelegte>("SDL_JoystickClose");
-                    _joystickCurrentPowerLevel = LoadFunction<JoystickCurrentPowerLevelDelegate>("SDL_JoystickCurrentPowerLevel");
-                    break;
-                }
-                case SDLModule.Keyboard:
-                {
-                    _getKeyboardFocus = LoadFunction<GetKeyboardFocusDelegate>("SDL_GetKeyboardFocus");
-                    _getKeyboardState = LoadFunction<GetKeyboardStateDelegate>("SDL_GetKeyboardState");
-                    _getModState = LoadFunction<GetModStateDelegate>("SDL_GetModState");
-                    _setModState = LoadFunction<SetModStateDelegate>("SDL_SetModState");
-                    _getKeyFromScancode = LoadFunction<GetKeyFromScancodeDelegate>("SDL_GetKeyFromScancode");
-                    _getScancodeFromKey = LoadFunction<GetScancodeFromKeyDelegate>("SDL_GetScancodeFromKey");
-                    _getScancodeName = LoadFunction<GetScancodeNameDelegate>("SDL_GetScancodeName");
-                    _getScancodeFromName = LoadFunction<GetScancodeFromNameDelegate>("SDL_GetScancodeFromName");
-                    _getKeyName = LoadFunction<GetKeyNameDelegate>("SDL_GetKeyName");
-                    _getKeyFromName = LoadFunction<GetKeyFromNameDelegate>("SDL_GetKeyFromName");
-                    _startTextInput = LoadFunction<StartTextInputDelegate>("SDL_StartTextInput");
-                    _isTextInputActive = LoadFunction<IsTextInputActiveDelegate>("SDL_IsTextInputActive");
-                    _stopTextInput = LoadFunction<StopTextInputDelegate>("SDL_StopTextInput");
-                    _setTextInputRect = LoadFunction<SetTextInputRectDelegate>("SDL_SetTextInputRect");
-                    _hasScreenKeyboardSupport = LoadFunction<HasScreenKeyboardSupportDelegate>("SDL_HasScreenKeyboardSupport");
-                    _isScreenKeyboardShown = LoadFunction<IsScreenKeyboardShownDelegate>("SDL_IsScreenKeyboardShown");
-                    break;
-                }
-                case SDLModule.LoadSO:
-                {
-                    _loadObject = LoadFunction<LoadObjectDelegate>("SDL_LoadObject");
-                    _loadFunction = LoadFunction<LoadFunctionDelegate>("SDL_LoadFunction");
-                    _unloadObject = LoadFunction<UnloadObjectDelegate>("SDL_UnloadObject");
-                    break;
-                }
-                case SDLModule.Log:
-                {
-                    _logSetAllPriority = LoadFunction<LogSetAllPriorityDelegate>("SDL_LogSetAllPriority");
-                    _logSetPriority = LoadFunction<LogSetPriorityDelegate>("SDL_LogSetPriority");
-                    _logGetPriority = LoadFunction<LogGetPriorityDelegate>("SDL_LogGetPriority");
-                    _logResetPriorities = LoadFunction<LogResetPrioritiesDelegate>("SDL_LogResetPriorities");
-                    _log = LoadFunction<LogDelegate>("SDL_Log");
-                    _logVerbose = LoadFunction<LogVerboseDelegate>("SDL_LogVerbose");
-                    _logDebug = LoadFunction<LogDebugDelegate>("SDL_LogDebug");
-                    _logInfo = LoadFunction<LogInfoDelegate>("SDL_LogInfo");
-                    _logWarn = LoadFunction<LogWarnDelegate>("SDL_LogWarn");
-                    _logError = LoadFunction<LogErrorDelegate>("SDL_LogError");
-                    _logCritical = LoadFunction<LogCriticalDelegate>("SDL_LogCritical");
-                    _logMessage = LoadFunction<LogMessageDelegate>("SDL_LogMessage");
-                    _logGetOutputFunction = LoadFunction<LogGetOutputFunctionDelegate>("SDL_LogGetOutputFunction");
-                    _logSetOutputFunction = LoadFunction<LogSetOutputFunctionDelegate>("SDL_LogSetOutputFunction");
-                    break;
-                }
-                case SDLModule.MessageBox:
-                {
-                    _showMessageBox = LoadFunction<ShowMessageBoxDelegate>("SDL_ShowMessageBox");
-                    _showSimpleMessageBox = LoadFunction<ShowSimpleMessageBoxDelegate>("SDL_ShowSimpleMessageBox");
-                    break;
-                }
-                case SDLModule.Mouse:
-                {
-                    _getMouseFocus = LoadFunction<GetMouseFocusDelegate>("SDL_GetMouseFocus");
-                    _getMouseState = LoadFunction<GetMouseStateDelegate>("SDL_GetMouseState");
-                    _getGlobalMouseState = LoadFunction<GetGlobalMouseStateDelegate>("SDL_GetGlobalMouseState");
-                    _getRelativeMouseState = LoadFunction<GetRelativeMouseStateDelegate>("SDL_GetRelativeMouseState");
-                    _warpMouseInWindow = LoadFunction<WarpMouseInWindowDelegate>("SDL_WarpMouseInWindow");
-                    _warpMouseGlobal = LoadFunction<WarpMouseGlobalDelegate>("SDL_WarpMouseGlobal");
-                    _setRelativeMouseMode = LoadFunction<SetRelativeMouseModeDelegate>("SDL_SetRelativeMouseMode");
-                    _captureMouse = LoadFunction<CaptureMouseDelegate>("SDL_CaptureMouse");
-                    _getRelativeMouseMode = LoadFunction<GetRelativeMouseModeDelegate>("SDL_GetRelativeMouseMode");
-                    _createCursor = LoadFunction<CreateCursorDelegate>("SDL_CreateCursor");
-                    _createColorCursor = LoadFunction<CreateColorCursorDelegate>("SDL_CreateColorCursor");
-                    _createSystemCursor = LoadFunction<CreateSystemCursorDelegate>("SDL_CreateSystemCursor");
-                    _setCursor = LoadFunction<SetCursorDelegate>("SDL_SetCursor");
-                    _getCursor = LoadFunction<GetCursorDelegate>("SDL_GetCursor");
-                    _getDefaultCursor = LoadFunction<GetDefaultCursorDelegate>("SDL_GetDefaultCursor");
-                    _freeCursor = LoadFunction<FreeCursorDelegate>("SDL_FreeCursor");
-                    _showCursor = LoadFunction<ShowCursorDelegate>("SDL_ShowCursor");
-                    break;
-                }
-                case SDLModule.Pixels:
-                {
-                    _getPixelFormatName = LoadFunction<GetPixelFormatNameDelegate>("SDL_GetPixelFormatName");
-                    _pixelFormatEnumToMasks = LoadFunction<PixelFormatEnumToMasksDelegate>("SDL_PixelFormatEnumToMasks");
-                    _masksToPixelFormatEnum = LoadFunction<MasksToPixelFormatEnumDelegate>("SDL_MasksToPixelFormatEnum");
-                    _allocFormat = LoadFunction<AllocFormatDelegate>("SDL_AllocFormat");
-                    _freeFormat = LoadFunction<FreeFormatDelegate>("SDL_FreeFormat");
-                    _allocPalette = LoadFunction<AllocPaletteDelegate>("SDL_AllocPalette");
-                    _setPixelFormatPalette = LoadFunction<SetPixelFormatPaletteDelegate>("SDL_SetPixelFormatPalette");
-                    _setPaletteColors = LoadFunction<SetPaletteColorsDelegate>("SDL_SetPaletteColors");
-                    _freePalette = LoadFunction<FreePaletteDelegate>("SDL_FreePalette");
-                    _mapRgb = LoadFunction<MapRgbDelegate>("SDL_MapRGB");
-                    _mapRgba = LoadFunction<MapRgbaDelegate>("SDL_MapRGBA");
-                    _getRgb = LoadFunction<GetRgbDelegate>("SDL_GetRGB");
-                    _getRgba = LoadFunction<GetRgbaDelegate>("SDL_GetRGBA");
-                    _calculateGammaRamp = LoadFunction<CalculateGammaRampDelegate>("SDL_CalculateGammaRamp");
-                    break;
-                }
-                case SDLModule.Platform:
-                {
-                    _getPlatform = LoadFunction<GetPlatformDelegate>("SDL_GetPlatform");
-                    break;
-                }
-                case SDLModule.Power:
-                {
-                    _getPowerInfo = LoadFunction<GetPowerInfoDelegate>("SDL_GetPowerInfo");
-                    break;
-                }
-                case SDLModule.Rect:
-                {
-                    _hasIntersection = LoadFunction<HasIntersectionDelegate>("SDL_HasIntersection");
-                    _intersectRect = LoadFunction<IntersectRectDelegate>("SDL_IntersectRect");
-                    _unionRect = LoadFunction<UnionRectDelegate>("SDL_UnionRect");
-                    _enclosePoints = LoadFunction<EnclosePointsDelegate>("SDL_EnclosePoints");
-                    _intersectRectAndLine = LoadFunction<IntersectRectAndLineDelegate>("SDL_IntersectRectAndLine");
-                    break;
-                }
-                case SDLModule.Render:
-                {
-                    _getNumRenderDrivers = LoadFunction<GetNumRenderDriversDelegate>("SDL_GetNumRenderDrivers");
-                    _getRenderDriverInfo = LoadFunction<GetRenderDriverInfoDelegate>("SDL_GetRenderDriverInfo");
-                    _createWindowAndRenderer = LoadFunction<CreateWindowAndRendererDelegate>("SDL_CreateWindowAndRenderer");
-                    _createRenderer = LoadFunction<CreateRendererDelegate>("SDL_CreateRenderer");
-                    _createSoftwareRenderer = LoadFunction<CreateSoftwareRendererDelegate>("SDL_CreateSoftwareRenderer");
-                    _getRenderer = LoadFunction<GetRendererDelegate>("SDL_GetRenderer");
-                    _getRendererInfo = LoadFunction<GetRendererInfoDelegate>("SDL_GetRendererInfo");
-                    _getRendererOutputSize = LoadFunction<GetRendererOutputSizeDelegate>("SDL_GetRendererOutputSize");
-                    _createTexture = LoadFunction<CreateTextureDelegate>("SDL_CreateTexture");
-                    _createTextureFromSurface = LoadFunction<CreateTextureFromSurfaceDelegate>("SDL_CreateTextureFromSurface");
-                    _queryTexture = LoadFunction<QueryTextureDelegate>("SDL_QueryTexture");
-                    _setTextureColorMod = LoadFunction<SetTextureColorModDelegate>("SDL_SetTextureColorMod");
-                    _getTextureColorMod = LoadFunction<GetTextureColorModDelegate>("SDL_GetTextureColorMod");
-                    _setTextureAlphaMod = LoadFunction<SetTextureAlphaModDelegate>("SDL_SetTextureAlphaMod");
-                    _getTextureAlphaMod = LoadFunction<GetTextureAlphaModDelegate>("SDL_GetTextureAlphaMod");
-                    _setTextureBlendMode = LoadFunction<SetTextureBlendModeDelegate>("SDL_SetTextureBlendMode");
-                    _getTextureBlendMode = LoadFunction<GetTextureBlendModeDelegate>("SDL_GetTextureBlendMode");
-                    _updateTexture = LoadFunction<UpdateTextureDelegate>("SDL_UpdateTexture");
-                    _updateYUVTexture = LoadFunction<UpdateYUVTextureDelegate>("SDL_UpdateYUVTexture");
-                    _lockTexture = LoadFunction<LockTextureDelegate>("SDL_LockTexture");
-                    _unlockTexture = LoadFunction<UnlockTextureDelegate>("SDL_UnlockTexture");
-                    _renderTargetSupported = LoadFunction<RenderTargetSupportedDelegate>("SDL_RenderTargetSupported");
-                    _setRenderTarget = LoadFunction<SetRenderTargetDelegate>("SDL_SetRenderTarget");
-                    _getRenderTarget = LoadFunction<GetRenderTargetDelegate>("SDL_GetRenderTarget");
-                    _renderSetLogicalSize = LoadFunction<RenderSetLogicalSizeDelegate>("SDL_RenderSetLogicalSize");
-                    _renderGetLogicalSize = LoadFunction<RenderGetLogicalSizeDelegate>("SDL_RenderGetLogicalSize");
-                    _renderSetIntegerScale = LoadFunction<RenderSetIntegerScaleDelegate>("SDL_RenderSetIntegerScale");
-                    _renderGetIntegerScale = LoadFunction<RenderGetIntegerScaleDelegate>("SDL_RenderGetIntegerScale");
-                    _renderSetViewport = LoadFunction<RenderSetViewportDelegate>("SDL_RenderSetViewport");
-                    _renderGetViewport = LoadFunction<RenderGetViewportDelegate>("SDL_RenderGetViewport");
-                    _renderSetClipRect = LoadFunction<RenderSetClipRectDelegate>("SDL_RenderSetClipRect");
-                    _renderGetClipRect = LoadFunction<RenderGetClipRectDelegate>("SDL_RenderGetClipRect");
-                    _renderIsClipEnabled = LoadFunction<RenderIsClipEnabledDelegate>("SDL_RenderIsClipEnabled");
-                    _renderSetScale = LoadFunction<RenderSetScaleDelegate>("SDL_RenderSetScale");
-                    _renderGetScale = LoadFunction<RenderGetScaleDelegate>("SDL_RenderGetScale");
-                    _setRenderDrawColor = LoadFunction<SetRenderDrawColorDelegate>("SDL_SetRenderDrawColor");
-                    _getRenderDrawColor = LoadFunction<GetRenderDrawColorDelegate>("SDL_GetRenderDrawColor");
-                    _setRenderDrawBlendMode = LoadFunction<SetRenderDrawBlendModeDelegate>("SDL_SetRenderDrawBlendMode");
-                    _getRenderDrawBlendMode = LoadFunction<GetRenderDrawBlendModeDelegate>("SDL_GetRenderDrawBlendMode");
-                    _renderClear = LoadFunction<RenderClearDelegate>("SDL_RenderClear");
-                    _renderDrawPoint = LoadFunction<RenderDrawPointDelegate>("SDL_RenderDrawPoint");
-                    _renderDrawPoints = LoadFunction<RenderDrawPointsDelegate>("SDL_RenderDrawPoints");
-                    _renderDrawLine = LoadFunction<RenderDrawLineDelegate>("SDL_RenderDrawLine");
-                    _renderDrawLines = LoadFunction<RenderDrawLinesDelegate>("SDL_RenderDrawLines");
-                    _renderDrawRect = LoadFunction<RenderDrawRectDelegate>("SDL_RenderDrawRect");
-                    _renderDrawRects = LoadFunction<RenderDrawRectsDelegate>("SDL_RenderDrawRects");
-                    _renderFillRect = LoadFunction<RenderFillRectDelegate>("SDL_RenderFillRect");
-                    _renderFillRects = LoadFunction<RenderFillRectsDelegate>("SDL_RenderFillRects");
-                    _renderCopy = LoadFunction<RenderCopyDelegate>("SDL_RenderCopy");
-                    _renderCopyEx = LoadFunction<RenderCopyExDelegate>("SDL_RenderCopyEx");
-                    _renderReadPixels = LoadFunction<RenderReadPixelsDelegate>("SDL_RenderReadPixels");
-                    _renderPresent = LoadFunction<RenderPresentDelegate>("SDL_RenderPresent");
-                    _destroyTexture = LoadFunction<DestroyTextureDelegate>("SDL_DestroyTexture");
-                    _destroyRenderer = LoadFunction<DestroyRendererDelegate>("SDL_DestroyRenderer");
-                    break;
-                }
-                case SDLModule.Rwops:
-                {
-                    _rwFromFile = LoadFunction<RWFromFileDelegate>("SDL_RWFromFile");
-                    break;
-                }
-                case SDLModule.Shape:
-                {
-                    _createShapedWindow = LoadFunction<CreateShapedWindowDelegate>("SDL_CreateShapedWindow");
-                    _isShapedWindow = LoadFunction<IsShapedWindowDelegate>("SDL_IsShapedWindow");
-                    _setWindowShape = LoadFunction<SetWindowShapeDelegate>("SDL_SetWindowShape");
-                    _getShapedWindowMode = LoadFunction<GetShapedWindowModeDelegate>("SDL_GetShapedWindowMode");
-                    break;
-                }
-                case SDLModule.Surface:
-                {
-                    throw new NotImplementedException();
-                }
-                case SDLModule.System:
-                {
-                    throw new NotImplementedException();
-                }
-                case SDLModule.SysWm:
-                {
-                    _getWindowWMInfo = LoadFunction<GetWindowWMInfoDelegate>("SDL_GetWindowWMInfo");
-                    break;
-                }
-                case SDLModule.Timer:
-                {
-                    _getTicks = LoadFunction<GetTicksDelegate>("SDL_GetTicks");
-                    _getPerformanceCounter = LoadFunction<GetPerformanceCounterDelegate>("SDL_GetPerformanceCounter");
-                    _getPerformanceFrequency = LoadFunction<GetPerformanceFrequencyDelegate>("SDL_GetPerformanceFrequency");
-                    _delay = LoadFunction<DelayDelegate>("SDL_Delay");
-                    _addTimer = LoadFunction<AddTimerDelegate>("SDL_AddTimer");
-                    _removeTimer = LoadFunction<RemoveTimerDelegate>("SDL_RemoveTimer");
-                    break;
-                }
-                case SDLModule.Touch:
-                {
-                    throw new NotImplementedException();
-                }
-                case SDLModule.Version:
-                {
-                    _getVersion = LoadFunction<GetVersionDelegate>("SDL_GetVersion");
-                    _getRevision = LoadFunction<GetRevisionDelegate>("SDL_GetRevision");
-                    _getRevisionNumber = LoadFunction<GetRevisionNumberDelegate>("SDL_GetRevisionNumber");
-                    break;
-                }
-                case SDLModule.Video:
-                {
-                    _getNumVideoDrivers = LoadFunction<GetNumVideoDriversDelegate>("SDL_GetNumVideoDrivers");
-                    _getVideoDriver = LoadFunction<GetVideoDriverDelegate>("SDL_GetVideoDriver");
-                    _videoInit = LoadFunction<VideoInitDelegate>("SDL_VideoInit");
-                    _videoQuit = LoadFunction<VideoQuitDelegate>("SDL_VideoQuit");
-                    _getCurrentVideoDriver = LoadFunction<GetCurrentVideoDriverDelegate>("SDL_GetCurrentVideoDriver");
-                    _getNumVideoDisplays = LoadFunction<GetNumVideoDisplaysDelegate>("SDL_GetNumVideoDisplays");
-                    _getDisplayName = LoadFunction<GetDisplayNameDelegate>("SDL_GetDisplayName");
-                    _getDisplayBounds = LoadFunction<GetDisplayBoundsDelegate>("SDL_GetDisplayBounds");
-                    _getDisplayDpi = LoadFunction<GetDisplayDpiDelegate>("SDL_GetDisplayDPI");
-                    _getDisplayUsableBounds = LoadFunction<GetDisplayUsableBoundsDelegate>("SDL_GetDisplayUsableBounds");
-                    _getNumDisplayModes = LoadFunction<GetNumDisplayModesDelegate>("SDL_GetNumDisplayModes");
-                    _getDisplayMode = LoadFunction<GetDisplayModeDelegate>("SDL_GetDisplayMode");
-                    _getDesktopDisplayMode = LoadFunction<GetDesktopDisplayModeDelegate>("SDL_GetDesktopDisplayMode");
-                    _getCurrentDisplayMode = LoadFunction<GetCurrentDisplayModeDelegate>("SDL_GetCurrentDisplayMode");
-                    _getClosestDisplayMode = LoadFunction<GetClosestDisplayModeDelegate>("SDL_GetClosestDisplayMode");
-                    _getWindowDisplayIndex = LoadFunction<GetWindowDisplayIndexDelegate>("SDL_GetWindowDisplayIndex");
-                    _setWindowDisplayMode = LoadFunction<SetWindowDisplayModeDelegate>("SDL_SetWindowDisplayMode");
-                    _getWindowDisplayMode = LoadFunction<GetWindowDisplayModeDelegate>("SDL_GetWindowDisplayMode");
-                    _getWindowPixelFormat = LoadFunction<GetWindowPixelFormatDelegate>("SDL_GetWindowPixelFormat");
-                    _createWindow = LoadFunction<CreateWindowDelegate>("SDL_CreateWindow");
-                    _createWindowFrom = LoadFunction<CreateWindowFromDelegate>("SDL_CreateWindowFrom");
-                    _getWindowID = LoadFunction<GetWindowIDDelegate>("SDL_GetWindowID");
-                    _getWindowFromID = LoadFunction<GetWindowFromIDDelegate>("SDL_GetWindowFromID");
-                    _getWindowFlags = LoadFunction<GetWindowFlagsDelegate>("SDL_GetWindowFlags");
-                    _setWindowTitle = LoadFunction<SetWindowTitleDelegate>("SDL_SetWindowTitle");
-                    _getWindowTitle = LoadFunction<GetWindowTitleDelegate>("SDL_GetWindowTitle");
-                    _setWindowIcon = LoadFunction<SetWindowIconDelegate>("SDL_SetWindowIcon");
-                    _setWindowData = LoadFunction<SetWindowDataDelegate>("SDL_SetWindowData");
-                    _getWindowData = LoadFunction<GetWindowDataDelegate>("SDL_GetWindowData");
-                    _setWindowPosition = LoadFunction<SetWindowPositionDelegate>("SDL_SetWindowPosition");
-                    _getWindowPosition = LoadFunction<GetWindowPositionDelegate>("SDL_GetWindowPosition");
-                    _setWindowSize = LoadFunction<SetWindowSizeDelegate>("SDL_SetWindowSize");
-                    _getWindowSize = LoadFunction<GetWindowSizeDelegate>("SDL_GetWindowSize");
-                    _getWindowBordersSize = LoadFunction<GetWindowBordersSizeDelegate>("SDL_GetWindowBordersSize");
-                    _setWindowMinimumSize = LoadFunction<SetWindowMinimumSizeDelegate>("SDL_SetWindowMinimumSize");
-                    _getWindowMinimumSize = LoadFunction<GetWindowMinimumSizeDelegate>("SDL_GetWindowMinimumSize");
-                    _setWindowMaximumSize = LoadFunction<SetWindowMaximumSizeDelegate>("SDL_SetWindowMaximumSize");
-                    _getWindowMaximumSize = LoadFunction<GetWindowMaximumSizeDelegate>("SDL_GetWindowMaximumSize");
-                    _setWindowBordered = LoadFunction<SetWindowBorderedDelegate>("SDL_SetWindowBordered");
-                    _setWindowResizable = LoadFunction<SetWindowResizableDelegate>("SDL_SetWindowResizable");
-                    _showWindow = LoadFunction<ShowWindowDelegate>("SDL_ShowWindow");
-                    _hideWindow = LoadFunction<HideWindowDelegate>("SDL_HideWindow");
-                    _raiseWindow = LoadFunction<RaiseWindowDelegate>("SDL_RaiseWindow");
-                    _maximizeWindow = LoadFunction<MaximizeWindowDelegate>("SDL_MaximizeWindow");
-                    _minimizeWindow = LoadFunction<MinimizeWindowDelegate>("SDL_MinimizeWindow");
-                    _restoreWindow = LoadFunction<RestoreWindowDelegate>("SDL_RestoreWindow");
-                    _setWindowFullscreen = LoadFunction<SetWindowFullscreenDelegate>("SDL_SetWindowFullscreen");
-                    _getWindowSurface = LoadFunction<GetWindowSurfaceDelegate>("SDL_GetWindowSurface");
-                    _updateWindowSurface = LoadFunction<UpdateWindowSurfaceDelegate>("SDL_UpdateWindowSurface");
-                    _updateWindowSurfaceRects = LoadFunction<UpdateWindowSurfaceRectsDelegate>("SDL_UpdateWindowSurfaceRects");
-                    _setWindowGrab = LoadFunction<SetWindowGrabDelegate>("SDL_SetWindowGrab");
-                    _getWindowGrab = LoadFunction<GetWindowGrabDelegate>("SDL_GetWindowGrab");
-                    _getGrabbedWindow = LoadFunction<GetGrabbedWindowDelegate>("SDL_GetGrabbedWindow");
-                    _setWindowBrightness = LoadFunction<SetWindowBrightnessDelegate>("SDL_SetWindowBrightness");
-                    _getWindowBrightness = LoadFunction<GetWindowBrightnessDelegate>("SDL_GetWindowBrightness");
-                    _setWindowOpacity = LoadFunction<SetWindowOpacityDelegate>("SDL_SetWindowOpacity");
-                    _getWindowOpacity = LoadFunction<GetWindowOpacityDelegate>("SDL_GetWindowOpacity");
-                    _setWindowModalFor = LoadFunction<SetWindowModalForDelegate>("SDL_SetWindowModalFor");
-                    _setWindowInputFocus = LoadFunction<SetWindowInputFocusDelegate>("SDL_SetWindowInputFocus");
-                    _setWindowGammaRamp = LoadFunction<SetWindowGammaRampDelegate>("SDL_SetWindowGammaRamp");
-                    _getWindowGammaRamp = LoadFunction<GetWindowGammaRampDelegate>("SDL_GetWindowGammaRamp");
-                    _setWindowHitTest = LoadFunction<SetWindowHitTestDelegate>("SDL_SetWindowHitTest");
-                    _destroyWindow = LoadFunction<DestroyWindowDelegate>("SDL_DestroyWindow");
-                    _isScreenSaverEnabled = LoadFunction<IsScreenSaverEnabledDelegate>("SDL_IsScreenSaverEnabled");
-                    _enableScreenSaver = LoadFunction<EnableScreenSaverDelegate>("SDL_EnableScreenSaver");
-                    _disableScreenSaver = LoadFunction<DisableScreenSaverDelegate>("SDL_DisableScreenSaver");
-                    break;
-                }
-                case SDLModule.Vulkan:
-                {
-                    _vulkanLoadLibrary = LoadFunction<VulkanLoadLibraryDelegate>("SDL_Vulkan_LoadLibrary");
-                    _vulkanGetVkGetInstanceProcAddr = LoadFunction<VulkanGetVkGetInstanceProcAddrDelegate>("SDL_Vulkan_GetVkGetInstanceProcAddr");
-                    _vulkanUnloadLibrary = LoadFunction<VulkanUnloadLibraryDelegate>("SDL_Vulkan_UnloadLibrary");
-                    _vulkanGetInstanceExtensions = LoadFunction<VulkanGetInstanceExtensionsDelegate>("SDL_Vulkan_GetInstanceExtensions");
-                    _vulkanCreateSurface = LoadFunction<VulkanCreateSurfaceDelegate>("SDL_Vulkan_CreateSurface");
-                    _vulkanGetDrawableSize = LoadFunction<VulkanGetDrawableSizeDelegate>("SDL_Vulkan_GetDrawableSize");
-                    break;
-                }
-            }
-        }
 
         public static class Hint
         {
@@ -709,330 +165,125 @@ namespace SDL2
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public static uint DefinePixelFormat(PixelType type, PixelOrder order, PackedLayout layout, byte bits, byte bytes) => (uint)((1 << 28) | ((byte)type << 24) | ((byte)order << 20) | ((byte)layout << 16) | (bits << 8) | bytes);
         }
-        
+
         //
         // SDL.h
         //
-        [DllImport()]
-        private delegate int InitDelegate(InitFlags flags);
-        private static InitDelegate _init;
-        public static int Init(InitFlags flags) => _init(flags);
-
-        private delegate int InitSubSystemDelegate(InitFlags flags);
-        private static InitSubSystemDelegate _initSubSystem;
-        // TODO: Find a way to skip verification in RELEASE
-        public static int InitSubSystem(InitFlags flags) => _initSubSystem != null ? _initSubSystem(flags) : throw new NullReferenceException($"You need to call {nameof(LoadFunctions)}({nameof(SDLModule)}.{SDLModule.SDL}) before calling this method.");
-
-        private delegate void QuitSubSystemDelegate(InitFlags flags);
-        private static QuitSubSystemDelegate _quitSubSystem;
-        public static void QuitSubSystem(InitFlags flags) => _quitSubSystem(flags);
-
-        private delegate InitFlags WasInitDelegate(InitFlags flags);
-        private static WasInitDelegate _wasInit;
-        public static InitFlags WasInit(InitFlags flags) => _wasInit(flags);
-
-        private delegate void QuitDelegate();
-        private static QuitDelegate _quit;
-        public static void Quit() => _quit();
+        [DllImport(LibraryName, EntryPoint = "SDL_Init")]
+        public static extern int Init(InitFlags flags);        [DllImport(LibraryName, EntryPoint = "SDL_InitSubSystem")]
+        public static extern int InitSubSystem(InitFlags flags);        [DllImport(LibraryName, EntryPoint = "SDL_QuitSubSystem")]
+        public static extern void QuitSubSystem(InitFlags flags);        [DllImport(LibraryName, EntryPoint = "SDL_WasInit")]
+        public static extern InitFlags WasInit(InitFlags flags);        [DllImport(LibraryName, EntryPoint = "SDL_Quit")]
+        public static extern void Quit();
 
         // TODO: SDL_audio.h
 
         //
         // SDL_blendmode.h
         //
-        private delegate BlendMode ComposeCustomBlendModeDelegate(BlendFactor srcColorFactor, BlendFactor dstColorFactor, BlendOperation colorOperation, BlendFactor srcAlphaFactor, BlendFactor dstAlphaFactor, BlendOperation alphaOperation);
-        private static ComposeCustomBlendModeDelegate _composeCustomBlendMode;
-        public static BlendMode ComposeCustomBlendMode(BlendFactor srcColorFactor, BlendFactor dstColorFactor, BlendOperation colorOperation, BlendFactor srcAlphaFactor, BlendFactor dstAlphaFactor, BlendOperation alphaOperation) => _composeCustomBlendMode(srcColorFactor, dstColorFactor, colorOperation, srcAlphaFactor, dstAlphaFactor, alphaOperation);
+        [DllImport(LibraryName, EntryPoint = "SDL_ComposeCustomBlendMode")]
+        public static extern BlendMode ComposeCustomBlendMode(BlendFactor srcColorFactor, BlendFactor dstColorFactor, BlendOperation colorOperation, BlendFactor srcAlphaFactor, BlendFactor dstAlphaFactor, BlendOperation alphaOperation);
 
         //
         // SDL_clipboard.h
         //
-        private delegate int SetClipboardTextDelegate(byte* text);
-        private static SetClipboardTextDelegate _setClipboardText;
-        public static int SetClipboardText(byte* text) => _setClipboardText(text);
-
-        private delegate byte* GetClipboardTextDelegate();
-        private static GetClipboardTextDelegate _getClipboardText;
-        public static byte* GetClipboardText() => _getClipboardText();
-
-        private delegate bool HasClipboardTextDelegate();
-        private static HasClipboardTextDelegate _hasClipboardText;
-        public static bool HasClipboardText() => _hasClipboardText();
+        [DllImport(LibraryName, EntryPoint = "SDL_SetClipboardText")]
+        public static extern int SetClipboardText(byte* text);        [DllImport(LibraryName, EntryPoint = "SDL_GetClipboardText")]
+        public static extern byte* GetClipboardText();        [DllImport(LibraryName, EntryPoint = "SDL_HasClipboardText")]
+        public static extern bool HasClipboardText();
 
         //
         // SDL_cpuinfo.h
         //
-        private delegate int GetCpuCountDelegate();
-        private static GetCpuCountDelegate _getCpuCount;
-        public static int GetCpuCount() => _getCpuCount();
-
-        private delegate int GetCpuCacheLineSizeDelegate();
-        private static GetCpuCacheLineSizeDelegate _getCpuCacheLineSize;
-        public static int GetCpuCacheLineSize() => _getCpuCacheLineSize();
-
-        private delegate bool HasRdtscDelegate();
-        private static HasRdtscDelegate _hasRdtsc;
-        public static bool HasRdtsc() => _hasRdtsc();
-
-        private delegate bool HasAltiVecDelegate();
-        private static HasAltiVecDelegate _hasAltiVec;
-        public static bool HasAltiVec() => _hasAltiVec();
-
-        private delegate bool HasMmxDelegate();
-        private static HasMmxDelegate _hasMmx;
-        public static bool HasMmx() => _hasMmx();
-
-        private delegate bool Has3DNowDelegate();
-        private static Has3DNowDelegate _has3DNow;
-        public static bool Has3DNow() => _has3DNow();
-
-        private delegate bool HasSseDelegate();
-        private static HasSseDelegate _hasSse;
-        public static bool HasSse() => _hasSse();
-
-        private delegate bool HasSse2Delegate();
-        private static HasSse2Delegate _hasSse2;
-        public static bool HasSse2() => _hasSse2();
-
-        private delegate bool HasSse3Delegate();
-        private static HasSse3Delegate _hasSse3;
-        public static bool HasSse3() => _hasSse3();
-
-        private delegate bool HasSse41Delegate();
-        private static HasSse41Delegate _hasSse41;
-        public static bool HasSse41() => _hasSse41();
-
-        private delegate bool HasSse42Delegate();
-        private static HasSse42Delegate _hasSse42;
-        public static bool HasSse42() => _hasSse42();
-
-        private delegate bool HasAvxDelegate();
-        private static HasAvxDelegate _hasAvx;
-        public static bool HasAvx() => _hasAvx();
-
-        private delegate bool HasAvx2Delegate();
-        private static HasAvx2Delegate _hasAvx2;
-        public static bool HasAvx2() => _hasAvx2();
-
-        private delegate bool HasNeonDelegate();
-        private static HasNeonDelegate _hasNeon;
-        public static bool HasNeon() => _hasNeon();
-
-        private delegate int GetSystemRamDelegate();
-        private static GetSystemRamDelegate _getSystemRam;
-        public static int GetSystemRam() => _getSystemRam();
+        [DllImport(LibraryName, EntryPoint = "SDL_GetCpuCount")]
+        public static extern int GetCpuCount();        [DllImport(LibraryName, EntryPoint = "SDL_GetCpuCacheLineSize")]
+        public static extern int GetCpuCacheLineSize();        [DllImport(LibraryName, EntryPoint = "SDL_HasRdtsc")]
+        public static extern bool HasRdtsc();        [DllImport(LibraryName, EntryPoint = "SDL_HasAltiVec")]
+        public static extern bool HasAltiVec();        [DllImport(LibraryName, EntryPoint = "SDL_HasMmx")]
+        public static extern bool HasMmx();        [DllImport(LibraryName, EntryPoint = "SDL_Has3DNow")]
+        public static extern bool Has3DNow();        [DllImport(LibraryName, EntryPoint = "SDL_HasSse")]
+        public static extern bool HasSse();        [DllImport(LibraryName, EntryPoint = "SDL_HasSse2")]
+        public static extern bool HasSse2();        [DllImport(LibraryName, EntryPoint = "SDL_HasSse3")]
+        public static extern bool HasSse3();        [DllImport(LibraryName, EntryPoint = "SDL_HasSse41")]
+        public static extern bool HasSse41();        [DllImport(LibraryName, EntryPoint = "SDL_HasSse42")]
+        public static extern bool HasSse42();        [DllImport(LibraryName, EntryPoint = "SDL_HasAvx")]
+        public static extern bool HasAvx();        [DllImport(LibraryName, EntryPoint = "SDL_HasAvx2")]
+        public static extern bool HasAvx2();        [DllImport(LibraryName, EntryPoint = "SDL_HasNeon")]
+        public static extern bool HasNeon();        [DllImport(LibraryName, EntryPoint = "SDL_GetSystemRam")]
+        public static extern int GetSystemRam();
 
         //
         // SDL_error.h
         //
-        private delegate byte* GetErrorDelegate();
-        private static GetErrorDelegate _getError;
-        public static byte* GetError() => _getError();
-
-        private delegate int SetErrorDelegate(byte* format, params object[] objects);
-        private static SetErrorDelegate _setError;
-        public static int SetError(byte* format, params object[] objects) => _setError(format, objects);
-
-        private delegate void ClearErrorDelegate();
-        private static ClearErrorDelegate _clearError;
-        public static void ClearError() => _clearError();
+        [DllImport(LibraryName, EntryPoint = "SDL_GetError")]
+        public static extern byte* GetError();        [DllImport(LibraryName, EntryPoint = "SDL_SetError")]
+        public static extern int SetError(byte* format, params object[] objects);        [DllImport(LibraryName, EntryPoint = "SDL_ClearError")]
+        public static extern void ClearError();
 
         //
         // SDL_events.h
         //
-        private delegate void PumpEventsDelegate();
-        private static PumpEventsDelegate _pumpEvents;
-        public static void PumpEvents() => _pumpEvents();
-
-        private delegate int PeepEventsDelegate(Event[] events, int numEvents, EventAction action, EventType minType, EventType maxType);
-        private static PeepEventsDelegate _peepEvents;
-        public static int PeepEvents(Event[] events, int numEvents, EventAction action, EventType minType, EventType maxType) => _peepEvents(events, numEvents, action, minType, maxType);
-
-        private delegate bool HasEventDelegate(EventType type);
-        private static HasEventDelegate _hasEvent;
-        public static bool HasEvent(EventType type) => _hasEvent(type);
-
-        private delegate bool HasEventsDelegate(EventType minType, EventType maxType);
-        private static HasEventsDelegate _hasEvents;
-        public static bool HasEvents(EventType minType, EventType maxType) => _hasEvents(minType, maxType);
-
-        private delegate void FlushEventDelegate(EventType type);
-        private static FlushEventDelegate _flushEvent;
-        public static void FlushEvent(EventType type) => _flushEvent(type);
-
-        private delegate void FlushEventsDelegate(EventType minType, EventType maxType);
-        private static FlushEventsDelegate _flushEvents;
-        public static void FlushEvents(EventType minType, EventType maxType) => _flushEvents(minType, maxType);
-
-        private delegate int PollEventDelegate(out Event @event);
-        private static PollEventDelegate _pollEvent;
-        public static int PollEvent(out Event @event) => _pollEvent(out @event);
-
-        private delegate int WaitEventDelegate(out Event @event);
-        private static WaitEventDelegate _waitEvent;
-        public static int WaitEvent(out Event @event) => _waitEvent(out @event);
-
-        private delegate int WaitEventTimeoutDelegate(out Event @event, int timeout);
-        private static WaitEventTimeoutDelegate _waitEventTimeout;
-        public static int WaitEventTimeout(out Event @event, int timeout) => _waitEventTimeout(out @event, timeout);
-
-        private delegate int PushEventDelegate(ref Event @event);
-        private static PushEventDelegate _pushEvent;
-        public static int PushEvent(ref Event @event) => _pushEvent(ref @event);
-
-        private delegate void SetEventFilterDelegate(EventFilter filter, IntPtr userData);
-        private static SetEventFilterDelegate _setEventFilter;
-        public static void SetEventFilter(EventFilter filter, IntPtr userData) => _setEventFilter(filter, userData);
-
-        private delegate bool GetEventFilterDelegate(out EventFilter filter, IntPtr userData);
-        private static GetEventFilterDelegate _getEventFilter;
-        public static bool GetEventFilter(out EventFilter filter, IntPtr userData) => _getEventFilter(out filter, userData);
-
-        private delegate void AddEventWatchDelegate(EventFilter filter, IntPtr userData);
-        private static AddEventWatchDelegate _addEventWatch;
-        public static void AddEventWatch(EventFilter filter, IntPtr userData) => _addEventWatch(filter, userData);
-
-        private delegate void DelEventWatchDelegate(EventFilter filter, IntPtr userData);
-        private static DelEventWatchDelegate _delEventWatch;
-        public static void DelEventWatch(EventFilter filter, IntPtr userData) => _delEventWatch(filter, userData);
-
-        private delegate void FilterEventsDelegate(EventFilter filter, IntPtr userData);
-        private static FilterEventsDelegate _filterEvents;
-        public static void FilterEvents(EventFilter filter, IntPtr userData) => _filterEvents(filter, userData);
-
-        private delegate State EventStateDelegate(EventType type, State state);
-        private static EventStateDelegate _eventState;
-        public static State EventState(EventType type, State state) => _eventState(type, state);
-
-        public static State GetEventState(EventType type) => _eventState(type, State.Query);
-
-        private delegate uint RegisterEventsDelegate(int numEvents);
-        private static RegisterEventsDelegate _registerEvents;
-        public static uint RegisterEvents(int numEvents) => _registerEvents(numEvents);
+        [DllImport(LibraryName, EntryPoint = "SDL_PumpEvents")]
+        public static extern void PumpEvents();        [DllImport(LibraryName, EntryPoint = "SDL_PeepEvents")]
+        public static extern int PeepEvents(Event[] events, int numEvents, EventAction action, EventType minType, EventType maxType);        [DllImport(LibraryName, EntryPoint = "SDL_HasEvent")]
+        public static extern bool HasEvent(EventType type);        [DllImport(LibraryName, EntryPoint = "SDL_HasEvents")]
+        public static extern bool HasEvents(EventType minType, EventType maxType);        [DllImport(LibraryName, EntryPoint = "SDL_FlushEvent")]
+        public static extern void FlushEvent(EventType type);        [DllImport(LibraryName, EntryPoint = "SDL_FlushEvents")]
+        public static extern void FlushEvents(EventType minType, EventType maxType);        [DllImport(LibraryName, EntryPoint = "SDL_PollEvent")]
+        public static extern int PollEvent(out Event @event);        [DllImport(LibraryName, EntryPoint = "SDL_WaitEvent")]
+        public static extern int WaitEvent(out Event @event);        [DllImport(LibraryName, EntryPoint = "SDL_WaitEventTimeout")]
+        public static extern int WaitEventTimeout(out Event @event, int timeout);        [DllImport(LibraryName, EntryPoint = "SDL_PushEvent")]
+        public static extern int PushEvent(ref Event @event);        [DllImport(LibraryName, EntryPoint = "SDL_SetEventFilter")]
+        public static extern void SetEventFilter(EventFilter filter, IntPtr userData);        [DllImport(LibraryName, EntryPoint = "SDL_GetEventFilter")]
+        public static extern bool GetEventFilter(out EventFilter filter, IntPtr userData);        [DllImport(LibraryName, EntryPoint = "SDL_AddEventWatch")]
+        public static extern void AddEventWatch(EventFilter filter, IntPtr userData);        [DllImport(LibraryName, EntryPoint = "SDL_DelEventWatch")]
+        public static extern void DelEventWatch(EventFilter filter, IntPtr userData);        [DllImport(LibraryName, EntryPoint = "SDL_FilterEvents")]
+        public static extern void FilterEvents(EventFilter filter, IntPtr userData);        [DllImport(LibraryName, EntryPoint = "SDL_EventState")]
+        public static extern State EventState(EventType type, State state);
+        public static State GetEventState(EventType type) => EventState(type, State.Query);        [DllImport(LibraryName, EntryPoint = "SDL_RegisterEvents")]
+        public static extern uint RegisterEvents(int numEvents);
 
         //
         // SDL_filesystem.h
         //
-        private delegate byte* GetBasePathDelegate();
-        private static GetBasePathDelegate _getBasePath;
-        public static byte* GetBasePath() => _getBasePath();
 
-        private delegate byte* GetPrefPathDelegate(byte* org, byte* app);
-        private static GetPrefPathDelegate _getPrefPath;
-        public static byte* GetPrefPath(byte* org, byte* app) => _getPrefPath(org, app);
+        [DllImport(LibraryName, EntryPoint = "SDL_GetBasePath")]
+        public static extern byte* GetBasePath();        [DllImport(LibraryName, EntryPoint = "SDL_GetPrefPath")]
+        public static extern byte* GetPrefPath(byte* org, byte* app);
 
         //
         // SDL_gamecontroller.h
         //
-        private delegate int GameControllerAddMappingsFromRWDelegate(RWops rwOps, int freeRW);
-        private static GameControllerAddMappingsFromRWDelegate _gameControllerAddMappingsFromRW;
-        public static int GameControllerAddMappingsFromRW(RWops rwOps, int freeRW) => _gameControllerAddMappingsFromRW(rwOps, freeRW);
 
-        public static int GameControllerAddMappingsFromFile(byte* file) => _gameControllerAddMappingsFromRW(RWFromFile(file, "rb".ToUtf8()), 1);
-
-        private delegate int GameControllerAddMappingDelegate(byte* mappginText);
-        private static GameControllerAddMappingDelegate _gameControllerAddMapping;
-        public static int GameControllerAddMapping(byte* mappingText) => _gameControllerAddMapping(mappingText);
-
-        private delegate int GameControllerNumMappingsDelegate();
-        private static GameControllerNumMappingsDelegate _gameControllerNumMappings;
-        public static int GameControllerNumMappings() => _gameControllerNumMappings();
-
-        private delegate byte* GameControllerMappingForIndexDelegate(int mappingIndex);
-        private static GameControllerMappingForIndexDelegate _gameControllerMappingForIndex;
-        public static byte* GameControllerMappingForIndex(int mappingIndex) => _gameControllerMappingForIndex(mappingIndex);
-
-        private delegate byte* GameControllerMappingForGuidDelegate(Guid guid);
-        private static GameControllerMappingForGuidDelegate _gameControllerMappingForGuid;
-        public static byte* GameControllerMappingForGuid(Guid guid) => _gameControllerMappingForGuid(guid);
-
-        private delegate byte* GameControllerMappingDelegate(GameController gameController);
-        private static GameControllerMappingDelegate _gameControllerMapping;
-        public static byte* GameControllerMapping(GameController gameController) => _gameControllerMapping(gameController);
-
-        private delegate bool IsGameControllerDelegate(int joystickIndex);
-        private static IsGameControllerDelegate _isGameController;
-        public static bool IsGameController(int joystickIndex) => _isGameController(joystickIndex);
-
-        private delegate byte* GameControllerNameForIndexDelegate(int joystickIndex);
-        private static GameControllerNameForIndexDelegate _gameControllerNameForIndex;
-        public static byte* GameControllerNameForIndex(int joystickIndex) => _gameControllerNameForIndex(joystickIndex);
-
-        private delegate GameController GameControllerOpenDelegate(int joystickIndex);
-        private static GameControllerOpenDelegate _gameControllerOpen;
-        public static GameController GameControllerOpen(int joystickIndex) => _gameControllerOpen(joystickIndex);
-
-        private delegate GameController GameControllerFromInstanceIDDelegate(JoystickID joystickID);
-        private static GameControllerFromInstanceIDDelegate _gameControllerFromInstanceID;
-        public static GameController GameControllerFromInstanceID(JoystickID joystickID) => _gameControllerFromInstanceID(joystickID);
-
-        private delegate byte* GameControllerNameDelegate(GameController gameController);
-        private static GameControllerNameDelegate _gameControllerName;
-        public static byte* GameControllerName(GameController gameController) => _gameControllerName(gameController);
-
-        private delegate ushort GameControllerGetVendorDelegate(GameController gameController);
-        private static GameControllerGetVendorDelegate _gameControllerGetVendor;
-        public static ushort GameControllerGetVendor(GameController gameController) => _gameControllerGetVendor(gameController);
-
-        private delegate ushort GameControllerGetProductDelegate(GameController gameController);
-        private static GameControllerGetProductDelegate _gameControllerGetProduct;
-        public static ushort GameControllerGetProduct(GameController gameController) => _gameControllerGetProduct(gameController);
-
-        private delegate ushort GameControllerGetProductVersionDelegate(GameController gameController);
-        private static GameControllerGetProductVersionDelegate _gameControllerGetProductVersion;
-        public static ushort GameControllerGetProductVersion(GameController gameController) => _gameControllerGetProductVersion(gameController);
-
-        private delegate bool GameControllerGetAttachedDelegate(GameController gameController);
-        private static GameControllerGetAttachedDelegate _gameControllerGetAttached;
-        public static bool GameControllerGetAttached(GameController gameController) => _gameControllerGetAttached(gameController);
-
-        private delegate Joystick GameControllerGetJoystickDelegate(GameController gameController);
-        private static GameControllerGetJoystickDelegate _gameControllerGetJoystick;
-        public static Joystick GameControllerGetJoystick(GameController gameController) => _gameControllerGetJoystick(gameController);
-
-        private delegate State GameControllerEventStateDelegate(State state);
-        private static GameControllerEventStateDelegate _gameControllerEventState;
-        public static State GameControllerEventState(State state) => _gameControllerEventState(state);
-
-        private delegate void GameControllerUpdateDelegate();
-        private static GameControllerUpdateDelegate _gameControllerUpdate;
-        public static void GameControllerUpdate() => _gameControllerUpdate();
-
-        private delegate GameControllerAxis GameControllerGetAxisFromTextDelegate(byte* pchText);
-        private static GameControllerGetAxisFromTextDelegate _gameControllerGetAxisFromText;
-        public static GameControllerAxis GameControllerGetAxisFromText(byte* pchText) => _gameControllerGetAxisFromText(pchText);
-
-        private delegate byte* GameControllerGetTextForAxisDelegate(GameControllerAxis axis);
-        private static GameControllerGetTextForAxisDelegate _gameControllerGetTextForAxis;
-        public static byte* GameControllerGetTextForAxis(GameControllerAxis axis) => _gameControllerGetTextForAxis(axis);
-
-        private delegate GameControllerButtonBind GameControllerGetBindForAxisDelegate(GameController gameController, GameControllerAxis axis);
-        private static GameControllerGetBindForAxisDelegate _gameControllerGetBindForAxis;
-        public static GameControllerButtonBind GameControllerGetBindForAxis(GameController gameController, GameControllerAxis axis) => _gameControllerGetBindForAxis(gameController, axis);
-
-        private delegate short GameControllerGetAxisDelegate(GameController gameController, GameControllerAxis axis);
-        private static GameControllerGetAxisDelegate _gameControllerGetAxis;
-        public static short GameControllerGetAxis(GameController gameController, GameControllerAxis axis) => _gameControllerGetAxis(gameController, axis);
-
-        private delegate GameControllerButton GameControllerGetButtonFromTextDelegate(byte* pchText);
-        private static GameControllerGetButtonFromTextDelegate _gameControllerGetButtonFromText;
-        public static GameControllerButton GameControllerGetButtonFromText(byte* pchText) => _gameControllerGetButtonFromText(pchText);
-
-        private delegate byte* GameControllerGetTextForButtonDelegate(GameControllerButton button);
-        private static GameControllerGetTextForButtonDelegate _gameControllerGetTextForButton;
-        public static byte* GameControllerGetTextForButton(GameControllerButton button) => _gameControllerGetTextForButton(button);
-
-        private delegate GameControllerButtonBind GameControllerGetBindForButtonDelegate(GameController gameController, GameControllerButton button);
-        private static GameControllerGetBindForButtonDelegate _gameControllerGetBindForButton;
-        public static GameControllerButtonBind GameControllerGetBindForButton(GameController gameController, GameControllerButton button) => _gameControllerGetBindForButton(gameController, button);
-
-        private delegate byte GameControllerGetButtonDelegate(GameController gameController, GameControllerButton button);
-        private static GameControllerGetButtonDelegate _gameControllerGetButton;
-        public static byte GameControllerGetButton(GameController gameController, GameControllerButton button) => _gameControllerGetButton(gameController, button);
-
-        private delegate void GameControllerCloseDelegate(GameController gameController);
-        private static GameControllerCloseDelegate _gameControllerClose;
-        public static void GameControllerClose(GameController gameController) => _gameControllerClose(gameController);
+        [DllImport(LibraryName, EntryPoint = "SDL_GameControllerAddMappingsFromRW")]
+        public static extern int GameControllerAddMappingsFromRW(RWops rwOps, int freeRW);
+        public static int GameControllerAddMappingsFromFile(byte* file) => GameControllerAddMappingsFromRW(RWFromFile(file, "rb".ToUtf8()), 1);        [DllImport(LibraryName, EntryPoint = "SDL_GameControllerAddMapping")]
+        public static extern int GameControllerAddMapping(byte* mappingText);        [DllImport(LibraryName, EntryPoint = "SDL_GameControllerNumMappings")]
+        public static extern int GameControllerNumMappings();        [DllImport(LibraryName, EntryPoint = "SDL_GameControllerMappingForIndex")]
+        public static extern byte* GameControllerMappingForIndex(int mappingIndex);        [DllImport(LibraryName, EntryPoint = "SDL_GameControllerMappingForGuid")]
+        public static extern byte* GameControllerMappingForGuid(Guid guid);        [DllImport(LibraryName, EntryPoint = "SDL_GameControllerMapping")]
+        public static extern byte* GameControllerMapping(GameController gameController);        [DllImport(LibraryName, EntryPoint = "SDL_IsGameController")]
+        public static extern bool IsGameController(int joystickIndex);        [DllImport(LibraryName, EntryPoint = "SDL_GameControllerNameForIndex")]
+        public static extern byte* GameControllerNameForIndex(int joystickIndex);        [DllImport(LibraryName, EntryPoint = "SDL_GameControllerOpen")]
+        public static extern GameController GameControllerOpen(int joystickIndex);        [DllImport(LibraryName, EntryPoint = "SDL_GameControllerFromInstanceID")]
+        public static extern GameController GameControllerFromInstanceID(JoystickID joystickID);        [DllImport(LibraryName, EntryPoint = "SDL_GameControllerName")]
+        public static extern byte* GameControllerName(GameController gameController);        [DllImport(LibraryName, EntryPoint = "SDL_GameControllerGetVendor")]
+        public static extern ushort GameControllerGetVendor(GameController gameController);        [DllImport(LibraryName, EntryPoint = "SDL_GameControllerGetProduct")]
+        public static extern ushort GameControllerGetProduct(GameController gameController);        [DllImport(LibraryName, EntryPoint = "SDL_GameControllerGetProductVersion")]
+        public static extern ushort GameControllerGetProductVersion(GameController gameController);        [DllImport(LibraryName, EntryPoint = "SDL_GameControllerGetAttached")]
+        public static extern bool GameControllerGetAttached(GameController gameController);        [DllImport(LibraryName, EntryPoint = "SDL_GameControllerGetJoystick")]
+        public static extern Joystick GameControllerGetJoystick(GameController gameController);        [DllImport(LibraryName, EntryPoint = "SDL_GameControllerEventState")]
+        public static extern State GameControllerEventState(State state);        [DllImport(LibraryName, EntryPoint = "SDL_GameControllerUpdate")]
+        public static extern void GameControllerUpdate();        [DllImport(LibraryName, EntryPoint = "SDL_GameControllerGetAxisFromText")]
+        public static extern GameControllerAxis GameControllerGetAxisFromText(byte* pchText);        [DllImport(LibraryName, EntryPoint = "SDL_GameControllerGetTextForAxis")]
+        public static extern byte* GameControllerGetTextForAxis(GameControllerAxis axis);        [DllImport(LibraryName, EntryPoint = "SDL_GameControllerGetBindForAxis")]
+        public static extern GameControllerButtonBind GameControllerGetBindForAxis(GameController gameController, GameControllerAxis axis);        [DllImport(LibraryName, EntryPoint = "SDL_GameControllerGetAxis")]
+        public static extern short GameControllerGetAxis(GameController gameController, GameControllerAxis axis);        [DllImport(LibraryName, EntryPoint = "SDL_GameControllerGetButtonFromText")]
+        public static extern GameControllerButton GameControllerGetButtonFromText(byte* pchText);        [DllImport(LibraryName, EntryPoint = "SDL_GameControllerGetTextForButton")]
+        public static extern byte* GameControllerGetTextForButton(GameControllerButton button);        [DllImport(LibraryName, EntryPoint = "SDL_GameControllerGetBindForButton")]
+        public static extern GameControllerButtonBind GameControllerGetBindForButton(GameController gameController, GameControllerButton button);        [DllImport(LibraryName, EntryPoint = "SDL_GameControllerGetButton")]
+        public static extern byte GameControllerGetButton(GameController gameController, GameControllerButton button);        [DllImport(LibraryName, EntryPoint = "SDL_GameControllerClose")]
+        public static extern void GameControllerClose(GameController gameController);
 
         // TODO: SDL_gesture.h
         // TODO: SDL_haptic.h
@@ -1040,888 +291,274 @@ namespace SDL2
         //
         // SDL_hints.h
         //
-        private delegate bool SetHintWithPriorityDelegate(byte* name, byte* value, HintPriority priority);
-        private static SetHintWithPriorityDelegate _setHintWithPriority;
-        public static bool SetHintWithPriority(byte* name, byte* value, HintPriority priority) => _setHintWithPriority(name, value, priority);
-
-        private delegate bool SetHintDelegate(byte* name, byte* value);
-        private static SetHintDelegate _setHint;
-        public static bool SetHint(byte* name, byte* value) => _setHint(name, value);
-
-        private delegate byte* GetHintDelegate(byte* name);
-        private static GetHintDelegate _getHint;
-        private static byte* GetHint(byte* name) => _getHint(name);
-
-        private delegate bool GetHintBooleanDelegate(byte* name, bool defaultValue);
-        private static GetHintBooleanDelegate _getHintBoolean;
-        public static bool GetHintBoolean(byte* name, bool defaultValue) => _getHintBoolean(name, defaultValue);
-
-        private delegate void AddHintCallbackDelegate(byte* name, HintCallback callback, IntPtr userData);
-        private static AddHintCallbackDelegate _addHintCallback;
-        public static void AddHintCallback(byte* name, HintCallback callback, IntPtr userData) => _addHintCallback(name, callback, userData);
-
-        private delegate void DelHintCallbackDelegate(byte* name, HintCallback callback, IntPtr userData);
-        private static DelHintCallbackDelegate _delHintCallback;
-        public static void DelHintCallback(byte* name, HintCallback callback, IntPtr userData) => _delHintCallback(name, callback, userData);
-
-        private delegate void ClearHintsDelegate();
-        private static ClearHintsDelegate _clearHints;
-        public static void ClearHints() => _clearHints();
+        [DllImport(LibraryName, EntryPoint = "SDL_SetHintWithPriority")]
+        public static extern bool SetHintWithPriority(byte* name, byte* value, HintPriority priority);        [DllImport(LibraryName, EntryPoint = "SDL_SetHint")]
+        public static extern bool SetHint(byte* name, byte* value);        [DllImport(LibraryName, EntryPoint = "SDL_GetHint")]
+        public static extern byte* GetHint(byte* name);        [DllImport(LibraryName, EntryPoint = "SDL_GetHintBoolean")]
+        public static extern bool GetHintBoolean(byte* name, bool defaultValue);        [DllImport(LibraryName, EntryPoint = "SDL_AddHintCallback")]
+        public static extern void AddHintCallback(byte* name, HintCallback callback, IntPtr userData);        [DllImport(LibraryName, EntryPoint = "SDL_DelHintCallback")]
+        public static extern void DelHintCallback(byte* name, HintCallback callback, IntPtr userData);        [DllImport(LibraryName, EntryPoint = "SDL_ClearHints")]
+        public static extern void ClearHints();
 
         //
         // SDL_joystick.h
         //
-        private delegate int NumJoysticksDelegate();
-        private static NumJoysticksDelegate _numJoysticks;
-        public static int NumJoysticks() => _numJoysticks();
-
-        private delegate byte* JoystickNameForIndexDelegate(int deviceIndex);
-        private static JoystickNameForIndexDelegate _joystickNameForIndex;
-        public static byte* JoystickNameForIndex(int deviceIndex) => _joystickNameForIndex(deviceIndex);
-
-        private delegate Guid JoystickGetDeviceGuidDelegate(int deviceIndex);
-        private static JoystickGetDeviceGuidDelegate _joystickGetDeviceGuid;
-        public static Guid JoystickGetDeviceGUID(int deviceIndex) => _joystickGetDeviceGuid(deviceIndex);
-
-        private delegate ushort JoystickGetDeviceVendorDelegate(int deviceIndex);
-        private static JoystickGetDeviceVendorDelegate _joystickGetDeviceVendor;
-        public static ushort JoystickGetDeviceVendor(int deviceIndex) => _joystickGetDeviceVendor(deviceIndex);
-
-        private delegate ushort JoystickGetDeviceProductDelegate(int deviceIndex);
-        private static JoystickGetDeviceProductDelegate _joystickGetDeviceProduct;
-        public static ushort JoystickGetDeviceProduct(int deviceIndex) => _joystickGetDeviceProduct(deviceIndex);
-
-        private delegate ushort JoystickGetDeviceProductVersionDelegate(int deviceIndex);
-        private static JoystickGetDeviceProductVersionDelegate _joystickGetDeviceProductVersion;
-        public static ushort JoystickGetDeviceProductVersion(int deviceIndex) => _joystickGetDeviceProductVersion(deviceIndex);
-
-        private delegate JoystickType JoystickGetDeviceTypeDelegate(int deviceIndex);
-        private static JoystickGetDeviceTypeDelegate _joystickGetDeviceType;
-        public static JoystickType JoystickGetDeviceType(int deviceIndex) => _joystickGetDeviceType(deviceIndex);
-
-        private delegate JoystickID JoystickGetDeviceInstanceIDDelegate(int deviceIndex);
-        private static JoystickGetDeviceInstanceIDDelegate _joystickGetDeviceInstanceID;
-        public static JoystickID JoystickGetDeviceInstanceID(int deviceIndex) => _joystickGetDeviceInstanceID(deviceIndex);
-
-        private delegate Joystick JoystickOpenDelegate(int deviceIndex);
-        private static JoystickOpenDelegate _joystickOpen;
-        public static Joystick JoystickOpen(int deviceIndex) => _joystickOpen(deviceIndex);
-
-        private delegate Joystick JoystickFromInstanceIDDelegate(JoystickID joystickID);
-        private static JoystickFromInstanceIDDelegate _joystickFromInstanceID;
-        public static Joystick JoystickFromInstanceID(JoystickID joystickID) => _joystickFromInstanceID(joystickID);
-
-        private delegate byte* JoystickNameDelegate(Joystick joystick);
-        private static JoystickNameDelegate _joystickName;
-        public static byte* JoystickName(Joystick joystick) => _joystickName(joystick);
-
-        private delegate Guid JoystickGetGuidDelegate(Joystick joystick);
-        private static JoystickGetGuidDelegate _joystickGetGuid;
-        public static Guid JoystickGetGUID(Joystick joystick) => _joystickGetGuid(joystick);
-
-
-        private delegate ushort JoystickGetVendorDelegate(Joystick joystick);
-        private static JoystickGetVendorDelegate _joystickGetVendor;
-        public static ushort JoystickGetVendor(Joystick joystick) => _joystickGetVendor(joystick);
-
-        private delegate ushort JoystickGetProductDelegate(Joystick joystick);
-        private static JoystickGetProductDelegate _joystickGetProduct;
-        public static ushort JoystickGetProduct(Joystick joystick) => _joystickGetProduct(joystick);
-
-        private delegate ushort JoystickGetProductVersionDelegate(Joystick joystick);
-        private static JoystickGetProductVersionDelegate _joystickGetProductVersion;
-        public static ushort JoystickGetProductVersion(Joystick joystick) => _joystickGetProductVersion(joystick);
-
-        private delegate JoystickType JoystickGetTypeDelegate(Joystick joystick);
-        private static JoystickGetTypeDelegate _joystickGetType;
-        public static JoystickType JoystickGetType(Joystick joystick) => _joystickGetType(joystick);
-
-        private delegate void JoystickGetGuidTextDelegate(Guid guid, byte* pszGuid, int cbGuid);
-        private static JoystickGetGuidTextDelegate _joystickGetGuidText;
-        public static void JoystickGetGuidText(Guid guid, byte* pszGUID, int cbGUID) => _joystickGetGuidText(guid, pszGUID, cbGUID);
-
-        private delegate Guid JoystickGetGuidFromTextDelegate(byte* pchGuid);
-        private static JoystickGetGuidFromTextDelegate _joystickGetGuidFromText;
-        public static Guid JoystickGetGUIDFromText(byte* pchGUID) => _joystickGetGuidFromText(pchGUID);
-
-        private delegate bool JoystickGetAttachedDelegate(Joystick joystick);
-        private static JoystickGetAttachedDelegate _joystickGetAttached;
-        public static bool JoystickGetAttached(Joystick joystick) => _joystickGetAttached(joystick);
-
-        private delegate JoystickID JoystickInstanceIDDelegate(Joystick joystick);
-        private static JoystickInstanceIDDelegate _joystickInstanceID;
-        public static JoystickID JoystickInstanceID(Joystick joystick) => _joystickInstanceID(joystick);
-
-        private delegate int JoystickNumAxesDelegate(Joystick joystick);
-        private static JoystickNumAxesDelegate _joystickNumAxes;
-        public static int JoystickNumAxes(Joystick joystick) => _joystickNumAxes(joystick);
-
-        private delegate int JoystickNumBallsDelegate(Joystick joystick);
-        private static JoystickNumBallsDelegate _joystickNumBalls;
-        public static int JoystickNumBalls(Joystick joystick) => _joystickNumBalls(joystick);
-
-        private delegate int JoystickNumHatsDelegate(Joystick joystick);
-        private static JoystickNumHatsDelegate _joystickNumHats;
-        public static int JoystickNumHats(Joystick joystick) => _joystickNumHats(joystick);
-
-        private delegate int JoystickNumButtonsDelegate(Joystick joystick);
-        private static JoystickNumButtonsDelegate _joystickNumButtons;
-        public static int JoystickNumButtons(Joystick joystick) => _joystickNumButtons(joystick);
-
-        private delegate void JoystickUpdateDelegate();
-        private static JoystickUpdateDelegate _joystickUpdate;
-        public static void JoystickUpdate() => _joystickUpdate();
-
-        private delegate State JoystickEventStateDelegate(State state);
-        private static JoystickEventStateDelegate _joystickEventState;
-        public static State JoystickEventState(State state) => _joystickEventState(state);
-
-        private delegate short JoystickGetAxisDelegate(Joystick joystick, JoystickAxis axis);
-        private static JoystickGetAxisDelegate _joystickGetAxis;
-        public static short JoystickGetAxis(Joystick joystick, JoystickAxis axis) => _joystickGetAxis(joystick, axis);
-
-        private delegate bool JoystickGetAxisInitialStateDelegate(Joystick joystick, JoystickAxis axis, out short state);
-        private static JoystickGetAxisInitialStateDelegate _joystickGetAxisInitialState;
-        public static bool JoystickGetAxisInitialState(Joystick joystick, JoystickAxis axis, out short state) => _joystickGetAxisInitialState(joystick, axis, out state);
-
-        private delegate JoystickHat JoystickGetHatDelegate(Joystick joystick, int hat);
-        private static JoystickGetHatDelegate _joystickGetHat;
-        public static JoystickHat JoystickGetHat(Joystick joystick, int hat) => _joystickGetHat(joystick, hat);
-
-        private delegate int JoystickGetBallDelegate(Joystick joystick, int ball, out int dx, out int dy);
-        private static JoystickGetBallDelegate _joystickGetBall;
-        public static int JoystickGetBall(Joystick joystick, int ball, out int dx, out int dy) => _joystickGetBall(joystick, ball, out dx, out dy);
-
-        private delegate byte JoystickGetButtonDelegate(Joystick joystick, int button);
-        private static JoystickGetButtonDelegate _joystickGetButton;
-        public static byte JoystickGetButton(Joystick joystick, int button) => _joystickGetButton(joystick, button);
-
-        private delegate void JoystickCloseDelegte(Joystick joystick);
-        private static JoystickCloseDelegte _joystickClose;
-        public static void JoystickClose(Joystick joystick) => _joystickClose(joystick);
-
-        private delegate JoystickPowerLevel JoystickCurrentPowerLevelDelegate(Joystick joystick);
-        private static JoystickCurrentPowerLevelDelegate _joystickCurrentPowerLevel;
-        public static JoystickPowerLevel JoystickCurrentPowerLevel(Joystick joystick) => _joystickCurrentPowerLevel(joystick);
+        [DllImport(LibraryName, EntryPoint = "SDL_NumJoysticks")]
+        public static extern int NumJoysticks();        [DllImport(LibraryName, EntryPoint = "SDL_JoystickNameForIndex")]
+        public static extern byte* JoystickNameForIndex(int deviceIndex);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickGetDeviceGuid")]
+        public static extern Guid JoystickGetDeviceGUID(int deviceIndex);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickGetDeviceVendor")]
+        public static extern ushort JoystickGetDeviceVendor(int deviceIndex);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickGetDeviceProduct")]
+        public static extern ushort JoystickGetDeviceProduct(int deviceIndex);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickGetDeviceProductVersion")]
+        public static extern ushort JoystickGetDeviceProductVersion(int deviceIndex);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickGetDeviceType")]
+        public static extern JoystickType JoystickGetDeviceType(int deviceIndex);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickGetDeviceInstanceID")]
+        public static extern JoystickID JoystickGetDeviceInstanceID(int deviceIndex);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickOpen")]
+        public static extern Joystick JoystickOpen(int deviceIndex);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickFromInstanceID")]
+        public static extern Joystick JoystickFromInstanceID(JoystickID joystickID);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickName")]
+        public static extern byte* JoystickName(Joystick joystick);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickGetGuid")]
+        public static extern Guid JoystickGetGUID(Joystick joystick);
+        [DllImport(LibraryName, EntryPoint = "SDL_JoystickGetVendor")]
+        public static extern ushort JoystickGetVendor(Joystick joystick);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickGetProduct")]
+        public static extern ushort JoystickGetProduct(Joystick joystick);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickGetProductVersion")]
+        public static extern ushort JoystickGetProductVersion(Joystick joystick);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickGetType")]
+        public static extern JoystickType JoystickGetType(Joystick joystick);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickGetGuidText")]
+        public static extern void JoystickGetGuidText(Guid guid, byte* pszGUID, int cbGUID);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickGetGuidFromText")]
+        public static extern Guid JoystickGetGUIDFromText(byte* pchGUID);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickGetAttached")]
+        public static extern bool JoystickGetAttached(Joystick joystick);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickInstanceID")]
+        public static extern JoystickID JoystickInstanceID(Joystick joystick);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickNumAxes")]
+        public static extern int JoystickNumAxes(Joystick joystick);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickNumBalls")]
+        public static extern int JoystickNumBalls(Joystick joystick);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickNumHats")]
+        public static extern int JoystickNumHats(Joystick joystick);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickNumButtons")]
+        public static extern int JoystickNumButtons(Joystick joystick);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickUpdate")]
+        public static extern void JoystickUpdate();        [DllImport(LibraryName, EntryPoint = "SDL_JoystickEventState")]
+        public static extern State JoystickEventState(State state);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickGetAxis")]
+        public static extern short JoystickGetAxis(Joystick joystick, JoystickAxis axis);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickGetAxisInitialState")]
+        public static extern bool JoystickGetAxisInitialState(Joystick joystick, JoystickAxis axis, out short state);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickGetHat")]
+        public static extern JoystickHat JoystickGetHat(Joystick joystick, int hat);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickGetBall")]
+        public static extern int JoystickGetBall(Joystick joystick, int ball, out int dx, out int dy);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickGetButton")]
+        public static extern byte JoystickGetButton(Joystick joystick, int button);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickClose")]
+        public static extern void JoystickClose(Joystick joystick);        [DllImport(LibraryName, EntryPoint = "SDL_JoystickCurrentPowerLevel")]
+        public static extern JoystickPowerLevel JoystickCurrentPowerLevel(Joystick joystick);
 
         //
         // SDL_keyboard.h
         //
-        private delegate Window GetKeyboardFocusDelegate();
-        private static GetKeyboardFocusDelegate _getKeyboardFocus;
-        public static Window GetKeyboardFocus() => _getKeyboardFocus();
-
-        private delegate byte* GetKeyboardStateDelegate(out int numKeys);
-        private static GetKeyboardStateDelegate _getKeyboardState;
-        public static byte* GetKeyboardState(out int numkeys) => _getKeyboardState(out numkeys);
-
-        private delegate KeyMod GetModStateDelegate();
-        private static GetModStateDelegate _getModState;
-        public static KeyMod GetModState() => _getModState();
-
-        private delegate void SetModStateDelegate(KeyMod modState);
-        private static SetModStateDelegate _setModState;
-        public static void SetModState(KeyMod modState) => _setModState(modState);
-
-        private delegate KeyCode GetKeyFromScancodeDelegate(Scancode scancode);
-        private static GetKeyFromScancodeDelegate _getKeyFromScancode;
-        public static KeyCode GetKeyFromScancode(Scancode scancode) => _getKeyFromScancode(scancode);
-
-        private delegate Scancode GetScancodeFromKeyDelegate(KeyCode key);
-        private static GetScancodeFromKeyDelegate _getScancodeFromKey;
-        public static Scancode GetScancodeFromKey(KeyCode key) => _getScancodeFromKey(key);
-
-        private delegate byte* GetScancodeNameDelegate(Scancode scancode);
-        private static GetScancodeNameDelegate _getScancodeName;
-        public static byte* GetScancodeName(Scancode scancode) => _getScancodeName(scancode);
-
-        private delegate Scancode GetScancodeFromNameDelegate(byte* name);
-        private static GetScancodeFromNameDelegate _getScancodeFromName;
-        public static Scancode GetScancodeFromName(byte* name) => _getScancodeFromName(name);
-
-        private delegate byte* GetKeyNameDelegate(KeyCode key);
-        private static GetKeyNameDelegate _getKeyName;
-        public static byte* GetKeyName(KeyCode key) => _getKeyName(key);
-
-        private delegate KeyCode GetKeyFromNameDelegate(byte* name);
-        private static GetKeyFromNameDelegate _getKeyFromName;
-        public static KeyCode GetKeyFromName(byte* name) => _getKeyFromName(name);
-
-        private delegate void StartTextInputDelegate();
-        private static StartTextInputDelegate _startTextInput;
-        public static void StartTextInput() => _startTextInput();
-
-        private delegate bool IsTextInputActiveDelegate();
-        private static IsTextInputActiveDelegate _isTextInputActive;
-        public static bool IsTextInputActive() => _isTextInputActive();
-
-        private delegate void StopTextInputDelegate();
-        private static StopTextInputDelegate _stopTextInput;
-        public static void StopTextInput() => _stopTextInput();
-
-        private delegate void SetTextInputRectDelegate(ref Rect rectangle);
-        private static SetTextInputRectDelegate _setTextInputRect;
-        public static void SetTextInputRect(ref Rect rectangle) => _setTextInputRect(ref rectangle);
-
-        private delegate bool HasScreenKeyboardSupportDelegate();
-        private static HasScreenKeyboardSupportDelegate _hasScreenKeyboardSupport;
-        public static bool HasScreenKeyboardSupport() => _hasScreenKeyboardSupport();
-
-        private delegate bool IsScreenKeyboardShownDelegate(Window window);
-        private static IsScreenKeyboardShownDelegate _isScreenKeyboardShown;
-        public static bool IsScreenKeyboardShown(Window window) => _isScreenKeyboardShown(window);
+        [DllImport(LibraryName, EntryPoint = "SDL_GetKeyboardFocus")]
+        public static extern Window GetKeyboardFocus();        [DllImport(LibraryName, EntryPoint = "SDL_GetKeyboardState")]
+        public static extern byte* GetKeyboardState(out int numkeys);        [DllImport(LibraryName, EntryPoint = "SDL_GetModState")]
+        public static extern KeyMod GetModState();        [DllImport(LibraryName, EntryPoint = "SDL_SetModState")]
+        public static extern void SetModState(KeyMod modState);        [DllImport(LibraryName, EntryPoint = "SDL_GetKeyFromScancode")]
+        public static extern KeyCode GetKeyFromScancode(Scancode scancode);        [DllImport(LibraryName, EntryPoint = "SDL_GetScancodeFromKey")]
+        public static extern Scancode GetScancodeFromKey(KeyCode key);        [DllImport(LibraryName, EntryPoint = "SDL_GetScancodeName")]
+        public static extern byte* GetScancodeName(Scancode scancode);        [DllImport(LibraryName, EntryPoint = "SDL_GetScancodeFromName")]
+        public static extern Scancode GetScancodeFromName(byte* name);        [DllImport(LibraryName, EntryPoint = "SDL_GetKeyName")]
+        public static extern byte* GetKeyName(KeyCode key);        [DllImport(LibraryName, EntryPoint = "SDL_GetKeyFromName")]
+        public static extern KeyCode GetKeyFromName(byte* name);        [DllImport(LibraryName, EntryPoint = "SDL_StartTextInput")]
+        public static extern void StartTextInput();        [DllImport(LibraryName, EntryPoint = "SDL_IsTextInputActive")]
+        public static extern bool IsTextInputActive();        [DllImport(LibraryName, EntryPoint = "SDL_StopTextInput")]
+        public static extern void StopTextInput();        [DllImport(LibraryName, EntryPoint = "SDL_SetTextInputRect")]
+        public static extern void SetTextInputRect(ref Rect rectangle);        [DllImport(LibraryName, EntryPoint = "SDL_HasScreenKeyboardSupport")]
+        public static extern bool HasScreenKeyboardSupport();        [DllImport(LibraryName, EntryPoint = "SDL_IsScreenKeyboardShown")]
+        public static extern bool IsScreenKeyboardShown(Window window);
 
         //
         // SDL_loadso.h
         //
-        private delegate IntPtr LoadObjectDelegate(byte* file);
-        private static LoadObjectDelegate _loadObject;
-        public static IntPtr LoadObject(byte* file) => _loadObject(file);
-
-        private delegate IntPtr LoadFunctionDelegate(IntPtr handle, byte* name);
-        private static LoadFunctionDelegate _loadFunction;
-        public static IntPtr LoadFunction(IntPtr handle, byte* name) => _loadFunction(handle, name);
-
-        private delegate void UnloadObjectDelegate(IntPtr handle);
-        private static UnloadObjectDelegate _unloadObject;
-        public static void UnloadObject(IntPtr handle) => _unloadObject(handle);
+        [DllImport(LibraryName, EntryPoint = "SDL_LoadObject")]
+        public static extern IntPtr LoadObject(byte* file);        [DllImport(LibraryName, EntryPoint = "SDL_LoadFunction")]
+        public static extern IntPtr LoadFunction(IntPtr handle, byte* name);        [DllImport(LibraryName, EntryPoint = "SDL_UnloadObject")]
+        public static extern void UnloadObject(IntPtr handle);
 
         //
         // SDL_log.h
         //
-        private delegate void LogSetAllPriorityDelegate(LogPriority priority);
-        private static LogSetAllPriorityDelegate _logSetAllPriority;
-        public static void LogSetAllPriority(LogPriority priority) => _logSetAllPriority(priority);
-
-        private delegate void LogSetPriorityDelegate(LogCategory category, LogPriority priority);
-        private static LogSetPriorityDelegate _logSetPriority;
-        public static void LogSetPriority(LogCategory category, LogPriority priority) => _logSetPriority(category, priority);
-
-        private delegate LogPriority LogGetPriorityDelegate(LogCategory category);
-        private static LogGetPriorityDelegate _logGetPriority;
-        public static LogPriority LogGetPriority(LogCategory category) => _logGetPriority(category);
-
-        private delegate void LogResetPrioritiesDelegate();
-        private static LogResetPrioritiesDelegate _logResetPriorities;
-        public static void LogResetPriorities() => _logResetPriorities();
-
-        private delegate void LogDelegate(byte* fmt, params object[] objects);
-        private static LogDelegate _log;
-        public static void Log(byte* fmt, params object[] objects) => _log(fmt, objects);
-
-        private delegate void LogVerboseDelegate(LogCategory category, byte* fmt, params object[] objects);
-        private static LogVerboseDelegate _logVerbose;
-        public static void LogVerbose(LogCategory category, byte* fmt, params object[] objects) => _logVerbose(category, fmt, objects);
-
-        private delegate void LogDebugDelegate(LogCategory category, byte* fmt, params object[] objects);
-        private static LogDebugDelegate _logDebug;
-        public static void LogDebug(LogCategory category, byte* fmt, params object[] objects) => _logDebug(category, fmt, objects);
-
-        private delegate void LogInfoDelegate(LogCategory category, byte* fmt, params object[] objects);
-        private static LogInfoDelegate _logInfo;
-        public static void LogInfo(LogCategory category, byte* fmt, params object[] objects) => _logInfo(category, fmt, objects);
-
-        private delegate void LogWarnDelegate(LogCategory category, byte* fmt, params object[] objects);
-        private static LogWarnDelegate _logWarn;
-        public static void LogWarn(LogCategory category, byte* fmt, params object[] objects) => _logWarn(category, fmt, objects);
-
-        private delegate void LogErrorDelegate(LogCategory category, byte* fmt, params object[] objects);
-        private static LogErrorDelegate _logError;
-        public static void LogError(LogCategory category, byte* fmt, params object[] objects) => _logError(category, fmt, objects);
-
-        private delegate void LogCriticalDelegate(LogCategory category, byte* fmt, params object[] objects);
-        private static LogCriticalDelegate _logCritical;
-        public static void LogCritical(LogCategory category, byte* fmt, params object[] objects) => _logCritical(category, fmt, objects);
-
-        private delegate void LogMessageDelegate(LogCategory category, byte* fmt, params object[] objects);
-        private static LogMessageDelegate _logMessage;
-        public static void LogMessage(LogCategory category, byte* fmt, params object[] objects) => _logMessage(category, fmt, objects);
-
-        private delegate void LogGetOutputFunctionDelegate(LogOutputFunction callback, IntPtr userData);
-        private static LogGetOutputFunctionDelegate _logGetOutputFunction;
-        public static void LogGetOutputFunction(LogOutputFunction callback, IntPtr userData) => _logGetOutputFunction(callback, userData);
-
-        private delegate void LogSetOutputFunctionDelegate(LogOutputFunction callback, IntPtr userData);
-        private static LogSetOutputFunctionDelegate _logSetOutputFunction;
-        public static void LogSetOutputFunction(LogOutputFunction callback, IntPtr userData) => _logSetOutputFunction(callback, userData);
+        [DllImport(LibraryName, EntryPoint = "SDL_LogSetAllPriority")]
+        public static extern void LogSetAllPriority(LogPriority priority);        [DllImport(LibraryName, EntryPoint = "SDL_LogSetPriority")]
+        public static extern void LogSetPriority(LogCategory category, LogPriority priority);        [DllImport(LibraryName, EntryPoint = "SDL_LogGetPriority")]
+        public static extern LogPriority LogGetPriority(LogCategory category);        [DllImport(LibraryName, EntryPoint = "SDL_LogResetPriorities")]
+        public static extern void LogResetPriorities();        [DllImport(LibraryName, EntryPoint = "SDL_Log")]
+        public static extern void Log(byte* fmt, params object[] objects);        [DllImport(LibraryName, EntryPoint = "SDL_LogVerbose")]
+        public static extern void LogVerbose(LogCategory category, byte* fmt, params object[] objects);        [DllImport(LibraryName, EntryPoint = "SDL_LogDebug")]
+        public static extern void LogDebug(LogCategory category, byte* fmt, params object[] objects);        [DllImport(LibraryName, EntryPoint = "SDL_LogInfo")]
+        public static extern void LogInfo(LogCategory category, byte* fmt, params object[] objects);        [DllImport(LibraryName, EntryPoint = "SDL_LogWarn")]
+        public static extern void LogWarn(LogCategory category, byte* fmt, params object[] objects);        [DllImport(LibraryName, EntryPoint = "SDL_LogError")]
+        public static extern void LogError(LogCategory category, byte* fmt, params object[] objects);        [DllImport(LibraryName, EntryPoint = "SDL_LogCritical")]
+        public static extern void LogCritical(LogCategory category, byte* fmt, params object[] objects);        [DllImport(LibraryName, EntryPoint = "SDL_LogMessage")]
+        public static extern void LogMessage(LogCategory category, byte* fmt, params object[] objects);        [DllImport(LibraryName, EntryPoint = "SDL_LogGetOutputFunction")]
+        public static extern void LogGetOutputFunction(LogOutputFunction callback, IntPtr userData);        [DllImport(LibraryName, EntryPoint = "SDL_LogSetOutputFunction")]
+        public static extern void LogSetOutputFunction(LogOutputFunction callback, IntPtr userData);
 
         //
         // SDL_messagebox.h
         //
-        private delegate int ShowMessageBoxDelegate(ref MessageBoxData messageBoxData, out int buttonID);
-        private static ShowMessageBoxDelegate _showMessageBox;
-        public static int ShowMessageBox(ref MessageBoxData messageBoxData, out int buttonID) => _showMessageBox(ref messageBoxData, out buttonID);
-
-        private delegate int ShowSimpleMessageBoxDelegate(MessageBoxFlags flags, byte* title, byte* message, Window window);
-        private static ShowSimpleMessageBoxDelegate _showSimpleMessageBox;
-        public static int ShowSimpleMessageBox(MessageBoxFlags flags, byte* title, byte* message, Window window) => _showSimpleMessageBox(flags, title, message, window);
+        [DllImport(LibraryName, EntryPoint = "SDL_ShowMessageBox")]
+        public static extern int ShowMessageBox(ref MessageBoxData messageBoxData, out int buttonID);        [DllImport(LibraryName, EntryPoint = "SDL_ShowSimpleMessageBox")]
+        public static extern int ShowSimpleMessageBox(MessageBoxFlags flags, byte* title, byte* message, Window window);
 
         //
         // SDL_mouse.h
         //
-        private delegate Window GetMouseFocusDelegate();
-        private static GetMouseFocusDelegate _getMouseFocus;
-        public static Window GetMouseFocus() => _getMouseFocus();
-
-        private delegate MouseButtonState GetMouseStateDelegate(out int x, out int y);
-        private static GetMouseStateDelegate _getMouseState;
-        public static MouseButtonState GetMouseState(out int x, out int y) => _getMouseState(out x, out y);
-
-        private delegate MouseButtonState GetGlobalMouseStateDelegate(out int x, out int y);
-        private static GetGlobalMouseStateDelegate _getGlobalMouseState;
-        public static MouseButtonState GetGlobalMouseState(out int x, out int y) => _getGlobalMouseState(out x, out y);
-
-        private delegate MouseButtonState GetRelativeMouseStateDelegate(out int x, out int y);
-        private static GetRelativeMouseStateDelegate _getRelativeMouseState;
-        public static MouseButtonState GetRelativeMouseState(out int x, out int y) => _getRelativeMouseState(out x, out y);
-
-        private delegate void WarpMouseInWindowDelegate(Window window, int x, int y);
-        private static WarpMouseInWindowDelegate _warpMouseInWindow;
-        public static void WarpMouseInWindow(Window window, int x, int y) => _warpMouseInWindow(window, x, y);
-
-        private delegate int WarpMouseGlobalDelegate(int x, int y);
-        private static WarpMouseGlobalDelegate _warpMouseGlobal;
-        public static int WarpMouseGlobal(int x, int y) => _warpMouseGlobal(x, y);
-
-        private delegate int SetRelativeMouseModeDelegate(bool enabled);
-        private static SetRelativeMouseModeDelegate _setRelativeMouseMode;
-        public static int SetRelativeMouseMode(bool enabled) => _setRelativeMouseMode(enabled);
-
-        private delegate int CaptureMouseDelegate(bool enabled);
-        private static CaptureMouseDelegate _captureMouse;
-        public static int CaptureMouse(bool enabled) => _captureMouse(enabled);
-
-        private delegate bool GetRelativeMouseModeDelegate();
-        private static GetRelativeMouseModeDelegate _getRelativeMouseMode;
-        public static bool GetRelativeMouseMode() => _getRelativeMouseMode();
-
-        private delegate Cursor CreateCursorDelegate(byte[] data, byte[] mask, int w, int h, int hotX, int hotY);
-        private static CreateCursorDelegate _createCursor;
-        public static Cursor CreateCursor(byte[] data, byte[] mask, int w, int h, int hotX, int hotY) => _createCursor(data, mask, w, h, hotX, hotY);
-
-        private delegate Cursor CreateColorCursorDelegate(Surface surface, int hotX, int hotY);
-        private static CreateColorCursorDelegate _createColorCursor;
-        public static Cursor CreateColorCursor(Surface surface, int hotX, int hotY) => _createColorCursor(surface, hotX, hotY);
-
-        private delegate Cursor CreateSystemCursorDelegate(SystemCursor id);
-        private static CreateSystemCursorDelegate _createSystemCursor;
-        public static Cursor CreateSystemCursor(SystemCursor id) => _createSystemCursor(id);
-
-        private delegate void SetCursorDelegate(Cursor cursor);
-        private static SetCursorDelegate _setCursor;
-        public static void SetCursor(Cursor cursor) => _setCursor(cursor);
-
-        private delegate Cursor GetCursorDelegate();
-        private static GetCursorDelegate _getCursor;
-        public static Cursor GetCursor() => _getCursor();
-
-        private delegate Cursor GetDefaultCursorDelegate();
-        private static GetDefaultCursorDelegate _getDefaultCursor;
-        public static Cursor GetDefaultCursor() => _getDefaultCursor();
-
-        private delegate void FreeCursorDelegate(Cursor cursor);
-        private static FreeCursorDelegate _freeCursor;
-        public static void FreeCursor(Cursor cursor) => _freeCursor(cursor);
-
-        private delegate State ShowCursorDelegate(State toggle);
-        private static ShowCursorDelegate _showCursor;
-        public static State ShowCursor(State toggle) => _showCursor(toggle);
+        [DllImport(LibraryName, EntryPoint = "SDL_GetMouseFocus")]
+        public static extern Window GetMouseFocus();        [DllImport(LibraryName, EntryPoint = "SDL_GetMouseState")]
+        public static extern MouseButtonState GetMouseState(out int x, out int y);        [DllImport(LibraryName, EntryPoint = "SDL_GetGlobalMouseState")]
+        public static extern MouseButtonState GetGlobalMouseState(out int x, out int y);        [DllImport(LibraryName, EntryPoint = "SDL_GetRelativeMouseState")]
+        public static extern MouseButtonState GetRelativeMouseState(out int x, out int y);        [DllImport(LibraryName, EntryPoint = "SDL_WarpMouseInWindow")]
+        public static extern void WarpMouseInWindow(Window window, int x, int y);        [DllImport(LibraryName, EntryPoint = "SDL_WarpMouseGlobal")]
+        public static extern int WarpMouseGlobal(int x, int y);        [DllImport(LibraryName, EntryPoint = "SDL_SetRelativeMouseMode")]
+        public static extern int SetRelativeMouseMode(bool enabled);        [DllImport(LibraryName, EntryPoint = "SDL_CaptureMouse")]
+        public static extern int CaptureMouse(bool enabled);        [DllImport(LibraryName, EntryPoint = "SDL_GetRelativeMouseMode")]
+        public static extern bool GetRelativeMouseMode();        [DllImport(LibraryName, EntryPoint = "SDL_CreateCursor")]
+        public static extern Cursor CreateCursor(byte* data, byte* mask, int w, int h, int hotX, int hotY);        [DllImport(LibraryName, EntryPoint = "SDL_CreateColorCursor")]
+        public static extern Cursor CreateColorCursor(Surface surface, int hotX, int hotY);        [DllImport(LibraryName, EntryPoint = "SDL_CreateSystemCursor")]
+        public static extern Cursor CreateSystemCursor(SystemCursor id);        [DllImport(LibraryName, EntryPoint = "SDL_SetCursor")]
+        public static extern void SetCursor(Cursor cursor);        [DllImport(LibraryName, EntryPoint = "SDL_GetCursor")]
+        public static extern Cursor GetCursor();        [DllImport(LibraryName, EntryPoint = "SDL_GetDefaultCursor")]
+        public static extern Cursor GetDefaultCursor();        [DllImport(LibraryName, EntryPoint = "SDL_FreeCursor")]
+        public static extern void FreeCursor(Cursor cursor);        [DllImport(LibraryName, EntryPoint = "SDL_ShowCursor")]
+        public static extern State ShowCursor(State toggle);
 
         //
         // SDL_pixels.h
         //
-        private delegate byte* GetPixelFormatNameDelegate(uint format);
-        private static GetPixelFormatNameDelegate _getPixelFormatName;
-        public static byte* GetPixelFormatName(uint format) => _getPixelFormatName(format);
-
-        private delegate bool PixelFormatEnumToMasksDelegate(uint format, out int bpp, out uint rMask, out uint gMask, out uint bMask, out uint aMask);
-        private static PixelFormatEnumToMasksDelegate _pixelFormatEnumToMasks;
-        public static bool PixelFormatEnumToMasks(uint format, out int bpp, out uint rMask, out uint gMask, out uint bMask, out uint aMask) => _pixelFormatEnumToMasks(format, out bpp, out rMask, out gMask, out bMask, out aMask);
-
-        private delegate uint MasksToPixelFormatEnumDelegate(int bpp, uint rMask, uint gMask, uint bMask, uint aMask);
-        private static MasksToPixelFormatEnumDelegate _masksToPixelFormatEnum;
-        public static uint MasksToPixelFormatEnum(int bpp, uint rMask, uint gMask, uint bMask, uint aMask) => _masksToPixelFormatEnum(bpp, rMask, gMask, bMask, aMask);
-
-        private delegate PixelFormat* AllocFormatDelegate(uint pixelFormat);
-        private static AllocFormatDelegate _allocFormat;
-        public static PixelFormat* AllocFormat(uint pixelFormat) => _allocFormat(pixelFormat);
-
-        private delegate void FreeFormatDelegate(ref PixelFormat pixelFormat);
-        private static FreeFormatDelegate _freeFormat;
-        public static void FreeFormat(ref PixelFormat pixelFormat) => _freeFormat(ref pixelFormat);
-
-        private delegate IntPtr AllocPaletteDelegate(int numColors);
-        private static AllocPaletteDelegate _allocPalette;
-        public static IntPtr AllocPalette(int numColors) => _allocPalette(numColors);
-
-        private delegate int SetPixelFormatPaletteDelegate(ref PixelFormat format, ref Palette palette);
-        private static SetPixelFormatPaletteDelegate _setPixelFormatPalette;
-        public static int SetPixelFormatPalette(ref PixelFormat format, ref Palette palette) => _setPixelFormatPalette(ref format, ref palette);
-
-        private delegate int SetPaletteColorsDelegate(Palette palette, Color[] colors, int firstColor, int numColors);
-        private static SetPaletteColorsDelegate _setPaletteColors;
-        public static int SetPaletteColors(Palette palette, Color[] colors, int firstColor, int numColors) => _setPaletteColors(palette, colors, firstColor, numColors);
-
-        private delegate void FreePaletteDelegate(Palette palette);
-        private static FreePaletteDelegate _freePalette;
-        public static void FreePalette(Palette palette) => _freePalette(palette);
-
-        private delegate uint MapRgbDelegate(ref PixelFormat format, byte r, byte g, byte b);
-        private static MapRgbDelegate _mapRgb;
-        public static uint MapRgb(ref PixelFormat format, byte r, byte g, byte b) => _mapRgb(ref format, r, g, b);
-
-        private delegate uint MapRgbaDelegate(ref PixelFormat format, byte r, byte g, byte b, byte a);
-        private static MapRgbaDelegate _mapRgba;
-        public static uint MapRgba(ref PixelFormat format, byte r, byte g, byte b, byte a) => _mapRgba(ref format, r, g, b, a);
-
-        private delegate void GetRgbDelegate(uint pixel, ref PixelFormat format, out byte r, out byte g, out byte b);
-        private static GetRgbDelegate _getRgb;
-        public static void GetRgb(uint pixel, ref PixelFormat format, out byte r, out byte g, out byte b) => _getRgb(pixel, ref format, out r, out g, out b);
-
-        private delegate void GetRgbaDelegate(uint pixel, ref PixelFormat format, out byte r, out byte g, out byte b, out byte a);
-        private static GetRgbaDelegate _getRgba;
-        public static void GetRgba(uint pixel, ref PixelFormat format, out byte r, out byte g, out byte b, out byte a) => _getRgba(pixel, ref format, out r, out g, out b, out a);
-
-        private delegate void CalculateGammaRampDelegate(float gamma, out ushort[] ramp);
-        private static CalculateGammaRampDelegate _calculateGammaRamp;
-        public static void CalculateGammaRamp(float gamma, out ushort[] ramp) => _calculateGammaRamp(gamma, out ramp);
+        [DllImport(LibraryName, EntryPoint = "SDL_GetPixelFormatName")]
+        public static extern byte* GetPixelFormatName(uint format);        [DllImport(LibraryName, EntryPoint = "SDL_PixelFormatEnumToMasks")]
+        public static extern bool PixelFormatEnumToMasks(uint format, out int bpp, out uint rMask, out uint gMask, out uint bMask, out uint aMask);        [DllImport(LibraryName, EntryPoint = "SDL_MasksToPixelFormatEnum")]
+        public static extern uint MasksToPixelFormatEnum(int bpp, uint rMask, uint gMask, uint bMask, uint aMask);        [DllImport(LibraryName, EntryPoint = "SDL_AllocFormat")]
+        public static extern PixelFormat* AllocFormat(uint pixelFormat);        [DllImport(LibraryName, EntryPoint = "SDL_FreeFormat")]
+        public static extern void FreeFormat(ref PixelFormat pixelFormat);        [DllImport(LibraryName, EntryPoint = "SDL_AllocPalette")]
+        public static extern IntPtr AllocPalette(int numColors);        [DllImport(LibraryName, EntryPoint = "SDL_SetPixelFormatPalette")]
+        public static extern int SetPixelFormatPalette(ref PixelFormat format, ref Palette palette);        [DllImport(LibraryName, EntryPoint = "SDL_SetPaletteColors")]
+        public static extern int SetPaletteColors(Palette palette, Color* colors, int firstColor, int numColors);        [DllImport(LibraryName, EntryPoint = "SDL_FreePalette")]
+        public static extern void FreePalette(Palette palette);        [DllImport(LibraryName, EntryPoint = "SDL_MapRgb")]
+        public static extern uint MapRgb(ref PixelFormat format, byte r, byte g, byte b);        [DllImport(LibraryName, EntryPoint = "SDL_MapRgba")]
+        public static extern uint MapRgba(ref PixelFormat format, byte r, byte g, byte b, byte a);        [DllImport(LibraryName, EntryPoint = "SDL_GetRgb")]
+        public static extern void GetRgb(uint pixel, ref PixelFormat format, out byte r, out byte g, out byte b);        [DllImport(LibraryName, EntryPoint = "SDL_GetRgba")]
+        public static extern void GetRgba(uint pixel, ref PixelFormat format, out byte r, out byte g, out byte b, out byte a);        [DllImport(LibraryName, EntryPoint = "SDL_CalculateGammaRamp")]
+        public static extern void CalculateGammaRamp(float gamma, out ushort* ramp);
 
         //
         // SDL_platform.h
         //
-        private delegate byte* GetPlatformDelegate();
-        private static GetPlatformDelegate _getPlatform;
-        public static byte* GetPlatform() => _getPlatform();
+        [DllImport(LibraryName, EntryPoint = "SDL_GetPlatform")]
+        public static extern byte* GetPlatform();
 
         //
         // SDL_power.h
         //
-        private delegate PowerState GetPowerInfoDelegate(out int seconds, out int percentage);
-        private static GetPowerInfoDelegate _getPowerInfo;
-        public static PowerState GetPowerInfo(out int seconds, out int percentage) => _getPowerInfo(out seconds, out percentage);
+        [DllImport(LibraryName, EntryPoint = "SDL_GetPowerInfo")]
+        public static extern PowerState GetPowerInfo(out int seconds, out int percentage);
 
         //
         // SDL_rect.h
         //
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool PointInRect(ref Point p, ref Rect r)
-        {
-            return ((p.X >= r.X) && (p.X < (r.X + r.W)) &&
-                    (p.Y >= r.Y) && (p.Y < (r.Y + r.H))) ? true : false;
-        }
-
+        public static bool PointInRect(ref Point p, ref Rect r) => ((p.X >= r.X) && (p.X < (r.X + r.W)) && (p.Y >= r.Y) && (p.Y < (r.Y + r.H))) ? true : false;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool RectEmpty(ref Rect r)
-        {
-            return ((r.W <= 0) || (r.H <= 0)) ? true : false;
-        }
-
+        public static bool RectEmpty(ref Rect r) => ((r.W <= 0) || (r.H <= 0)) ? true : false;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool RectEquals(ref Rect a, ref Rect b)
-        {
-            return ((a.X == b.X) && (a.Y == b.Y) &&
-                    (a.W == b.W) && (a.H == b.H)) ? true : false;
-        }
-
-        private delegate bool HasIntersectionDelegate(ref Rect a, ref Rect b);
-        private static HasIntersectionDelegate _hasIntersection;
-        public static bool HasIntersection(ref Rect a, ref Rect b) => _hasIntersection(ref a, ref b);
-
-        private delegate bool IntersectRectDelegate(ref Rect a, ref Rect b, out Rect result);
-        private static IntersectRectDelegate _intersectRect;
-        public static bool IntersectRect(ref Rect a, ref Rect b, out Rect result) => _intersectRect(ref a, ref b, out result);
-
-        private delegate void UnionRectDelegate(ref Rect a, ref Rect b, out Rect result);
-        private static UnionRectDelegate _unionRect;
-        public static void UnionRect(ref Rect a, ref Rect b, out Rect result) => _unionRect(ref a, ref b, out result);
-
-        private delegate bool EnclosePointsDelegate(Point[] points, int count, ref Rect clip, out Rect result);
-        private static EnclosePointsDelegate _enclosePoints;
-        public static bool EnclosePoints(Point[] points, int count, ref Rect clip, out Rect result) => _enclosePoints(points, count, ref clip, out result);
-
-        private delegate bool IntersectRectAndLineDelegate(ref Rect rectangle, ref int x1, ref int y1, ref int x2, ref int y2);
-        private static IntersectRectAndLineDelegate _intersectRectAndLine;
-        public static bool IntersectRectAndLine(ref Rect rectangle, ref int x1, ref int y1, ref int x2, ref int y2) => _intersectRectAndLine(ref rectangle, ref x1, ref y1, ref x2, ref y2);
+        public static bool RectEquals(ref Rect a, ref Rect b) => ((a.X == b.X) && (a.Y == b.Y) && (a.W == b.W) && (a.H == b.H)) ? true : false;        [DllImport(LibraryName, EntryPoint = "SDL_HasIntersection")]
+        public static extern bool HasIntersection(ref Rect a, ref Rect b);        [DllImport(LibraryName, EntryPoint = "SDL_IntersectRect")]
+        public static extern bool IntersectRect(ref Rect a, ref Rect b, out Rect result);        [DllImport(LibraryName, EntryPoint = "SDL_UnionRect")]
+        public static extern void UnionRect(ref Rect a, ref Rect b, out Rect result);        [DllImport(LibraryName, EntryPoint = "SDL_EnclosePoints")]
+        public static extern bool EnclosePoints(Point* points, int count, ref Rect clip, out Rect result);        [DllImport(LibraryName, EntryPoint = "SDL_IntersectRectAndLine")]
+        public static extern bool IntersectRectAndLine(ref Rect rectangle, ref int x1, ref int y1, ref int x2, ref int y2);
 
         //
         // SDL_render.h
         //
-        private delegate int GetNumRenderDriversDelegate();
-        private static GetNumRenderDriversDelegate _getNumRenderDrivers;
-        public static int GetNumRenderDrivers() => _getNumRenderDrivers();
-
-        private delegate int GetRenderDriverInfoDelegate(int index, out RendererInfo info);
-        private static GetRenderDriverInfoDelegate _getRenderDriverInfo;
-        public static int GetRenderDriverInfo(int index, out RendererInfo info) => _getRenderDriverInfo(index, out info);
-
-        private delegate int CreateWindowAndRendererDelegate(int width, int height, WindowFlags windowFlags, out Window window, out Renderer renderer);
-        private static CreateWindowAndRendererDelegate _createWindowAndRenderer;
-        public static int CreateWindowAndRenderer(int width, int height, WindowFlags windowFlags, out Window window, out Renderer renderer) => _createWindowAndRenderer(width, height, windowFlags, out window, out renderer);
-
-        private delegate Renderer CreateRendererDelegate(Window window, int index, RendererFlags flags);
-        private static CreateRendererDelegate _createRenderer;
-        public static Renderer CreateRenderer(Window window, int index, RendererFlags flags) => _createRenderer(window, index, flags);
-
-        private delegate Renderer CreateSoftwareRendererDelegate(Surface surface);
-        private static CreateSoftwareRendererDelegate _createSoftwareRenderer;
-        public static Renderer CreateSoftwareRenderer(Surface surface) => _createSoftwareRenderer(surface);
-
-        private delegate Renderer GetRendererDelegate(Window window);
-        private static GetRendererDelegate _getRenderer;
-        public static Renderer GetRenderer(Window window) => _getRenderer(window);
-
-        private delegate int GetRendererInfoDelegate(Renderer renderer, out RendererInfo info);
-        private static GetRendererInfoDelegate _getRendererInfo;
-        public static int GetRendererInfo(Renderer renderer, out RendererInfo info) => _getRendererInfo(renderer, out info);
-
-        private delegate int GetRendererOutputSizeDelegate(Renderer renderer, out int w, out int h);
-        private static GetRendererOutputSizeDelegate _getRendererOutputSize;
-        public static int GetRendererOutputSize(Renderer renderer, out int w, out int h) => _getRendererOutputSize(renderer, out w, out h);
-
-        private delegate Texture CreateTextureDelegate(Renderer renderer, uint format, int access, int w, int h);
-        private static CreateTextureDelegate _createTexture;
-        public static Texture CreateTexture(Renderer renderer, uint format, int access, int w, int h) => _createTexture(renderer, format, access, w, h);
-
-        private delegate Texture CreateTextureFromSurfaceDelegate(Renderer renderer, Surface surface);
-        private static CreateTextureFromSurfaceDelegate _createTextureFromSurface;
-        public static Texture CreateTextureFromSurface(Renderer renderer, Surface surface) => _createTextureFromSurface(renderer, surface);
-
-        private delegate int QueryTextureDelegate(Texture texture, out uint format, out int access, out int w, out int h);
-        private static QueryTextureDelegate _queryTexture;
-        public static int QueryTexture(Texture texture, out uint format, out int access, out int w, out int h) => _queryTexture(texture, out format, out access, out w, out h);
-
-        private delegate int SetTextureColorModDelegate(Texture texture, byte r, byte g, byte b);
-        private static SetTextureColorModDelegate _setTextureColorMod;
-        public static int SetTextureColorMod(Texture texture, byte r, byte g, byte b) => _setTextureColorMod(texture, r, g, b);
-
-        private delegate int GetTextureColorModDelegate(Texture texture, out byte r, out byte g, out byte b);
-        private static GetTextureColorModDelegate _getTextureColorMod;
-        public static int GetTextureColorMod(Texture texture, out byte r, out byte g, out byte b) => _getTextureColorMod(texture, out r, out g, out b);
-
-        private delegate int SetTextureAlphaModDelegate(Texture texture, byte alpha);
-        private static SetTextureAlphaModDelegate _setTextureAlphaMod;
-        public static int SetTextureAlphaMod(Texture texture, byte alpha) => _setTextureAlphaMod(texture, alpha);
-
-        private delegate int GetTextureAlphaModDelegate(Texture texture, out byte alpha);
-        private static GetTextureAlphaModDelegate _getTextureAlphaMod;
-        public static int GetTextureAlphaMod(Texture texture, out byte alpha) => _getTextureAlphaMod(texture, out alpha);
-
-        private delegate int SetTextureBlendModeDelegate(Texture texture, BlendMode blendMode);
-        private static SetTextureBlendModeDelegate _setTextureBlendMode;
-        public static int SetTextureBlendMode(Texture texture, BlendMode blendMode) => _setTextureBlendMode(texture, blendMode);
-
-        private delegate int GetTextureBlendModeDelegate(Texture texture, out BlendMode blendMode);
-        private static GetTextureBlendModeDelegate _getTextureBlendMode;
-        public static int GetTextureBlendMode(Texture texture, out BlendMode blendMode) => _getTextureBlendMode(texture, out blendMode);
-
-        private delegate int UpdateTextureDelegate(Texture texture, ref Rect rect, IntPtr pixels, int pitch);
-        private static UpdateTextureDelegate _updateTexture;
-        public static int UpdateTexture(Texture texture, ref Rect rect, IntPtr pixels, int pitch) => _updateTexture(texture, ref rect, pixels, pitch);
-
-        private delegate int UpdateYUVTextureDelegate(Texture texture, ref Rect rect, byte[] yPlane, int yPitch, byte[] uPlane, int uPitch, byte[] vPlane, int vPitch);
-        private static UpdateYUVTextureDelegate _updateYUVTexture;
-        public static int UpdateYUVTexture(Texture texture, ref Rect rect, byte[] yPlane, int yPitch, byte[] uPlane, int uPitch, byte[] vPlane, int vPitch) => _updateYUVTexture(texture, ref rect, yPlane, yPitch, uPlane, uPitch, vPlane, vPitch);
-
-        private delegate int LockTextureDelegate(Texture texture, ref Rect rect, out IntPtr pixels, out int pitch);
-        private static LockTextureDelegate _lockTexture;
-        public static int LockTexture(Texture texture, ref Rect rect, out IntPtr pixels, out int pitch) => _lockTexture(texture, ref rect, out pixels, out pitch);
-
-        private delegate void UnlockTextureDelegate(Texture texture);
-        private static UnlockTextureDelegate _unlockTexture;
-        public static void UnlockTexture(Texture texture) => _unlockTexture(texture);
-
-        private delegate bool RenderTargetSupportedDelegate(Renderer renderer);
-        private static RenderTargetSupportedDelegate _renderTargetSupported;
-        public static bool RenderTargetSupported(Renderer renderer) => _renderTargetSupported(renderer);
-
-        private delegate int SetRenderTargetDelegate(Renderer renderer, Texture texture);
-        private static SetRenderTargetDelegate _setRenderTarget;
-        public static int SetRenderTarget(Renderer renderer, Texture texture) => _setRenderTarget(renderer, texture);
-
-        private delegate Texture GetRenderTargetDelegate(Renderer renderer);
-        private static GetRenderTargetDelegate _getRenderTarget;
-        public static Texture GetRenderTarget(Renderer renderer) => _getRenderTarget(renderer);
-
-        private delegate int RenderSetLogicalSizeDelegate(Renderer renderer, int w, int h);
-        private static RenderSetLogicalSizeDelegate _renderSetLogicalSize;
-        public static int RenderSetLogicalSize(Renderer renderer, int w, int h) => _renderSetLogicalSize(renderer, w, h);
-
-        private delegate void RenderGetLogicalSizeDelegate(Renderer renderer, out int w, out int h);
-        private static RenderGetLogicalSizeDelegate _renderGetLogicalSize;
-        public static void RenderGetLogicalSize(Renderer renderer, out int w, out int h) => _renderGetLogicalSize(renderer, out w, out h);
-
-        private delegate int RenderSetIntegerScaleDelegate(Renderer renderer, bool enable);
-        private static RenderSetIntegerScaleDelegate _renderSetIntegerScale;
-        public static int RenderSetIntegerScale(Renderer renderer, bool enable) => _renderSetIntegerScale(renderer, enable);
-
-        private delegate bool RenderGetIntegerScaleDelegate(Renderer renderer);
-        private static RenderGetIntegerScaleDelegate _renderGetIntegerScale;
-        public static bool RenderGetIntegerScale(Renderer renderer) => _renderGetIntegerScale(renderer);
-
-        private delegate int RenderSetViewportDelegate(Renderer renderer, ref Rect rect);
-        private static RenderSetViewportDelegate _renderSetViewport;
-        public static int RenderSetViewport(Renderer renderer, ref Rect rect) => _renderSetViewport(renderer, ref rect);
-
-        private delegate void RenderGetViewportDelegate(Renderer renderer, out Rect rect);
-        private static RenderGetViewportDelegate _renderGetViewport;
-        public static void RenderGetViewport(Renderer renderer, out Rect rect) => _renderGetViewport(renderer, out rect);
-
-        private delegate int RenderSetClipRectDelegate(Renderer renderer, ref Rect rect);
-        private static RenderSetClipRectDelegate _renderSetClipRect;
-        public static int RenderSetClipRect(Renderer renderer, ref Rect rect) => _renderSetClipRect(renderer, ref rect);
-
-        private delegate void RenderGetClipRectDelegate(Renderer renderer, out Rect rect);
-        private static RenderGetClipRectDelegate _renderGetClipRect;
-        public static void RenderGetClipRect(Renderer renderer, out Rect rect) => _renderGetClipRect(renderer, out rect);
-
-        private delegate bool RenderIsClipEnabledDelegate(Renderer renderer);
-        private static RenderIsClipEnabledDelegate _renderIsClipEnabled;
-        public static bool RenderIsClipEnabled(Renderer renderer) => _renderIsClipEnabled(renderer);
-
-        private delegate int RenderSetScaleDelegate(Renderer renderer, float scaleX, float scaleY);
-        private static RenderSetScaleDelegate _renderSetScale;
-        public static int RenderSetScale(Renderer renderer, float scaleX, float scaleY) => _renderSetScale(renderer, scaleX, scaleY);
-
-        private delegate void RenderGetScaleDelegate(Renderer renderer, out float scaleX, out float scaleY);
-        private static RenderGetScaleDelegate _renderGetScale;
-        public static void RenderGetScale(Renderer renderer, out float scaleX, out float scaleY) => _renderGetScale(renderer, out scaleX, out scaleY);
-
-        private delegate int SetRenderDrawColorDelegate(Renderer renderer, byte r, byte g, byte b, byte a);
-        private static SetRenderDrawColorDelegate _setRenderDrawColor;
-        public static int SetRenderDrawColor(Renderer renderer, byte r, byte g, byte b, byte a) => _setRenderDrawColor(renderer, r, g, b, a);
-
-        private delegate int GetRenderDrawColorDelegate(Renderer renderer, out byte r, out byte g, out byte b, out byte a);
-        private static GetRenderDrawColorDelegate _getRenderDrawColor;
-        public static int GetRenderDrawColor(Renderer renderer, out byte r, out byte g, out byte b, out byte a) => _getRenderDrawColor(renderer, out r, out g, out b, out a);
-
-        private delegate int SetRenderDrawBlendModeDelegate(Renderer renderer, BlendMode blendMode);
-        private static SetRenderDrawBlendModeDelegate _setRenderDrawBlendMode;
-        public static int SetRenderDrawBlendMode(Renderer renderer, BlendMode blendMode) => _setRenderDrawBlendMode(renderer, blendMode);
-
-        private delegate int GetRenderDrawBlendModeDelegate(Renderer renderer, out BlendMode blendMode);
-        private static GetRenderDrawBlendModeDelegate _getRenderDrawBlendMode;
-        public static int GetRenderDrawBlendMode(Renderer renderer, out BlendMode blendMode) => _getRenderDrawBlendMode(renderer, out blendMode);
-
-        private delegate int RenderClearDelegate(Renderer renderer);
-        private static RenderClearDelegate _renderClear;
-        public static int RenderClear(Renderer renderer) => _renderClear(renderer);
-
-        private delegate int RenderDrawPointDelegate(Renderer renderer, int x, int y);
-        private static RenderDrawPointDelegate _renderDrawPoint;
-        public static int RenderDrawPoint(Renderer renderer, int x, int y) => _renderDrawPoint(renderer, x, y);
-
-        private delegate int RenderDrawPointsDelegate(Renderer renderer, Point[] points, int count);
-        private static RenderDrawPointsDelegate _renderDrawPoints;
-        public static int RenderDrawPoints(Renderer renderer, Point[] points, int count) => _renderDrawPoints(renderer, points, count);
-
-        private delegate int RenderDrawLineDelegate(Renderer renderer, int x1, int y1, int x2, int y2);
-        private static RenderDrawLineDelegate _renderDrawLine;
-        public static int RenderDrawLine(Renderer renderer, int x1, int y1, int x2, int y2) => _renderDrawLine(renderer, x1, y1, x2, y2);
-
-        private delegate int RenderDrawLinesDelegate(Renderer renderer, Point[] points, int count);
-        private static RenderDrawLinesDelegate _renderDrawLines;
-        public static int RenderDrawLines(Renderer renderer, Point[] points, int count) => _renderDrawLines(renderer, points, count);
-
-        private delegate int RenderDrawRectDelegate(Renderer renderer, ref Rect rect);
-        private static RenderDrawRectDelegate _renderDrawRect;
-        public static int RenderDrawRect(Renderer renderer, ref Rect rect) => _renderDrawRect(renderer, ref rect);
-
-        private delegate int RenderDrawRectsDelegate(Renderer renderer, Rect[] rects, int count);
-        private static RenderDrawRectsDelegate _renderDrawRects;
-        public static int RenderDrawRects(Renderer renderer, Rect[] rects, int count) => _renderDrawRects(renderer, rects, count);
-
-        private delegate int RenderFillRectDelegate(Renderer renderer, ref Rect rect);
-        private static RenderFillRectDelegate _renderFillRect;
-        public static int RenderFillRect(Renderer renderer, ref Rect rect) => _renderFillRect(renderer, ref rect);
-
-        private delegate int RenderFillRectsDelegate(Renderer renderer, Rect[] rects, int count);
-        private static RenderFillRectsDelegate _renderFillRects;
-        public static int RenderFillRects(Renderer renderer, Rect[] rects, int count) => _renderFillRects(renderer, rects, count);
-
-        private delegate int RenderCopyDelegate(Renderer renderer, Texture texture, ref Rect srcRect, ref Rect dstRect);
-        private static RenderCopyDelegate _renderCopy;
-        public static int RenderCopy(Renderer renderer, Texture texture, ref Rect srcRect, ref Rect dstRect) => _renderCopy(renderer, texture, ref srcRect, ref dstRect);
-
-        private delegate int RenderCopyExDelegate(Renderer renderer, Texture texture, ref Rect srcrect, ref Rect dstrect, double angle, ref Point center, RendererFlip flip);
-        private static RenderCopyExDelegate _renderCopyEx;
-        public static int RenderCopyEx(Renderer renderer, Texture texture, ref Rect srcRect, ref Rect dstRect, double angle, ref Point center, RendererFlip flip) => _renderCopyEx(renderer, texture, ref srcRect, ref dstRect, angle, ref center, flip);
-
-        private delegate int RenderReadPixelsDelegate(Renderer renderer, ref Rect rect, uint format, IntPtr pixels, int pitch);
-        private static RenderReadPixelsDelegate _renderReadPixels;
-        public static int RenderReadPixels(Renderer renderer, ref Rect rect, uint format, IntPtr pixels, int pitch) => _renderReadPixels(renderer, ref rect, format, pixels, pitch);
-
-        private delegate void RenderPresentDelegate(Renderer renderer);
-        private static RenderPresentDelegate _renderPresent;
-        public static void RenderPresent(Renderer renderer) => _renderPresent(renderer);
-
-        private delegate void DestroyTextureDelegate(Texture texture);
-        private static DestroyTextureDelegate _destroyTexture;
-        public static void DestroyTexture(Texture texture) => _destroyTexture(texture);
-
-        private delegate void DestroyRendererDelegate(Renderer renderer);
-        private static DestroyRendererDelegate _destroyRenderer;
-        public static void DestroyRenderer(Renderer renderer) => _destroyRenderer(renderer);
+        [DllImport(LibraryName, EntryPoint = "SDL_GetNumRenderDrivers")]
+        public static extern int GetNumRenderDrivers();        [DllImport(LibraryName, EntryPoint = "SDL_GetRenderDriverInfo")]
+        public static extern int GetRenderDriverInfo(int index, out RendererInfo info);        [DllImport(LibraryName, EntryPoint = "SDL_CreateWindowAndRenderer")]
+        public static extern int CreateWindowAndRenderer(int width, int height, WindowFlags windowFlags, out Window window, out Renderer renderer);        [DllImport(LibraryName, EntryPoint = "SDL_CreateRenderer")]
+        public static extern Renderer CreateRenderer(Window window, int index, RendererFlags flags);        [DllImport(LibraryName, EntryPoint = "SDL_CreateSoftwareRenderer")]
+        public static extern Renderer CreateSoftwareRenderer(Surface surface);        [DllImport(LibraryName, EntryPoint = "SDL_GetRenderer")]
+        public static extern Renderer GetRenderer(Window window);        [DllImport(LibraryName, EntryPoint = "SDL_GetRendererInfo")]
+        public static extern int GetRendererInfo(Renderer renderer, out RendererInfo info);        [DllImport(LibraryName, EntryPoint = "SDL_GetRendererOutputSize")]
+        public static extern int GetRendererOutputSize(Renderer renderer, out int w, out int h);        [DllImport(LibraryName, EntryPoint = "SDL_CreateTexture")]
+        public static extern Texture CreateTexture(Renderer renderer, uint format, int access, int w, int h);        [DllImport(LibraryName, EntryPoint = "SDL_CreateTextureFromSurface")]
+        public static extern Texture CreateTextureFromSurface(Renderer renderer, Surface surface);        [DllImport(LibraryName, EntryPoint = "SDL_QueryTexture")]
+        public static extern int QueryTexture(Texture texture, out uint format, out int access, out int w, out int h);        [DllImport(LibraryName, EntryPoint = "SDL_SetTextureColorMod")]
+        public static extern int SetTextureColorMod(Texture texture, byte r, byte g, byte b);        [DllImport(LibraryName, EntryPoint = "SDL_GetTextureColorMod")]
+        public static extern int GetTextureColorMod(Texture texture, out byte r, out byte g, out byte b);        [DllImport(LibraryName, EntryPoint = "SDL_SetTextureAlphaMod")]
+        public static extern int SetTextureAlphaMod(Texture texture, byte alpha);        [DllImport(LibraryName, EntryPoint = "SDL_GetTextureAlphaMod")]
+        public static extern int GetTextureAlphaMod(Texture texture, out byte alpha);        [DllImport(LibraryName, EntryPoint = "SDL_SetTextureBlendMode")]
+        public static extern int SetTextureBlendMode(Texture texture, BlendMode blendMode);        [DllImport(LibraryName, EntryPoint = "SDL_GetTextureBlendMode")]
+        public static extern int GetTextureBlendMode(Texture texture, out BlendMode blendMode);        [DllImport(LibraryName, EntryPoint = "SDL_UpdateTexture")]
+        public static extern int UpdateTexture(Texture texture, ref Rect rect, IntPtr pixels, int pitch);        [DllImport(LibraryName, EntryPoint = "SDL_UpdateYUVTexture")]
+        public static extern int UpdateYUVTexture(Texture texture, ref Rect rect, byte* yPlane, int yPitch, byte* uPlane, int uPitch, byte* vPlane, int vPitch);        [DllImport(LibraryName, EntryPoint = "SDL_LockTexture")]
+        public static extern int LockTexture(Texture texture, ref Rect rect, out IntPtr pixels, out int pitch);        [DllImport(LibraryName, EntryPoint = "SDL_UnlockTexture")]
+        public static extern void UnlockTexture(Texture texture);        [DllImport(LibraryName, EntryPoint = "SDL_RenderTargetSupported")]
+        public static extern bool RenderTargetSupported(Renderer renderer);        [DllImport(LibraryName, EntryPoint = "SDL_SetRenderTarget")]
+        public static extern int SetRenderTarget(Renderer renderer, Texture texture);        [DllImport(LibraryName, EntryPoint = "SDL_GetRenderTarget")]
+        public static extern Texture GetRenderTarget(Renderer renderer);        [DllImport(LibraryName, EntryPoint = "SDL_RenderSetLogicalSize")]
+        public static extern int RenderSetLogicalSize(Renderer renderer, int w, int h);        [DllImport(LibraryName, EntryPoint = "SDL_RenderGetLogicalSize")]
+        public static extern void RenderGetLogicalSize(Renderer renderer, out int w, out int h);        [DllImport(LibraryName, EntryPoint = "SDL_RenderSetIntegerScale")]
+        public static extern int RenderSetIntegerScale(Renderer renderer, bool enable);        [DllImport(LibraryName, EntryPoint = "SDL_RenderGetIntegerScale")]
+        public static extern bool RenderGetIntegerScale(Renderer renderer);        [DllImport(LibraryName, EntryPoint = "SDL_RenderSetViewport")]
+        public static extern int RenderSetViewport(Renderer renderer, ref Rect rect);        [DllImport(LibraryName, EntryPoint = "SDL_RenderGetViewport")]
+        public static extern void RenderGetViewport(Renderer renderer, out Rect rect);        [DllImport(LibraryName, EntryPoint = "SDL_RenderSetClipRect")]
+        public static extern int RenderSetClipRect(Renderer renderer, ref Rect rect);        [DllImport(LibraryName, EntryPoint = "SDL_RenderGetClipRect")]
+        public static extern void RenderGetClipRect(Renderer renderer, out Rect rect);        [DllImport(LibraryName, EntryPoint = "SDL_RenderIsClipEnabled")]
+        public static extern bool RenderIsClipEnabled(Renderer renderer);        [DllImport(LibraryName, EntryPoint = "SDL_RenderSetScale")]
+        public static extern int RenderSetScale(Renderer renderer, float scaleX, float scaleY);        [DllImport(LibraryName, EntryPoint = "SDL_RenderGetScale")]
+        public static extern void RenderGetScale(Renderer renderer, out float scaleX, out float scaleY);        [DllImport(LibraryName, EntryPoint = "SDL_SetRenderDrawColor")]
+        public static extern int SetRenderDrawColor(Renderer renderer, byte r, byte g, byte b, byte a);        [DllImport(LibraryName, EntryPoint = "SDL_GetRenderDrawColor")]
+        public static extern int GetRenderDrawColor(Renderer renderer, out byte r, out byte g, out byte b, out byte a);        [DllImport(LibraryName, EntryPoint = "SDL_SetRenderDrawBlendMode")]
+        public static extern int SetRenderDrawBlendMode(Renderer renderer, BlendMode blendMode);        [DllImport(LibraryName, EntryPoint = "SDL_GetRenderDrawBlendMode")]
+        public static extern int GetRenderDrawBlendMode(Renderer renderer, out BlendMode blendMode);        [DllImport(LibraryName, EntryPoint = "SDL_RenderClear")]
+        public static extern int RenderClear(Renderer renderer);        [DllImport(LibraryName, EntryPoint = "SDL_RenderDrawPoint")]
+        public static extern int RenderDrawPoint(Renderer renderer, int x, int y);        [DllImport(LibraryName, EntryPoint = "SDL_RenderDrawPoints")]
+        public static extern int RenderDrawPoints(Renderer renderer, Point* points, int count);        [DllImport(LibraryName, EntryPoint = "SDL_RenderDrawLine")]
+        public static extern int RenderDrawLine(Renderer renderer, int x1, int y1, int x2, int y2);        [DllImport(LibraryName, EntryPoint = "SDL_RenderDrawLines")]
+        public static extern int RenderDrawLines(Renderer renderer, Point* points, int count);        [DllImport(LibraryName, EntryPoint = "SDL_RenderDrawRect")]
+        public static extern int RenderDrawRect(Renderer renderer, ref Rect rect);        [DllImport(LibraryName, EntryPoint = "SDL_RenderDrawRects")]
+        public static extern int RenderDrawRects(Renderer renderer, Rect* rects, int count);        [DllImport(LibraryName, EntryPoint = "SDL_RenderFillRect")]
+        public static extern int RenderFillRect(Renderer renderer, ref Rect rect);        [DllImport(LibraryName, EntryPoint = "SDL_RenderFillRects")]
+        public static extern int RenderFillRects(Renderer renderer, Rect* rects, int count);        [DllImport(LibraryName, EntryPoint = "SDL_RenderCopy")]
+        public static extern int RenderCopy(Renderer renderer, Texture texture, ref Rect srcRect, ref Rect dstRect);        [DllImport(LibraryName, EntryPoint = "SDL_RenderCopyEx")]
+        public static extern int RenderCopyEx(Renderer renderer, Texture texture, ref Rect srcRect, ref Rect dstRect, double angle, ref Point center, RendererFlip flip);        [DllImport(LibraryName, EntryPoint = "SDL_RenderReadPixels")]
+        public static extern int RenderReadPixels(Renderer renderer, ref Rect rect, uint format, IntPtr pixels, int pitch);        [DllImport(LibraryName, EntryPoint = "SDL_RenderPresent")]
+        public static extern void RenderPresent(Renderer renderer);        [DllImport(LibraryName, EntryPoint = "SDL_DestroyTexture")]
+        public static extern void DestroyTexture(Texture texture);        [DllImport(LibraryName, EntryPoint = "SDL_DestroyRenderer")]
+        public static extern void DestroyRenderer(Renderer renderer);
 
         //
         // SDL_rwops.h
         //
-        private delegate RWops RWFromFileDelegate(byte* file, byte* mode);
-        private static RWFromFileDelegate _rwFromFile;
-        public static RWops RWFromFile(byte* file, byte* mode) => _rwFromFile(file, mode);
+        [DllImport(LibraryName, EntryPoint = "SDL_RwFromFile")]
+        public static extern RWops RWFromFile(byte* file, byte* mode);
 
         //
         // SDL_shape.h
         //
-        private delegate Window CreateShapedWindowDelegate(byte* title, uint x, uint y, uint w, uint h, WindowFlags flags);
-        private static CreateShapedWindowDelegate _createShapedWindow;
-        public static Window CreateShapedWindow(byte* title, uint x, uint y, uint w, uint h, WindowFlags flags) => _createShapedWindow(title, x, y, w, h, flags);
-
-        private delegate bool IsShapedWindowDelegate(Window window);
-        private static IsShapedWindowDelegate _isShapedWindow;
-        public static bool IsShapedWindow(Window window) => _isShapedWindow(window);
-
-        private delegate int SetWindowShapeDelegate(Window window, ref Surface shape, ref WindowShape shapeMode);
-        private static SetWindowShapeDelegate _setWindowShape;
-        public static int SetWindowShape(Window window, ref Surface shape, ref WindowShape shapeMode) => _setWindowShape(window, ref shape, ref shapeMode);
-
-        private delegate int GetShapedWindowModeDelegate(Window window, out WindowShape shapeMode);
-        private static GetShapedWindowModeDelegate _getShapedWindowMode;
-        public static int GetShapedWindowMode(Window window, out WindowShape shapeMode) => _getShapedWindowMode(window, out shapeMode);
+        [DllImport(LibraryName, EntryPoint = "SDL_CreateShapedWindow")]
+        public static extern Window CreateShapedWindow(byte* title, uint x, uint y, uint w, uint h, WindowFlags flags);        [DllImport(LibraryName, EntryPoint = "SDL_IsShapedWindow")]
+        public static extern bool IsShapedWindow(Window window);        [DllImport(LibraryName, EntryPoint = "SDL_SetWindowShape")]
+        public static extern int SetWindowShape(Window window, ref Surface shape, ref WindowShape shapeMode);        [DllImport(LibraryName, EntryPoint = "SDL_GetShapedWindowMode")]
+        public static extern int GetShapedWindowMode(Window window, out WindowShape shapeMode);
 
         //
         // TODO: SDL_surface.h
         //
-
-        //public static int UpperBlit(Surface src, ref Rect srcrect, Surface dst, ref Rect dstrect);
-
-
-        //public static int UpperBlitScaled(Surface src, ref Rect srcrect, Surface dst, ref Rect dstrect);
-
-
-        //public static int ConvertPixels(int width, int height, uint src_format, Surface src, int src_pitch, uint dst_format, Surface dst, int dst_pitch);
-
-
-        //public static IntPtr ConvertSurface(IntPtr src, IntPtr fmt, uint flags);
-
-
-        //public static IntPtr ConvertSurfaceFormat(IntPtr src, uint pixel_format, uint flags);
-
-
-        //public static IntPtr CreateRGBSurface(uint flags, int width, int height, int depth, uint Rmask, uint Gmask, uint Bmask, uint Amask);
-
-
-        //public static IntPtr CreateRGBSurfaceFrom(IntPtr pixels, int width, int height, int depth, int pitch, uint Rmask, uint Gmask, uint Bmask, uint Amask);
-
-
-        //public static IntPtr CreateRGBSurfaceWithFormat(uint flags, int width, int height, int depth, uint format);
-
-
-        //public static IntPtr CreateRGBSurfaceWithFormatFrom(IntPtr pixels, int width, int height, int depth, int pitch, uint format);
-
-
-        //public static int FillRect(IntPtr dst, ref Rect rect, uint color);
-
-
-        //public static int FillRects(IntPtr dst, Rect[] rects, int count, uint color);
-
-
-        //public static void FreeSurface(Surface surface);
-
-
-        //public static void GetClipRect(Surface surface, out Rect rect);
-
-
-        //public static int GetColorKey(Surface surface, out uint key);
-
-
-        //public static int GetSurfaceAlphaMod(Surface surface, out byte alpha);
-
-
-        //public static int GetSurfaceBlendMode(Surface surface, out BlendMode blendMode);
-
-
-        //public static int GetSurfaceColorMod(Surface surface, out byte r, out byte g, out byte b);
-
-
-        //private static IntPtr LoadBMP_RW(IntPtr src, int freesrc);
-
-
-        //public static int LockSurface(Surface surface);
-
-
-        //public static int LowerBlit(IntPtr src, ref Rect srcrect, IntPtr dst, ref Rect dstrect);
-
-
-        //public static int LowerBlitScaled(IntPtr src, ref Rect srcrect, IntPtr dst, ref Rect dstrect);
-
-
-        //private static int SaveBMP_RW(Surface surface, IntPtr src, int freesrc);
-
-
-        //public static bool SetClipRect(Surface surface, ref Rect rect);
-
-
-        //public static int SetColorKey(Surface surface, int flag, uint key);
-
-
-        //public static int SetSurfaceAlphaMod(Surface surface, byte alpha);
-
-
-        //public static int SetSurfaceBlendMode(Surface surface, BlendMode blendMode);
-
-
-        //public static int SetSurfaceColorMod(Surface surface, byte r, byte g, byte b);
-
-
-        //public static int SetSurfacePalette(Surface surface, IntPtr palette);
-
-
-        //public static int SetSurfaceRLE(Surface surface, int flag);
-
-
-        //public static int SoftStretch(IntPtr src, ref Rect srcrect, IntPtr dst, ref Rect dstrect);
-
-
-        //public static void UnlockSurface(Surface surface);
+        //public static extern int UpperBlit(Surface src, ref Rect srcrect, Surface dst, ref Rect dstrect)")]        //public static extern int UpperBlitScaled(Surface src, ref Rect srcrect, Surface dst, ref Rect dstrect)")]        //public static extern int ConvertPixels(int width, int height, uint src_format, Surface src, int src_pitch, uint dst_format, Surface dst, int dst_pitch)")]        //public static extern IntPtr ConvertSurface(IntPtr src, IntPtr fmt, uint flags)")]        //public static extern IntPtr ConvertSurfaceFormat(IntPtr src, uint pixel_format, uint flags)")]        //public static extern IntPtr CreateRGBSurface(uint flags, int width, int height, int depth, uint Rmask, uint Gmask, uint Bmask, uint Amask)")]        //public static extern IntPtr CreateRGBSurfaceFrom(IntPtr pixels, int width, int height, int depth, int pitch, uint Rmask, uint Gmask, uint Bmask, uint Amask)")]        //public static extern IntPtr CreateRGBSurfaceWithFormat(uint flags, int width, int height, int depth, uint format)")]        //public static extern IntPtr CreateRGBSurfaceWithFormatFrom(IntPtr pixels, int width, int height, int depth, int pitch, uint format)")]        //public static extern int FillRect(IntPtr dst, ref Rect rect, uint color)")]        //public static extern int FillRects(IntPtr dst, Rect* rects, int count, uint color)")]        //public static extern void FreeSurface(Surface surface)")]        //public static extern void GetClipRect(Surface surface, out Rect rect)")]        //public static extern int GetColorKey(Surface surface, out uint key)")]        //public static extern int GetSurfaceAlphaMod(Surface surface, out byte alpha)")]        //public static extern int GetSurfaceBlendMode(Surface surface, out BlendMode blendMode)")]        //public static extern int GetSurfaceColorMod(Surface surface, out byte r, out byte g, out byte b)")]        //[DllImport(LibraryName, EntryPoint = "SDL_RW(IntPtr src, int freesrc)")]        //public static extern int LockSurface(Surface surface)")]        //public static extern int LowerBlit(IntPtr src, ref Rect srcrect, IntPtr dst, ref Rect dstrect)")]        //public static extern int LowerBlitScaled(IntPtr src, ref Rect srcrect, IntPtr dst, ref Rect dstrect)")]        //[DllImport(LibraryName, EntryPoint = "SDL_RW(Surface surface, IntPtr src, int freesrc)")]        //public static extern bool SetClipRect(Surface surface, ref Rect rect)")]        //public static extern int SetColorKey(Surface surface, int flag, uint key)")]        //public static extern int SetSurfaceAlphaMod(Surface surface, byte alpha)")]        //public static extern int SetSurfaceBlendMode(Surface surface, BlendMode blendMode)")]        //public static extern int SetSurfaceColorMod(Surface surface, byte r, byte g, byte b)")]        //public static extern int SetSurfacePalette(Surface surface, IntPtr palette)")]        //public static extern int SetSurfaceRLE(Surface surface, int flag)")]        //public static extern int SoftStretch(IntPtr src, ref Rect srcrect, IntPtr dst, ref Rect dstrect)")]        //public static extern void UnlockSurface(Surface surface)")]
 
         //
         // SDL_syswm.h
         //
-        private delegate bool GetWindowWMInfoDelegate(Window window, ref SysWMInfo info);
-        private static GetWindowWMInfoDelegate _getWindowWMInfo;
-        public static bool GetWindowWMInfo(Window window, ref SysWMInfo info) => _getWindowWMInfo(window, ref info);
+        [DllImport(LibraryName, EntryPoint = "SDL_GetWindowWMInfo")]
+        public static extern bool GetWindowWMInfo(Window window, ref SysWMInfo info);
 
         //
         // SDL_timer.h
         //
-        private delegate uint GetTicksDelegate();
-        private static GetTicksDelegate _getTicks;
-        public static uint GetTicks() => _getTicks();
+        [DllImport(LibraryName, EntryPoint = "SDL_GetTicks")]
+        public static extern uint GetTicks();
 
-        public static bool TicksPassed(uint a, uint b)
-        {
-            return ((int)(b - a) <= 0);
-        }
-
-        private delegate ulong GetPerformanceCounterDelegate();
-        private static GetPerformanceCounterDelegate _getPerformanceCounter;
-        public static ulong GetPerformanceCounter() => _getPerformanceCounter();
-
-        private delegate ulong GetPerformanceFrequencyDelegate();
-        private static GetPerformanceFrequencyDelegate _getPerformanceFrequency;
-        public static ulong GetPerformanceFrequency() => _getPerformanceFrequency();
-
-        private delegate void DelayDelegate(uint ms);
-        private static DelayDelegate _delay;
-        public static void Delay(uint ms) => _delay(ms);
-
-        private delegate TimerID AddTimerDelegate(uint interval, TimerCallback callback, IntPtr param);
-        private static AddTimerDelegate _addTimer;
-        public static TimerID AddTimer(uint interval, TimerCallback callback, IntPtr param) => _addTimer(interval, callback, param);
-
-        private delegate bool RemoveTimerDelegate(TimerID id);
-        private static RemoveTimerDelegate _removeTimer;
-        public static bool RemoveTimer(TimerID id) => _removeTimer(id);
+        public static bool TicksPassed(uint a, uint b) => ((int)(b - a) <= 0);        [DllImport(LibraryName, EntryPoint = "SDL_GetPerformanceCounter")]
+        public static extern ulong GetPerformanceCounter();        [DllImport(LibraryName, EntryPoint = "SDL_GetPerformanceFrequency")]
+        public static extern ulong GetPerformanceFrequency();        [DllImport(LibraryName, EntryPoint = "SDL_Delay")]
+        public static extern void Delay(uint ms);        [DllImport(LibraryName, EntryPoint = "SDL_AddTimer")]
+        public static extern TimerID AddTimer(uint interval, TimerCallback callback, IntPtr param);        [DllImport(LibraryName, EntryPoint = "SDL_RemoveTimer")]
+        public static extern bool RemoveTimer(TimerID id);
 
         // TODO: SDL_touch.h
 
@@ -1930,19 +567,10 @@ namespace SDL2
         //
         public static int VersionNum(int x, int y, int z) => x * 1000 + y * 100 + z;
         public static int CompiledVersion() => VersionNum(Version.MajorVersion, Version.MinorVersion, Version.PatchLevel);
-        public static bool VersionAtLeast(int x, int y, int z) => CompiledVersion() >= VersionNum(x, y, z);
-
-        private delegate void GetVersionDelegate(out Version version);
-        private static GetVersionDelegate _getVersion;
-        public static void GetVersion(out Version version) => _getVersion(out version);
-
-        private delegate byte* GetRevisionDelegate();
-        private static GetRevisionDelegate _getRevision;
-        public static byte* GetRevision() => _getRevision();
-
-        private delegate int GetRevisionNumberDelegate();
-        private static GetRevisionNumberDelegate _getRevisionNumber;
-        public static int GetRevisionNumber() => _getRevisionNumber();
+        public static bool VersionAtLeast(int x, int y, int z) => CompiledVersion() >= VersionNum(x, y, z);        [DllImport(LibraryName, EntryPoint = "SDL_GetVersion")]
+        public static extern void GetVersion(out Version version);        [DllImport(LibraryName, EntryPoint = "SDL_GetRevision")]
+        public static extern byte* GetRevision();        [DllImport(LibraryName, EntryPoint = "SDL_GetRevisionNumber")]
+        public static extern int GetRevisionNumber();
 
         //
         // SDL_video.h
@@ -1951,304 +579,86 @@ namespace SDL2
         public const int WindowPositionCenteredMask = 0x2FFF0000;
         public const int WindowPositionUndefined = 0x1FFF0000;
         public const int WindowPositionCentered = 0x2FFF0000;
-
-        public static int WindowPositionUndefinedDisplay(int x) => (WindowPositionUndefinedMask | x);
-
+        public static int WindowPositionUndefinedDisplay(int x) => WindowPositionUndefinedMask | x;
         public static bool WindowPositionIsUndefined(int x) => (x & 0xFFFF0000) == WindowPositionUndefinedMask;
-
-        public static int WindowPositionCenteredDisplay(int x) => (WindowPositionCenteredMask | x);
-
-        public static bool WindowPositionIsCentered(int x) => (x & 0xFFFF0000) == WindowPositionCenteredMask;
-
-        private delegate int GetNumVideoDriversDelegate();
-        private static GetNumVideoDriversDelegate _getNumVideoDrivers;
-        public static int GetNumVideoDrivers() => _getNumVideoDrivers();
-
-        private delegate byte* GetVideoDriverDelegate(int index);
-        private static GetVideoDriverDelegate _getVideoDriver;
-        private static byte* GetVideoDriver(int index) => _getVideoDriver(index);
-
-        private delegate int VideoInitDelegate(byte* driverName);
-        private static VideoInitDelegate _videoInit;
-        public static int VideoInit(byte* driverName) => _videoInit(driverName);
-
-        private delegate void VideoQuitDelegate();
-        private static VideoQuitDelegate _videoQuit;
-        public static void VideoQuit() => _videoQuit();
-
-        private delegate byte* GetCurrentVideoDriverDelegate();
-        private static GetCurrentVideoDriverDelegate _getCurrentVideoDriver;
-        public static byte* GetCurrentVideoDriver() => _getCurrentVideoDriver();
-
-        private delegate int GetNumVideoDisplaysDelegate();
-        private static GetNumVideoDisplaysDelegate _getNumVideoDisplays;
-        public static int GetNumVideoDisplays() => _getNumVideoDisplays();
-
-        private delegate byte* GetDisplayNameDelegate(int displayIndex);
-        private static GetDisplayNameDelegate _getDisplayName;
-        public static byte* GetDisplayName(int displayIndex) => _getDisplayName(displayIndex);
-
-        private delegate int GetDisplayBoundsDelegate(int displayIndex, out Rect rectangle);
-        private static GetDisplayBoundsDelegate _getDisplayBounds;
-        public static int GetDisplayBounds(int displayIndex, out Rect rectangle) => _getDisplayBounds(displayIndex, out rectangle);
-
-        private delegate int GetDisplayDpiDelegate(int displayIndex, out float ddpi, out float hdpi, out float vdpi);
-        private static GetDisplayDpiDelegate _getDisplayDpi;
-        public static int GetDisplayDpi(int displayIndex, out float ddpi, out float hdpi, out float vdpi) => _getDisplayDpi(displayIndex, out ddpi, out hdpi, out vdpi);
-
-        private delegate int GetDisplayUsableBoundsDelegate(int displayIndex, out Rect rectangle);
-        private static GetDisplayUsableBoundsDelegate _getDisplayUsableBounds;
-        public static int GetDisplayUsableBounds(int displayIndex, out Rect rectangle) => _getDisplayUsableBounds(displayIndex, out rectangle);
-
-        private delegate int GetNumDisplayModesDelegate(int displayIndex);
-        private static GetNumDisplayModesDelegate _getNumDisplayModes;
-        public static int GetNumDisplayModes(int displayIndex) => _getNumDisplayModes(displayIndex);
-
-        private delegate int GetDisplayModeDelegate(int displayIndex, int modeIndex, out DisplayMode mode);
-        private static GetDisplayModeDelegate _getDisplayMode;
-        public static int GetDisplayMode(int displayIndex, int modeIndex, out DisplayMode mode) => _getDisplayMode(displayIndex, modeIndex, out mode);
-
-        private delegate int GetDesktopDisplayModeDelegate(int displayIndex, out DisplayMode mode);
-        private static GetDesktopDisplayModeDelegate _getDesktopDisplayMode;
-        public static int GetDesktopDisplayMode(int displayIndex, out DisplayMode mode) => _getDesktopDisplayMode(displayIndex, out mode);
-
-        private delegate int GetCurrentDisplayModeDelegate(int displayIndex, out DisplayMode mode);
-        private static GetCurrentDisplayModeDelegate _getCurrentDisplayMode;
-        public static int GetCurrentDisplayMode(int displayIndex, out DisplayMode mode) => _getCurrentDisplayMode(displayIndex, out mode);
-
-        private delegate DisplayMode GetClosestDisplayModeDelegate(int displayIndex, ref DisplayMode mode, out DisplayMode closest);
-        private static GetClosestDisplayModeDelegate _getClosestDisplayMode;
-        public static DisplayMode GetClosestDisplayMode(int displayIndex, ref DisplayMode mode, out DisplayMode closest) => _getClosestDisplayMode(displayIndex, ref mode, out closest);
-
-        private delegate int GetWindowDisplayIndexDelegate(Window window);
-        private static GetWindowDisplayIndexDelegate _getWindowDisplayIndex;
-        public static int GetWindowDisplayIndex(Window window) => _getWindowDisplayIndex(window);
-
-        private delegate int SetWindowDisplayModeDelegate(Window window, ref DisplayMode mode);
-        private static SetWindowDisplayModeDelegate _setWindowDisplayMode;
-        public static int SetWindowDisplayMode(Window window, ref DisplayMode mode) => _setWindowDisplayMode(window, ref mode);
-
-        private delegate int GetWindowDisplayModeDelegate(Window window, out DisplayMode mode);
-        private static GetWindowDisplayModeDelegate _getWindowDisplayMode;
-        public static int GetWindowDisplayMode(Window window, out DisplayMode mode) => _getWindowDisplayMode(window, out mode);
-
-        private delegate uint GetWindowPixelFormatDelegate(Window window);
-        private static GetWindowPixelFormatDelegate _getWindowPixelFormat;
-        public static uint GetWindowPixelFormat(Window window) => _getWindowPixelFormat(window);
-
-        private delegate Window CreateWindowDelegate(byte* title, int x, int y, int width, int height, WindowFlags flags);
-        private static CreateWindowDelegate _createWindow;
-        public static Window CreateWindow(byte* title, int x, int y, int width, int height, WindowFlags flags) => _createWindow(title, x, y, width, height, flags);
-
-        private delegate Window CreateWindowFromDelegate(IntPtr data);
-        private static CreateWindowFromDelegate _createWindowFrom;
-        public static Window CreateWindowFrom(IntPtr data) => _createWindowFrom(data);
-
-        private delegate WindowID GetWindowIDDelegate(Window window);
-        private static GetWindowIDDelegate _getWindowID;
-        public static WindowID GetWindowID(Window window) => _getWindowID(window);
-
-        private delegate Window GetWindowFromIDDelegate(WindowID id);
-        private static GetWindowFromIDDelegate _getWindowFromID;
-        public static Window GetWindowFromID(WindowID id) => _getWindowFromID(id);
-
-        private delegate WindowFlags GetWindowFlagsDelegate(Window window);
-        private static GetWindowFlagsDelegate _getWindowFlags;
-        public static WindowFlags GetWindowFlags(Window window) => _getWindowFlags(window);
-
-        private delegate void SetWindowTitleDelegate(Window window, byte* title);
-        private static SetWindowTitleDelegate _setWindowTitle;
-        public static void SetWindowTitle(Window window, byte* title) => _setWindowTitle(window, title);
-
-        private delegate byte* GetWindowTitleDelegate(Window window);
-        private static GetWindowTitleDelegate _getWindowTitle;
-        public static byte* GetWindowTitle(Window window) => _getWindowTitle(window);
-
-        private delegate void SetWindowIconDelegate(Window window, Surface icon);
-        private static SetWindowIconDelegate _setWindowIcon;
-        public static void SetWindowIcon(Window window, Surface icon) => _setWindowIcon(window, icon);
-
-        private delegate IntPtr SetWindowDataDelegate(Window window, byte* name, IntPtr userData);
-        private static SetWindowDataDelegate _setWindowData;
-        public static IntPtr SetWindowData(Window window, byte* name, IntPtr userData) => _setWindowData(window, name, userData);
-
-        private delegate IntPtr GetWindowDataDelegate(Window window, byte* name);
-        private static GetWindowDataDelegate _getWindowData;
-        public static IntPtr GetWindowData(Window window, byte* name) => _getWindowData(window, name);
-
-        private delegate void SetWindowPositionDelegate(Window window, int x, int y);
-        private static SetWindowPositionDelegate _setWindowPosition;
-        public static void SetWindowPosition(Window window, int x, int y) => _setWindowPosition(window, x, y);
-
-        private delegate void GetWindowPositionDelegate(Window window, out int x, out int y);
-        private static GetWindowPositionDelegate _getWindowPosition;
-        public static void GetWindowPosition(Window window, out int x, out int y) => _getWindowPosition(window, out x, out y);
-
-        private delegate void SetWindowSizeDelegate(Window window, int width, int height);
-        private static SetWindowSizeDelegate _setWindowSize;
-        public static void SetWindowSize(Window window, int width, int height) => _setWindowSize(window, width, height);
-
-        private delegate void GetWindowSizeDelegate(Window window, out int width, out int height);
-        private static GetWindowSizeDelegate _getWindowSize;
-        public static void GetWindowSize(Window window, out int width, out int height) => _getWindowSize(window, out width, out height);
-
-        private delegate int GetWindowBordersSizeDelegate(Window window, out int top, out int left, out int bottom, out int right);
-        private static GetWindowBordersSizeDelegate _getWindowBordersSize;
-        public static int GetWindowBordersSize(Window window, out int top, out int left, out int bottom, out int right) => _getWindowBordersSize(window, out top, out left, out bottom, out right);
-
-        private delegate void SetWindowMinimumSizeDelegate(Window window, int minWidth, int minHeight);
-        private static SetWindowMinimumSizeDelegate _setWindowMinimumSize;
-        public static void SetWindowMinimumSize(Window window, int minWidth, int minHeight) => _setWindowMinimumSize(window, minWidth, minHeight);
-
-        private delegate void GetWindowMinimumSizeDelegate(Window window, out int width, out int height);
-        private static GetWindowMinimumSizeDelegate _getWindowMinimumSize;
-        public static void GetWindowMinimumSize(Window window, out int width, out int height) => _getWindowMinimumSize(window, out width, out height);
-
-        private delegate void SetWindowMaximumSizeDelegate(Window window, int maxWidth, int maxHeight);
-        private static SetWindowMaximumSizeDelegate _setWindowMaximumSize;
-        public static void SetWindowMaximumSize(Window window, int maxWidth, int maxHeight) => _setWindowMaximumSize(window, maxWidth, maxHeight);
-
-        private delegate void GetWindowMaximumSizeDelegate(Window window, out int width, out int height);
-        private static GetWindowMaximumSizeDelegate _getWindowMaximumSize;
-        public static void GetWindowMaximumSize(Window window, out int width, out int height) => _getWindowMaximumSize(window, out width, out height);
-
-        private delegate void SetWindowBorderedDelegate(Window window, bool bordered);
-        private static SetWindowBorderedDelegate _setWindowBordered;
-        public static void SetWindowBordered(Window window, bool bordered) => _setWindowBordered(window, bordered);
-
-        private delegate void SetWindowResizableDelegate(Window window, bool resizable);
-        private static SetWindowResizableDelegate _setWindowResizable;
-        public static void SetWindowResizable(Window window, bool resizable) => _setWindowResizable(window, resizable);
-
-        private delegate void ShowWindowDelegate(Window window);
-        private static ShowWindowDelegate _showWindow;
-        public static void ShowWindow(Window window) => _showWindow(window);
-
-        private delegate void HideWindowDelegate(Window window);
-        private static HideWindowDelegate _hideWindow;
-        public static void HideWindow(Window window) => _hideWindow(window);
-
-        private delegate void RaiseWindowDelegate(Window window);
-        private static RaiseWindowDelegate _raiseWindow;
-        public static void RaiseWindow(Window window) => _raiseWindow(window);
-
-        private delegate void MaximizeWindowDelegate(Window window);
-        private static MaximizeWindowDelegate _maximizeWindow;
-        public static void MaximizeWindow(Window window) => _maximizeWindow(window);
-
-        private delegate void MinimizeWindowDelegate(Window window);
-        private static MinimizeWindowDelegate _minimizeWindow;
-        public static void MinimizeWindow(Window window) => _minimizeWindow(window);
-
-        private delegate void RestoreWindowDelegate(Window window);
-        private static RestoreWindowDelegate _restoreWindow;
-        public static void RestoreWindow(Window window) => _restoreWindow(window);
-
-        private delegate int SetWindowFullscreenDelegate(Window window, WindowFlags flags);
-        private static SetWindowFullscreenDelegate _setWindowFullscreen;
-        public static int SetWindowFullscreen(Window window, WindowFlags flags) => _setWindowFullscreen(window, flags);
-
-        private delegate Surface GetWindowSurfaceDelegate(Window window);
-        private static GetWindowSurfaceDelegate _getWindowSurface;
-        public static Surface GetWindowSurface(Window window) => _getWindowSurface(window);
-
-        private delegate int UpdateWindowSurfaceDelegate(Window window);
-        private static UpdateWindowSurfaceDelegate _updateWindowSurface;
-        public static int UpdateWindowSurface(Window window) => _updateWindowSurface(window);
-
-        private delegate int UpdateWindowSurfaceRectsDelegate(Window window, Rect[] rectangles, int numRectangles);
-        private static UpdateWindowSurfaceRectsDelegate _updateWindowSurfaceRects;
-        public static int UpdateWindowSurfaceRects(Window window, Rect[] rectangles, int numRectangles) => _updateWindowSurfaceRects(window, rectangles, numRectangles);
-
-        private delegate void SetWindowGrabDelegate(Window window, bool grabbed);
-        private static SetWindowGrabDelegate _setWindowGrab;
-        public static void SetWindowGrab(Window window, bool grabbed) => _setWindowGrab(window, grabbed);
-
-        private delegate bool GetWindowGrabDelegate(Window window);
-        private static GetWindowGrabDelegate _getWindowGrab;
-        public static bool GetWindowGrab(Window window) => _getWindowGrab(window);
-
-        private delegate Window GetGrabbedWindowDelegate();
-        private static GetGrabbedWindowDelegate _getGrabbedWindow;
-        public static Window GetGrabbedWindow() => _getGrabbedWindow();
-
-        private delegate int SetWindowBrightnessDelegate(Window window, float brightness);
-        private static SetWindowBrightnessDelegate _setWindowBrightness;
-        public static int SetWindowBrightness(Window window, float brightness) => _setWindowBrightness(window, brightness);
-
-        private delegate float GetWindowBrightnessDelegate(Window window);
-        private static GetWindowBrightnessDelegate _getWindowBrightness;
-        public static float GetWindowBrightness(Window window) => _getWindowBrightness(window);
-
-        private delegate int SetWindowOpacityDelegate(Window window, float opacity);
-        private static SetWindowOpacityDelegate _setWindowOpacity;
-        public static int SetWindowOpacity(Window window, float opacity) => _setWindowOpacity(window, opacity);
-
-        private delegate int GetWindowOpacityDelegate(Window window, out float opacity);
-        private static GetWindowOpacityDelegate _getWindowOpacity;
-        public static int GetWindowOpacity(Window window, out float opacity) => _getWindowOpacity(window, out opacity);
-
-        private delegate int SetWindowModalForDelegate(Window modalWindow, Window parentWindow);
-        private static SetWindowModalForDelegate _setWindowModalFor;
-        public static int SetWindowModalFor(Window modalWindow, Window parentWindow) => _setWindowModalFor(modalWindow, parentWindow);
-
-        private delegate int SetWindowInputFocusDelegate(Window window);
-        private static SetWindowInputFocusDelegate _setWindowInputFocus;
-        public static int SetWindowInputFocus(Window window) => _setWindowInputFocus(window);
-
-        private delegate int SetWindowGammaRampDelegate(Window window, ushort[] red, ushort[] green, ushort[] blue);
-        private static SetWindowGammaRampDelegate _setWindowGammaRamp;
-        public static int SetWindowGammaRamp(Window window, ushort[] red, ushort[] green, ushort[] blue) => _setWindowGammaRamp(window, red, green, blue);
-
-        private delegate int GetWindowGammaRampDelegate(Window window, ushort[] red, ushort[] green, ushort[] blue);
-        private static GetWindowGammaRampDelegate _getWindowGammaRamp;
-        public static int GetWindowGammaRamp(Window window, ushort[] red, ushort[] green, ushort[] blue) => _getWindowGammaRamp(window, red, green, blue);
-
-        private delegate int SetWindowHitTestDelegate(Window window, HitTest callback, IntPtr callbackData);
-        private static SetWindowHitTestDelegate _setWindowHitTest;
-        public static int SetWindowHitTest(Window window, HitTest callback, IntPtr callbackData) => _setWindowHitTest(window, callback, callbackData);
-
-        private delegate void DestroyWindowDelegate(Window window);
-        private static DestroyWindowDelegate _destroyWindow;
-        public static void DestroyWindow(Window window) => _destroyWindow(window);
-
-        private delegate bool IsScreenSaverEnabledDelegate();
-        private static IsScreenSaverEnabledDelegate _isScreenSaverEnabled;
-        public static bool IsScreenSaverEnabled() => _isScreenSaverEnabled();
-
-        private delegate void EnableScreenSaverDelegate();
-        private static EnableScreenSaverDelegate _enableScreenSaver;
-        public static void EnableScreenSaver() => _enableScreenSaver();
-
-        private delegate void DisableScreenSaverDelegate();
-        private static DisableScreenSaverDelegate _disableScreenSaver;
-        public static void DisableScreenSaver() => _disableScreenSaver();
+        public static int WindowPositionCenteredDisplay(int x) => WindowPositionCenteredMask | x;
+        public static bool WindowPositionIsCentered(int x) => (x & 0xFFFF0000) == WindowPositionCenteredMask;        [DllImport(LibraryName, EntryPoint = "SDL_GetNumVideoDrivers")]
+        public static extern int GetNumVideoDrivers();        [DllImport(LibraryName, EntryPoint = "SDL_GetVideoDriver")]
+        public static extern byte* GetVideoDriver(int index);        [DllImport(LibraryName, EntryPoint = "SDL_VideoInit")]
+        public static extern int VideoInit(byte* driverName);        [DllImport(LibraryName, EntryPoint = "SDL_VideoQuit")]
+        public static extern void VideoQuit();        [DllImport(LibraryName, EntryPoint = "SDL_GetCurrentVideoDriver")]
+        public static extern byte* GetCurrentVideoDriver();        [DllImport(LibraryName, EntryPoint = "SDL_GetNumVideoDisplays")]
+        public static extern int GetNumVideoDisplays();        [DllImport(LibraryName, EntryPoint = "SDL_GetDisplayName")]
+        public static extern byte* GetDisplayName(int displayIndex);        [DllImport(LibraryName, EntryPoint = "SDL_GetDisplayBounds")]
+        public static extern int GetDisplayBounds(int displayIndex, out Rect rectangle);        [DllImport(LibraryName, EntryPoint = "SDL_GetDisplayDpi")]
+        public static extern int GetDisplayDpi(int displayIndex, out float ddpi, out float hdpi, out float vdpi);        [DllImport(LibraryName, EntryPoint = "SDL_GetDisplayUsableBounds")]
+        public static extern int GetDisplayUsableBounds(int displayIndex, out Rect rectangle);        [DllImport(LibraryName, EntryPoint = "SDL_GetNumDisplayModes")]
+        public static extern int GetNumDisplayModes(int displayIndex);        [DllImport(LibraryName, EntryPoint = "SDL_GetDisplayMode")]
+        public static extern int GetDisplayMode(int displayIndex, int modeIndex, out DisplayMode mode);        [DllImport(LibraryName, EntryPoint = "SDL_GetDesktopDisplayMode")]
+        public static extern int GetDesktopDisplayMode(int displayIndex, out DisplayMode mode);        [DllImport(LibraryName, EntryPoint = "SDL_GetCurrentDisplayMode")]
+        public static extern int GetCurrentDisplayMode(int displayIndex, out DisplayMode mode);        [DllImport(LibraryName, EntryPoint = "SDL_GetClosestDisplayMode")]
+        public static extern DisplayMode GetClosestDisplayMode(int displayIndex, ref DisplayMode mode, out DisplayMode closest);        [DllImport(LibraryName, EntryPoint = "SDL_GetWindowDisplayIndex")]
+        public static extern int GetWindowDisplayIndex(Window window);        [DllImport(LibraryName, EntryPoint = "SDL_SetWindowDisplayMode")]
+        public static extern int SetWindowDisplayMode(Window window, ref DisplayMode mode);        [DllImport(LibraryName, EntryPoint = "SDL_GetWindowDisplayMode")]
+        public static extern int GetWindowDisplayMode(Window window, out DisplayMode mode);        [DllImport(LibraryName, EntryPoint = "SDL_GetWindowPixelFormat")]
+        public static extern uint GetWindowPixelFormat(Window window);        [DllImport(LibraryName, EntryPoint = "SDL_CreateWindow")]
+        public static extern Window CreateWindow(byte* title, int x, int y, int width, int height, WindowFlags flags);        [DllImport(LibraryName, EntryPoint = "SDL_CreateWindowFrom")]
+        public static extern Window CreateWindowFrom(IntPtr data);        [DllImport(LibraryName, EntryPoint = "SDL_GetWindowID")]
+        public static extern WindowID GetWindowID(Window window);        [DllImport(LibraryName, EntryPoint = "SDL_GetWindowFromID")]
+        public static extern Window GetWindowFromID(WindowID id);        [DllImport(LibraryName, EntryPoint = "SDL_GetWindowFlags")]
+        public static extern WindowFlags GetWindowFlags(Window window);        [DllImport(LibraryName, EntryPoint = "SDL_SetWindowTitle")]
+        public static extern void SetWindowTitle(Window window, byte* title);        [DllImport(LibraryName, EntryPoint = "SDL_GetWindowTitle")]
+        public static extern byte* GetWindowTitle(Window window);        [DllImport(LibraryName, EntryPoint = "SDL_SetWindowIcon")]
+        public static extern void SetWindowIcon(Window window, Surface icon);        [DllImport(LibraryName, EntryPoint = "SDL_SetWindowData")]
+        public static extern IntPtr SetWindowData(Window window, byte* name, IntPtr userData);        [DllImport(LibraryName, EntryPoint = "SDL_GetWindowData")]
+        public static extern IntPtr GetWindowData(Window window, byte* name);        [DllImport(LibraryName, EntryPoint = "SDL_SetWindowPosition")]
+        public static extern void SetWindowPosition(Window window, int x, int y);        [DllImport(LibraryName, EntryPoint = "SDL_GetWindowPosition")]
+        public static extern void GetWindowPosition(Window window, out int x, out int y);        [DllImport(LibraryName, EntryPoint = "SDL_SetWindowSize")]
+        public static extern void SetWindowSize(Window window, int width, int height);        [DllImport(LibraryName, EntryPoint = "SDL_GetWindowSize")]
+        public static extern void GetWindowSize(Window window, out int width, out int height);        [DllImport(LibraryName, EntryPoint = "SDL_GetWindowBordersSize")]
+        public static extern int GetWindowBordersSize(Window window, out int top, out int left, out int bottom, out int right);        [DllImport(LibraryName, EntryPoint = "SDL_SetWindowMinimumSize")]
+        public static extern void SetWindowMinimumSize(Window window, int minWidth, int minHeight);        [DllImport(LibraryName, EntryPoint = "SDL_GetWindowMinimumSize")]
+        public static extern void GetWindowMinimumSize(Window window, out int width, out int height);        [DllImport(LibraryName, EntryPoint = "SDL_SetWindowMaximumSize")]
+        public static extern void SetWindowMaximumSize(Window window, int maxWidth, int maxHeight);        [DllImport(LibraryName, EntryPoint = "SDL_GetWindowMaximumSize")]
+        public static extern void GetWindowMaximumSize(Window window, out int width, out int height);        [DllImport(LibraryName, EntryPoint = "SDL_SetWindowBordered")]
+        public static extern void SetWindowBordered(Window window, bool bordered);        [DllImport(LibraryName, EntryPoint = "SDL_SetWindowResizable")]
+        public static extern void SetWindowResizable(Window window, bool resizable);        [DllImport(LibraryName, EntryPoint = "SDL_ShowWindow")]
+        public static extern void ShowWindow(Window window);        [DllImport(LibraryName, EntryPoint = "SDL_HideWindow")]
+        public static extern void HideWindow(Window window);        [DllImport(LibraryName, EntryPoint = "SDL_RaiseWindow")]
+        public static extern void RaiseWindow(Window window);        [DllImport(LibraryName, EntryPoint = "SDL_MaximizeWindow")]
+        public static extern void MaximizeWindow(Window window);        [DllImport(LibraryName, EntryPoint = "SDL_MinimizeWindow")]
+        public static extern void MinimizeWindow(Window window);        [DllImport(LibraryName, EntryPoint = "SDL_RestoreWindow")]
+        public static extern void RestoreWindow(Window window);        [DllImport(LibraryName, EntryPoint = "SDL_SetWindowFullscreen")]
+        public static extern int SetWindowFullscreen(Window window, WindowFlags flags);        [DllImport(LibraryName, EntryPoint = "SDL_GetWindowSurface")]
+        public static extern Surface GetWindowSurface(Window window);        [DllImport(LibraryName, EntryPoint = "SDL_UpdateWindowSurface")]
+        public static extern int UpdateWindowSurface(Window window);        [DllImport(LibraryName, EntryPoint = "SDL_UpdateWindowSurfaceRects")]
+        public static extern int UpdateWindowSurfaceRects(Window window, Rect* rectangles, int numRectangles);        [DllImport(LibraryName, EntryPoint = "SDL_SetWindowGrab")]
+        public static extern void SetWindowGrab(Window window, bool grabbed);        [DllImport(LibraryName, EntryPoint = "SDL_GetWindowGrab")]
+        public static extern bool GetWindowGrab(Window window);        [DllImport(LibraryName, EntryPoint = "SDL_GetGrabbedWindow")]
+        public static extern Window GetGrabbedWindow();        [DllImport(LibraryName, EntryPoint = "SDL_SetWindowBrightness")]
+        public static extern int SetWindowBrightness(Window window, float brightness);        [DllImport(LibraryName, EntryPoint = "SDL_GetWindowBrightness")]
+        public static extern float GetWindowBrightness(Window window);        [DllImport(LibraryName, EntryPoint = "SDL_SetWindowOpacity")]
+        public static extern int SetWindowOpacity(Window window, float opacity);        [DllImport(LibraryName, EntryPoint = "SDL_GetWindowOpacity")]
+        public static extern int GetWindowOpacity(Window window, out float opacity);        [DllImport(LibraryName, EntryPoint = "SDL_SetWindowModalFor")]
+        public static extern int SetWindowModalFor(Window modalWindow, Window parentWindow);        [DllImport(LibraryName, EntryPoint = "SDL_SetWindowInputFocus")]
+        public static extern int SetWindowInputFocus(Window window);        [DllImport(LibraryName, EntryPoint = "SDL_SetWindowGammaRamp")]
+        public static extern int SetWindowGammaRamp(Window window, ushort* red, ushort* green, ushort* blue);        [DllImport(LibraryName, EntryPoint = "SDL_GetWindowGammaRamp")]
+        public static extern int GetWindowGammaRamp(Window window, ushort* red, ushort* green, ushort* blue);        [DllImport(LibraryName, EntryPoint = "SDL_SetWindowHitTest")]
+        public static extern int SetWindowHitTest(Window window, HitTest callback, IntPtr callbackData);        [DllImport(LibraryName, EntryPoint = "SDL_DestroyWindow")]
+        public static extern void DestroyWindow(Window window);        [DllImport(LibraryName, EntryPoint = "SDL_IsScreenSaverEnabled")]
+        public static extern bool IsScreenSaverEnabled();        [DllImport(LibraryName, EntryPoint = "SDL_EnableScreenSaver")]
+        public static extern void EnableScreenSaver();        [DllImport(LibraryName, EntryPoint = "SDL_DisableScreenSaver")]
+        public static extern void DisableScreenSaver();
 
         //
         // SDL_vulkan.h
         //
-        private delegate int VulkanLoadLibraryDelegate(byte* path);
-        private static VulkanLoadLibraryDelegate _vulkanLoadLibrary;
-        public static int VulkanLoadLibrary(byte* path) => _vulkanLoadLibrary(path);
-
-        private delegate IntPtr VulkanGetVkGetInstanceProcAddrDelegate();
-        private static VulkanGetVkGetInstanceProcAddrDelegate _vulkanGetVkGetInstanceProcAddr;
-        public static IntPtr VulkanGetVkGetInstanceProcAddr() => _vulkanGetVkGetInstanceProcAddr();
-
-        private delegate void VulkanUnloadLibraryDelegate();
-        private static VulkanUnloadLibraryDelegate _vulkanUnloadLibrary;
-        public static void VulkanUnloadLibrary() => _vulkanUnloadLibrary();
-
-        private delegate bool VulkanGetInstanceExtensionsDelegate(Window window, ref uint count, byte** names);
-        private static VulkanGetInstanceExtensionsDelegate _vulkanGetInstanceExtensions;
-        public static bool VulkanGetInstanceExtensions(Window window, ref uint count, byte** names) => _vulkanGetInstanceExtensions(window, ref count, names);
-
-        private delegate bool VulkanCreateSurfaceDelegate(Window window, Vulkan.Vk.Instance instance, out Vulkan.Vk.Surface surface);
-        private static VulkanCreateSurfaceDelegate _vulkanCreateSurface;
-        public static bool VulkanCreateSurface(Window window, Vulkan.Vk.Instance instance, out Vulkan.Vk.Surface surface) => _vulkanCreateSurface(window, instance, out surface);
-
-        private delegate void VulkanGetDrawableSizeDelegate(Window window, out int w, out int h);
-        private static VulkanGetDrawableSizeDelegate _vulkanGetDrawableSize;
-        public static void VulkanGetDrawableSize(Window window, out int w, out int h) => _vulkanGetDrawableSize(window, out w, out h);
+        [DllImport(LibraryName, EntryPoint = "SDL_Vulkan_LoadLibrary")]
+        public static extern int VulkanLoadLibrary(byte* path);        [DllImport(LibraryName, EntryPoint = "SDL_Vulkan_GetVkGetInstanceProcAddr")]
+        public static extern IntPtr VulkanGetVkGetInstanceProcAddr();        [DllImport(LibraryName, EntryPoint = "SDL_Vulkan_UnloadLibrary")]
+        public static extern void VulkanUnloadLibrary();        [DllImport(LibraryName, EntryPoint = "SDL_Vulkan_GetInstanceExtensions")]
+        public static extern bool VulkanGetInstanceExtensions(Window window, ref uint count, byte** names);        [DllImport(LibraryName, EntryPoint = "SDL_Vulkan_CreateSurface")]
+        public static extern bool VulkanCreateSurface(Window window, Vulkan.Vk.Instance instance, out Vulkan.Vk.Surface surface);        [DllImport(LibraryName, EntryPoint = "SDL_Vulkan_GetDrawableSize")]
+        public static extern void VulkanGetDrawableSize(Window window, out int w, out int h);
     }
 }

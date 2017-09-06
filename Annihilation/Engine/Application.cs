@@ -77,16 +77,6 @@ namespace Engine
 
         public void Run(Action initFunction, Action<double> updateFunction, Action shutdownFunction)
         {
-            SDL.LoadFunctions(SDLModule.SDL);
-            SDL.LoadFunctions(SDLModule.Video);
-            SDL.LoadFunctions(SDLModule.Events);
-            SDL.LoadFunctions(SDLModule.Keyboard);
-            SDL.LoadFunctions(SDLModule.Mouse);
-            SDL.LoadFunctions(SDLModule.Version);
-            SDL.LoadFunctions(SDLModule.SysWm);
-            SDL.LoadFunctions(SDLModule.FileSystem);
-            SDL.LoadFunctions(SDLModule.Vulkan);
-            
             StringUtf8 title = Strings.GameTitle.ToUtf8();
             StringUtf8 organization = Strings.Organization.ToUtf8();
             // TODO: Can't ever free this. Why? SDL_Free()?
