@@ -1,0 +1,3 @@
+[submodule "Annihilation/ThirdParty/CoreSDL"]
+	path = Annihilation/ThirdParty/CoreSDL
+	url = https://github.com/jesta88/CoreSDL
