@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using Engine;
 
 namespace Vulkan
 {
@@ -138,8 +137,6 @@ namespace Vulkan
             public IntPtr Free; // FreeFunction
             public IntPtr InternalAllocation; // InternalAllocationNotification
             public IntPtr InternalFree; // InternalFreeNotification
-
-            public static AllocationCallbacks Null = new AllocationCallbacks();
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -357,18 +354,21 @@ namespace Vulkan
             public uint VendorId;
             public uint DeviceId;
             public PhysicalDeviceType DeviceType;
-            public fixed byte DeviceName[(int)MaxPhysicalDeviceNameSize];
-            public fixed byte PipelineCacheUuid[(int)UUIDSize];
+            public byte* DeviceName;
+            public byte* PipelineCacheUuid;
+            //public fixed byte DeviceName[(int)MaxPhysicalDeviceNameSize];
+            //public fixed byte PipelineCacheUuid[(int)UUIDSize];
             public PhysicalDeviceLimits Limits;
             public PhysicalDeviceSparseProperties SparseProperties;
 
             public string GetDeviceName()
             {
-                fixed (byte* ptr = DeviceName)
+                return Utf8.ToString(DeviceName);
+                /*fixed (byte* ptr = DeviceName)
                 {
                     StringUtf8 strUtf8 = new StringUtf8(ptr);
                     return strUtf8.ToString();
-                }
+                }*/
             }
         }
 

@@ -116,7 +116,7 @@ namespace Engine.Graphics
             }
 
             // Loading Vulkan loader library.");
-            SDL.VulkanLoadLibrary(null);
+            SDL.VulkanLoadLibrary(null).CheckError();
 
             // Creating SDL window.");
             _sdlWindow = SDL.CreateWindow(

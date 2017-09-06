@@ -27,6 +27,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="ThirdParty\CoreVulkan\Utf8.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Engine\Collections\" />
     <Folder Include="Engine\Config\" />
     <Folder Include="Engine\Console\" />
