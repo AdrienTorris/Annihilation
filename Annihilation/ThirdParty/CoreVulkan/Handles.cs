@@ -9,39 +9,20 @@ namespace Vulkan
         {
             public IntPtr Handle;
 
-            public readonly static Instance Null = new Instance();
+            public static readonly Instance Null;
 
-            public override bool Equals(object obj)
-            {
-                return obj is Instance && this == (Instance)obj;
-            }
+            public bool Equals(Instance other) => Handle == other.Handle;
+            public override bool Equals(object obj) => obj is Instance && this == (Instance)obj;
+            public override int GetHashCode() => Handle.GetHashCode();
+            public override string ToString() => Handle.ToString();
 
-            public static bool operator ==(Instance left, Instance right)
-            {
-                return left.Equals(right);
-            }
+            public static bool operator ==(Instance left, Instance right) => left.Equals(right);
+            public static bool operator !=(Instance left, Instance right) => !left.Equals(right);
 
-            public static bool operator !=(Instance left, Instance right)
-            {
-                return !left.Equals(right);
-            }
-
-            public bool Equals(Instance other)
-            {
-                return Handle == other.Handle;
-            }
-
-            public override int GetHashCode()
-            {
-                return Handle.GetHashCode();
-            }
-
-            public override string ToString()
-            {
-                return Handle.ToString();
-            }
+            public static implicit operator IntPtr(Instance instance) => instance.Handle;
+            public static implicit operator Instance(IntPtr handle) => new Instance() { Handle = handle };
         }
-        
+
         [StructLayout(LayoutKind.Sequential)]
         public struct PhysicalDevice : IEquatable<PhysicalDevice>
         {

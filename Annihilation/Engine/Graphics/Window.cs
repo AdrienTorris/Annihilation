@@ -108,17 +108,17 @@ namespace Engine.Graphics
 
         public Window(ref StringUtf8 title)
         {
-            // Initializing SDL video subsystem.");
+            // Initializing SDL video subsystem.
             if (VideoSubSystemInitialized == false)
             {
                 SDL.InitSubSystem(SDL.InitFlags.Video).CheckError();
                 VideoSubSystemInitialized = true;
             }
 
-            // Loading Vulkan loader library.");
+            // Loading Vulkan loader library.
             SDL.VulkanLoadLibrary(null).CheckError();
 
-            // Creating SDL window.");
+            // Creating SDL window.
             _sdlWindow = SDL.CreateWindow(
                 title,
                 SDL.WindowPositionUndefined,
@@ -129,7 +129,7 @@ namespace Engine.Graphics
             );
             _sdlWindow.CheckError();
 
-            // Getting window manager info.");
+            // Getting window manager info.
             SDL.SysWMInfo sysWMInfo = default(SDL.SysWMInfo);
             SDL.GetVersion(out sysWMInfo.Version);
             SDL.GetWindowWMInfo(_sdlWindow, ref sysWMInfo).CheckError();
@@ -155,7 +155,7 @@ namespace Engine.Graphics
 #elif PLATFORM_MACOS
             Handle = sysWMInfo.Info.Cocoa.Window;
 #endif
-            // Initializing Vulkan.");
+            // Initializing Vulkan.
             InitInstance(title);
             InitDevice();
             InitCommandBuffers();
@@ -177,7 +177,7 @@ namespace Engine.Graphics
 
         public void SetMode(int width, int height, int refreshRate, int bpp, bool fullscreen)
         {
-            // Creating SDL window.");
+            // Creating SDL window.
             if (_sdlWindow.Handle == IntPtr.Zero)
             {
                 SDL.WindowFlags flags = SDL.WindowFlags.Hidden | SDL.WindowFlags.Vulkan;
@@ -205,10 +205,10 @@ namespace Engine.Graphics
 
         private void InitInstance(byte* title)
         {
-            // Loading Vulkan getInstanceProcAddr function.");
+            // Loading Vulkan getInstanceProcAddr function.
             Vk.GetInstanceProcAddr = Vk.GetInstanceProcAddr ?? Marshal.GetDelegateForFunctionPointer<Vk.GetInstanceProcAddrDelegate>(SDL.VulkanGetVkGetInstanceProcAddr());
 
-            // Getting required Vulkan instance extensions for surface.");
+            // Getting required Vulkan instance extensions for surface.
             uint extensionCount = 0;
             SDL.VulkanGetInstanceExtensions(_sdlWindow, ref extensionCount, null).CheckError();
 
@@ -223,10 +223,10 @@ namespace Engine.Graphics
                 extensionNames[extensionCount] = Vk.ExtDebugReportExtensionName.ToUtf8();
             }
 #endif
-            // Loading Vulkan createInstance function.");
+            // Loading Vulkan createInstance function.
             vkCreateInstance = vkCreateInstance ?? Vk.LoadGlobalFunction<Vk.CreateInstanceDelegate>();
 
-            // Creating Vulkan instance.");
+            // Creating Vulkan instance.
             Vk.ApplicationInfo applicationInfo = new Vk.ApplicationInfo(
                 title,
                 Vulkan.Version.One,
@@ -259,10 +259,10 @@ namespace Engine.Graphics
                 Log.Error("Vulkan instance is null.");
             }
 
-            // Creating Vulkan surface.");
+            // Creating Vulkan surface.
             SDL.VulkanCreateSurface(_sdlWindow, _vulkanInstance, out _vulkanSurface).CheckError();
 
-            // Loading Vulkan instance functions.");
+            // Loading Vulkan instance functions.
             Vk.GetDeviceProcAddr = Vk.GetDeviceProcAddr ?? Vk.LoadInstanceFunction<Vk.GetDeviceProcAddrDelegate>(_vulkanInstance);
 
             vkDestroyInstance = vkDestroyInstance ?? Vk.LoadInstanceFunction<Vk.DestroyInstanceDelegate>(_vulkanInstance);
@@ -291,7 +291,7 @@ namespace Engine.Graphics
                 vkCreateDebugReportCallback = Vk.LoadInstanceFunction<Vk.CreateDebugReportCallbackEXTDelegate>(_vulkanInstance);
                 vkDestroyDebugReportCallback = Vk.LoadInstanceFunction<Vk.DestroyDebugReportCallbackEXTDelegate>(_vulkanInstance);
 
-                // Creating Vulkan debug report callback.");
+                // Creating Vulkan debug report callback.
                 Vk.DebugReportCallbackCreateInfo debugReportCallbackCreateInfo = new Vk.DebugReportCallbackCreateInfo(
                     Vk.DebugReportFlags.Error | Vk.DebugReportFlags.Warning | Vk.DebugReportFlags.PerformanceWarning | Vk.DebugReportFlags.Information,
                     DebugMessageCallback
@@ -306,13 +306,13 @@ namespace Engine.Graphics
 
         private void InitDevice()
         {
-            // Enumerating physical devices.");
+            // Enumerating physical devices.
             uint physicalDeviceCount = 0;
             vkEnumeratePhysicalDevices(_vulkanInstance, ref physicalDeviceCount, null).CheckError();
 
             if (physicalDeviceCount == 0)
             {
-                Log.Error("No Vulkan physical device found.");
+                Log.Error("No Vulkan physical device found.
             }
 
             // TODO: This should be user-configurable through command line args and settings
@@ -324,19 +324,19 @@ namespace Engine.Graphics
 
             if (_vulkanPhysicalDevice == Vk.PhysicalDevice.Null)
             {
-                Log.Error("Vulkan physical device is null.");
+                Log.Error("Vulkan physical device is null.
             }
 
-            // Getting device memory properties.");
+            // Getting device memory properties.
             vkGetPhysicalDeviceMemoryProperties(_vulkanPhysicalDevice, out Graphics.DeviceMemoryProperties);
 
-            // Enumerating device extensions.");
+            // Enumerating device extensions.
             uint deviceExtensionCount = 0;
             vkEnumerateDeviceExtensionProperties(_vulkanPhysicalDevice, null, ref deviceExtensionCount, null).CheckError();
 
             if (deviceExtensionCount == 0)
             {
-                Log.Error("No device extensions found.");
+                Log.Error("No device extensions found.
             }
 
             Vk.ExtensionProperties[] extensionProperties = new Vk.ExtensionProperties[deviceExtensionCount];
@@ -368,33 +368,33 @@ namespace Engine.Graphics
 
             if (!foundSwapchainExtension)
             {
-                Log.Error($"Couldn't find {Vk.SwapchainExtensionName} extension.");
+                Log.Error($"Couldn't find {Vk.SwapchainExtensionName} extension.
             }
 
-            // Getting device properties.");
+            // Getting device properties.
             vkGetPhysicalDeviceProperties(_vulkanPhysicalDevice, out Graphics.DeviceProperties);
             Log.Info($"Device: {Graphics.VendorNames[Graphics.DeviceProperties.VendorId]} {Graphics.DeviceProperties.GetDeviceName()}");
 
-            // Getting queue family properties.");
+            // Getting queue family properties.
             uint queueFamilyCount = 0;
             vkGetPhysicalDeviceQueueFamilyProperties(_vulkanPhysicalDevice, ref queueFamilyCount, null);
 
             if (queueFamilyCount == 0)
             {
-                Log.Error("No Vulkan queues found.");
+                Log.Error("No Vulkan queues found.
             }
 
             Vk.QueueFamilyProperties[] queueFamilyProperties = new Vk.QueueFamilyProperties[queueFamilyCount];
             vkGetPhysicalDeviceQueueFamilyProperties(_vulkanPhysicalDevice, ref queueFamilyCount, queueFamilyProperties);
 
-            // Finding queues with present support.");
+            // Finding queues with present support.
             Vk.Bool32[] queueSupportsPresent = new Vk.Bool32[queueFamilyCount];
             for (uint i = 0; i < queueFamilyCount; ++i)
             {
                 vkGetPhysicalDeviceSurfaceSupport(_vulkanPhysicalDevice, i, _vulkanSurface, out queueSupportsPresent[i]);
             }
 
-            // Finding queue with graphics and present support.");
+            // Finding queue with graphics and present support.
             bool foundGraphicsQueue = false;
 
             for (uint i = 0; i < queueFamilyCount; ++i)
@@ -408,12 +408,12 @@ namespace Engine.Graphics
 
             if (!foundGraphicsQueue)
             {
-                Log.Error("No graphics+present queue found.");
+                Log.Error("No graphics+present queue found.
             }
 
             // TODO: Find exclusive compute and transfer queues
 
-            // Getting Vulkan physical device features.");
+            // Getting Vulkan physical device features.
             vkGetPhysicalDeviceFeatures(_vulkanPhysicalDevice, out _vulkanPhysicalDeviceFeatures);
 
             Vk.PhysicalDeviceFeatures physicalDeviceFeatures = new Vk.PhysicalDeviceFeatures
@@ -422,7 +422,7 @@ namespace Engine.Graphics
                 SamplerAnisotropy = _vulkanPhysicalDeviceFeatures.SamplerAnisotropy
             };
 
-            // Creating Vulkan device.");
+            // Creating Vulkan device.
             Vk.DeviceQueueCreateInfo deviceQueueCreateInfo = new Vk.DeviceQueueCreateInfo(
                 Graphics.GraphicsQueueFamily,
                 1,
@@ -449,10 +449,10 @@ namespace Engine.Graphics
 
             if (Graphics.Device == Vk.Device.Null)
             {
-                Log.Error("Vulkan device is null.");
+                Log.Error("Vulkan device is null.
             }
 
-            // Loading Vulkan device functions.");
+            // Loading Vulkan device functions.
             vkGetDeviceQueue = vkGetDeviceQueue ?? Vk.LoadDeviceFunction<Vk.GetDeviceQueueDelegate>(Graphics.Device);
             vkCreateCommandPool = vkCreateCommandPool ?? Vk.LoadDeviceFunction<Vk.CreateCommandPoolDelegate>(Graphics.Device);
             vkAllocateCommandBuffers = vkAllocateCommandBuffers ?? Vk.LoadDeviceFunction<Vk.AllocateCommandBuffersDelegate>(Graphics.Device);
@@ -467,19 +467,19 @@ namespace Engine.Graphics
 #if DEBUG
             if (foundDebugMarkerExtension)
             {
-                Log.Info($"Using {Vk.DebugMarkerExtensionName}.");
+                Log.Info($"Using {Vk.DebugMarkerExtensionName}.
                 vkDebugMarkerSetObjectName = vkDebugMarkerSetObjectName ?? Vk.LoadDeviceFunction<Vk.DebugMarkerSetObjectNameEXTDelegate>(Graphics.Device);
             }
 #endif
             if (Graphics.DedicatedAllocation)
             {
-                Log.Info($"Using {Vk.DedicatedAllocationExtensionName}.");
+                Log.Info($"Using {Vk.DedicatedAllocationExtensionName}.
             }
 
-            // Getting graphics queue.");
+            // Getting graphics queue.
             vkGetDeviceQueue(Graphics.Device, Graphics.GraphicsQueueFamily, 0, out Graphics.GraphicsQueue);
 
-            // Finding color buffer format.");
+            // Finding color buffer format.
             Vk.FormatProperties formatProperties;
             Graphics.ColorFormat = Vk.Format.R8G8B8A8UNorm;
 
@@ -490,12 +490,12 @@ namespace Engine.Graphics
 
                 if (a2b10g10r10Support)
                 {
-                    // Using A2B10G10R10 color buffer format.");
+                    // Using A2B10G10R10 color buffer format.
                     Graphics.ColorFormat = Vk.Format.A2B10G10R10UNormPack32;
                 }
             }
 
-            // Finding depth buffer format.");
+            // Finding depth buffer format.
             vkGetPhysicalDeviceFormatProperties(_vulkanPhysicalDevice, Vk.Format.X8D24UNormPack32, out formatProperties);
             bool x8d24Support = (formatProperties.OptimalTilingFeatures & Vk.FormatFeatureFlags.DepthStencilAttachment) != 0;
             vkGetPhysicalDeviceFormatProperties(_vulkanPhysicalDevice, Vk.Format.D32SFloat, out formatProperties);
@@ -504,19 +504,19 @@ namespace Engine.Graphics
             Graphics.DepthFormat = Vk.Format.D16UNorm;
             if (x8d24Support)
             {
-                // Using X8_D24 depth buffer format.");
+                // Using X8_D24 depth buffer format.
                 Graphics.DepthFormat = Vk.Format.X8D24UNormPack32;
             }
             else if (d32Support)
             {
-                // Using D32 depth buffer format.");
+                // Using D32 depth buffer format.
                 Graphics.DepthFormat = Vk.Format.D32SFloat;
             }
         }
 
         private void InitCommandBuffers()
         {
-            // Creating Vulkan command pool.");
+            // Creating Vulkan command pool.
             Vk.CommandPoolCreateInfo commandPoolCreateInfo = new Vk.CommandPoolCreateInfo(
                 Vk.CommandPoolCreateFlags.ResetCommandBuffer,
                 Graphics.GraphicsQueueFamily
@@ -527,12 +527,12 @@ namespace Engine.Graphics
             commandPoolCreateInfo.Flags = Vk.CommandPoolCreateFlags.Transient;
             vkCreateCommandPool(Graphics.Device, ref commandPoolCreateInfo, null, out _transientCommandPool).CheckError();
 
-            // Creating Vulkan command buffers.");
+            // Creating Vulkan command buffers.
             Vk.CommandBufferAllocateInfo commandBufferAllocateInfo = new Vk.CommandBufferAllocateInfo(_commandPool, CommandBufferCount);
 
             vkAllocateCommandBuffers(Graphics.Device, ref commandBufferAllocateInfo, _commandBuffers).CheckError();
 
-            // Creating Vulkan command buffer fences and semaphores.");
+            // Creating Vulkan command buffer fences and semaphores.
             Vk.FenceCreateInfo fenceCreateInfo = new Vk.FenceCreateInfo(Vk.FenceCreateFlags.None);
 
             for (int i = 0; i < CommandBufferCount; ++i)
@@ -547,7 +547,7 @@ namespace Engine.Graphics
 
         private void CreateSwapchain()
         {
-            // Creating Vulkan swapchain.");
+            // Creating Vulkan swapchain.
 
             vkGetPhysicalDeviceSurfaceCapabilities(_vulkanPhysicalDevice, _vulkanSurface, out _vulkanSurfaceCapabilities).CheckError();
 

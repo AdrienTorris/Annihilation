@@ -15,7 +15,7 @@
     <BaseIntermediateOutputPath>..\Temp\</BaseIntermediateOutputPath>
     <BaseOutputPath>..\Build\</BaseOutputPath>
     <DocumentationFile></DocumentationFile>
-    <DefineConstants>TRACE;DEBUG;NETCOREAPP2_0;PLATFORM_WINDOWS;ENABLE_VALIDATION;NETCOREAPP2_0</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETCOREAPP2_0;PLATFORM_WINDOWS;ENABLE_VALIDATION</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -23,17 +23,11 @@
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <BaseIntermediateOutputPath>..\Temp\</BaseIntermediateOutputPath>
     <BaseOutputPath>..\Build\</BaseOutputPath>
-    <DefineConstants>RELEASE;NETCOREAPP2_0;WINDOW_WIN32</DefineConstants>
+    <DefineConstants>RELEASE;NETCOREAPP2_0;PLATFORM_WINDOWS</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="ThirdParty\CoreVulkan\Utf8.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Engine\Collections\" />
-    <Folder Include="Engine\Config\" />
-    <Folder Include="Engine\Console\" />
+    <PackageReference Include="CoreSDL" Version="1.0.0" />
   </ItemGroup>
 
 </Project>
