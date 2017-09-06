@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Text;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 using Engine.Input;
 using Engine.Graphics;
@@ -79,16 +77,17 @@ namespace Engine
         {
             StringUtf8 title = Strings.GameTitle.ToUtf8();
             StringUtf8 organization = Strings.Organization.ToUtf8();
-            // TODO: Can't ever free this. Why? SDL_Free()?
             StringUtf8 preferencePath = SDL.GetPrefPath(title, organization);
             organization.Free();
 
             PreferencePath = preferencePath.ToString();
+            SDL.Free(preferencePath.BytePtr);
 
             Log.Info("Preference path found: " + PreferencePath);
             
             Window = new Window(ref title);
-            
+            title.Free();
+
             InputManager.Init(this);
             
             initFunction?.Invoke();

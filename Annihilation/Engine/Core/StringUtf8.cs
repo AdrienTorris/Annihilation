@@ -68,9 +68,7 @@ namespace Engine
 
         public static bool operator ==(StringUtf8 s1, StringUtf8 s2) => Compare(s1, s2);
         public static bool operator !=(StringUtf8 s1, StringUtf8 s2) => !(s1 == s2);
-
-        //public static implicit operator string (StringUtf8 text) => text.ToString();
-        //public static implicit operator StringUtf8(string str) => new StringUtf8(str);
+        
         public static implicit operator byte* (StringUtf8 text) => text.BytePtr;
         public static implicit operator StringUtf8(byte* ptr) => new StringUtf8(ptr);
     }
