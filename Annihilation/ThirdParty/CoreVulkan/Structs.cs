@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using System.Runtime.InteropServices;
 using Engine;
 
@@ -400,11 +399,9 @@ namespace Vulkan
         public unsafe struct PhysicalDeviceMemoryProperties
         {
             public uint MemoryTypeCount;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxMemoryTypes)]
-            public MemoryType[] MemoryTypes;
+            public MemoryType* MemoryTypes;
             public uint MemoryHeapCount;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxMemoryHeaps)]
-            public MemoryHeap[] MemoryHeaps;
+            public MemoryHeap* MemoryHeaps;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -417,17 +414,14 @@ namespace Vulkan
             public uint QueueCount;
             public float* QueuePriorities;
 
-            public DeviceQueueCreateInfo(uint queueFamilyIndex, uint queueCount, float[] queuePriorities)
+            public DeviceQueueCreateInfo(uint queueFamilyIndex, uint queueCount, float* queuePriorities)
             {
                 Type = StructureType.DeviceQueueCreateInfo;
                 Next = null;
                 Flags = DeviceQueueCreateFlags.None;
                 QueueFamilyIndex = queueFamilyIndex;
                 QueueCount = queueCount;
-                fixed (float* ptr = &queuePriorities[0])
-                {
-                    QueuePriorities = ptr;
-                }
+                QueuePriorities = queuePriorities;
             }
         }
 
@@ -1340,11 +1334,9 @@ namespace Vulkan
         public unsafe struct ImageBlit
         {
             public ImageSubresourceLayers SrcSubresource;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public Offset3D[] SrcOffsets;
+            public Offset3D* SrcOffsets;
             public ImageSubresourceLayers DstSubresource;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public Offset3D[] DstOffsets;
+            public Offset3D* DstOffsets;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -2653,8 +2645,7 @@ namespace Vulkan
             public StructureType Type;
             public void* Next;
             public uint PhysicalDeviceCount;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDeviceGroupSize)]
-            public PhysicalDevice[] PhysicalDevices;
+            public PhysicalDevice* PhysicalDevices;
             public Bool32 SubsetAllocation;
         }
 
