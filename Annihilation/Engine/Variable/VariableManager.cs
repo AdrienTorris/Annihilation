@@ -42,19 +42,15 @@ namespace Engine
         private static readonly List<string> _varsToWrite = new List<string>(128);
         private static readonly Dictionary<string, Value> _vars = new Dictionary<string, Value>(128);
 
-        static VariableManager()
-        {
-            // Add the engine's default variable-related commands
-            CommandManager.AddCommand("ListVariables", )
-        }
-
+        // PERF: Is this really faster than a dictionary?
         public static Variable* Find(char* name)
         {
             Variable* var;
-            
+
             for (var = _variables; var != null; var = var->Next)
             {
-                if (!StringUtility.Compare(name, var->Name))
+                // PERF: Hash the names instead of comparing char*?
+                if (!StringUtility.AreEqual(name, var->Name))
                 {
                     return var;
                 }
@@ -93,7 +89,7 @@ namespace Engine
             }
             else
             {
-
+                Set(var, var->DefaultValueString);
             }
         }
 
@@ -106,10 +102,52 @@ namespace Engine
                 return;
             }
 
-
+            Set(var, value);
         }
 
-        public static void Set(Variable* var, char* value)
+        public static void Set(string name, bool value)
+        {
+            fixed (char* ptr = name)
+            {
+
+            }
+        }
+
+        public static void Set(Variable* var, bool value)
+        {
+            char* valueString = value ? Memory.AllocateChars(4) : Memory.AllocateChars(5);
+            *(valueString + 0) = value ? 't' : 'f';
+            *(valueString + 1) = value ? 'r' : 'a';
+            *(valueString + 2) = value ? 'u' : 'l';
+            *(valueString + 3) = value ? 'e' : 's';
+            if (!value) *(valueString + 4) = 'e';
+
+            var->Value = new Value(value);
+            Set(var, valueString);
+        }
+
+        public static void Set(Variable* var, int value)
+        {
+            var->Value = new Value(value);
+            Set(var, MathUtility.ToChars(value));
+        }
+
+        public static void Set(Variable* var, float value)
+        {
+            var->Value = new Value(value);
+            Set(var, MathUtility.ToChars(value));
+        }
+
+        public static void Set(Variable* var, string value)
+        {
+            var->Value = new Value(value);
+            fixed (char* ptr = value)
+            {
+                Set(var, ptr);
+            }
+        }
+
+        public static void Set(Variable* var, char* valueString)
         {
             if ((var->Flags & VariableFlags.Registered) == 0)
             {
@@ -118,38 +156,54 @@ namespace Engine
 
             if (var->ValueString == null)
             {
-                var->ValueString = value;
+                // TODO: Need to duplicate memory?
+                var->ValueString = StringUtility.Duplicate(valueString);
             }
             else
             {
-                if (StringUtility.Compare(var->ValueString, value))
+                if (StringUtility.AreEqual(var->ValueString, valueString))
                 {
                     return;
                 }
-            }
 
-            ValueType type = StringUtility.GetType(var->ValueString);
-            switch (type)
+                int length = StringUtility.GetLength(valueString);
+                // Different lengths, realloc the string
+                if (length != StringUtility.GetLength(var->ValueString))
+                {
+                    Memory.Free(var->ValueString);
+                    //
+                    // ALLOCATION
+                    //
+                    var->ValueString = Memory.AllocateChars(length + 1);
+                }
+                Memory.Copy(var->ValueString, valueString, length + 1);
+            }
+            
+            if (var->Value.Type == ValueType.Unknown)
             {
-                case ValueType.Bool:
+                ValueType type = StringUtility.GetType(var->ValueString);
+                switch (type)
                 {
-                    var->Value = new Value(StringUtility.ToBool(var->ValueString));
-                    break;
-                }
-                case ValueType.Int32:
-                {
-                    var->Value = new Value(StringUtility.ToInt(var->ValueString));
-                    break;
-                }
-                case ValueType.Float:
-                {
-                    var->Value = new Value(StringUtility.ToFloat(var->ValueString));
-                    break;
-                }
-                case ValueType.String:
-                {
-                    var->Value = new Value(var->ValueString);
-                    break;
+                    case ValueType.Bool:
+                    {
+                        var->Value = new Value(StringUtility.ToBool(var->ValueString));
+                        break;
+                    }
+                    case ValueType.Int32:
+                    {
+                        var->Value = new Value(StringUtility.ToInt(var->ValueString));
+                        break;
+                    }
+                    case ValueType.Float:
+                    {
+                        var->Value = new Value(StringUtility.ToFloat(var->ValueString));
+                        break;
+                    }
+                    case ValueType.String:
+                    {
+                        var->Value = new Value(var->ValueString);
+                        break;
+                    }
                 }
             }
 
@@ -157,6 +211,9 @@ namespace Engine
             {
                 var->DefaultValueString = var->ValueString;
             }
+
+            // TODO: How do we fill the actions on game restart?
+            //var->Callback();
         }
 
         public static void AddVar(string name, byte value = 0, VariableFlags flags = VariableFlags.None)

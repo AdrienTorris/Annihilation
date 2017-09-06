@@ -17,9 +17,15 @@ namespace Engine
         }
 
         [Conditional("DEBUG")]
-        public static unsafe void Info(byte* text)
+        public static unsafe void Info(StringUtf8 text)
         {
-            Info(text);
+            Info(text.ToString());
+        }
+
+        [Conditional("DEBUG")]
+        public static unsafe void Info(char* text)
+        {
+            Info(new string(text));
         }
 
         [Conditional("DEBUG")]
@@ -31,9 +37,9 @@ namespace Engine
         }
 
         [Conditional("DEBUG")]
-        public static unsafe void Warning(byte* text)
+        public static unsafe void Warning(StringUtf8 text)
         {
-            Warning(text);
+            Warning(text.ToString());
         }
 
         [Conditional("DEBUG")]
@@ -45,9 +51,9 @@ namespace Engine
         }
 
         [Conditional("DEBUG")]
-        public static unsafe void Error(byte* text)
+        public static unsafe void Error(StringUtf8 text)
         {
-            Error(text);
+            Error(text.ToString());
         }
 
         [Conditional("DEBUG")]
@@ -59,9 +65,9 @@ namespace Engine
         }
 
         [Conditional("DEBUG")]
-        public static unsafe void Performance(byte* text)
+        public static unsafe void Performance(StringUtf8 text)
         {
-            Performance(text);
+            Performance(text.ToString());
         }
     }
 }

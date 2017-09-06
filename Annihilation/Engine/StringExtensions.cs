@@ -1,18 +1,18 @@
 ﻿using System.Text;
+using System.Runtime.InteropServices;
 using Engine.Mathematics;
 
 namespace Engine
 {
     public static class StringExtensions
     {
-        public static unsafe byte* ToBytes(this string text)
+        public static unsafe StringUtf8 ToUtf8(this string str) => new StringUtf8(str);
+
+        public static unsafe char* ToCharPtr(this string text)
         {
-            byte* bytes = null;
-            int maxBytes = Encoding.UTF8.GetMaxByteCount(text.Length);
-            fixed (char* chars = text)
+            fixed (char* charPtr = text)
             {
-                Encoding.UTF8.GetBytes(chars, text.Length, bytes, maxBytes);
-                return bytes;
+                return charPtr;
             }
         }
 

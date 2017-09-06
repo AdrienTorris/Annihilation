@@ -4,7 +4,7 @@ namespace Engine
 {
     public enum ValueType : byte
     {
-        Invalid,
+        Unknown,
         Uint8,
         Uint16,
         Uint32,

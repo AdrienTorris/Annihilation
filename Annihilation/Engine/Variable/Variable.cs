@@ -47,5 +47,18 @@ namespace Engine
                 CallbackId = 0;
             }
         }
+
+        public void Callback()
+        {
+            if (CallbackId == 0) return;
+
+            if (_callbacks.TryGetValue(CallbackId, out VariableCallback callback))
+            {
+                fixed (Variable* ptr = &this)
+                {
+                    callback.Invoke(ptr);
+                }
+            }
+        }
     }
 }

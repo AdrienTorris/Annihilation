@@ -20,16 +20,6 @@ namespace Engine
 
     public struct ApplicationSettings
     {
-        public string Title;
-        public string Organization;
-        public string Version;
 
-        [Conditional("DEBUG")]
-        public void CheckError()
-        {
-            if (Title == null) Log.Error($"Settings must have non-null {nameof(Title)}");
-            if (Organization == null) Log.Error($"Settings must have non-null {nameof(Organization)}");
-            if (Version == null) Log.Error($"Settings must have non-null {nameof(Version)}");
-        }
     }
 }

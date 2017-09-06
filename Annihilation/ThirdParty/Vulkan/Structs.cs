@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Runtime.InteropServices;
+using Engine;
 
 namespace Vulkan
 {
@@ -116,7 +117,7 @@ namespace Vulkan
             public uint EnabledExtensionCount;
             public byte** EnabledExtensionNames;
 
-            public InstanceCreateInfo(ApplicationInfo* applicationInfo, uint extensionCount, byte*[] extensionNames)
+            public InstanceCreateInfo(ApplicationInfo* applicationInfo, uint extensionCount, byte** extensionNames)
             {
                 Type = StructureType.InstanceCreateInfo;
                 Next = null;
@@ -125,10 +126,7 @@ namespace Vulkan
                 EnabledLayerCount = 0;
                 EnabledLayerNames = null;
                 EnabledExtensionCount = extensionCount;
-                fixed (byte** ptr = &extensionNames[0])
-                {
-                    EnabledExtensionNames = ptr;
-                }
+                EnabledExtensionNames = extensionNames;
             }
         }
 
@@ -369,7 +367,8 @@ namespace Vulkan
             {
                 fixed (byte* ptr = DeviceName)
                 {
-                    return Encoding.UTF8.GetString(ptr, MaxPhysicalDeviceNameSize);
+                    StringUtf8 strUtf8 = new StringUtf8(ptr);
+                    return strUtf8.ToString();
                 }
             }
         }
@@ -446,7 +445,7 @@ namespace Vulkan
             public byte** EnabledExtensionNames;
             public PhysicalDeviceFeatures* EnabledFeatures;
 
-            public DeviceCreateInfo(DeviceQueueCreateInfo queueCreateInfo, uint enabledExtensionCount, byte*[] enabledExtensionNames, PhysicalDeviceFeatures enabledFeatures)
+            public DeviceCreateInfo(DeviceQueueCreateInfo queueCreateInfo, uint enabledExtensionCount, byte** enabledExtensionNames, PhysicalDeviceFeatures enabledFeatures)
             {
                 Type = StructureType.DeviceCreateInfo;
                 Next = null;
@@ -456,10 +455,7 @@ namespace Vulkan
                 EnabledLayerCount = 0;
                 EnabledLayerNames = null;
                 EnabledExtensionCount = enabledExtensionCount;
-                fixed (byte** ptr = &enabledExtensionNames[0])
-                {
-                    EnabledExtensionNames = ptr;
-                }
+                EnabledExtensionNames = enabledExtensionNames;
                 EnabledFeatures = &enabledFeatures;
             }
         }
@@ -472,27 +468,18 @@ namespace Vulkan
 
             public bool IsNamed(string name)
             {
-                int strByteCount = Encoding.UTF8.GetMaxByteCount(name.Length);
-                byte[] strBytes = new byte[strByteCount];
-                Encoding.UTF8.GetBytes(name, 0, name.Length, strBytes, 0);
-
-                fixed (byte* namePtr = ExtensionName)
-                fixed (byte* strPtr = &strBytes[0])
+                StringUtf8 nameUtf8 = new StringUtf8(name);
+                StringUtf8 extensionUtf8;
+                bool result = false;
+                fixed (byte* extension = ExtensionName)
                 {
-                    for (int i = 0; i < MaxExtensionNameSize; ++i)
-                    {
-                        if (*(namePtr + i) == 0)
-                        {
-                            return true;
-                        }
-
-                        if (*(namePtr + i) != *(strPtr + i))
-                        {
-                            return false;
-                        }
-                    }
+                    extensionUtf8 = new StringUtf8(extension);
                 }
-                return true;
+                result = nameUtf8 == extensionUtf8;
+                
+                nameUtf8.Free();
+
+                return result;
             }
         }
 

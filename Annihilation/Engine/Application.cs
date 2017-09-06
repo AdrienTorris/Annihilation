@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Text;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Engine.Input;
-using Engine.Config;
 using Engine.Graphics;
 
 using SDL2;
@@ -69,9 +69,7 @@ namespace Engine
                 Args = new string[0];
                 ArgsSet = new HashSet<string>(0);
             }
-
-            applicationSettings.CheckError();
-
+            
             ApplicationSettings = applicationSettings;
             GraphicsSettings = graphicsSettings;
             InputSettings = inputSettings;
@@ -79,7 +77,6 @@ namespace Engine
 
         public void Run(Action initFunction, Action<double> updateFunction, Action shutdownFunction)
         {
-            Log.Info("Loading SDL functions.");
             SDL.LoadFunctions(SDLModule.SDL);
             SDL.LoadFunctions(SDLModule.Video);
             SDL.LoadFunctions(SDLModule.Events);
@@ -89,21 +86,21 @@ namespace Engine
             SDL.LoadFunctions(SDLModule.SysWm);
             SDL.LoadFunctions(SDLModule.FileSystem);
             SDL.LoadFunctions(SDLModule.Vulkan);
+            
+            StringUtf8 title = Strings.GameTitle.ToUtf8();
+            StringUtf8 organization = Strings.Organization.ToUtf8();
+            // TODO: Can't ever free this. Why? SDL_Free()?
+            StringUtf8 preferencePath = SDL.GetPrefPath(title, organization);
+            organization.Free();
 
-            byte* title = ApplicationSettings.Title.ToBytes();
-            byte* organization = ApplicationSettings.Organization.ToBytes();
+            PreferencePath = preferencePath.ToString();
 
-            Log.Info("Getting preference path.");
-            PreferencePath = PreferencePath ?? StringUtility.GetString(SDL.GetPrefPath(title, organization));
             Log.Info("Preference path found: " + PreferencePath);
             
-            Log.Info("Creating window.");
-            Window = new Window(title);
-
-            Log.Info("Creating input manager.");
+            Window = new Window(ref title);
+            
             InputManager.Init(this);
             
-            Log.Info("Calling game init callback.");
             initFunction?.Invoke();
             
             while (_state == GameState.Running)
@@ -113,7 +110,6 @@ namespace Engine
                 updateFunction?.Invoke(1f / 144);
             }
             
-            Log.Info("Calling game shutdown callback.");
             shutdownFunction?.Invoke();
         }
         

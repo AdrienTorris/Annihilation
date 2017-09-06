@@ -1,16 +1,10 @@
 ﻿using System.Text;
+using System.Runtime.InteropServices;
 
 namespace Engine
 {
     public static class StringUtility
     {
-        public static unsafe int GetLength(byte* text)
-        {
-            int count = 0;
-            while (*(text++) != 0) count++;
-            return count;
-        }
-
         public static unsafe int GetLength(char* text)
         {
             int count = 0;
@@ -18,36 +12,7 @@ namespace Engine
             return count;
         }
 
-        public static unsafe string GetString(byte* text)
-        {
-            int length = GetLength(text);
-            return Encoding.UTF8.GetString(text, length);
-        }
-
-        public static unsafe bool Compare(byte* s1, byte* s2)
-        {
-            while (true)
-            {
-                if (*s1 != *s2) return false;
-                if (*s1 == 0) return true;
-                s1++;
-                s2++;
-            }
-        }
-
-        public static unsafe bool Compare(byte* s1, byte* s2, int count)
-        {
-            while (true)
-            {
-                if (count-- <= 0) return true;
-                if (*s1 != *s2) return false;
-                if (*s1 == 0) return true;
-                s1++;
-                s2++;
-            }
-        }
-
-        public static unsafe bool Compare(char* s1, char* s2)
+        public static unsafe bool AreEqual(char* s1, char* s2)
         {
             while (true)
             {
@@ -75,7 +40,7 @@ namespace Engine
             fixed (char* s1Ptr = s1)
             fixed (char* s2Ptr = s2)
             {
-                return Compare(s1Ptr, s2Ptr);
+                return AreEqual(s1Ptr, s2Ptr);
             }
         }
 
@@ -100,6 +65,14 @@ namespace Engine
             }
         }
 
+        public static unsafe char* Duplicate(char* text)
+        {
+            int length = GetLength(text);
+            char* ptr = Memory.AllocateChars(length);
+            Memory.Copy(ptr, text, length);
+            return ptr;
+        }
+
         public static unsafe ValueType GetType(char* text)
         {
             if (*text == '"') return ValueType.String;
@@ -112,9 +85,7 @@ namespace Engine
 
         public static unsafe bool ToBool(char* text)
         {
-            bool val = false;
-            if (*text == 't') val = true;
-            return val;
+            return *text == 't' ? true : false;
         }
 
         public static unsafe int ToInt(char* text)

@@ -27,7 +27,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.4.0" />
+    <Folder Include="Engine\Collections\" />
+    <Folder Include="Engine\Config\" />
+    <Folder Include="Engine\Console\" />
   </ItemGroup>
 
 </Project>

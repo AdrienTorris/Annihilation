@@ -95,6 +95,14 @@ namespace SDL2
     [SuppressUnmanagedCodeSecurity]
     public static unsafe partial class SDL
     {
+#if PLATFORM_WINDOWS
+        private const string LibraryName = "SDL2.dll";
+#elif PLATFORM_LINUX
+        private const string LibraryName = "libSDL2-2.0.so";
+#elif PLATFORM_MACOS
+        private const string LibraryName = "libdylib";
+#endif
+
         public const int ScanCodeMask = (1 << 30);
         public const int AudioCVTMaxFilters = 9;
 
@@ -705,6 +713,7 @@ namespace SDL2
         //
         // SDL.h
         //
+        [DllImport()]
         private delegate int InitDelegate(InitFlags flags);
         private static InitDelegate _init;
         public static int Init(InitFlags flags) => _init(flags);
@@ -919,7 +928,7 @@ namespace SDL2
         private static GameControllerAddMappingsFromRWDelegate _gameControllerAddMappingsFromRW;
         public static int GameControllerAddMappingsFromRW(RWops rwOps, int freeRW) => _gameControllerAddMappingsFromRW(rwOps, freeRW);
 
-        public static int GameControllerAddMappingsFromFile(byte* file) => _gameControllerAddMappingsFromRW(RWFromFile(file, "rb".ToBytes()), 1);
+        public static int GameControllerAddMappingsFromFile(byte* file) => _gameControllerAddMappingsFromRW(RWFromFile(file, "rb".ToUtf8()), 1);
 
         private delegate int GameControllerAddMappingDelegate(byte* mappginText);
         private static GameControllerAddMappingDelegate _gameControllerAddMapping;
@@ -2230,9 +2239,9 @@ namespace SDL2
         private static VulkanUnloadLibraryDelegate _vulkanUnloadLibrary;
         public static void VulkanUnloadLibrary() => _vulkanUnloadLibrary();
 
-        private delegate bool VulkanGetInstanceExtensionsDelegate(Window window, ref uint count, byte*[] names);
+        private delegate bool VulkanGetInstanceExtensionsDelegate(Window window, ref uint count, byte** names);
         private static VulkanGetInstanceExtensionsDelegate _vulkanGetInstanceExtensions;
-        public static bool VulkanGetInstanceExtensions(Window window, ref uint count, byte*[] names) => _vulkanGetInstanceExtensions(window, ref count, names);
+        public static bool VulkanGetInstanceExtensions(Window window, ref uint count, byte** names) => _vulkanGetInstanceExtensions(window, ref count, names);
 
         private delegate bool VulkanCreateSurfaceDelegate(Window window, Vulkan.Vk.Instance instance, out Vulkan.Vk.Surface surface);
         private static VulkanCreateSurfaceDelegate _vulkanCreateSurface;

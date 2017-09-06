@@ -158,7 +158,9 @@ namespace Vulkan
         {
             string name = "vk" + typeof(T).Name;
             name = name.Replace("Delegate", "");
-            IntPtr function = GetInstanceProcAddr(instance, name.ToBytes());
+            byte* nameUtf8 = name.ToUtf8();
+            
+            IntPtr function = GetInstanceProcAddr(instance, nameUtf8);
             if (function == IntPtr.Zero)
             {
                 throw new NullReferenceException();
@@ -170,7 +172,7 @@ namespace Vulkan
         {
             string name = "vk" + typeof(T).Name;
             name = name.Replace("Delegate", "");
-            IntPtr function = GetDeviceProcAddr(device, name.ToBytes());
+            IntPtr function = GetDeviceProcAddr(device, name.ToUtf8());
             if (function == IntPtr.Zero)
             {
                 throw new NullReferenceException();

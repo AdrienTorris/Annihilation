@@ -3,7 +3,6 @@ using System.Numerics;
 using System.Threading.Tasks;
 
 using Engine;
-using Engine.Config;
 
 namespace Annihilation
 {
@@ -28,9 +27,6 @@ namespace Annihilation
         static void Main(string[] args)
         {
             ApplicationSettings applicationSettings = default(ApplicationSettings);
-            applicationSettings.Title = "Annihilation";
-            applicationSettings.Organization = "Illogika";
-            applicationSettings.Version = "0.1.0";
 
             GraphicsSettings graphicsSettings = new GraphicsSettings();
 
@@ -40,15 +36,18 @@ namespace Annihilation
 
             using (Application application = new Application(args, ref applicationSettings, ref graphicsSettings, ref inputSettings))
             {
-                application.Run(Init, null, null);
+                application.Run(Init, Update, null);
             }
         }
 
-        private static void Init()
+        private unsafe static void Init()
         {
-            string configPath = Application.PreferencePath + "settings.init";
+            
+        }
+        
+        private static unsafe void Update(double dt)
+        {
 
-            VariableManager.AddVarsFromFile(configPath);
         }
     }
 }

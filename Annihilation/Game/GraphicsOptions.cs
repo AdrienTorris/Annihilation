@@ -1,6 +1,4 @@
-﻿using Engine.Config;
-
-namespace Annihilation
+﻿namespace Annihilation
 {
     public enum DisplayMode : byte
     {
