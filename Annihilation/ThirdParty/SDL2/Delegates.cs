@@ -7,7 +7,7 @@ namespace SDL2
     public unsafe static partial class SDL
     {
         // SDL_audio.h
-        public delegate void AudioCallback(IntPtr userData, byte[] stream, int length);
+        public delegate void AudioCallback(IntPtr userData, byte* stream, int length);
         public delegate void AudioFilter(ref AudioCVT cvt, AudioFormat format);
         
         // SDL_events.h

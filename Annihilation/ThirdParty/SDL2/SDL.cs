@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Security;
 using System.Diagnostics;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;using Engine;
-using Engine.Platform;
 
 namespace SDL2
 {

@@ -53,13 +53,6 @@ namespace SDL2
         public struct Cursor
         {
             public IntPtr Handle;
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public Cursor CheckErrorAndReturn()
-            {
-                if (Handle == IntPtr.Zero) LogError(LogCategory.Application, GetError());
-                return this;
-            }
         }
 
         //
@@ -104,20 +97,7 @@ namespace SDL2
             {
                 Handle = handle;
             }
-
-            /*[MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public void CheckError()
-            {
-                if (Handle == IntPtr.Zero) LogError(LogCategory.Application, GetError());
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public Window CheckErrorAndReturn()
-            {
-                if (Handle == IntPtr.Zero) LogError(LogCategory.Application, GetError());
-                return this;
-            }*/
-
+            
             public static implicit operator IntPtr(Window window) => window.Handle;
             public static implicit operator Window(IntPtr handle) => new Window(handle);
         }
