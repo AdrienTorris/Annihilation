@@ -66,24 +66,24 @@ namespace Engine.Graphics
         private IntPtr _display;
 #endif
         private SDL.Window _sdlWindow;
-        private Vk.Instance _vulkanInstance;
-        private Vk.Surface _vulkanSurface;
-        private Vk.PhysicalDevice _vulkanPhysicalDevice;
+        private Vk.VkInstance _vulkanInstance;
+        private Vk.VkSurface _vulkanSurface;
+        private Vk.VkPhysicalDevice _vulkanPhysicalDevice;
         private Vk.PhysicalDeviceFeatures _vulkanPhysicalDeviceFeatures;
 
-        private Vk.CommandPool _commandPool;
-        private Vk.CommandPool _transientCommandPool;
-        private Vk.CommandBuffer[] _commandBuffers = new Vk.CommandBuffer[CommandBufferCount];
-        private Vk.Fence[] _commandBufferFences = new Vk.Fence[CommandBufferCount];
-        private Vk.Semaphore[] _drawCompleteSemaphores = new Vk.Semaphore[CommandBufferCount];
+        private Vk.VkCommandPool _commandPool;
+        private Vk.VkCommandPool _transientCommandPool;
+        private Vk.VkCommandBuffer[] _commandBuffers = new Vk.VkCommandBuffer[CommandBufferCount];
+        private Vk.VkFence[] _commandBufferFences = new Vk.VkFence[CommandBufferCount];
+        private Vk.VkSemaphore[] _drawCompleteSemaphores = new Vk.VkSemaphore[CommandBufferCount];
 
         private Vk.SurfaceCapabilities _vulkanSurfaceCapabilities;
-        private Vk.Swapchain _vulkanSwapchain;
+        private Vk.VkSwapchain _vulkanSwapchain;
 
         private bool[] _isCommandBufferSubmitted = new bool[CommandBufferCount];
         private uint _currentSwapchainBuffer;
 #if DEBUG
-        private Vk.DebugReportCallback _debugReportCallback;
+        private Vk.VkDebugReportCallback _debugReportCallback;
 
         private static Vk.Bool32 DebugMessageCallback(Vk.DebugReportFlags flags, Vk.DebugReportObjectType objectType, ulong @object, Size location, int messageCode, byte* layerPrefix, byte* message, IntPtr userData)
         {
@@ -254,7 +254,7 @@ namespace Engine.Graphics
 #endif
             vkCreateInstance(ref instanceCreateInfo, null, out _vulkanInstance).CheckError();
 
-            if (_vulkanInstance == Vk.Instance.Null)
+            if (_vulkanInstance == Vk.VkInstance.Null)
             {
                 Log.Error("Vulkan instance is null.");
             }
@@ -312,19 +312,19 @@ namespace Engine.Graphics
 
             if (physicalDeviceCount == 0)
             {
-                Log.Error("No Vulkan physical device found.
+                Log.Error("No Vulkan physical device found.");
             }
 
             // TODO: This should be user-configurable through command line args and settings
             int deviceIndex = 0;
-            Vk.PhysicalDevice[] physicalDevices = new Vk.PhysicalDevice[(int)physicalDeviceCount];
+            Vk.VkPhysicalDevice[] physicalDevices = new Vk.VkPhysicalDevice[(int)physicalDeviceCount];
             vkEnumeratePhysicalDevices(_vulkanInstance, ref physicalDeviceCount, physicalDevices).CheckError();
 
             _vulkanPhysicalDevice = physicalDevices[deviceIndex];
 
-            if (_vulkanPhysicalDevice == Vk.PhysicalDevice.Null)
+            if (_vulkanPhysicalDevice == Vk.VkPhysicalDevice.Null)
             {
-                Log.Error("Vulkan physical device is null.
+                Log.Error("Vulkan physical device is null.");
             }
 
             // Getting device memory properties.
@@ -336,7 +336,7 @@ namespace Engine.Graphics
 
             if (deviceExtensionCount == 0)
             {
-                Log.Error("No device extensions found.
+                Log.Error("No device extensions found.");
             }
 
             Vk.ExtensionProperties[] extensionProperties = new Vk.ExtensionProperties[deviceExtensionCount];
@@ -368,7 +368,7 @@ namespace Engine.Graphics
 
             if (!foundSwapchainExtension)
             {
-                Log.Error($"Couldn't find {Vk.SwapchainExtensionName} extension.
+                Log.Error($"Couldn't find {Vk.SwapchainExtensionName} extension.");
             }
 
             // Getting device properties.
@@ -381,7 +381,7 @@ namespace Engine.Graphics
 
             if (queueFamilyCount == 0)
             {
-                Log.Error("No Vulkan queues found.
+                Log.Error("No Vulkan queues found.");
             }
 
             Vk.QueueFamilyProperties[] queueFamilyProperties = new Vk.QueueFamilyProperties[queueFamilyCount];
@@ -408,7 +408,7 @@ namespace Engine.Graphics
 
             if (!foundGraphicsQueue)
             {
-                Log.Error("No graphics+present queue found.
+                Log.Error("No graphics+present queue found.");
             }
 
             // TODO: Find exclusive compute and transfer queues
@@ -447,9 +447,9 @@ namespace Engine.Graphics
 #endif
             vkCreateDevice(_vulkanPhysicalDevice, ref deviceCreateInfo, null, out Graphics.Device).CheckError();
 
-            if (Graphics.Device == Vk.Device.Null)
+            if (Graphics.Device == Vk.VkDevice.Null)
             {
-                Log.Error("Vulkan device is null.
+                Log.Error("Vulkan device is null.");
             }
 
             // Loading Vulkan device functions.
@@ -467,13 +467,13 @@ namespace Engine.Graphics
 #if DEBUG
             if (foundDebugMarkerExtension)
             {
-                Log.Info($"Using {Vk.DebugMarkerExtensionName}.
+                Log.Info($"Using {Vk.DebugMarkerExtensionName}.");
                 vkDebugMarkerSetObjectName = vkDebugMarkerSetObjectName ?? Vk.LoadDeviceFunction<Vk.DebugMarkerSetObjectNameEXTDelegate>(Graphics.Device);
             }
 #endif
             if (Graphics.DedicatedAllocation)
             {
-                Log.Info($"Using {Vk.DedicatedAllocationExtensionName}.
+                Log.Info($"Using {Vk.DedicatedAllocationExtensionName}.");
             }
 
             // Getting graphics queue.

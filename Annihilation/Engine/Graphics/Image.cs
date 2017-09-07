@@ -5,8 +5,8 @@ namespace Engine.Rendering
 {
     public class Image
     {
-        private Vk.Image _image;
-        private Vk.ImageView _imageView;
+        private Vk.VkImage _image;
+        private Vk.VkImageView _imageView;
         private Vk.ImageUsageFlags _usage;
         
     }

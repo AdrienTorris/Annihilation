@@ -356,19 +356,12 @@ namespace Vulkan
             public PhysicalDeviceType DeviceType;
             public byte* DeviceName;
             public byte* PipelineCacheUuid;
-            //public fixed byte DeviceName[(int)MaxPhysicalDeviceNameSize];
-            //public fixed byte PipelineCacheUuid[(int)UUIDSize];
             public PhysicalDeviceLimits Limits;
             public PhysicalDeviceSparseProperties SparseProperties;
 
             public string GetDeviceName()
             {
                 return Utf8.ToString(DeviceName);
-                /*fixed (byte* ptr = DeviceName)
-                {
-                    StringUtf8 strUtf8 = new StringUtf8(ptr);
-                    return strUtf8.ToString();
-                }*/
             }
         }
 
@@ -457,21 +450,15 @@ namespace Vulkan
         [StructLayout(LayoutKind.Sequential)]
         public unsafe struct ExtensionProperties
         {
-            public fixed byte ExtensionName[Vk.MaxExtensionNameSize];
+            public byte* ExtensionName;
             public Version SpecVersion;
 
             public bool IsNamed(string name)
             {
-                StringUtf8 nameUtf8 = new StringUtf8(name);
-                StringUtf8 extensionUtf8;
-                bool result = false;
-                fixed (byte* extension = ExtensionName)
-                {
-                    extensionUtf8 = new StringUtf8(extension);
-                }
-                result = nameUtf8 == extensionUtf8;
+                byte* nameUtf8 = Utf8.AllocateFromString(name);
+                bool result = Utf8.Compare(nameUtf8, ExtensionName);
                 
-                nameUtf8.Free();
+                Utf8.Free(nameUtf8);
 
                 return result;
             }
@@ -480,10 +467,10 @@ namespace Vulkan
         [StructLayout(LayoutKind.Sequential)]
         public unsafe struct LayerProperties
         {
-            public fixed byte LayerName[Vk.MaxExtensionNameSize];
+            public byte* LayerName;
             public Version SpecVersion;
             public Version ImplementationVersion;
-            public fixed byte Description[MaxDescriptionSize];
+            public byte* Description;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -492,12 +479,12 @@ namespace Vulkan
             public StructureType Type;
             public void* Next;
             public uint WaitSemaphoreCount;
-            public Semaphore* WaitSemaphores;
+            public VkSemaphore* WaitSemaphores;
             public PipelineStageFlags* WaitDstStageMask;
             public uint CommandBufferCount;
-            public CommandBuffer* CommandBuffers;
+            public VkCommandBuffer* CommandBuffers;
             public uint SignalSemaphoreCount;
-            public Semaphore* SignalSemaphores;
+            public VkSemaphore* SignalSemaphores;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -514,7 +501,7 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public DeviceMemory Memory;
+            public VkDeviceMemory Memory;
             public DeviceSize Offset;
             public DeviceSize Size;
         }
@@ -550,7 +537,7 @@ namespace Vulkan
         {
             public DeviceSize ResourceOffset;
             public DeviceSize Size;
-            public DeviceMemory Memory;
+            public VkDeviceMemory Memory;
             public DeviceSize MemoryOffset;
             public SparseMemoryBindFlags Flags;
         }
@@ -558,7 +545,7 @@ namespace Vulkan
         [StructLayout(LayoutKind.Sequential)]
         public unsafe struct SparseBufferMemoryBindInfo
         {
-            public Buffer Buffer;
+            public VkBuffer Buffer;
             public uint BindCount;
             public SparseMemoryBind* Binds;
         }
@@ -566,7 +553,7 @@ namespace Vulkan
         [StructLayout(LayoutKind.Sequential)]
         public unsafe struct SparseImageOpaqueMemoryBindInfo
         {
-            public Image Image;
+            public VkImage Image;
             public uint BindCount;
             public SparseMemoryBind* Binds;
         }
@@ -593,7 +580,7 @@ namespace Vulkan
             public ImageSubresource Subresource;
             public Offset3D Offset;
             public Extent3D Extent;
-            public DeviceMemory Memory;
+            public VkDeviceMemory Memory;
             public DeviceSize MemoryOffset;
             public SparseMemoryBindFlags Flags;
         }
@@ -601,7 +588,7 @@ namespace Vulkan
         [StructLayout(LayoutKind.Sequential)]
         public unsafe struct SparseImageMemoryBindInfo
         {
-            public Image Image;
+            public VkImage Image;
             public uint BindCount;
             public SparseImageMemoryBind* Binds;
         }
@@ -612,7 +599,7 @@ namespace Vulkan
             public StructureType Type;
             public void* Next;
             public uint WaitSemaphoreCount;
-            public Semaphore* WaitSemaphores;
+            public VkSemaphore* WaitSemaphores;
             public uint BufferBindCount;
             public SparseBufferMemoryBindInfo* BufferBinds;
             public uint ImageOpaqueBindCount;
@@ -620,7 +607,7 @@ namespace Vulkan
             public uint ImageBindCount;
             public SparseImageMemoryBindInfo* ImageBinds;
             public uint SignalSemaphoreCount;
-            public Semaphore* SignalSemaphores;
+            public VkSemaphore* SignalSemaphores;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -691,7 +678,7 @@ namespace Vulkan
             public StructureType Type;
             public void* Next;
             public BufferViewCreateFlags Flags;
-            public Buffer Buffer;
+            public VkBuffer Buffer;
             public Format Format;
             public DeviceSize Offset;
             public DeviceSize Range;
@@ -752,7 +739,7 @@ namespace Vulkan
             public StructureType Type;
             public void* Next;
             public ImageViewCreateFlags Flags;
-            public Image Image;
+            public VkImage Image;
             public ImageViewType ViewType;
             public Format Format;
             public ComponentMapping Components;
@@ -803,7 +790,7 @@ namespace Vulkan
             public void* Next;
             public PipelineShaderStageCreateFlags Flags;
             public ShaderStageFlags Stage;
-            public ShaderModule Module;
+            public VkShaderModule Module;
             public byte* Name;
             public SpecializationInfo* SpecializationInfo;
         }
@@ -1014,10 +1001,10 @@ namespace Vulkan
             public PipelineDepthStencilStateCreateInfo* DepthStencilState;
             public PipelineColorBlendStateCreateInfo* ColorBlendState;
             public PipelineDynamicStateCreateInfo* DynamicState;
-            public PipelineLayout Layout;
-            public RenderPass RenderPass;
+            public VkPipelineLayout Layout;
+            public VkRenderPass RenderPass;
             public uint Subpass;
-            public Pipeline BasePipelineHandle;
+            public VkPipeline BasePipelineHandle;
             public int BasePipelineIndex;
         }
 
@@ -1028,8 +1015,8 @@ namespace Vulkan
             public void* Next;
             public PipelineCreateFlags Flags;
             public PipelineShaderStageCreateInfo Stage;
-            public PipelineLayout Layout;
-            public Pipeline BasePipelineHandle;
+            public VkPipelineLayout Layout;
+            public VkPipeline BasePipelineHandle;
             public int BasePipelineIndex;
         }
 
@@ -1048,7 +1035,7 @@ namespace Vulkan
             public void* Next;
             public PipelineLayoutCreateFlags Flags;
             public uint SetLayoutCount;
-            public DescriptorSetLayout* SetLayouts;
+            public VkDescriptorSetLayout* SetLayouts;
             public uint PushantRangeCount;
             public PushantRange* PushantRanges;
         }
@@ -1083,7 +1070,7 @@ namespace Vulkan
             public DescriptorType DescriptorType;
             public uint DescriptorCount;
             public ShaderStageFlags StageFlags;
-            public Sampler* ImmutableSamplers;
+            public VkSampler* ImmutableSamplers;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -1119,23 +1106,23 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public DescriptorPool DescriptorPool;
+            public VkDescriptorPool DescriptorPool;
             public uint DescriptorSetCount;
-            public DescriptorSetLayout* SetLayouts;
+            public VkDescriptorSetLayout* SetLayouts;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         public unsafe struct DescriptorImageInfo
         {
-            public Sampler Sampler;
-            public ImageView ImageView;
+            public VkSampler Sampler;
+            public VkImageView ImageView;
             public ImageLayout ImageLayout;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         public unsafe struct DescriptorBufferInfo
         {
-            public Buffer Buffer;
+            public VkBuffer Buffer;
             public DeviceSize Offset;
             public DeviceSize Range;
         }
@@ -1145,14 +1132,14 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public DescriptorSet DstSet;
+            public VkDescriptorSet DstSet;
             public uint DstBinding;
             public uint DstArrayElement;
             public uint DescriptorCount;
             public DescriptorType DescriptorType;
             public DescriptorImageInfo* ImageInfo;
             public DescriptorBufferInfo* BufferInfo;
-            public BufferView* TexelBufferView;
+            public VkBufferView* TexelBufferView;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -1160,10 +1147,10 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public DescriptorSet SrcSet;
+            public VkDescriptorSet SrcSet;
             public uint SrcBinding;
             public uint SrcArrayElement;
-            public DescriptorSet DstSet;
+            public VkDescriptorSet DstSet;
             public uint DstBinding;
             public uint DstArrayElement;
             public uint DescriptorCount;
@@ -1175,9 +1162,9 @@ namespace Vulkan
             public StructureType Type;
             public void* Next;
             public FramebufferCreateFlags Flags;
-            public RenderPass RenderPass;
+            public VkRenderPass RenderPass;
             public uint AttachmentCount;
-            public ImageView* Attachments;
+            public VkImageView* Attachments;
             public uint Width;
             public uint Height;
             public uint Layers;
@@ -1267,11 +1254,11 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public CommandPool CommandPool;
+            public VkCommandPool CommandPool;
             public CommandBufferLevel Level;
             public uint CommandBufferCount;
 
-            public CommandBufferAllocateInfo(CommandPool commandPool, uint commandBufferCount)
+            public CommandBufferAllocateInfo(VkCommandPool commandPool, uint commandBufferCount)
             {
                 Type = StructureType.CommandBufferAllocateInfo;
                 Next = null;
@@ -1286,9 +1273,9 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public RenderPass RenderPass;
+            public VkRenderPass RenderPass;
             public uint Subpass;
-            public Framebuffer Framebuffer;
+            public VkFramebuffer Framebuffer;
             public Bool32 OcclusionQueryEnable;
             public QueryControlFlags QueryFlags;
             public QueryPipelineStatisticFlags PipelineStatistics;
@@ -1416,7 +1403,7 @@ namespace Vulkan
             public AccessFlags DstAccessMask;
             public uint SrcQueueFamilyIndex;
             public uint DstQueueFamilyIndex;
-            public Buffer Buffer;
+            public VkBuffer Buffer;
             public DeviceSize Offset;
             public DeviceSize Size;
         }
@@ -1432,7 +1419,7 @@ namespace Vulkan
             public ImageLayout NewLayout;
             public uint SrcQueueFamilyIndex;
             public uint DstQueueFamilyIndex;
-            public Image Image;
+            public VkImage Image;
             public ImageSubresourceRange SubresourceRange;
         }
 
@@ -1441,8 +1428,8 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public RenderPass RenderPass;
-            public Framebuffer Framebuffer;
+            public VkRenderPass RenderPass;
+            public VkFramebuffer Framebuffer;
             public Rect2D RenderArea;
             public uint ClearValueCount;
             public ClearValue* ClearValues;
@@ -1509,7 +1496,7 @@ namespace Vulkan
             public StructureType Type;
             public void* Next;
             public SwapchainCreateFlags Flags;
-            public Surface Surface;
+            public VkSurface Surface;
             public uint MinImageCount;
             public Format ImageFormat;
             public ColorSpace ImageColorSpace;
@@ -1523,7 +1510,7 @@ namespace Vulkan
             public CompositeAlphaFlags CompositeAlpha;
             public PresentMode PresentMode;
             public Bool32 Clipped;
-            public Swapchain OldSwapchain;
+            public VkSwapchain OldSwapchain;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -1532,9 +1519,9 @@ namespace Vulkan
             public StructureType Type;
             public void* Next;
             public uint WaitSemaphoreCount;
-            public Semaphore* WaitSemaphores;
+            public VkSemaphore* WaitSemaphores;
             public uint SwapchainCount;
-            public Swapchain* Swapchains;
+            public VkSwapchain* Swapchains;
             public uint* ImageIndices;
             public Result* Results;
         }
@@ -1545,7 +1532,7 @@ namespace Vulkan
         [StructLayout(LayoutKind.Sequential)]
         public unsafe struct DisplayProperties
         {
-            public Display Display;
+            public VkDisplay Display;
             public byte* DisplayName;
             public Extent2D PhysicalDimensions;
             public Extent2D PhysicalResolution;
@@ -1564,7 +1551,7 @@ namespace Vulkan
         [StructLayout(LayoutKind.Sequential)]
         public unsafe struct DisplayModeProperties
         {
-            public DisplayMode DisplayMode;
+            public VkDisplayMode DisplayMode;
             public DisplayModeParameters Parameters;
         }
 
@@ -1594,7 +1581,7 @@ namespace Vulkan
         [StructLayout(LayoutKind.Sequential)]
         public unsafe struct DisplayPlaneProperties
         {
-            public Display CurrentDisplay;
+            public VkDisplay CurrentDisplay;
             public uint CurrentStackIndex;
         }
 
@@ -1604,7 +1591,7 @@ namespace Vulkan
             public StructureType Type;
             public void* Next;
             public DisplaySurfaceCreateFlags Flags;
-            public DisplayMode DisplayMode;
+            public VkDisplayMode DisplayMode;
             public uint PlaneIndex;
             public uint PlaneStackIndex;
             public SurfaceTransformFlags Transform;
@@ -1891,7 +1878,7 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public DeviceMemory Memory;
+            public VkDeviceMemory Memory;
             public ExternalMemoryHandleTypeFlags HandleType;
         }
 
@@ -1917,7 +1904,7 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public DeviceMemory Memory;
+            public VkDeviceMemory Memory;
             public ExternalMemoryHandleTypeFlags HandleType;
         }
 
@@ -1927,11 +1914,11 @@ namespace Vulkan
             public StructureType Type;
             public void* Next;
             public uint AcquireCount;
-            public DeviceMemory* AcquireSyncs;
+            public VkDeviceMemory* AcquireSyncs;
             public ulong* AcquireKeys;
             public uint* AcquireTimeouts;
             public uint ReleaseCount;
-            public DeviceMemory* ReleaseSyncs;
+            public VkDeviceMemory* ReleaseSyncs;
             public ulong* ReleaseKeys;
         }
 
@@ -1969,7 +1956,7 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public Semaphore Semaphore;
+            public VkSemaphore Semaphore;
             public SemaphoreImportFlags Flags;
             public ExternalSemaphoreHandleTypeFlags HandleType;
             public IntPtr Handle;
@@ -2002,7 +1989,7 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public Semaphore Semaphore;
+            public VkSemaphore Semaphore;
             public ExternalSemaphoreHandleTypeFlags HandleType;
         }
 
@@ -2011,7 +1998,7 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public Semaphore Semaphore;
+            public VkSemaphore Semaphore;
             public SemaphoreImportFlags Flags;
             public ExternalSemaphoreHandleTypeFlags HandleType;
             public int Fd;
@@ -2022,7 +2009,7 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public Semaphore Semaphore;
+            public VkSemaphore Semaphore;
             public ExternalSemaphoreHandleTypeFlags HandleType;
         }
 
@@ -2092,9 +2079,9 @@ namespace Vulkan
             public uint DescriptorUpdateEntryCount;
             public DescriptorUpdateTemplateEntry* DescriptorUpdateEntries;
             public DescriptorUpdateTemplateType TemplateType;
-            public DescriptorSetLayout DescriptorSetLayout;
+            public VkDescriptorSetLayout DescriptorSetLayout;
             public PipelineBindPoint PipelineBindPoint;
-            public PipelineLayout PipelineLayout;
+            public VkPipelineLayout PipelineLayout;
             public uint Set;
         }
 
@@ -2140,7 +2127,7 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public Fence Fence;
+            public VkFence Fence;
             public FenceImportFlags Flags;
             public ExternalFenceHandleTypeFlags HandleType;
             public IntPtr Handle;
@@ -2162,7 +2149,7 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public Fence Fence;
+            public VkFence Fence;
             public ExternalFenceHandleTypeFlags HandleType;
         }
 
@@ -2171,7 +2158,7 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public Fence Fence;
+            public VkFence Fence;
             public FenceImportFlags Flags;
             public ExternalFenceHandleTypeFlags HandleType;
             public int Fd;
@@ -2182,7 +2169,7 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public Fence Fence;
+            public VkFence Fence;
             public ExternalFenceHandleTypeFlags HandleType;
         }
 
@@ -2194,7 +2181,7 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public Surface Surface;
+            public VkSurface Surface;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -2236,8 +2223,8 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public Image Image;
-            public Buffer Buffer;
+            public VkImage Image;
+            public VkBuffer Buffer;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -2245,7 +2232,7 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public Buffer Buffer;
+            public VkBuffer Buffer;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -2253,7 +2240,7 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public Image Image;
+            public VkImage Image;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -2261,7 +2248,7 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public Image Image;
+            public VkImage Image;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -2371,8 +2358,8 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public Image Image;
-            public Buffer Buffer;
+            public VkImage Image;
+            public VkBuffer Buffer;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -2470,11 +2457,11 @@ namespace Vulkan
             public StructureType Type;
             public void* Next;
             public uint AcquireCount;
-            public DeviceMemory* AcquireSyncs;
+            public VkDeviceMemory* AcquireSyncs;
             public ulong* AcquireKeys;
             public uint* AcquireTimeoutMilliseconds;
             public uint ReleaseCount;
-            public DeviceMemory* ReleaseSyncs;
+            public VkDeviceMemory* ReleaseSyncs;
             public ulong* ReleaseKeys;
         }
 
@@ -2495,8 +2482,8 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public Buffer Buffer;
-            public DeviceMemory Memory;
+            public VkBuffer Buffer;
+            public VkDeviceMemory Memory;
             public DeviceSize MemoryOffset;
             public uint DeviceIndexCount;
             public uint* DeviceIndices;
@@ -2507,8 +2494,8 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public Image Image;
-            public DeviceMemory Memory;
+            public VkImage Image;
+            public VkDeviceMemory Memory;
             public DeviceSize MemoryOffset;
             public uint DeviceIndexCount;
             public uint* DeviceIndices;
@@ -2570,7 +2557,7 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public Swapchain Swapchain;
+            public VkSwapchain Swapchain;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -2578,7 +2565,7 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public Swapchain Swapchain;
+            public VkSwapchain Swapchain;
             public uint ImageIndex;
         }
 
@@ -2587,10 +2574,10 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public Swapchain Swapchain;
+            public VkSwapchain Swapchain;
             public ulong Timeout;
-            public Semaphore Semaphore;
-            public Fence Fence;
+            public VkSemaphore Semaphore;
+            public VkFence Fence;
             public uint DeviceMask;
         }
 
@@ -2645,7 +2632,7 @@ namespace Vulkan
             public StructureType Type;
             public void* Next;
             public uint PhysicalDeviceCount;
-            public PhysicalDevice* PhysicalDevices;
+            public VkPhysicalDevice* PhysicalDevices;
             public Bool32 SubsetAllocation;
         }
 
@@ -2655,7 +2642,7 @@ namespace Vulkan
             public StructureType Type;
             public void* Next;
             public uint PhysicalDeviceCount;
-            public PhysicalDevice* PhysicalDevices;
+            public VkPhysicalDevice* PhysicalDevices;
         }
 
         //
@@ -2685,7 +2672,7 @@ namespace Vulkan
         public unsafe struct IndirectCommandsToken
         {
             public IndirectCommandsTokenType TokenType;
-            public Buffer Buffer;
+            public VkBuffer Buffer;
             public DeviceSize Offset;
         }
 
@@ -2714,15 +2701,15 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public ObjectTable ObjectTable;
-            public IndirectCommandsLayout IndirectCommandsLayout;
+            public VkObjectTable ObjectTable;
+            public VkIndirectCommandsLayout IndirectCommandsLayout;
             public uint IndirectCommandsTokenCount;
             public IndirectCommandsToken* IndirectCommandsTokens;
             public uint MaxSequencesCount;
-            public CommandBuffer TargetCommandBuffer;
-            public Buffer SequencesCountBuffer;
+            public VkCommandBuffer TargetCommandBuffer;
+            public VkBuffer SequencesCountBuffer;
             public DeviceSize SequencesCountOffset;
-            public Buffer SequencesIndexBuffer;
+            public VkBuffer SequencesIndexBuffer;
             public DeviceSize SequencesIndexOffset;
         }
 
@@ -2731,8 +2718,8 @@ namespace Vulkan
         {
             public StructureType Type;
             public void* Next;
-            public ObjectTable ObjectTable;
-            public IndirectCommandsLayout IndirectCommandsLayout;
+            public VkObjectTable ObjectTable;
+            public VkIndirectCommandsLayout IndirectCommandsLayout;
             public uint MaxSequencesCount;
         }
 
@@ -2764,7 +2751,7 @@ namespace Vulkan
         {
             public ObjectEntryType Type;
             public ObjectEntryUsageFlags Flags;
-            public Pipeline Pipeline;
+            public VkPipeline Pipeline;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -2772,8 +2759,8 @@ namespace Vulkan
         {
             public ObjectEntryType Type;
             public ObjectEntryUsageFlags Flags;
-            public PipelineLayout PipelineLayout;
-            public DescriptorSet DescriptorSet;
+            public VkPipelineLayout PipelineLayout;
+            public VkDescriptorSet DescriptorSet;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -2781,7 +2768,7 @@ namespace Vulkan
         {
             public ObjectEntryType Type;
             public ObjectEntryUsageFlags Flags;
-            public Buffer Buffer;
+            public VkBuffer Buffer;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -2789,7 +2776,7 @@ namespace Vulkan
         {
             public ObjectEntryType Type;
             public ObjectEntryUsageFlags Flags;
-            public Buffer Buffer;
+            public VkBuffer Buffer;
             public IndexType IndexType;
         }
 
@@ -2798,7 +2785,7 @@ namespace Vulkan
         {
             public ObjectEntryType Type;
             public ObjectEntryUsageFlags Flags;
-            public PipelineLayout PipelineLayout;
+            public VkPipelineLayout PipelineLayout;
             public ShaderStageFlags StageFlags;
         }
 

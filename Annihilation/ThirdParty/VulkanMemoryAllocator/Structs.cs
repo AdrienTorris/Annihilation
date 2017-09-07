@@ -26,12 +26,12 @@ namespace Vulkan.MemoryAllocator
             /// Vulkan physical device.
             /// <para/> It must be valid throughout whole lifetime of created Allocator.
             /// </summary>
-            public Vk.PhysicalDevice PhysicalDevice;
+            public Vk.VkPhysicalDevice PhysicalDevice;
             /// <summary>
             /// Vulkan device.
             /// <para/> It must be valid throughout whole lifetime of created Allocator.
             /// </summary>
-            public Vk.Device Device;
+            public Vk.VkDevice Device;
             /// <summary>
             /// Size of a single memory block to allocate for resources.
             /// <para/> Set to 0 to use default, which is currently 256 MB.
@@ -102,7 +102,7 @@ namespace Vulkan.MemoryAllocator
             /// <para/> Same memory object can be shared by multiple allocations.
             /// <para/> It can change after call to <see cref="MemoryAllocator.Defragment"/> if this allocation is passed to the function.
             /// </summary>
-            public Vk.DeviceMemory DeviceMemory;
+            public Vk.VkDeviceMemory DeviceMemory;
             /// <summary>
             /// Offset into <see cref="DeviceMemory"/> object to the beginning of this allocation, in bytes. (<see cref="DeviceMemory"/>, <see cref="Offset"/>) pair is unique to this allocation.
             /// <para/> It can change after call to <see cref="MemoryAllocator.Defragment"/> if this allocation is passed to the function.

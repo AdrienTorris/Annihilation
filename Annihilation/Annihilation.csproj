@@ -27,7 +27,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CoreSDL" Version="1.0.0" />
+    <PackageReference Include="CoreSDL" Version="1.0.5" />
   </ItemGroup>
 
 </Project>

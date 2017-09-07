@@ -6,7 +6,7 @@ namespace Engine.Rendering
 {
     public class PhysicalDevice : IDisposable
     {
-        public Vk.PhysicalDevice Handle { get; private set; }
+        public Vk.VkPhysicalDevice Handle { get; private set; }
         public Vk.PhysicalDeviceProperties Properties { get; private set; }
         public Vk.PhysicalDeviceFeatures Features { get; private set; }
         public Vk.QueueFamilyProperties[] QueueFamilies { get; private set; }
@@ -28,7 +28,7 @@ namespace Engine.Rendering
 
         public string GetVendorName() => _vendorMap[Properties.VendorId];
 
-        public int FindQueueFamily(Vk.QueueFlags flags, Vk.Surface surface)
+        public int FindQueueFamily(Vk.QueueFlags flags, Vk.VkSurface surface)
         {
             for (int i = 0; i < QueueFamilies.Length; ++i)
             {

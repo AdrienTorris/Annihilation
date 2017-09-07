@@ -32,5 +32,16 @@ namespace Vulkan
         {
             Marshal.FreeHGlobal(new IntPtr(bytePtr));
         }
+        
+        public static bool Compare(byte* str1, byte* str2)
+        {
+            while (true)
+            {
+                if (*str1 != *str2) return false;
+                if (*str1 == 0) return true;
+                str1++;
+                str2++;
+            }
+        }
     }
 }

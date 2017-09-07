@@ -16,14 +16,14 @@ namespace Engine.Graphics
             { 0x1010, "ImgTec" }
         };
 
-        public static Vk.Device Device;
+        public static Vk.VkDevice Device;
         public static uint GraphicsQueueFamily;
         public static uint ComputeQueueFamily;
         public static uint TransferQueueFamily;
-        public static Vk.Queue GraphicsQueue;
-        public static Vk.Queue ComputeQueue;
-        public static Vk.Queue TransferQueue;
-        public static Vk.CommandBuffer CommandBuffer;
+        public static Vk.VkQueue GraphicsQueue;
+        public static Vk.VkQueue ComputeQueue;
+        public static Vk.VkQueue TransferQueue;
+        public static Vk.VkCommandBuffer CommandBuffer;
         public static Vk.PhysicalDeviceProperties DeviceProperties;
         public static Vk.PhysicalDeviceMemoryProperties DeviceMemoryProperties;
         public static Vk.Format ColorFormat;

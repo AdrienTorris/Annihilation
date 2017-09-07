@@ -8,7 +8,7 @@ namespace Engine
     {
 #if PLATFORM_WINDOWS
         private const string MemCopyDll = "msvcrt.dll";
-#elif PLATFORM_UNIX
+#elif PLATFORM_LINUX || PLATFORM_MACOS
         private const string MemCopyDll = "libc.so";
 #else
 #error Unsupported platform
