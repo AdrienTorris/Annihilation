@@ -1,133 +1,141 @@
 ﻿using System;
-using System.Collections.Generic;
-
 using Engine.Input;
 using Engine.Graphics;
-
+using Engine.Profiling;
 using SDL2;
 
 namespace Engine
 {
-    public enum GameState : byte
+    public abstract unsafe class Game : IDisposable
     {
-        Running,
-        Quitting,
-    }
+        public abstract string Title { get; }
+        public abstract string Organization { get; }
 
-    // TODO: Should be singleton?
-    public unsafe class Game : IDisposable
-    {
-        public const int MaxPathLength = 256;
+        protected abstract void Startup();
+        protected abstract void Dispose(bool disposing);
 
-        // TODO: Best place/best name for these?
-        public const string ConfigResolutionX = "ResolutionX";
-        public const string ConfigResolutionY = "ResolutionY";
-        public const string ConfigEnableVulkanValidation = "EnableVulkanValidation";
+        protected abstract void Update(float deltaTime);
+
+        protected abstract void RenderScene();
+        protected abstract void RenderUI(GraphicsContext graphicsContext);
 
         /// <summary>
-        /// The platform-specific path where you can write files. Perfect for save games.
+        /// Returns true when the game should exit. By default, returns true when <see cref="SDL2.SDL.KeyCode.Escape"/> is pressed.
         /// </summary>
-        /// <remarks>
-        /// Must be called after <see cref="Run(Action, Action{double}, Action)"/>.
-        /// </remarks>
-        public static string PreferencePath { get; private set; }
-        
-        public string[] Args { get; private set; }
-        public HashSet<string> ArgsSet { get; private set; }
-
-        public ApplicationSettings ApplicationSettings { get; private set; }
-        public GraphicsSettings GraphicsSettings { get; private set; }
-        public InputSettings InputSettings { get; private set; }
-
-        // TODO: Support multiple windows per application
-        public Window Window { get; private set; }
-        public GraphicsManager GraphicsManager { get; private set; }
-
-        private GameState _state = GameState.Running;
-        private bool _isDisposed = false;
-        
-        private Game() { }
-
-        public Game(string[] args,
-                           ref ApplicationSettings applicationSettings,
-                           ref GraphicsSettings graphicsSettings,
-                           ref InputSettings inputSettings)
+        public virtual bool IsDone()
         {
-            if (args != null)
-            {
-                Args = args;
-                ArgsSet = new HashSet<string>(args.Length);
-                foreach (string arg in args)
-                {
-                    ArgsSet.Add(arg);
-                }
-            }
-            else
-            {
-                Args = new string[0];
-                ArgsSet = new HashSet<string>(0);
-            }
-            
-            ApplicationSettings = applicationSettings;
-            GraphicsSettings = graphicsSettings;
-            InputSettings = inputSettings;
-        }
-
-        public void Run(Action initFunction, Action<double> updateFunction, Action shutdownFunction)
-        {
-            Utf8 title = Strings.GameTitle.ToUtf8();
-            Utf8 organization = Strings.Organization.ToUtf8();
-            Utf8 preferencePath = SDL.GetPrefPath(title, organization);
-            organization.Free();
-
-            PreferencePath = preferencePath.ToString();
-            SDL.Free(preferencePath.BytePtr);
-
-            Log.Info("Preference path found: " + PreferencePath);
-            
-            Window = new Window(ref title);
-            title.Free();
-
-            InputManager.Init(this);
-            
-            initFunction?.Invoke();
-            
-            while (_state == GameState.Running)
-            {
-                InputManager.Update();
-                
-                updateFunction?.Invoke(1f / 144);
-            }
-            
-            shutdownFunction?.Invoke();
+            return InputSystem.IsKeyDown(SDL2.SDL.KeyCode.Escape);
         }
         
-        public void Quit()
-        {
-            _state = GameState.Quitting;
-        }
-        
-        private void Dispose(bool disposing)
-        {
-            if (!_isDisposed)
-            {
-                if (disposing) { }
-
-                Window.Dispose();
-
-                _isDisposed = true;
-            }
-        }
-        
+        //
+        // Disposable pattern
+        //
         ~Game()
         {
             Dispose(false);
         }
-        
+
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        //
+        // Static methods
+        //
+        public static void Run<T>(T game) where T : Game
+        {
+            // Create window
+            byte* title = Utf8.AllocateFromString(game.Title);
+            Window window = new Window(title);
+            
+            // Initialize engine systems and game
+            Initialize(game);
+
+            // Show window
+            window.Show();
+
+            // Poll and handle OS events, then update systems and game
+            do
+            {
+                if (SDL.PollEvent(out SDL.Event ev) == 1)
+                {
+                    switch (ev.Type)
+                    {
+                        case SDL.EventType.Quit:
+                        {
+                            goto terminate;
+                        }
+                        case SDL.EventType.WindowEvent:
+                        {
+                            HandleWindowEvent(ev.Window);
+                            break;
+                        }
+                    }
+                }
+            }
+            while (Update(game));
+
+            terminate:
+            Terminate(game);
+        }
+
+        private static void Initialize<T>(T game) where T : Game
+        {
+            GraphicsSystem.Initialize();
+            TimeSystem.Initialize();
+            InputSystem.Initialize();
+            VariableSystem.Initialize();
+
+            game.Startup();
+        }
+
+        private static void Terminate<T>(T game) where T : Game
+        {
+            GraphicsSystem.Terminate();
+
+            game.Dispose();
+
+            InputSystem.Shutdown();
+            GraphicsSystem.Shutdown();
+        }
+
+        private static bool Update<T>(T game) where T : Game
+        {
+            ProfilingSystem.Update();
+
+            float deltaTime = GraphicsSystem.GetFrameTime();
+
+            InputSystem.Update(deltaTime);
+            VariableSystem.Update(deltaTime);
+
+            game.Update(deltaTime);
+            game.RenderScene();
+
+            PostEffectSystem.Render();
+
+            // TODO: Setup ui context
+            GraphicsContext uiContext = new GraphicsContext();
+            game.RenderUI(uiContext);
+
+            uiContext.Finish();
+
+            GraphicsSystem.Present();
+
+            return !game.IsDone();
+        }
+
+        private static void HandleWindowEvent(SDL.WindowEvent windowEvent)
+        {
+            switch (windowEvent.Event)
+            {
+                case SDL.WindowEventID.SizeChanged:
+                {
+                    GraphicsSystem.Resize(windowEvent.Data1, windowEvent.Data2);
+                    break;
+                }
+            }
         }
     }
 }

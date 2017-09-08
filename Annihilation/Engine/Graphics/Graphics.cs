@@ -4,7 +4,7 @@ using Vulkan;
 
 namespace Engine.Graphics
 {
-    public static class Graphics
+    public static class GraphicsSystem
     {
         public static readonly Dictionary<uint, string> VendorNames = new Dictionary<uint, string>
         {
@@ -16,14 +16,17 @@ namespace Engine.Graphics
             { 0x1010, "ImgTec" }
         };
 
-        public static Vk.VkDevice Device;
+        public static int DisplayWidth = 1920;
+        public static int DisplayHeight = 1080;
+
+        public static VkDevice Device;
         public static uint GraphicsQueueFamily;
         public static uint ComputeQueueFamily;
         public static uint TransferQueueFamily;
-        public static Vk.VkQueue GraphicsQueue;
-        public static Vk.VkQueue ComputeQueue;
-        public static Vk.VkQueue TransferQueue;
-        public static Vk.VkCommandBuffer CommandBuffer;
+        public static VkQueue GraphicsQueue;
+        public static VkQueue ComputeQueue;
+        public static VkQueue TransferQueue;
+        public static VkCommandBuffer CommandBuffer;
         public static Vk.PhysicalDeviceProperties DeviceProperties;
         public static Vk.PhysicalDeviceMemoryProperties DeviceMemoryProperties;
         public static Vk.Format ColorFormat;
@@ -31,5 +34,35 @@ namespace Engine.Graphics
         public static Vk.SampleCountFlags SampleCount;
         public static bool Supersampling;
         public static bool DedicatedAllocation;
+
+        public static void Initialize()
+        {
+
+        }
+
+        public static float GetFrameTime()
+        {
+            return 1 / 144f;
+        }
+
+        public static void Present()
+        {
+
+        }
+
+        public static void Resize(int width, int height)
+        {
+
+        }
+
+        public static void Terminate()
+        {
+
+        }
+
+        public static void Shutdown()
+        {
+
+        }
     }
 }

@@ -7,7 +7,7 @@ using SDL2;
 namespace Engine.Input
 {
     // TODO: Make this non-static so we're sure every dependency (application) is filled at creation
-    public static class InputManager
+    public static class InputSystem
     {
         public static IInputHandler InputHandler;
 
@@ -46,7 +46,7 @@ namespace Engine.Input
         private static readonly List<int> _mouseWheelActions = new List<int>();
         private static readonly List<int> _mouseMoveActions = new List<int>();
 
-        public static void Init(Application application)
+        public static void Initialize()
         {
             _application = application;
 
@@ -99,7 +99,7 @@ namespace Engine.Input
             _currentContexts |= context;
         }
         
-        public static void Update()
+        public static void Update(float deltaTime)
         {
             _keyEvents.Clear();
             _pressedKeys.Clear();

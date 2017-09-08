@@ -5,7 +5,7 @@ using Engine.Mathematics;
 
 namespace Engine
 {
-    public static unsafe class VariableManager
+    public static unsafe class VariableSystem
     {
         public const string TypeUint8 = "uint8";
         public const string TypeUint16 = "uint16";
@@ -40,6 +40,16 @@ namespace Engine
         
         private static readonly Dictionary<Hash, Variable> _variables = new Dictionary<Hash, Variable>(128);
         
+        public static void Initialize()
+        {
+
+        }
+
+        public static void Update(float deltaTime)
+        {
+
+        }
+
         public static Variable* Find(Hash nameHash)
         {
             if (_variables.TryGetValue(nameHash, out Variable variable))
