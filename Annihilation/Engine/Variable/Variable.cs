@@ -25,7 +25,6 @@ namespace Engine
         public char* DefaultValueString;
         public VariableFlags Flags;
         public Value Value;
-        public Variable* Next;
         public uint CallbackId;
 
         public Variable(char* name, Value value, VariableFlags flags, VariableCallback callback = null)

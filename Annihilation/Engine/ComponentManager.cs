@@ -17,7 +17,7 @@ namespace Engine
             _indexMap = new Dictionary<Entity, int> (capacity);
         }
         
-        public ComponentInstance Create (Entity entity, ComponentInstance instance)
+        public int Create (Entity entity, int instance)
         {
             int index = _count;
             _entities[index] = entity;
@@ -26,15 +26,15 @@ namespace Engine
             return index;
         }
 
-        public void Destroy (Entity entity, ComponentInstance instance)
-        {
-            int index = instance.IsValid() ? instance.Index : _indexMap[entity];
-            int lastIndex = _count - 1;
+        //public void Destroy (Entity entity, int instance)
+        //{
+        //    int index = instance.IsValid() ? instance.Index : _indexMap[entity];
+        //    int lastIndex = _count - 1;
 
-            Entity lastEntity = _entities[lastIndex];
-            _indexMap[lastEntity] = index;
-            _indexMap.Remove (entity);
-            --_count;
-        }
+        //    Entity lastEntity = _entities[lastIndex];
+        //    _indexMap[lastEntity] = index;
+        //    _indexMap.Remove (entity);
+        //    --_count;
+        //}
     }
 }

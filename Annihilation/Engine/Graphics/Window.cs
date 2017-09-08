@@ -92,7 +92,7 @@ namespace Engine.Graphics
                 return false;
             }
 
-            string output = "[" + new StringUtf8(layerPrefix).ToString() + "] Code " + messageCode + ": " + new StringUtf8(message).ToString();
+            string output = "[" + new Utf8(layerPrefix).ToString() + "] Code " + messageCode + ": " + new Utf8(message).ToString();
 
             switch (flags)
             {
@@ -106,7 +106,7 @@ namespace Engine.Graphics
         }
 #endif
 
-        public Window(ref StringUtf8 title)
+        public Window(ref Utf8 title)
         {
             // Initializing SDL video subsystem.
             if (VideoSubSystemInitialized == false)

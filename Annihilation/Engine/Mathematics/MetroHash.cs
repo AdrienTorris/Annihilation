@@ -9,7 +9,7 @@ namespace Engine.Mathematics
         private const ulong K2 = 0x62992FC1;
         private const ulong K3 = 0x30BC5B29;
 
-        public static ulong Hash64(byte* buffer, ulong length, ulong seed = 0)
+        public static ulong Hash64(byte* buffer, int length, ulong seed = 0)
         {
             byte* ptr = buffer;
             byte* end = buffer + length;
@@ -78,10 +78,8 @@ namespace Engine.Mathematics
 
         public static ulong Hash64(char* text, int length, ulong seed = 0)
         {
-            int maxBytes = Encoding.UTF8.GetMaxByteCount(length);
-            byte* buffer = null;
-            int byteCount = Encoding.UTF8.GetBytes(text, length, buffer, maxBytes);
-            return Hash64(buffer, (ulong)byteCount, seed);
+            byte* bytes = Utf8.AllocateFromChars(text, length, out int bytesLength);
+            return Hash64(bytes, bytesLength, seed);
         }
 
         public static ulong Hash64(string text, ulong seed = 0)
@@ -92,7 +90,7 @@ namespace Engine.Mathematics
             }
         }
 
-        public static uint Hash32(byte* buffer, ulong length, ulong seed = 0)
+        public static uint Hash32(byte* buffer, int length, ulong seed = 0)
         {
             return (uint)(Hash64(buffer, length, seed) >> 32);
         }

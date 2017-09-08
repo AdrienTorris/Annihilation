@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 using System.Collections.Generic;
+using Engine.Mathematics;
 
 namespace Engine
 {
@@ -36,26 +37,26 @@ namespace Engine
             [ValueType.Bool] = TypeBool,
             [ValueType.String] = TypeString,
         };
-
-        private static Variable* _variables;
-
-        private static readonly List<string> _varsToWrite = new List<string>(128);
-        private static readonly Dictionary<string, Value> _vars = new Dictionary<string, Value>(128);
-
-        // PERF: Is this really faster than a dictionary?
-        public static Variable* Find(char* name)
+        
+        private static readonly Dictionary<Hash, Variable> _variables = new Dictionary<Hash, Variable>(128);
+        
+        public static Variable* Find(Hash nameHash)
         {
-            Variable* var;
-
-            for (var = _variables; var != null; var = var->Next)
+            if (_variables.TryGetValue(nameHash, out Variable variable))
             {
-                // PERF: Hash the names instead of comparing char*?
-                if (!StringUtility.AreEqual(name, var->Name))
-                {
-                    return var;
-                }
+                return &variable;
             }
             return null;
+        }
+
+        public static Variable* Find(char* name)
+        {
+            return Find(new Hash(name));
+        }
+
+        public static Variable* Find(string name)
+        {
+            return Find(new Hash(name));
         }
 
         public static string GetValueString(char* name)
@@ -214,6 +215,11 @@ namespace Engine
 
             // TODO: How do we fill the actions on game restart?
             //var->Callback();
+        }
+
+        public static void Register(Variable* variable)
+        {
+
         }
 
         public static void AddVar(string name, byte value = 0, VariableFlags flags = VariableFlags.None)

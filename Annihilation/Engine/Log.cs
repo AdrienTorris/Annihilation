@@ -17,7 +17,7 @@ namespace Engine
         }
 
         [Conditional("DEBUG")]
-        public static unsafe void Info(StringUtf8 text)
+        public static unsafe void Info(Utf8 text)
         {
             Info(text.ToString());
         }
@@ -37,7 +37,7 @@ namespace Engine
         }
 
         [Conditional("DEBUG")]
-        public static unsafe void Warning(StringUtf8 text)
+        public static unsafe void Warning(Utf8 text)
         {
             Warning(text.ToString());
         }
@@ -51,7 +51,7 @@ namespace Engine
         }
 
         [Conditional("DEBUG")]
-        public static unsafe void Error(StringUtf8 text)
+        public static unsafe void Error(Utf8 text)
         {
             Error(text.ToString());
         }
@@ -65,7 +65,7 @@ namespace Engine
         }
 
         [Conditional("DEBUG")]
-        public static unsafe void Performance(StringUtf8 text)
+        public static unsafe void Performance(Utf8 text)
         {
             Performance(text.ToString());
         }

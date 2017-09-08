@@ -15,7 +15,7 @@ namespace Engine
     }
 
     // TODO: Should be singleton?
-    public unsafe class Application : IDisposable
+    public unsafe class Game : IDisposable
     {
         public const int MaxPathLength = 256;
 
@@ -46,9 +46,9 @@ namespace Engine
         private GameState _state = GameState.Running;
         private bool _isDisposed = false;
         
-        private Application() { }
+        private Game() { }
 
-        public Application(string[] args,
+        public Game(string[] args,
                            ref ApplicationSettings applicationSettings,
                            ref GraphicsSettings graphicsSettings,
                            ref InputSettings inputSettings)
@@ -75,9 +75,9 @@ namespace Engine
 
         public void Run(Action initFunction, Action<double> updateFunction, Action shutdownFunction)
         {
-            StringUtf8 title = Strings.GameTitle.ToUtf8();
-            StringUtf8 organization = Strings.Organization.ToUtf8();
-            StringUtf8 preferencePath = SDL.GetPrefPath(title, organization);
+            Utf8 title = Strings.GameTitle.ToUtf8();
+            Utf8 organization = Strings.Organization.ToUtf8();
+            Utf8 preferencePath = SDL.GetPrefPath(title, organization);
             organization.Free();
 
             PreferencePath = preferencePath.ToString();
@@ -119,7 +119,7 @@ namespace Engine
             }
         }
         
-        ~Application()
+        ~Game()
         {
             Dispose(false);
         }

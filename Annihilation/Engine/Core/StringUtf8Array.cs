@@ -9,15 +9,15 @@
             ArrayPtr = (byte**)Memory.AllocatePointers((int)size);
         }
 
-        public StringUtf8 this[int index]
+        public byte* this[int index]
         {
-            get => new StringUtf8(*(ArrayPtr + index));
+            get => *(ArrayPtr + index);
             set => *(ArrayPtr + index) = value;
         }
 
-        public StringUtf8 this[uint index]
+        public byte* this[uint index]
         {
-            get => new StringUtf8(*(ArrayPtr + index));
+            get => *(ArrayPtr + index);
             set => *(ArrayPtr + index) = value;
         }
     }

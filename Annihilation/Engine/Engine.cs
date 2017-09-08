@@ -1,6 +1,6 @@
 ﻿namespace Engine
 {
-    public static class Constants
+    public static unsafe class Engine
     {
         /// <summary>
         /// Maximum number of players.

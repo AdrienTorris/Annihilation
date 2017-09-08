@@ -1,7 +1,4 @@
-﻿using System.Text;
-using System.Runtime.InteropServices;
-
-namespace Engine
+﻿namespace Engine
 {
     public static class StringUtility
     {
