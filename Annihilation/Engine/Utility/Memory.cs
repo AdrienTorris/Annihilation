@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace Engine
 {
@@ -9,7 +10,7 @@ namespace Engine
 #if PLATFORM_WINDOWS
         private const string MemCopyDll = "msvcrt.dll";
 #elif PLATFORM_LINUX || PLATFORM_MACOS
-        private const string MemCopyDll = "libc.so";
+        private const string MemCopyDll = "libc";
 #else
 #error Unsupported platform
 #endif
@@ -85,14 +86,55 @@ namespace Engine
             return true;
         }
 
+        public static bool IsZeroed(byte* buffer, int byteCount)
+        {
+            // Compare 8 bytes
+            int numberOf = byteCount >> 3;
+            while (numberOf > 0)
+            {
+                if (*(long*)buffer != *(long*)0)
+                    return false;
+                buffer += 8;
+                numberOf--;
+            }
+
+            // Compare remaining bytes
+            numberOf = byteCount & 7;
+            while (numberOf > 0)
+            {
+                if (*buffer != 0)
+                    return false;
+                buffer++;
+                numberOf--;
+            }
+            return true;
+        }
+
         public static byte* AllocateBytes(int length)
         {
             return (byte*)Marshal.AllocHGlobal(length * sizeof(byte));
         }
 
+        public static byte* AllocateAndClearBytes(int length)
+        {
+            byte* buffer = (byte*)Marshal.AllocHGlobal(length * sizeof(byte));
+            Clear(buffer, 0, length);
+            return buffer;
+        }
+
         public static char* AllocateChars(int length)
         {
             return (char*)Marshal.AllocHGlobal(length * sizeof(char));
+        }
+
+        public static bool* AllocateBools(int length)
+        {
+            return (bool*)Marshal.AllocHGlobal(length * sizeof(bool));
+        }
+
+        public static float* AllocateFloats(int length)
+        {
+            return (float*)Marshal.AllocHGlobal(length * sizeof(float));
         }
 
         public static void* AllocatePointers(int length)
@@ -113,9 +155,46 @@ namespace Engine
             return new IntPtr(ptr);
         }
 
-        public static void Clear(IntPtr dest, byte value, int sizeInBytesToClear)
+        public static void Clear(byte* dest, byte value, int byteCount)
         {
-            
+            // Clear 8 bytes
+            int numberOf = byteCount >> 3;
+            while (numberOf > 0)
+            {
+                *(long*)dest = *(long*)value;
+                dest += 8;
+                numberOf--;
+            }
+
+            // Clear remaining bytes
+            numberOf = byteCount & 7;
+            while (numberOf > 0)
+            {
+                *dest = value;
+                dest++;
+                numberOf--;
+            }
+        }
+
+        public static void Clear(bool* dest, byte value, int byteCount)
+        {
+            // Clear 8 bytes
+            int numberOf = byteCount >> 3;
+            while (numberOf > 0)
+            {
+                *(long*)dest = *(long*)value;
+                dest += 8;
+                numberOf--;
+            }
+
+            // Clear remaining bytes
+            numberOf = byteCount & 7;
+            while (numberOf > 0)
+            {
+                *dest = value == 0 ? false : true;
+                dest++;
+                numberOf--;
+            }
         }
 
         public static void Free(void* ptr)

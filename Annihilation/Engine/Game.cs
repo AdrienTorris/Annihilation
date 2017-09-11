@@ -24,7 +24,7 @@ namespace Engine
         /// </summary>
         public virtual bool IsDone()
         {
-            return InputSystem.IsKeyDown(SDL2.SDL.KeyCode.Escape);
+            return InputSystem.WasPressed(Button.Escape);
         }
         
         //
@@ -57,6 +57,7 @@ namespace Engine
             window.Show();
 
             // Poll and handle OS events, then update systems and game
+            int mouseWheel = 0;
             do
             {
                 if (SDL.PollEvent(out SDL.Event ev) == 1)
@@ -69,13 +70,19 @@ namespace Engine
                         }
                         case SDL.EventType.WindowEvent:
                         {
-                            HandleWindowEvent(ev.Window);
+                            HandleWindowEvent(ev.WindowEvent);
+                            break;
+                        }
+                        case SDL.EventType.MouseWheel:
+                        {
+                            // Ugly hack because SDL does not support getting state for mouse wheel
+                            mouseWheel = ev.MouseWheelEvent.Y;
                             break;
                         }
                     }
                 }
             }
-            while (Update(game));
+            while (Update(game, mouseWheel));
 
             terminate:
             Terminate(game);
@@ -101,13 +108,13 @@ namespace Engine
             GraphicsSystem.Shutdown();
         }
 
-        private static bool Update<T>(T game) where T : Game
+        private static bool Update<T>(T game, int mouseWheel) where T : Game
         {
             ProfilingSystem.Update();
 
             float deltaTime = GraphicsSystem.GetFrameTime();
 
-            InputSystem.Update(deltaTime);
+            InputSystem.Update(deltaTime, mouseWheel);
             VariableSystem.Update(deltaTime);
 
             game.Update(deltaTime);

@@ -27,20 +27,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Client\Annihilation.cs" />
-    <Compile Include="Engine\Command\CommandContext.cs" />
-    <Compile Include="Engine\Config\ConfigSystem.cs" />
-    <Compile Include="Engine\Graphics\PostEffectSystem.cs" />
-    <Compile Include="Engine\Hash.cs" />
-    <Compile Include="Engine\Profiling\ProfilingSystem.cs" />
-    <Compile Include="Engine\TimeSystem.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="CoreSDL" Version="1.0.5" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <Folder Include="Engine\Command\" />
     <Folder Include="Engine\Variable.Test\" />
   </ItemGroup>
 

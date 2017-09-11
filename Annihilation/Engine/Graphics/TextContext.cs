@@ -6,6 +6,9 @@ namespace Engine.Graphics
 {
     public class TextContext
     {
+        public void Draw(string text)
+        {
 
+        }
     }
 }

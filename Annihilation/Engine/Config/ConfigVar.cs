@@ -18,20 +18,44 @@ namespace Engine.Config
 
     public abstract unsafe class ConfigVar
     {
-        public char* Name;
-        public char* ValueString;
-        public char* DefaultValueString;
-        public ConfigVarFlags Flags;
-        public Value Value;
-        //public uint CallbackId;
+        public ConfigVarGroup Group;
+        
+        public ConfigVar() { }
 
-        public ConfigVar(char* name, Value value, ConfigVarFlags flags)
+        public ConfigVar(string path)
         {
-            Name = name;
-            Value = value;
-            Flags = flags;
-            ValueString = null;
-            DefaultValueString = null;
+            ConfigSystem.RegisterVar(path, this);
+        }
+
+        public ConfigVar Next()
+        {
+            ConfigVar next = null;
+
+            if (this is ConfigVarGroup group && group.IsExpanded)
+            {
+                next = group.FirstVar();
+            }
+
+            if (next == null)
+            {
+                next = Group.NextVar(this);
+            }
+
+            return next ?? this;
+        }
+
+        public ConfigVar Previous()
+        {
+            ConfigVar previous = Group.PreviousVar(this);
+            if (previous != null && previous != Group)
+            {
+                if (previous is ConfigVarGroup group && group.IsExpanded)
+                {
+                    previous = group.LastVar();
+                }
+            }
+
+            return previous ?? this;
         }
 
         public abstract void Increment();
@@ -39,10 +63,37 @@ namespace Engine.Config
         public abstract void Select();
 
         public abstract void DisplayValue(TextContext textContext);
-        public abstract void SetValue(FileStream file, string setting);
+        public abstract void SetValue(StreamReader stream, string setting);
 
         public override string ToString() => "";
     }
 
-    
+    public class BoolVar : ConfigVar
+    {
+        private bool _value;
+
+        public BoolVar(string path, bool value) : base(path)
+        {
+            _value = value;
+        }
+
+        public override void Increment() => _value = true;
+        public override void Decrement() => _value = false;
+        public override void Select() => _value = !_value;
+
+        public override string ToString()
+        {
+            return _value ? "on" : "off";
+        }
+
+        public override void DisplayValue(TextContext textContext)
+        {
+            textContext.Draw(_value ? "[X]" : "[-]");
+        }
+        
+        public override void SetValue(StreamReader stream, string setting)
+        {
+
+        }
+    }
 }

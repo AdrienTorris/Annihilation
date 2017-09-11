@@ -1,24 +1,19 @@
 ﻿using System.Numerics;
 using System.Collections.Generic;
+using Engine.Config;
 using Vulkan;
 
 namespace Engine.Graphics
 {
     public static class GraphicsSystem
     {
-        public static readonly Dictionary<uint, string> VendorNames = new Dictionary<uint, string>
-        {
-            { 0x1002, "AMD" },
-            { 0x10DE, "NVIDIA" },
-            { 0x8086, "INTEL" },
-            { 0x13B5, "ARM" },
-            { 0x5143, "Qualcomm" },
-            { 0x1010, "ImgTec" }
-        };
-
         public static int DisplayWidth = 1920;
         public static int DisplayHeight = 1080;
 
+        private static float _frameTime = 0f;
+        private static ulong _frameIndex = 0;
+        private static long _frameStartTick = 0;
+        
         public static VkDevice Device;
         public static uint GraphicsQueueFamily;
         public static uint ComputeQueueFamily;
