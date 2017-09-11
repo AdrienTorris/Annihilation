@@ -110,33 +110,47 @@ namespace Engine
             return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static byte* AllocateBytes(int length)
         {
             return (byte*)Marshal.AllocHGlobal(length * sizeof(byte));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static byte* AllocateAndClearBytes(int length)
         {
-            byte* buffer = (byte*)Marshal.AllocHGlobal(length * sizeof(byte));
+            byte* buffer = AllocateBytes(length);
             Clear(buffer, 0, length);
             return buffer;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static char* AllocateChars(int length)
         {
             return (char*)Marshal.AllocHGlobal(length * sizeof(char));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool* AllocateBools(int length)
         {
             return (bool*)Marshal.AllocHGlobal(length * sizeof(bool));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float* AllocateFloats(int length)
         {
             return (float*)Marshal.AllocHGlobal(length * sizeof(float));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float* AllocateAndClearFloats(int length)
+        {
+            float* buffer = AllocateFloats(length);
+            Clear(buffer, 0f, length);
+            return buffer;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void* AllocatePointers(int length)
         {
             return (void*)Marshal.AllocHGlobal(length * sizeof(void*));
@@ -199,24 +213,11 @@ namespace Engine
 
         public static void Clear(float* dest, float value, int length)
         {
-            int byteCount = length * sizeof(float);
-
-            // Clear 8 bytes
-            int numberOf = byteCount >> 3;
-            while (numberOf > 0)
-            {
-                *(double*)dest = value;
-                dest += 8;
-                numberOf--;
-            }
-
-            // Clear remaining bytes
-            numberOf = byteCount & 7;
-            while (numberOf > 0)
+            while (length > 0)
             {
                 *dest = value;
                 dest++;
-                numberOf--;
+                length--;
             }
         }
 

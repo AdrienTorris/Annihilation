@@ -122,12 +122,12 @@ namespace Engine.Input
         
         public static void Initialize()
         {
-            _buttons = Memory.AllocateBytes((int)Button.Count);
-            _previousButtons = Memory.AllocateBytes((int)Button.Count);
-            _holdDurations = Memory.AllocateFloats((int)Button.Count);
-            _analogs = Memory.AllocateFloats((int)Analog.Count);
-            _analogsTimeCorrected = Memory.AllocateFloats((int)Analog.Count);
-
+            _buttons = Memory.AllocateAndClearBytes((int)Button.Count);
+            _previousButtons = Memory.AllocateAndClearBytes((int)Button.Count);
+            _holdDurations = Memory.AllocateAndClearFloats((int)Button.Count);
+            _analogs = Memory.AllocateAndClearFloats((int)Analog.Count);
+            _analogsTimeCorrected = Memory.AllocateAndClearFloats((int)Analog.Count);
+            
             BuildSdlMappings();
 
             _keyboardState = GetKeyboardState(null);
