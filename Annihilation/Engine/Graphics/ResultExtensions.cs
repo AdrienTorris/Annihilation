@@ -4,7 +4,7 @@ namespace Engine.Graphics
 {
     public static class ResultExtensions
     {
-        public static void CheckError(this Vk.Result result)
+        public static void CheckError(this VkResult result)
         {
             if (result < 0)
             {

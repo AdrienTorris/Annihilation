@@ -7,8 +7,8 @@ namespace Engine.Graphics
 {
     public static class GraphicsSystem
     {
-        public static int DisplayWidth = 1920;
-        public static int DisplayHeight = 1080;
+        public static int DisplayWidth = 1280;
+        public static int DisplayHeight = 720;
 
         private static float _frameTime = 0f;
         private static ulong _frameIndex = 0;
@@ -22,11 +22,11 @@ namespace Engine.Graphics
         public static VkQueue ComputeQueue;
         public static VkQueue TransferQueue;
         public static VkCommandBuffer CommandBuffer;
-        public static Vk.PhysicalDeviceProperties DeviceProperties;
-        public static Vk.PhysicalDeviceMemoryProperties DeviceMemoryProperties;
-        public static Vk.Format ColorFormat;
-        public static Vk.Format DepthFormat;
-        public static Vk.SampleCountFlags SampleCount;
+        public static VkPhysicalDeviceProperties DeviceProperties;
+        public static VkPhysicalDeviceMemoryProperties DeviceMemoryProperties;
+        public static VkFormat ColorFormat;
+        public static VkFormat DepthFormat;
+        public static VkSampleCountFlags SampleCount;
         public static bool Supersampling;
         public static bool DedicatedAllocation;
 

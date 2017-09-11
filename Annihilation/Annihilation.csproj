@@ -27,8 +27,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Engine\Command\" />
-    <Folder Include="Engine\Variable.Test\" />
+    <Compile Remove="Engine\Command\**" />
+    <Compile Remove="Engine\Variable.Test\**" />
+    <EmbeddedResource Remove="Engine\Command\**" />
+    <EmbeddedResource Remove="Engine\Variable.Test\**" />
+    <None Remove="Engine\Command\**" />
+    <None Remove="Engine\Variable.Test\**" />
   </ItemGroup>
 
 </Project>

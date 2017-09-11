@@ -92,7 +92,7 @@ namespace Engine
             int numberOf = byteCount >> 3;
             while (numberOf > 0)
             {
-                if (*(long*)buffer != *(long*)0)
+                if (*(long*)buffer != 0)
                     return false;
                 buffer += 8;
                 numberOf--;
@@ -161,7 +161,7 @@ namespace Engine
             int numberOf = byteCount >> 3;
             while (numberOf > 0)
             {
-                *(long*)dest = *(long*)value;
+                *(long*)dest = value;
                 dest += 8;
                 numberOf--;
             }
@@ -182,7 +182,7 @@ namespace Engine
             int numberOf = byteCount >> 3;
             while (numberOf > 0)
             {
-                *(long*)dest = *(long*)value;
+                *(long*)dest = value;
                 dest += 8;
                 numberOf--;
             }
@@ -192,6 +192,29 @@ namespace Engine
             while (numberOf > 0)
             {
                 *dest = value == 0 ? false : true;
+                dest++;
+                numberOf--;
+            }
+        }
+
+        public static void Clear(float* dest, float value, int length)
+        {
+            int byteCount = length * sizeof(float);
+
+            // Clear 8 bytes
+            int numberOf = byteCount >> 3;
+            while (numberOf > 0)
+            {
+                *(double*)dest = value;
+                dest += 8;
+                numberOf--;
+            }
+
+            // Clear remaining bytes
+            numberOf = byteCount & 7;
+            while (numberOf > 0)
+            {
+                *dest = value;
                 dest++;
                 numberOf--;
             }

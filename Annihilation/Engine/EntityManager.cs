@@ -34,7 +34,7 @@ namespace Engine
             return entity;
         }
 
-        public static Entity Spawn(World world, StringHash64 entityResource)
+        public static Entity Spawn(World world, Hash entityResource)
         {
             Entity entity = Create(world);
 
@@ -43,7 +43,7 @@ namespace Engine
             return entity;
         }
         
-        public static Entity Spawn(World world, StringHash64 entityResource, Matrix4x4 transform)
+        public static Entity Spawn(World world, Hash entityResource, Matrix4x4 transform)
         {
             Entity entity = Spawn(world, entityResource);
 

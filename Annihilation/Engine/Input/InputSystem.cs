@@ -145,11 +145,11 @@ namespace Engine.Input
         public static void EnableTextInput() => StartTextInput();
         public static void DisableTextInput() => StopTextInput();
         
-        public static void Update(float deltaTime, int mouseWheel)
+        public static void Update(float deltaTime, Event evt)
         {
             Memory.Copy(_previousButtons, _buttons, (int)Button.Count);
             Memory.Clear(_buttons, 0, (int)Button.Count);
-            Memory.Clear((byte*)_analogs, 0, (int)Analog.Count * sizeof(float));
+            Memory.Clear(_analogs, 0f, (int)Analog.Count);
 
             // Keyboard
             for (int i = 0; i < (int)Button.KeyCount; ++i)
@@ -168,10 +168,7 @@ namespace Engine.Input
             // Mouse move
             _analogs[(int)Analog.MouseX] = mouseX * 0.0018f;
             _analogs[(int)Analog.MouseY] = mouseY * -0.0018f;
-
-            // Mouse wheel
-            _analogs[(int)Analog.MouseWheel] = mouseWheel > 0 ? 1f : mouseWheel < 0f ? -1f : 0f;
-
+            
             // Hold durations
             for (int i = 0; i < (int)Button.KeyCount; ++i)
             {
@@ -185,6 +182,16 @@ namespace Engine.Input
                     {
                         _holdDurations[i] += deltaTime;
                     }
+                }
+            }
+
+            // Axis
+            switch(evt.Type)
+            {
+                case EventType.MouseWheel:
+                {
+                    _analogs[(int)Analog.MouseWheel] = evt.MouseWheelEvent.Y;
+                    break;
                 }
             }
 
