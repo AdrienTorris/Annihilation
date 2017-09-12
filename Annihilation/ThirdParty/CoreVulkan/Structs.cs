@@ -352,15 +352,10 @@ namespace Vulkan
         public uint VendorId;
         public uint DeviceId;
         public VkPhysicalDeviceType DeviceType;
-        public byte* DeviceName;
-        public byte* PipelineCacheUuid;
+        public fixed byte DeviceName[Vk.MaxPhysicalDeviceNameSize];
+        public fixed byte PipelineCacheUuid[Vk.UUIDSize];
         public VkPhysicalDeviceLimits Limits;
         public VkPhysicalDeviceSparseProperties SparseProperties;
-
-        public string GetDeviceName()
-        {
-            return Utf8.ToString(DeviceName);
-        }
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -390,9 +385,11 @@ namespace Vulkan
     public unsafe struct VkPhysicalDeviceMemoryProperties
     {
         public uint MemoryTypeCount;
-        public VkMemoryType* MemoryTypes;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = Vk.MaxMemoryTypes)]
+        public VkMemoryType[] MemoryTypes;
         public uint MemoryHeapCount;
-        public VkMemoryHeap* MemoryHeaps;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = Vk.MaxMemoryHeaps)]
+        public VkMemoryHeap[] MemoryHeaps;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -448,27 +445,17 @@ namespace Vulkan
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct VkExtensionProperties
     {
-        public byte* ExtensionName;
+        public fixed byte ExtensionName[Vk.MaxExtensionNameSize];
         public Version SpecVersion;
-
-        public bool IsNamed(string name)
-        {
-            byte* nameUtf8 = Utf8.AllocateFromString(name);
-            bool result = Utf8.Compare(nameUtf8, ExtensionName);
-
-            Utf8.Free(nameUtf8);
-
-            return result;
-        }
     }
 
     [StructLayout(LayoutKind.Sequential)]
     public unsafe struct VkLayerProperties
     {
-        public byte* LayerName;
+        public fixed byte LayerName[Vk.MaxExtensionNameSize];
         public Version SpecVersion;
         public Version ImplementationVersion;
-        public byte* Description;
+        public fixed byte Description[Vk.MaxDescriptionSize];
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -2277,7 +2264,7 @@ namespace Vulkan
         public IntPtr Callback;
         public IntPtr UserData;
 
-        public VkDebugReportCallbackCreateInfo(VkDebugReportFlags flags, Vk.DebugReportCallbackEXTDelegate callback)
+        public VkDebugReportCallbackCreateInfo(VkDebugReportFlags flags, DebugReportCallbackEXT callback)
         {
             Type = VkStructureType.DebugReportCallbackCreateInfo;
             Next = null;

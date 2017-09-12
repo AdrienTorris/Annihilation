@@ -2,7 +2,7 @@
 
 namespace Engine
 {
-    public static class MathUtility
+    public static class Utility
     {
         public static int Pow(int number, int power)
         {

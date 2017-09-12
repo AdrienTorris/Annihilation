@@ -49,9 +49,13 @@ namespace Engine
         //
         public static void Run<T>(T game) where T : Game
         {
-            CreateWindow(game);
+            byte* title = Utf8.AllocateFromString(game.Title);
+
+            CreateWindow(ref title, game);
             
-            Initialize(game);
+            Initialize(ref title, game);
+
+            Utf8.Free(title);
 
             SDL.ShowWindow(game._window);
 
@@ -81,13 +85,12 @@ namespace Engine
             Terminate(game);
         }
 
-        private static void CreateWindow<T>(T game) where T : Game
+        private static void CreateWindow<T>(ref byte* title, T game) where T : Game
         {
             SDL.InitSubSystem(SDL.InitFlags.Video);
             
             SDL.VulkanLoadLibrary(null).CheckError();
 
-            byte* title = Utf8.AllocateFromString(game.Title);
             SDL.Window window = SDL.CreateWindow(
                 title,
                 SDL.WindowPositionCentered,
@@ -101,9 +104,9 @@ namespace Engine
             game._window = window;
         }
 
-        private static void Initialize<T>(T game) where T : Game
+        private static void Initialize<T>(ref byte* title, T game) where T : Game
         {
-            GraphicsSystem.Initialize();
+            GraphicsSystem.Initialize(ref title, ref game._window);
             TimeSystem.Initialize();
             InputSystem.Initialize();
             ConfigSystem.Initialize();

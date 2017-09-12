@@ -7,6 +7,7 @@
     <StartupObject />
     <Platforms>x64</Platforms>
     <RootNamespace></RootNamespace>
+    <Configurations>Debug;Release;Profile</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -18,6 +19,14 @@
     <DefineConstants>TRACE;DEBUG;NETCOREAPP2_0;PLATFORM_WINDOWS;ENABLE_VALIDATION</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <BaseIntermediateOutputPath>..\Temp\</BaseIntermediateOutputPath>
+    <BaseOutputPath>..\Build\</BaseOutputPath>
+    <DefineConstants>PROFILE;NETCOREAPP2_0;PLATFORM_WINDOWS</DefineConstants>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <PlatformTarget>x64</PlatformTarget>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
@@ -27,12 +36,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Engine\Command\**" />
-    <Compile Remove="Engine\Variable.Test\**" />
-    <EmbeddedResource Remove="Engine\Command\**" />
-    <EmbeddedResource Remove="Engine\Variable.Test\**" />
-    <None Remove="Engine\Command\**" />
-    <None Remove="Engine\Variable.Test\**" />
+    <None Include="SDL2.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.4.0" />
   </ItemGroup>
 
 </Project>

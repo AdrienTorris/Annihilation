@@ -95,5 +95,7 @@ namespace Engine.Config
         {
 
         }
+
+        public static implicit operator bool(BoolVar var) => var._value;
     }
 }

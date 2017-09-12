@@ -79,6 +79,9 @@ namespace Engine.Config
 
             ConfigVarGroup group = ConfigVarGroup.Root;
 
+            // TODO: Remove this
+            if (group == null) return;
+
             foreach (string part in separatedPath)
             {
                 ConfigVarGroup nextGroup;

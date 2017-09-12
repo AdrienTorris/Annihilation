@@ -7,7 +7,6 @@ namespace Engine
 {
     public static unsafe class Utf8
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetLength(byte* text)
         {
             int count = 0;
@@ -49,6 +48,18 @@ namespace Engine
             }
 
             *(bytePtr + actualLength) = 0;
+
+            return bytePtr;
+        }
+        
+        public static byte* AllocateFromAsciiString(string str)
+        {
+            byte* bytePtr = (byte*)Marshal.AllocHGlobal(str.Length + 1);
+            for (int i = 0; i < str.Length; ++i)
+            {
+                bytePtr[i] = (byte)str[i];
+            }
+            bytePtr[str.Length] = 0;
 
             return bytePtr;
         }
