@@ -126,9 +126,10 @@ namespace Engine
 
         private static bool Update<T>(T game, SDL.Event evt) where T : Game
         {
+            TimeSystem.Update();
             ProfilingSystem.Update();
 
-            float deltaTime = GraphicsSystem.GetFrameTime();
+            float deltaTime = TimeSystem.DeltaTime;
 
             InputSystem.Update(deltaTime, evt);
             ConfigSystem.HandleInput(deltaTime);

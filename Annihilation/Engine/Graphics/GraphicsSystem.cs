@@ -25,13 +25,11 @@ namespace Engine.Graphics
         public static int DisplayWidth = 1280;
         public static int DisplayHeight = 720;
 
-        private static float _frameTime = 0f;
-        private static ulong _frameIndex = 0;
-        private static long _frameStartTick = 0;
-
-        private static BoolVar _enableVSync = new BoolVar("Graphics/VSync", false);
-        private static BoolVar _enableValidation = new BoolVar("Graphics/Validation", true);
-
+        public static BoolVar EnableVSync = new BoolVar("Graphics/VSync", false);
+        public static BoolVar EnableValidation = new BoolVar("Graphics/Validation", true);
+        
+        public static ulong FrameCount { get; private set; }
+        
         private static VkInstance _instance;
         private static VkSurface _surface;
         private static VkPhysicalDevice _physicalDevice;
@@ -133,14 +131,9 @@ namespace Engine.Graphics
             CreateDescriptorSets();
         }
 
-        public static float GetFrameTime()
-        {
-            return 1 / 144f;
-        }
-
         public static void Present()
         {
-
+            FrameCount++;
         }
 
         public static void Resize(int width, int height)
@@ -182,7 +175,7 @@ namespace Engine.Graphics
             Assert.IsTrue(result, Utf8.ToString(SDL.GetError()));
 
 #if DEBUG
-            if (_enableValidation)
+            if (EnableValidation)
             {
                 extensionNames[requiredExtensionCount] = Utf8.AllocateFromAsciiString("VK_EXT_debug_report");
             }
@@ -197,7 +190,7 @@ namespace Engine.Graphics
 #if DEBUG
             byte** layerNames = null;
             uint layerCount = 0;
-            if (_enableValidation)
+            if (EnableValidation)
             {
                 layerCount = 1;
                 layerNames = (byte**)Memory.AllocatePointers(1);
@@ -218,7 +211,7 @@ namespace Engine.Graphics
             LoadInstanceFunctions();
 
 #if DEBUG
-            if (_enableValidation)
+            if (EnableValidation)
             {
                 // Create debug report callback
                 VkDebugReportCallbackCreateInfo debugReportCallbackCreateInfo = new VkDebugReportCallbackCreateInfo(
@@ -235,7 +228,7 @@ namespace Engine.Graphics
 
 #if DEBUG
             // Free layer names
-            if (_enableValidation)
+            if (EnableValidation)
             {
                 Memory.Free(layerNames);
             }
