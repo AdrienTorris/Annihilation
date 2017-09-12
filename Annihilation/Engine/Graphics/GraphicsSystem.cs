@@ -27,9 +27,9 @@ namespace Engine.Graphics
 
         public static BoolVar EnableVSync = new BoolVar("Graphics/VSync", false);
         public static BoolVar EnableValidation = new BoolVar("Graphics/Validation", true);
-        
+
         public static ulong FrameCount { get; private set; }
-        
+
         private static VkInstance _instance;
         private static VkSurface _surface;
         private static VkPhysicalDevice _physicalDevice;
@@ -40,7 +40,14 @@ namespace Engine.Graphics
         private static VkFence[] _commandBufferFences = new VkFence[CommandBufferCount];
         private static VkSemaphore[] _drawCompleteSemaphores = new VkSemaphore[CommandBufferCount];
         private static VkSurfaceCapabilities _surfaceCapabilities;
+
+        private static VkFormat _swapchainFormat;
         private static VkSwapchain _swapchain;
+        private static uint _swapchainImageCount;
+        private static VkImage* _swapchainImages;
+        private static VkImageView[] _swapchainImageViews = new VkImageView[MaxSwapchainImages];
+        private static VkSemaphore[] _imageAcquiredSemaphores = new VkSemaphore[MaxSwapchainImages];
+
         private static bool[] _isCommandBufferSubmitted = new bool[CommandBufferCount];
         private static uint _currentSwapchainBuffer;
         private static VkDevice _device;
@@ -97,6 +104,7 @@ namespace Engine.Graphics
         private static VkCreateSwapchainKHR _vkCreateSwapchainKHR;
         private static VkDestroySwapchainKHR _vkDestroySwapchainKHR;
         private static VkGetSwapchainImagesKHR _vkGetSwapchainImagesKHR;
+        private static VkCreateImageView _vkCreateImageView;
         private static VkAcquireNextImageKHR _vkAcquireNextImageKHR;
         private static VkQueuePresentKHR _vkQueuePresentKHR;
 #if DEBUG
@@ -148,7 +156,7 @@ namespace Engine.Graphics
 
         public static void Shutdown()
         {
-
+            SDL.QuitSubSystem(SDL.InitFlags.Video);
         }
 
         private static void InitInstance(ref byte* title, ref SDL.Window window)
@@ -264,7 +272,7 @@ namespace Engine.Graphics
             // Enumerate device extensions
             uint deviceExtensionCount = 0;
             _vkEnumerateDeviceExtensionProperties(_physicalDevice, null, ref deviceExtensionCount, null).CheckError();
-            
+
             VkExtensionProperties* extensionProperties = (VkExtensionProperties*)Marshal.AllocHGlobal((int)deviceExtensionCount * sizeof(VkExtensionProperties));
             _vkEnumerateDeviceExtensionProperties(_physicalDevice, null, ref deviceExtensionCount, extensionProperties).CheckError();
 
@@ -392,9 +400,9 @@ namespace Engine.Graphics
 
             // Loading Vulkan device functions
             LoadDeviceFunctions(foundDebugMarkerExtension);
-            
+
             // Get graphics queue
-            _vkGetDeviceQueue(_device,_graphicsQueueFamily, 0, out _graphicsQueue);
+            _vkGetDeviceQueue(_device, _graphicsQueueFamily, 0, out _graphicsQueue);
 
             // Find color buffer format
             VkFormatProperties formatProperties;
@@ -461,11 +469,108 @@ namespace Engine.Graphics
 
         private static void CreateSwapchain()
         {
-            // Create Vulkan swapchain
-
+            // Get suface information
             _vkGetPhysicalDeviceSurfaceCapabilitiesKHR(_physicalDevice, _surface, out _surfaceCapabilities).CheckError();
 
-            //if (_vulkanSurfaceCapabilities.CurrentExtent.Width != )
+            if (_surfaceCapabilities.CurrentExtent.Width != DisplayWidth ||
+                _surfaceCapabilities.CurrentExtent.Height != DisplayHeight)
+            {
+                Log.Error("Surface doesn't match window width or height.");
+            }
+
+            uint surfaceCount = 0;
+            _vkGetPhysicalDeviceSurfaceFormatsKHR(_physicalDevice, _surface, ref surfaceCount, null).CheckError();
+
+            VkSurfaceFormat* surfaceFormats = (VkSurfaceFormat*)Marshal.AllocHGlobal((int)surfaceCount * sizeof(VkSurfaceFormat));
+            _vkGetPhysicalDeviceSurfaceFormatsKHR(_physicalDevice, _surface, ref surfaceCount, surfaceFormats).CheckError();
+
+            uint presentModeCount = 0;
+            _vkGetPhysicalDeviceSurfacePresentModesKHR(_physicalDevice, _surface, ref presentModeCount, null).CheckError();
+
+            VkPresentMode* presentModes = (VkPresentMode*)Marshal.AllocHGlobal((int)presentModeCount * sizeof(VkPresentMode));
+            _vkGetPhysicalDeviceSurfacePresentModesKHR(_physicalDevice, _surface, ref presentModeCount, presentModes).CheckError();
+
+            VkPresentMode presentMode = VkPresentMode.Fifo;
+            // Without VSync, prefer immediate to triple buffering
+            if (!EnableVSync)
+            {
+                bool foundImmediate = false;
+                bool foundMailbox = false;
+                for (int i = 0; i < presentModeCount; ++i)
+                {
+                    if (presentModes[i] == VkPresentMode.Immediate) foundImmediate = true;
+                    if (presentModes[i] == VkPresentMode.Mailbox) foundMailbox = true;
+                }
+                if (foundMailbox) presentMode = VkPresentMode.Mailbox;
+                if (foundImmediate) presentMode = VkPresentMode.Immediate;
+            }
+
+            Memory.Free(presentModes);
+
+            Log.Info("Using present mode " + presentMode);
+
+            // Create the sawpchain
+            VkSwapchainCreateInfo swapchainCreateInfo = new VkSwapchainCreateInfo
+            {
+                Type = VkStructureType.SwapchainCreateInfo,
+                Next = null,
+                Surface = _surface,
+                MinImageCount = 2,
+                ImageFormat = surfaceFormats[0].Format,
+                ImageColorSpace = surfaceFormats[0].ColorSpace,
+                ImageExtent = new VkExtent2D(DisplayWidth, DisplayHeight),
+                ImageUsage = VkImageUsageFlags.ColorAttachment | VkImageUsageFlags.TransferSrc,
+                PreTransform = VkSurfaceTransformFlags.Identity,
+                ImageArrayLayers = 1,
+                ImageSharingMode = VkSharingMode.Exclusive,
+                QueueFamilyIndexCount = 0,
+                QueueFamilyIndices = null,
+                PresentMode = presentMode,
+                Clipped = true,
+                CompositeAlpha = VkCompositeAlphaFlags.Opaque,
+            };
+            // Not all devices support opaque alpha
+            if ((_surfaceCapabilities.SupportedCompositeAlpha & VkCompositeAlphaFlags.Opaque) == 0)
+            {
+                swapchainCreateInfo.CompositeAlpha = VkCompositeAlphaFlags.Inherit;
+            }
+
+            _swapchainFormat = surfaceFormats[0].Format;
+            Memory.Free(surfaceFormats);
+
+            _vkCreateSwapchainKHR(_device, ref swapchainCreateInfo, null, out _swapchain).CheckError();
+
+            // Create the swapchain images
+            _vkGetSwapchainImagesKHR(_device, _swapchain, ref _swapchainImageCount, null).CheckError();
+
+            _swapchainImages = (VkImage*)Marshal.AllocHGlobal((int)_swapchainImageCount * sizeof(VkImage));
+            _vkGetSwapchainImagesKHR(_device, _swapchain, ref _swapchainImageCount, _swapchainImages).CheckError();
+
+            VkImageViewCreateInfo imageViewCreateInfo = new VkImageViewCreateInfo
+            {
+                Type = VkStructureType.ImageViewCreateInfo,
+                Next = null,
+                Format = _swapchainFormat,
+                Components = new VkComponentMapping(VkComponentSwizzle.R, VkComponentSwizzle.G, VkComponentSwizzle.B, VkComponentSwizzle.A),
+                SubresourceRange = new VkImageSubresourceRange(VkImageAspectFlags.Color, 0, 1, 0, 1),
+                ViewType = VkImageViewType.Type2D,
+                Flags = VkImageViewCreateFlags.None,
+            };
+
+            VkSemaphoreCreateInfo semaphoreCreateInfo = new VkSemaphoreCreateInfo(VkSemaphoreCreateFlags.None);
+
+            for (int i = 0; i < _swapchainImageCount; ++i)
+            {
+#if DEBUG
+                SetObjectName(_swapchainImages[i], VkDebugReportObjectType.Image, "Swapchain");
+#endif
+                imageViewCreateInfo.Image = _swapchainImages[i];
+                _vkCreateImageView(_device, ref imageViewCreateInfo, null, out _swapchainImageViews[i]).CheckError();
+#if DEBUG
+                SetObjectName(_swapchainImageViews[i], VkDebugReportObjectType.ImageView, "Swapchain View");
+#endif
+                _vkCreateSemaphore(_device, ref semaphoreCreateInfo, null, out _imageAcquiredSemaphores[i]).CheckError();
+            }
         }
 
         private static void CreateColorBuffer()
@@ -631,6 +736,7 @@ namespace Engine.Graphics
                 nameof(VkCreateSwapchainKHR),
                 nameof(VkDestroySwapchainKHR),
                 nameof(VkGetSwapchainImagesKHR),
+                nameof(VkCreateImageView),
                 nameof(VkAcquireNextImageKHR),
                 nameof(VkQueuePresentKHR),
 #if DEBUG
@@ -675,12 +781,13 @@ namespace Engine.Graphics
             _vkCreateSwapchainKHR = Marshal.GetDelegateForFunctionPointer<VkCreateSwapchainKHR>(funcPtrs[5]);
             _vkDestroySwapchainKHR = Marshal.GetDelegateForFunctionPointer<VkDestroySwapchainKHR>(funcPtrs[6]);
             _vkGetSwapchainImagesKHR = Marshal.GetDelegateForFunctionPointer<VkGetSwapchainImagesKHR>(funcPtrs[7]);
-            _vkAcquireNextImageKHR = Marshal.GetDelegateForFunctionPointer<VkAcquireNextImageKHR>(funcPtrs[8]);
-            _vkQueuePresentKHR = Marshal.GetDelegateForFunctionPointer<VkQueuePresentKHR>(funcPtrs[9]);
+            _vkCreateImageView = Marshal.GetDelegateForFunctionPointer<VkCreateImageView>(funcPtrs[8]);
+            _vkAcquireNextImageKHR = Marshal.GetDelegateForFunctionPointer<VkAcquireNextImageKHR>(funcPtrs[9]);
+            _vkQueuePresentKHR = Marshal.GetDelegateForFunctionPointer<VkQueuePresentKHR>(funcPtrs[10]);
 #if DEBUG
             if (foundDebugMarkerExtension)
             {
-                _vkDebugMarkerSetObjectNameEXT = Marshal.GetDelegateForFunctionPointer<VkDebugMarkerSetObjectNameEXT>(funcPtrs[10]);
+                _vkDebugMarkerSetObjectNameEXT = Marshal.GetDelegateForFunctionPointer<VkDebugMarkerSetObjectNameEXT>(funcPtrs[11]);
             }
 #endif
 
@@ -688,6 +795,24 @@ namespace Engine.Graphics
         }
 
 #if DEBUG
+        private static void SetObjectName(ulong obj, VkDebugReportObjectType objectType, string name)
+        {
+            if (_vkDebugMarkerSetObjectNameEXT != null && name != null)
+            {
+                byte* objectName = Utf8.AllocateFromAsciiString(name);
+                VkDebugMarkerObjectNameInfo nameInfo = new VkDebugMarkerObjectNameInfo
+                {
+                    Type = VkStructureType.DebugMarkerObjectNameInfo,
+                    Next = null,
+                    ObjectType = objectType,
+                    Object = obj,
+                    ObjectName = objectName
+                };
+                _vkDebugMarkerSetObjectNameEXT(_device, ref nameInfo).CheckError();
+                Utf8.Free(objectName);
+            }
+        }
+
         private static VkBool32 DebugMessageCallback(VkDebugReportFlags flags, VkDebugReportObjectType objectType, ulong @object, Size location, int messageCode, byte* layerPrefix, byte* message, IntPtr userData)
         {
             if (objectType == VkDebugReportObjectType.DebugReportCallback && messageCode == 1)

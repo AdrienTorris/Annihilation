@@ -616,7 +616,7 @@ namespace Vulkan
         public VkStructureType Type;
         public void* Next;
         public VkSemaphoreCreateFlags Flags;
-
+        
         public VkSemaphoreCreateInfo(VkSemaphoreCreateFlags flags = VkSemaphoreCreateFlags.None)
         {
             Type = VkStructureType.SemaphoreCreateInfo;
@@ -706,6 +706,14 @@ namespace Vulkan
         public VkComponentSwizzle G;
         public VkComponentSwizzle B;
         public VkComponentSwizzle A;
+
+        public VkComponentMapping(VkComponentSwizzle r, VkComponentSwizzle g, VkComponentSwizzle b, VkComponentSwizzle a)
+        {
+            R = r;
+            G = g;
+            B = b;
+            A = a;
+        }
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -716,6 +724,15 @@ namespace Vulkan
         public uint LevelCount;
         public uint BaseArrayLayer;
         public uint LayerCount;
+
+        public VkImageSubresourceRange(VkImageAspectFlags aspectMask, uint baseMipLevel, uint levelCount, uint baseArrayLayer, uint layerCount)
+        {
+            AspectMask = aspectMask;
+            BaseMipLevel = baseMipLevel;
+            LevelCount = levelCount;
+            BaseArrayLayer = baseArrayLayer;
+            LayerCount = layerCount;
+        }
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -851,6 +868,12 @@ namespace Vulkan
     {
         public uint Width;
         public uint Height;
+
+        public VkExtent2D(int width, int height)
+        {
+            Width = (uint)width;
+            Height = (uint)height;
+        }
     }
 
     [StructLayout(LayoutKind.Sequential)]
