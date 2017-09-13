@@ -116,8 +116,6 @@ namespace Engine
 
         private static void Terminate<T>(T game) where T : Game
         {
-            GraphicsSystem.Terminate();
-
             game.Dispose();
 
             InputSystem.Shutdown();
