@@ -211,6 +211,13 @@ namespace Vulkan
         public uint Width;
         public uint Height;
         public uint Depth;
+
+        public VkExtent3D(int width, int height, int depth)
+        {
+            Width = (uint)width;
+            Height = (uint)height;
+            Depth = (uint)depth;
+        }
     }
 
     [StructLayout(LayoutKind.Sequential)]

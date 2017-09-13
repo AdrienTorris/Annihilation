@@ -1,11 +1,9 @@
-﻿using System;
-using System.Runtime.InteropServices;
-
-namespace Vulkan
+﻿namespace Vulkan
 {
     public static unsafe class Vk
     {
         // Constants
+        public const uint HeaderVersion = 57;
         public const float LodClampNone = 1000f;
         public const uint RemainingMipLevels = ~0U;
         public const uint RemainingArrayLayers = ~0U;
@@ -26,10 +24,7 @@ namespace Vulkan
         private const int TotalExtensionCharCount = 1955;
         private const int MaxExtensionCharCount = 34;
         private const int AvgExtensionCharCount = 22;
-
-        // Extension names
-        public static readonly byte** ExtensionNames;
-
+        
         public const string SurfaceExtensionName = "VK_KHR_surface";
         public const string SwapchainExtensionName = "VK_KHR_swapchain";
         public const string DisplayExtensionName = "VK_KHR_display";
@@ -120,16 +115,5 @@ namespace Vulkan
         public const string FramebufferMixedSamplesExtensionName = "VK_NV_framebuffer_mixed_samples";
         public const string FillRectangleExtensionName = "VK_NV_fill_rectangle";
         public const string PostDepthCoverageExtensionName = "VK_EXT_post_depth_coverage";
-
-        static Vk()
-        {
-            /*ExtensionNames = (byte**)Marshal.AllocHGlobal(ExtensionCount * sizeof(void*));
-
-            byte* bytes = (byte*)Marshal.AllocHGlobal(TotalExtensionCharCount);
-            for (int i = 0; i < ExtensionCount; ++i)
-            {
-
-            }*/
-        }
     }
 }
