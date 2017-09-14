@@ -1,101 +1,83 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using Engine.Graphics;
 
 namespace Engine.Config
 {
+    /*
+    ===============================================================================
+	Config variables
+    ===============================================================================
+    */
     [Flags]
     public enum ConfigVarFlags : byte
     {
         None = 0,
-        Archive = 1 << 0,
-        Registered = 1 << 1,
-        Server = 1 << 2,
-        Client = 1 << 3
+        Bool = 1 << 0,
+        Int = 1 << 1,
+        Float = 1 << 2,
+        Cheat = 1 << 3,
+        Archive = 1 << 4,
+        Registered = 1 << 5,
+        Server = 1 << 6,
+        Client = 1 << 7
     }
-
-    public unsafe delegate void VariableCallback(ConfigVar var);
-
-    public abstract unsafe class ConfigVar
-    {
-        public ConfigVarGroup Group;
-        
-        public ConfigVar() { }
-
-        public ConfigVar(string path)
-        {
-            ConfigSystem.RegisterVar(path, this);
-        }
-
-        public ConfigVar Next()
-        {
-            ConfigVar next = null;
-
-            if (this is ConfigVarGroup group && group.IsExpanded)
-            {
-                next = group.FirstVar();
-            }
-
-            if (next == null)
-            {
-                next = Group.NextVar(this);
-            }
-
-            return next ?? this;
-        }
-
-        public ConfigVar Previous()
-        {
-            ConfigVar previous = Group.PreviousVar(this);
-            if (previous != null && previous != Group)
-            {
-                if (previous is ConfigVarGroup group && group.IsExpanded)
-                {
-                    previous = group.LastVar();
-                }
-            }
-
-            return previous ?? this;
-        }
-
-        public abstract void Increment();
-        public abstract void Decrement();
-        public abstract void Select();
-
-        public abstract void DisplayValue(TextContext textContext);
-        public abstract void SetValue(StreamReader stream, string setting);
-
-        public override string ToString() => "";
-    }
-
-    public class BoolVar : ConfigVar
+    
+    public struct BoolVar
     {
         private bool _value;
 
-        public BoolVar(string path, bool value) : base(path)
+        public BoolVar(string name, bool value)
+        {
+            _value = value;
+
+            ConfigSystem.RegisterBool(name, this);
+        }
+        
+        public override string ToString()
+        {
+            return _value ? "true" : "false";
+        }
+
+        public void DisplayValue(TextContext textContext)
+        {
+
+        }
+
+        public void SetValue(StreamReader stream, string setting)
+        {
+
+        }
+
+        public void SetValue(bool value)
         {
             _value = value;
         }
 
-        public override void Increment() => _value = true;
-        public override void Decrement() => _value = false;
-        public override void Select() => _value = !_value;
+        public static implicit operator bool(BoolVar var) => var._value;
+    }
+
+    public class IntVar
+    {
+        private int _value;
+        private int _minValue;
+        private int _maxValue;
+
+        public IntVar(string name, int value, int min, int max)
+        {
+            _value = value;
+            _minValue = min;
+            _maxValue = max;
+
+            ConfigSystem.RegisterInt(name, this);
+        }
+
+        public IntVar(string name, int value) : this(name, value, 0, int.MaxValue) { }
 
         public override string ToString()
         {
-            return _value ? "on" : "off";
+            return _value.ToString();
         }
-
-        public override void DisplayValue(TextContext textContext)
-        {
-            textContext.Draw(_value ? "[X]" : "[-]");
-        }
-        
-        public override void SetValue(StreamReader stream, string setting)
-        {
-
-        }
-
-        public static implicit operator bool(BoolVar var) => var._value;
     }
 }

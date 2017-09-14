@@ -2,12 +2,12 @@
 
 namespace Vulkan
 {
-    public enum VkPipelineCacheHeaderVersion
+    public enum PipelineCacheHeaderVersion
     {
         One = 1
     }
 
-    public enum VkResult : int
+    public enum Result : int
     {
         Success = 0,
         NotReady = 1,
@@ -38,7 +38,7 @@ namespace Vulkan
         ErrorInvalidExternalHandle = -1000072003,
     }
 
-    public enum VkStructureType
+    public enum StructureType
     {
         ApplicationInfo = 0,
         InstanceCreateInfo = 1,
@@ -221,7 +221,7 @@ namespace Vulkan
         PipelineCoverageModulationStateCreateInfoNv = 1000152000,
     }
 
-    public enum VkSystemAllocationScope
+    public enum SystemAllocationScope
     {
         Command = 0,
         Object = 1,
@@ -230,12 +230,12 @@ namespace Vulkan
         Instance = 4
     }
 
-    public enum VkInternalAllocationType
+    public enum InternalAllocationType
     {
         Executable = 0
     }
 
-    public enum VkFormat
+    public enum Format
     {
         Undefined = 0,
         R4G4UNormPack8 = 1,
@@ -432,20 +432,20 @@ namespace Vulkan
         PVRTC24BPPSRGBBlockImg = 1000054007,
     }
 
-    public enum VkImageType
+    public enum ImageType
     {
         Image1D = 0,
         Image2D = 1,
         Image3D = 2,
     }
 
-    public enum VkImageTiling
+    public enum ImageTiling
     {
         Optimal = 0,
         Linear = 1,
     }
 
-    public enum VkPhysicalDeviceType
+    public enum PhysicalDeviceType
     {
         Other = 0,
         IntegratedGPU = 1,
@@ -454,20 +454,20 @@ namespace Vulkan
         CPU = 4
     }
 
-    public enum VkQueryType
+    public enum QueryType
     {
         Occlusion = 0,
         PipelineStatistics = 1,
         Timestamp = 2
     }
 
-    public enum VkSharingMode
+    public enum SharingMode
     {
         Exclusive = 0,
         Concurrent = 1
     }
 
-    public enum VkImageLayout
+    public enum ImageLayout
     {
         Undefined = 0,
         General = 1,
@@ -482,7 +482,7 @@ namespace Vulkan
         SharedPresent = 1000111000,
     }
 
-    public enum VkImageViewType
+    public enum ImageViewType
     {
         Type1D = 0,
         Type2D = 1,
@@ -493,7 +493,7 @@ namespace Vulkan
         TypeCubeArray = 6
     }
 
-    public enum VkComponentSwizzle
+    public enum ComponentSwizzle
     {
         Identity = 0,
         Zero = 1,
@@ -504,13 +504,13 @@ namespace Vulkan
         A = 6
     }
 
-    public enum VkVertexInputRate
+    public enum VertexInputRate
     {
         Vertex = 0,
         Instance = 1
     }
 
-    public enum VkPrimitiveTopology
+    public enum PrimitiveTopology
     {
         PointList = 0,
         LineList = 1,
@@ -525,7 +525,7 @@ namespace Vulkan
         PatchList = 10
     }
 
-    public enum VkPolygonMode
+    public enum PolygonMode
     {
         Fill = 0,
         Line = 1,
@@ -533,13 +533,13 @@ namespace Vulkan
         FillTriangle = 1000153000
     }
 
-    public enum VkFrontFace
+    public enum FrontFace
     {
         CounterClockwise = 0,
         Clockwise = 1
     }
 
-    public enum VkCompareOp
+    public enum CompareOp
     {
         Never = 0,
         Less = 1,
@@ -551,7 +551,7 @@ namespace Vulkan
         Always = 7
     }
 
-    public enum VkStencilOp
+    public enum StencilOp
     {
         Keep = 0,
         Zero = 1,
@@ -563,7 +563,7 @@ namespace Vulkan
         DecrementAndWrap = 7,
     }
 
-    public enum VkLogicOp
+    public enum LogicOp
     {
         Clear = 0,
         And = 1,
@@ -583,7 +583,7 @@ namespace Vulkan
         Set = 15,
     }
 
-    public enum VkBlendFactor
+    public enum BlendFactor
     {
         Zero = 0,
         One = 1,
@@ -606,7 +606,7 @@ namespace Vulkan
         OneMinusSrc1Alpha = 18,
     }
 
-    public enum VkBlendOp
+    public enum BlendOp
     {
         Add = 0,
         Subtact = 1,
@@ -661,7 +661,7 @@ namespace Vulkan
         Blue = 1000148045,
     }
 
-    public enum VkDynamicState
+    public enum DynamicState
     {
         Viewport = 0,
         Scissor = 1,
@@ -676,20 +676,20 @@ namespace Vulkan
         DiscardRectangle = 1000099000
     }
 
-    public enum VkFilter
+    public enum Filter
     {
         Nearest = 0,
         Linear = 1,
         Cubic = 1000015000
     }
 
-    public enum VkSamplerMipmapMode
+    public enum SamplerMipmapMode
     {
         Nearest = 0,
         Linear = 1
     }
 
-    public enum VkSamplerAddressMode
+    public enum SamplerAddressMode
     {
         Repeat = 0,
         MirroredRepeat = 1,
@@ -698,7 +698,7 @@ namespace Vulkan
         MirrorClampToEdge = 4
     }
 
-    public enum VkBorderColor
+    public enum BorderColor
     {
         FloatTransparentBlack = 0,
         IntTransparentBlack = 1,
@@ -708,7 +708,7 @@ namespace Vulkan
         IntOpaqueWhite = 5
     }
 
-    public enum VkDescriptorType
+    public enum DescriptorType
     {
         Sampler = 0,
         CombinedImageSampler = 1,
@@ -723,44 +723,44 @@ namespace Vulkan
         InputAttachment = 10
     }
 
-    public enum VkAttachmentLoadOp
+    public enum AttachmentLoadOp
     {
         Load = 0,
         Clear = 1,
         DontCare = 2
     }
 
-    public enum VkAttachmentStoreOp
+    public enum AttachmentStoreOp
     {
         Store = 0,
         DontCare = 1
     }
 
-    public enum VkPipelineBindPoint
+    public enum PipelineBindPoint
     {
         Graphics = 0,
         Compute = 1
     }
 
-    public enum VkCommandBufferLevel
+    public enum CommandBufferLevel
     {
         Primary = 0,
         Secondary = 1
     }
 
-    public enum VkIndexType
+    public enum IndexType
     {
         Uint16 = 0,
         Uint32 = 1
     }
 
-    public enum VkSubpassContents
+    public enum SubpassContents
     {
         Inline = 0,
         SecondaryCommandBuffers = 1
     }
 
-    public enum VkObjectType
+    public enum ObjectType
     {
         Unkwown = 0,
         Instance = 1,
@@ -798,10 +798,10 @@ namespace Vulkan
         IndirectCommandsLayout = 1000086001
     }
 
-    [Flags] public enum VkInstanceCreateFlags : uint { None = 0 }
+    [Flags] public enum InstanceCreateFlags : uint { None = 0 }
 
     [Flags]
-    public enum VkFormatFeatureFlags : uint
+    public enum FormatFeatureFlags : uint
     {
         SampledImage = 1 << 0,
         StorageImage = 1 << 1,
@@ -823,7 +823,7 @@ namespace Vulkan
     }
 
     [Flags]
-    public enum VkImageUsageFlags : uint
+    public enum ImageUsageFlags : uint
     {
         TransferSrc = 0x00000001,
         TransferDst = 0x00000002,
@@ -836,7 +836,7 @@ namespace Vulkan
     }
 
     [Flags]
-    public enum VkImageCreateFlags : uint
+    public enum ImageCreateFlags : uint
     {
         SparseBinding = 0x00000001,
         SparseResidency = 0x00000002,
@@ -848,7 +848,7 @@ namespace Vulkan
     }
 
     [Flags]
-    public enum VkSampleCountFlags : uint
+    public enum SampleCountFlags : uint
     {
         Sample1 = 0x00000001,
         Sample2 = 0x00000002,
@@ -860,7 +860,7 @@ namespace Vulkan
     }
 
     [Flags]
-    public enum VkQueueFlags : uint
+    public enum QueueFlags : uint
     {
         Graphics = 1 << 0,
         Compute = 1 << 1,
@@ -869,7 +869,7 @@ namespace Vulkan
     }
 
     [Flags]
-    public enum VkMemoryPropertyFlags : uint
+    public enum MemoryPropertyFlags : uint
     {
         DeviceLocal = 0x00000001,
         HostVisible = 0x00000002,
@@ -879,17 +879,17 @@ namespace Vulkan
     }
 
     [Flags]
-    public enum VkMemoryHeapFlags : uint
+    public enum MemoryHeapFlags : uint
     {
         DeviceLocal = 0x00000001,
         MultiInstance = 0x00000002,
     }
 
-    [Flags] public enum VkDeviceCreateFlags : uint { None = 0 }
-    [Flags] public enum VkDeviceQueueCreateFlags : uint { None = 0 }
+    [Flags] public enum DeviceCreateFlags : uint { None = 0 }
+    [Flags] public enum DeviceQueueCreateFlags : uint { None = 0 }
 
     [Flags]
-    public enum VkPipelineStageFlags : uint
+    public enum PipelineStageFlags : uint
     {
         TopOfPipe = 1 << 0,
         DrawIndirect = 1 << 1,
@@ -911,10 +911,10 @@ namespace Vulkan
         CommandProcess = 1 << 17
     }
 
-    [Flags] public enum VkMemoryMapFlags : uint { None = 0 }
+    [Flags] public enum MemoryMapFlags : uint { None = 0 }
 
     [Flags]
-    public enum VkImageAspectFlags : uint
+    public enum ImageAspectFlags : uint
     {
         Color = 1 << 0,
         Depth = 1 << 1,
@@ -923,7 +923,7 @@ namespace Vulkan
     }
 
     [Flags]
-    public enum VkSparseImageFormatFlags : uint
+    public enum SparseImageFormatFlags : uint
     {
         SingleMiptail = 1 << 0,
         AlignedMipSize = 1 << 1,
@@ -931,24 +931,24 @@ namespace Vulkan
     }
 
     [Flags]
-    public enum VkSparseMemoryBindFlags : uint
+    public enum SparseMemoryBindFlags : uint
     {
         Metadata = 1 << 0
     }
 
     [Flags]
-    public enum VkFenceCreateFlags : uint
+    public enum FenceCreateFlags : uint
     {
         None = 0,
         Signaled = 1 << 0
     }
 
-    [Flags] public enum VkSemaphoreCreateFlags : uint { None = 0 }
-    [Flags] public enum VkEventCreateFlags : uint { None = 0 }
-    [Flags] public enum VkQueryPoolCreateFlags : uint { None = 0 }
+    [Flags] public enum SemaphoreCreateFlags : uint { None = 0 }
+    [Flags] public enum EventCreateFlags : uint { None = 0 }
+    [Flags] public enum QueryPoolCreateFlags : uint { None = 0 }
 
     [Flags]
-    public enum VkQueryPipelineStatisticFlags : uint
+    public enum QueryPipelineStatisticFlags : uint
     {
         InputAssemblyVertices = 1 << 0,
         InputAssemblyPrimitives = 1 << 1,
@@ -964,7 +964,7 @@ namespace Vulkan
     }
 
     [Flags]
-    public enum VkQueryResultFlags : uint
+    public enum QueryResultFlags : uint
     {
         SixtyFour = 1 << 0,
         Wait = 1 << 1,
@@ -973,7 +973,7 @@ namespace Vulkan
     }
 
     [Flags]
-    public enum VkBufferCreateFlags : uint
+    public enum BufferCreateFlags : uint
     {
         SparseBinding = 1 << 0,
         SparseResidency = 1 << 1,
@@ -981,7 +981,7 @@ namespace Vulkan
     }
 
     [Flags]
-    public enum VkBufferUsageFlags : uint
+    public enum BufferUsageFlags : uint
     {
         TransferSrc = 1 << 0,
         TransferDst = 1 << 1,
@@ -994,13 +994,13 @@ namespace Vulkan
         IndirectBuffer = 1 << 8
     }
 
-    [Flags] public enum VkBufferViewCreateFlags : uint { None = 0 }
-    [Flags] public enum VkImageViewCreateFlags : uint { None = 0 }
-    [Flags] public enum VkShaderModuleCreateFlags : uint { None = 0 }
-    [Flags] public enum VkPipelineCacheCreateFlags : uint { None = 0 }
+    [Flags] public enum BufferViewCreateFlags : uint { None = 0 }
+    [Flags] public enum ImageViewCreateFlags : uint { None = 0 }
+    [Flags] public enum ShaderModuleCreateFlags : uint { None = 0 }
+    [Flags] public enum PipelineCacheCreateFlags : uint { None = 0 }
 
     [Flags]
-    public enum VkPipelineCreateFlags : uint
+    public enum PipelineCreateFlags : uint
     {
         DisableOptimization = 0x00000001,
         AllowDerivatives = 0x00000002,
@@ -1009,10 +1009,10 @@ namespace Vulkan
         DispatchBase = 0x00000010
     }
 
-    [Flags] public enum VkPipelineShaderStageCreateFlags : uint { None = 0 }
+    [Flags] public enum PipelineShaderStageCreateFlags : uint { None = 0 }
 
     [Flags]
-    public enum VkShaderStageFlags : uint
+    public enum ShaderStageFlags : uint
     {
         Vertex = 0x00000001,
         TessellationControl = 0x00000002,
@@ -1024,14 +1024,14 @@ namespace Vulkan
         All = 0x7FFFFFFF
     }
 
-    [Flags] public enum VkPipelineVertexInputStateCreateFlags : uint { None = 0 }
-    [Flags] public enum VkPipelineInputAssemblyStateCreateFlags : uint { None = 0 }
-    [Flags] public enum VkPipelineTessellationStateCreateFlags : uint { None = 0 }
-    [Flags] public enum VkPipelineViewportStateCreateFlags : uint { None = 0 }
-    [Flags] public enum VkPipelineRasterizationStateCreateFlags : uint { None = 0 }
+    [Flags] public enum PipelineVertexInputStateCreateFlags : uint { None = 0 }
+    [Flags] public enum PipelineInputAssemblyStateCreateFlags : uint { None = 0 }
+    [Flags] public enum PipelineTessellationStateCreateFlags : uint { None = 0 }
+    [Flags] public enum PipelineViewportStateCreateFlags : uint { None = 0 }
+    [Flags] public enum PipelineRasterizationStateCreateFlags : uint { None = 0 }
 
     [Flags]
-    public enum VkCullModeFlags : uint
+    public enum CullModeFlags : uint
     {
         None = 0,
         Front = 0x00000001,
@@ -1039,12 +1039,12 @@ namespace Vulkan
         FrontAndBack = 0x00000003
     }
 
-    [Flags] public enum VkPipelineMultisampleStateCreateFlags : uint { None = 0 }
-    [Flags] public enum VkPipelineDepthStencilStateCreateFlags : uint { None = 0 }
-    [Flags] public enum VkPipelineColorBlendStateCreateFlags : uint { None = 0 }
+    [Flags] public enum PipelineMultisampleStateCreateFlags : uint { None = 0 }
+    [Flags] public enum PipelineDepthStencilStateCreateFlags : uint { None = 0 }
+    [Flags] public enum PipelineColorBlendStateCreateFlags : uint { None = 0 }
 
     [Flags]
-    public enum VkColorComponentFlags : uint
+    public enum ColorComponentFlags : uint
     {
         R = 0x00000001,
         G = 0x00000002,
@@ -1052,41 +1052,41 @@ namespace Vulkan
         A = 0x00000008
     }
 
-    [Flags] public enum VkPipelineDynamicStateCreateFlags : uint { None = 0 }
-    [Flags] public enum VkPipelineLayoutCreateFlags : uint { None = 0 }
-    [Flags] public enum VkSamplerCreateFlags : uint { None = 0 }
+    [Flags] public enum PipelineDynamicStateCreateFlags : uint { None = 0 }
+    [Flags] public enum PipelineLayoutCreateFlags : uint { None = 0 }
+    [Flags] public enum SamplerCreateFlags : uint { None = 0 }
 
     [Flags]
-    public enum VkDescriptorSetLayoutCreateFlags : uint
+    public enum DescriptorSetLayoutCreateFlags : uint
     {
         PushDescriptor = 1 << 0
     }
 
     [Flags]
-    public enum VkDescriptorPoolCreateFlags : uint
+    public enum DescriptorPoolCreateFlags : uint
     {
         FreeDescriptorSet = 1 << 0
     }
 
-    [Flags] public enum VkDescriptorPoolResetFlags : uint { None = 0 }
-    [Flags] public enum VkFramebufferCreateFlags : uint { None = 0 }
-    [Flags] public enum VkRenderPassCreateFlags : uint { None = 0 }
+    [Flags] public enum DescriptorPoolResetFlags : uint { None = 0 }
+    [Flags] public enum FramebufferCreateFlags : uint { None = 0 }
+    [Flags] public enum RenderPassCreateFlags : uint { None = 0 }
 
     [Flags]
-    public enum VkAttachmentDescriptionFlags : uint
+    public enum AttachmentDescriptionFlags : uint
     {
         MayAlias = 1 << 0
     }
 
     [Flags]
-    public enum VkSubpassDescriptionFlags : uint
+    public enum SubpassDescriptionFlags : uint
     {
         PerViewAttributes = 1 << 0,
         PerViewPositionXOnly = 1 << 1
     }
 
     [Flags]
-    public enum VkAccessFlags : uint
+    public enum AccessFlags : uint
     {
         IndirectCommandRead = 1 << 0,
         IndexRead = 1 << 1,
@@ -1111,7 +1111,7 @@ namespace Vulkan
     }
 
     [Flags]
-    public enum VkDependencyFlags : uint
+    public enum DependencyFlags : uint
     {
         ByRegion = 1 << 0,
         ViewLocal = 1 << 1,
@@ -1119,20 +1119,20 @@ namespace Vulkan
     }
 
     [Flags]
-    public enum VkCommandPoolCreateFlags : uint
+    public enum CommandPoolCreateFlags : uint
     {
         Transient = 1 << 0,
         ResetCommandBuffer = 1 << 1
     }
 
     [Flags]
-    public enum VkCommandPoolResetFlags : uint
+    public enum CommandPoolResetFlags : uint
     {
         ReleaseResources = 1 << 0
     }
 
     [Flags]
-    public enum VkCommandBufferUsageFlags : uint
+    public enum CommandBufferUsageFlags : uint
     {
         OneTimeSubmit = 1 << 0,
         RenderPassContinue = 1 << 1,
@@ -1140,19 +1140,19 @@ namespace Vulkan
     }
 
     [Flags]
-    public enum VkQueryControlFlags : uint
+    public enum QueryControlFlags : uint
     {
         Precise = 1 << 0
     }
 
     [Flags]
-    public enum VkCommandBufferResetFlags : uint
+    public enum CommandBufferResetFlags : uint
     {
         ReleaseResources = 1 << 0
     }
 
     [Flags]
-    public enum VkStencilFaceFlags : uint
+    public enum StencilFaceFlags : uint
     {
         Front = 1 << 0,
         Back = 1 << 1,
@@ -1162,7 +1162,7 @@ namespace Vulkan
     //
     // Khronos
     //
-    public enum VkColorSpace
+    public enum ColorSpace
     {
         SrgbNonLinear = 0,
         DisplayP3NonLinear = 1000104001,
@@ -1181,7 +1181,7 @@ namespace Vulkan
         ExtendedSrgbNonLinear = 1000104014
     }
 
-    public enum VkPresentMode
+    public enum PresentMode
     {
         Immediate = 0,
         Mailbox = 1,
@@ -1192,7 +1192,7 @@ namespace Vulkan
     }
 
     [Flags]
-    public enum VkSurfaceTransformFlags : uint
+    public enum SurfaceTransformFlags : uint
     {
         Identity = 0x00000001,
         Rotate90 = 0x00000002,
@@ -1206,7 +1206,7 @@ namespace Vulkan
     }
 
     [Flags]
-    public enum VkCompositeAlphaFlags : uint
+    public enum CompositeAlphaFlags : uint
     {
         Opaque = 1 << 0,
         PreMultiplied = 1 << 1,
@@ -1215,13 +1215,13 @@ namespace Vulkan
     }
 
     [Flags]
-    public enum VkSwapchainCreateFlags : uint
+    public enum SwapchainCreateFlags : uint
     {
         BindSFR = 1 << 0
     }
 
     [Flags]
-    public enum VkDisplayPlaneAlphaFlags : uint
+    public enum DisplayPlaneAlphaFlags : uint
     {
         Opaque = 1 << 0,
         Global = 1 << 1,
@@ -1229,18 +1229,18 @@ namespace Vulkan
         PerPixelPremultiplied = 1 << 3
     }
 
-    [Flags] public enum VkDisplayModeCreateFlags : uint { None = 0 }
-    [Flags] public enum VkDisplaySurfaceCreateFlags : uint { None = 0 }
-    [Flags] public enum VkXlibSurfaceCreateFlags : uint { None = 0 }
-    [Flags] public enum VkXcbSurfaceCreateFlags : uint { None = 0 }
-    [Flags] public enum VkWaylandSurfaceCreateFlags : uint { None = 0 }
-    [Flags] public enum VkMirSurfaceCreateFlags : uint { None = 0 }
-    [Flags] public enum VkAndroidSurfaceCreateFlags : uint { None = 0 }
-    [Flags] public enum VkWin32SurfaceCreateFlags : uint { None = 0 }
-    [Flags] public enum VkCommandPoolTrimFlags : uint { None = 0 }
+    [Flags] public enum DisplayModeCreateFlags : uint { None = 0 }
+    [Flags] public enum DisplaySurfaceCreateFlags : uint { None = 0 }
+    [Flags] public enum XlibSurfaceCreateFlags : uint { None = 0 }
+    [Flags] public enum XcbSurfaceCreateFlags : uint { None = 0 }
+    [Flags] public enum WaylandSurfaceCreateFlags : uint { None = 0 }
+    [Flags] public enum MirSurfaceCreateFlags : uint { None = 0 }
+    [Flags] public enum AndroidSurfaceCreateFlags : uint { None = 0 }
+    [Flags] public enum Win32SurfaceCreateFlags : uint { None = 0 }
+    [Flags] public enum CommandPoolTrimFlags : uint { None = 0 }
 
     [Flags]
-    public enum VkExternalMemoryHandleTypeFlags : uint
+    public enum ExternalMemoryHandleTypeFlags : uint
     {
         OpaqueFd = 1 << 0,
         OpaqueWin32 = 1 << 1,
@@ -1252,7 +1252,7 @@ namespace Vulkan
     }
 
     [Flags]
-    public enum VkExternalMemoryFeatureFlags : uint
+    public enum ExternalMemoryFeatureFlags : uint
     {
         DedicatedOnly = 1 << 0,
         Exportable = 1 << 1,
@@ -1260,7 +1260,7 @@ namespace Vulkan
     }
 
     [Flags]
-    public enum VkExternalSemaphoreHandleTypeFlags : uint
+    public enum ExternalSemaphoreHandleTypeFlags : uint
     {
         OpaqueFd = 1 << 0,
         OpaqueWin32 = 1 << 1,
@@ -1270,28 +1270,28 @@ namespace Vulkan
     }
 
     [Flags]
-    public enum VkExternalSemaphoreFeatureFlags : uint
+    public enum ExternalSemaphoreFeatureFlags : uint
     {
         Exportable = 1 << 0,
         Importable = 1 << 1
     }
 
     [Flags]
-    public enum VkSemaphoreImportFlags : uint
+    public enum SemaphoreImportFlags : uint
     {
         Temporary = 1 << 0
     }
 
-    public enum VkDescriptorUpdateTemplateType
+    public enum DescriptorUpdateTemplateType
     {
         DescriptorSet = 0,
         PushDescriptors = 1
     }
 
-    [Flags] public enum VkDescriptorUpdateTemplateCreateFlags : uint { None = 0 }
+    [Flags] public enum DescriptorUpdateTemplateCreateFlags : uint { None = 0 }
 
     [Flags]
-    public enum VkExternalFenceHandleTypeFlags : uint
+    public enum ExternalFenceHandleTypeFlags : uint
     {
         OpaqueFd = 1 << 0,
         OpaqueWin32 = 1 << 1,
@@ -1300,14 +1300,14 @@ namespace Vulkan
     }
 
     [Flags]
-    public enum VkExternalFenceFeatureFlags : uint
+    public enum ExternalFenceFeatureFlags : uint
     {
         Exportable = 1 << 0,
         Importable = 1 << 1
     }
 
     [Flags]
-    public enum VkFenceImportFlags : uint
+    public enum FenceImportFlags : uint
     {
         Temporary = 1 << 0
     }
@@ -1315,7 +1315,7 @@ namespace Vulkan
     //
     // Multi-vendor
     //
-    public enum VkDebugReportObjectType
+    public enum DebugReportObjectType
     {
         Unknown = 0,
         Instance = 1,
@@ -1354,7 +1354,7 @@ namespace Vulkan
     }
 
     [Flags]
-    public enum VkDebugReportFlags : uint
+    public enum DebugReportFlags : uint
     {
         Information = 0x00000001,
         Warning = 0x00000002,
@@ -1363,51 +1363,51 @@ namespace Vulkan
         Debug = 0x00000010,
     }
 
-    public enum VkValidationCheck
+    public enum ValidationCheck
     {
         All = 0,
         Shaders = 1
     }
 
     [Flags]
-    public enum VkSurfaceCounterFlags : uint
+    public enum SurfaceCounterFlags : uint
     {
         VBlank = 1 << 0
     }
 
-    public enum VkDisplayPowerState
+    public enum DisplayPowerState
     {
         Off = 0,
         Suspend = 1,
         On = 2
     }
 
-    public enum VkDeviceEventType
+    public enum DeviceEventType
     {
         DisplayHotplug = 0
     }
 
-    public enum VkDisplayEventType
+    public enum DisplayEventType
     {
         FirstPixelOut = 0
     }
 
-    public enum VkDiscardRectangleMode
+    public enum DiscardRectangleMode
     {
         Inclusive = 0,
         Exclusive = 1
     }
 
-    [Flags] public enum VkPipelineDiscardRectangleStateCreateFlags : uint { None = 0 }
+    [Flags] public enum PipelineDiscardRectangleStateCreateFlags : uint { None = 0 }
 
-    public enum VkSamplerReductionMode
+    public enum SamplerReductionMode
     {
         WeightedAverage = 0,
         Min = 1,
         Max = 2
     }
 
-    public enum VkBlendOverlap
+    public enum BlendOverlap
     {
         Uncorrelated = 0,
         Disjoint = 1,
@@ -1417,7 +1417,7 @@ namespace Vulkan
     //
     // AMD
     //
-    public enum VkRasterizationOrder
+    public enum RasterizationOrder
     {
         Strict = 0,
         Relaxed = 1
@@ -1427,7 +1427,7 @@ namespace Vulkan
     // Nvidia
     //
     [Flags]
-    public enum VkExternalMemoryHandleTypeFlagsNV : uint
+    public enum ExternalMemoryHandleTypeFlagsNV : uint
     {
         OpaqueWin32 = 1 << 0,
         OpaqueWin32Kmt = 1 << 1,
@@ -1436,16 +1436,16 @@ namespace Vulkan
     }
 
     [Flags]
-    public enum VkExternalMemoryFeatureFlagsNV : uint
+    public enum ExternalMemoryFeatureFlagsNV : uint
     {
         Dedicated = 1 << 0,
         Exportable = 1 << 1,
         Importable = 1 << 2
     }
 
-    [Flags] public enum VkPipelineCoverageToColorStateCreateFlags : uint { None = 0 }
+    [Flags] public enum PipelineCoverageToColorStateCreateFlags : uint { None = 0 }
 
-    public enum VkCoverageModulationMode
+    public enum CoverageModulationMode
     {
         None = 0,
         RGB = 1,
@@ -1453,10 +1453,10 @@ namespace Vulkan
         RGBA = 3
     }
 
-    [Flags] public enum VkPipelineCoverageModulationStateCreateFlags : uint { None = 0 }
+    [Flags] public enum PipelineCoverageModulationStateCreateFlags : uint { None = 0 }
 
 
-    public enum VkViewportCoordinateSwizzle
+    public enum ViewportCoordinateSwizzle
     {
         PositiveX = 0,
         NegativeX = 1,
@@ -1468,13 +1468,13 @@ namespace Vulkan
         NegativeW = 7
     }
 
-    [Flags] public enum VkPipelineViewportSwizzleStateCreateFlags : uint { None = 0 }
+    [Flags] public enum PipelineViewportSwizzleStateCreateFlags : uint { None = 0 }
 
     //
     // Khronos X
     //
     [Flags]
-    public enum VkPeerMemoryFeatureFlags : uint
+    public enum PeerMemoryFeatureFlags : uint
     {
         CopySrc = 1 << 0,
         CopyDst = 1 << 1,
@@ -1483,13 +1483,13 @@ namespace Vulkan
     }
 
     [Flags]
-    public enum VkMemoryAllocateFlags : uint
+    public enum MemoryAllocateFlags : uint
     {
         DeviceMask = 1 << 0
     }
 
     [Flags]
-    public enum VkDeviceGroupPresentModeFlags : uint
+    public enum DeviceGroupPresentModeFlags : uint
     {
         Local = 1 << 0,
         Remote = 1 << 1,
@@ -1500,12 +1500,12 @@ namespace Vulkan
     //
     // Nintendo
     //
-    [Flags] public enum VkViSurfaceCreateFlags : uint { None = 0 }
+    [Flags] public enum ViSurfaceCreateFlags : uint { None = 0 }
 
     //
     // Nvidia X
     //
-    public enum VkIndirectCommandsTokenType
+    public enum IndirectCommandsTokenType
     {
         Pipeline = 0,
         Descriptor = 1,
@@ -1517,7 +1517,7 @@ namespace Vulkan
         Dispatch = 7
     }
 
-    public enum VkObjectEntryType
+    public enum ObjectEntryType
     {
         DescriptorSet = 0,
         Pipeline = 1,
@@ -1527,7 +1527,7 @@ namespace Vulkan
     }
 
     [Flags]
-    public enum VkIndirectCommandsLayoutUsageFlags : uint
+    public enum IndirectCommandsLayoutUsageFlags : uint
     {
         UnorderedSequences = 1 << 0,
         SparseSequences = 1 << 1,
@@ -1536,7 +1536,7 @@ namespace Vulkan
     }
 
     [Flags]
-    public enum VkObjectEntryUsageFlags : uint
+    public enum ObjectEntryUsageFlags : uint
     {
         Graphics = 1 << 0,
         Compute = 1 << 1
@@ -1545,6 +1545,6 @@ namespace Vulkan
     //
     // MoltenVK
     // 
-    [Flags] public enum VkIOSSurfaceCreateFlags : uint { None = 0 }
-    [Flags] public enum VkMacOSSurfaceCreateFlags : uint { None = 0 }
+    [Flags] public enum IOSSurfaceCreateFlags : uint { None = 0 }
+    [Flags] public enum MacOSSurfaceCreateFlags : uint { None = 0 }
 }

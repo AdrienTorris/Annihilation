@@ -24,68 +24,71 @@ namespace Engine.Graphics
         private const int CommandBufferCount = 2;
         private const int ColorBufferCount = 2;
         private const int MaxSwapchainImages = 8;
-        private const VkFormatFeatureFlags RequiredColorBufferFeatures = VkFormatFeatureFlags.ColorAttachment |
-                                                                         VkFormatFeatureFlags.ColorAttachmentBlend |
-                                                                         VkFormatFeatureFlags.SampledImage |
-                                                                         VkFormatFeatureFlags.StorageImage |
-                                                                         VkFormatFeatureFlags.SampledImageFilterLinear;
+        private const FormatFeatureFlags RequiredColorBufferFeatures = FormatFeatureFlags.ColorAttachment |
+                                                                         FormatFeatureFlags.ColorAttachmentBlend |
+                                                                         FormatFeatureFlags.SampledImage |
+                                                                         FormatFeatureFlags.StorageImage |
+                                                                         FormatFeatureFlags.SampledImageFilterLinear;
 
         /*
         =============
         Fields
         =============
         */
-        public static int DisplayWidth = 1280;
-        public static int DisplayHeight = 720;
-        public static BoolVar EnableVSync = new BoolVar("Graphics/VSync", false);
-        public static BoolVar EnableValidation = new BoolVar("Graphics/Validation", true);
+        public static IntVar DisplayWidth = new IntVar("DisplayWidth", 1280);
+        public static IntVar DisplayHeight = new IntVar("DisplayHeight", 720);
+        public static BoolVar EnableVSync = new BoolVar("VSync", false);
+        public static BoolVar EnableValidation = new BoolVar("Validation", true);
+        public static IntVar DisplayAdapter = new IntVar("DisplayAdapter", 0);
+        public static IntVar DisplayMode = new IntVar("DisplayMode", (int)Graphics.DisplayMode.FullscreenBorderless, 0, (int)Graphics.DisplayMode.Count);
+        public static IntVar Monitor = new IntVar("Monitor", 0);
 
-        private static VkInstance _instance;
-        private static VkSurface _surface;
+        private static Instance _instance;
+        private static Surface _surface;
 #if DEBUG
-        private static VkDebugReportCallback _debugReportCallback;
+        private static DebugReportCallback _debugReportCallback;
 #endif
 
-        private static VkPhysicalDevice _physicalDevice;
-        private static VkPhysicalDeviceProperties _physicalDeviceProperties;
-        private static VkPhysicalDeviceMemoryProperties _physicalDeviceMemoryProperties;
-        private static VkPhysicalDeviceFeatures _physicalDeviceFeatures;
-        private static VkSurfaceCapabilities _surfaceCapabilities;
-        private static VkSurfaceFormat* _surfaceFormats;
-        private static VkPresentMode* _presentModes;
-        private static VkQueueFamilyProperties* _queueFamilyProperties;
-        private static VkExtensionProperties* _extensionProperties;
+        private static PhysicalDevice _physicalDevice;
+        private static PhysicalDeviceProperties _physicalDeviceProperties;
+        private static PhysicalDeviceMemoryProperties _physicalDeviceMemoryProperties;
+        private static PhysicalDeviceFeatures _physicalDeviceFeatures;
+        private static SurfaceCapabilities _surfaceCapabilities;
+        private static SurfaceFormat* _surfaceFormats;
+        private static PresentMode* _presentModes;
+        private static QueueFamilyProperties* _queueFamilyProperties;
+        private static ExtensionProperties* _extensionProperties;
 
-        private static VkFormat _swapchainFormat;
-        private static VkSwapchain _swapchain;
+        private static Format _swapchainFormat;
+        private static Swapchain _swapchain;
         private static uint _swapchainImageCount;
-        private static VkImage* _swapchainImages;
-        private static VkImageView[] _swapchainImageViews = new VkImageView[MaxSwapchainImages];
-        private static VkSemaphore[] _imageAcquiredSemaphores = new VkSemaphore[MaxSwapchainImages];
+        private static Image* _swapchainImages;
+        private static ImageView[] _swapchainImageViews = new ImageView[MaxSwapchainImages];
+        private static Semaphore[] _imageAcquiredSemaphores = new Semaphore[MaxSwapchainImages];
 
-        private static VkCommandPool _commandPool;
-        private static VkCommandPool _transientCommandPool;
-        private static VkCommandBuffer* _commandBuffers;
-        private static VkFence[] _commandBufferFences = new VkFence[CommandBufferCount];
-        private static VkSemaphore[] _drawCompleteSemaphores = new VkSemaphore[CommandBufferCount];
+        private static CommandPool _commandPool;
+        private static CommandPool _transientCommandPool;
+        private static CommandBuffer* _commandBuffers;
+        private static Fence[] _commandBufferFences = new Fence[CommandBufferCount];
+        private static Semaphore[] _drawCompleteSemaphores = new Semaphore[CommandBufferCount];
 
-        private static VkImage[] _colorBuffers = new VkImage[ColorBufferCount];
+        private static Image[] _colorBuffers = new Image[ColorBufferCount];
 
         private static bool[] _isCommandBufferSubmitted = new bool[CommandBufferCount];
         private static uint _currentSwapchainBuffer;
-        private static VkDevice _device;
+        private static Device _device;
         private static uint _graphicsQueueFamily;
         private static uint _computeQueueFamily;
         private static uint _transferQueueFamily;
-        private static VkQueue _graphicsQueue;
-        private static VkQueue _computeQueue;
-        private static VkQueue _transferQueue;
-        private static VkCommandBuffer _commandBuffer;
-        private static VkPhysicalDeviceProperties _deviceProperties;
-        private static VkPhysicalDeviceMemoryProperties _deviceMemoryProperties;
-        private static VkFormat _colorFormat;
-        private static VkFormat _depthFormat;
-        private static VkSampleCountFlags _sampleCount;
+        private static Queue _graphicsQueue;
+        private static Queue _computeQueue;
+        private static Queue _transferQueue;
+        private static CommandBuffer _commandBuffer;
+        private static PhysicalDeviceProperties _deviceProperties;
+        private static PhysicalDeviceMemoryProperties _deviceMemoryProperties;
+        private static Format _colorFormat;
+        private static Format _depthFormat;
+        private static SampleCountFlags _sampleCount;
         private static bool _supersampling;
 
         private static bool _hasDedicatedAllocation;
@@ -96,47 +99,37 @@ namespace Engine.Graphics
         Vulkan functions
         =============
         */
-        private static VkGetInstanceProcAddr _vkGetInstanceProcAddr;
+        internal static GetInstanceProcAddrDelegate GetInstanceProcAddr;
 
-        private static VkCreateInstance _vkCreateInstance;
+        internal static CreateInstanceDelegate CreateInstance;
 
-        private static VkDestroyInstance _vkDestroyInstance;
-        private static VkCreateDevice _vkCreateDevice;
-        private static VkGetDeviceProcAddr _vkGetDeviceProcAddr;
-        private static VkEnumeratePhysicalDevices _vkEnumeratePhysicalDevices;
-        private static VkEnumerateDeviceExtensionProperties _vkEnumerateDeviceExtensionProperties;
-        private static VkGetPhysicalDeviceProperties _vkGetPhysicalDeviceProperties;
-        private static VkGetPhysicalDeviceMemoryProperties _vkGetPhysicalDeviceMemoryProperties;
-        private static VkGetPhysicalDeviceQueueFamilyProperties _vkGetPhysicalDeviceQueueFamilyProperties;
-        private static VkGetPhysicalDeviceFeatures _vkGetPhysicalDeviceFeatures;
-        private static VkGetPhysicalDeviceFormatProperties _vkGetPhysicalDeviceFormatProperties;
-        private static VkGetPhysicalDeviceImageFormatProperties _vkGetPhysicalDeviceImageFormatProperties;
-        private static VkGetPhysicalDeviceSurfaceSupportKHR _vkGetPhysicalDeviceSurfaceSupportKHR;
-        private static VkGetPhysicalDeviceSurfaceCapabilitiesKHR _vkGetPhysicalDeviceSurfaceCapabilitiesKHR;
-        private static VkGetPhysicalDeviceSurfaceFormatsKHR _vkGetPhysicalDeviceSurfaceFormatsKHR;
-        private static VkGetPhysicalDeviceSurfacePresentModesKHR _vkGetPhysicalDeviceSurfacePresentModesKHR;
+        internal static DestroyInstanceDelegate DestroyInstance;
+        internal static CreateDeviceDelegate CreateDevice;
+        internal static GetDeviceProcAddrDelegate GetDeviceProcAddr;
+        internal static EnumeratePhysicalDevicesDelegate EnumeratePhysicalDevices;
+        internal static EnumerateDeviceExtensionPropertiesDelegate EnumerateDeviceExtensionProperties;
 #if DEBUG
-        private static VkCreateDebugReportCallbackEXT _vkCreateDebugReportCallbackEXT;
-        private static VkDestroyDebugReportCallbackEXT _vkDestroyDebugReportCallbackEXT;
+        internal static CreateDebugReportCallbackEXTDelegate CreateDebugReportCallbackEXT;
+        internal static DestroyDebugReportCallbackEXTDelegate DestroyDebugReportCallbackEXT;
 #endif
 
-        private static VkGetDeviceQueue _vkGetDeviceQueue;
-        private static VkCreateCommandPool _vkCreateCommandPool;
-        private static VkAllocateCommandBuffers _vkAllocateCommandBuffers;
-        private static VkCreateFence _vkCreateFence;
-        private static VkCreateSemaphore _vkCreateSemaphore;
-        private static VkCreateImageView _vkCreateImageView;
-        private static VkCreateImage _vkCreateImage;
-        private static VkGetImageMemoryRequirements _vkGetImageMemoryRequirements;
-        private static VkVkAllocateMemory _vkVkAllocateMemory;
-        private static VkBindImageMemory _vkBindImageMemory;
-        private static VkCreateSwapchainKHR _vkCreateSwapchainKHR;
-        private static VkDestroySwapchainKHR _vkDestroySwapchainKHR;
-        private static VkGetSwapchainImagesKHR _vkGetSwapchainImagesKHR;
-        private static VkAcquireNextImageKHR _vkAcquireNextImageKHR;
-        private static VkQueuePresentKHR _vkQueuePresentKHR;
+        internal static GetDeviceQueueDelegate GetDeviceQueue;
+        internal static CreateCommandPoolDelegate CreateCommandPool;
+        internal static AllocateCommandBuffersDelegate AllocateCommandBuffers;
+        internal static CreateFenceDelegate CreateFence;
+        internal static CreateSemaphoreDelegate CreateSemaphore;
+        internal static CreateImageViewDelegate CreateImageView;
+        internal static CreateImageDelegate CreateImage;
+        internal static GetImageMemoryRequirementsDelegate GetImageMemoryRequirements;
+        internal static AllocateMemoryDelegate AllocateMemory;
+        internal static BindImageMemoryDelegate BindImageMemory;
+        internal static CreateSwapchainKHRDelegate CreateSwapchainKHR;
+        internal static DestroySwapchainKHRDelegate DestroySwapchainKHR;
+        internal static GetSwapchainImagesKHRDelegate GetSwapchainImagesKHR;
+        internal static AcquireNextImageKHRDelegate AcquireNextImageKHR;
+        internal static QueuePresentKHRDelegate QueuePresentKHR;
 #if DEBUG
-        private static VkDebugMarkerSetObjectNameEXT _vkDebugMarkerSetObjectNameEXT;
+        internal static DebugMarkerSetObjectNameEXTDelegate DebugMarkerSetObjectNameEXT;
 #endif
 
         /*
@@ -153,7 +146,7 @@ namespace Engine.Graphics
         */
         public static void Initialize(ref byte* title, ref SDL.Window window)
         {
-            Assert.IsTrue(_swapchain == VkSwapchain.Null, "Graphics system has already been initialized.");
+            Assert.IsTrue(_swapchain == Swapchain.Null, "Graphics system has already been initialized.");
 
             LoadGetInstanceProcAddrFunction();
             LoadGlobalFunctions();
@@ -225,7 +218,7 @@ namespace Engine.Graphics
 
             if (EnableValidation)
             {
-                extensionNames[requiredExtensionCount] = Utf8.AllocateFromAsciiString(Vk.ExtDebugReportExtensionName);
+                extensionNames[requiredExtensionCount] = Utf8.AllocateFromAsciiString(.ExtDebugReportExtensionName);
             }
         }
 
@@ -236,21 +229,21 @@ namespace Engine.Graphics
         */
         private static void CreateInstance(ref byte* title, ref SDL.Window window)
         {
-            VkApplicationInfo applicationInfo = new VkApplicationInfo
+            ApplicationInfo applicationInfo = new ApplicationInfo
             {
-                Type = VkStructureType.ApplicationInfo,
+                Type = StructureType.ApplicationInfo,
                 ApplicationName = title,
                 ApplicationVersion = Version.One,
                 EngineName = title,
                 EngineVersion = Version.One,
-                ApiVersion = new Version(1, 0, Vk.HeaderVersion)
+                ApiVersion = new Version(1, 0, .HeaderVersion)
             };
 
             FindInstanceExtensions(ref window, out uint extensionCount, out byte** extensionNames);
 
-            VkInstanceCreateInfo instanceCreateInfo = new VkInstanceCreateInfo
+            InstanceCreateInfo instanceCreateInfo = new InstanceCreateInfo
             {
-                Type = VkStructureType.InstanceCreateInfo,
+                Type = StructureType.InstanceCreateInfo,
                 ApplicationInfo = &applicationInfo,
                 EnabledExtensionCount = extensionCount,
                 EnabledExtensionNames = extensionNames,
@@ -259,12 +252,12 @@ namespace Engine.Graphics
             Text layerName = new Text();
             if (EnableValidation)
             {
-                layerName = new Text("VK_LAYER_LUNARG_standard_validation");
+                layerName = new Text("_LAYER_LUNARG_standard_validation");
                 instanceCreateInfo.EnabledLayerCount = 1;
                 instanceCreateInfo.EnabledLayerNames = layerName.BufferPtr;
             }
 
-            _vkCreateInstance(ref instanceCreateInfo, null, out _instance).CheckError();
+            _CreateInstance(ref instanceCreateInfo, null, out _instance).CheckError();
 
             Memory.Free(extensionNames);
             layerName.Dispose();
@@ -283,8 +276,10 @@ namespace Engine.Graphics
         private static void CreateSurface(ref SDL.Window window)
         {
             SDL.VulkanCreateSurface(window, _instance, out ulong surfaceHandle).CheckError();
-            _surface = new VkSurface { Handle = surfaceHandle };
+            _surface = new Surface { Handle = surfaceHandle };
         }
+
+
 
         /*
         =============
@@ -294,20 +289,16 @@ namespace Engine.Graphics
         private static void SelectPhysicalDevice()
         {
             uint physicalDeviceCount = 0;
-            _vkEnumeratePhysicalDevices(_instance, ref physicalDeviceCount, null).CheckError();
-            VkPhysicalDevice* physicalDevices = (VkPhysicalDevice*)Marshal.AllocHGlobal((int)physicalDeviceCount * sizeof(VkPhysicalDevice));
-            _vkEnumeratePhysicalDevices(_instance, ref physicalDeviceCount, physicalDevices).CheckError();
+            _EnumeratePhysicalDevices(_instance, ref physicalDeviceCount, null).CheckError();
+            PhysicalDevice* physicalDevices = (PhysicalDevice*)Marshal.AllocHGlobal((int)physicalDeviceCount * sizeof(PhysicalDevice));
+            _EnumeratePhysicalDevices(_instance, ref physicalDeviceCount, physicalDevices).CheckError();
 
             for (int i = 0; i < physicalDeviceCount; ++i)
             {
-                VkPhysicalDevice physicalDevice = physicalDevices[i];
+                PhysicalDevice physicalDevice = physicalDevices[i];
 
                 // Check for extension support
                 {
-                    uint extensionCount = 0;
-                    _vkEnumerateDeviceExtensionProperties(physicalDevice, null, ref extensionCount, null).CheckError();
-                    _extensionProperties = (VkExtensionProperties*)Marshal.AllocHGlobal((int)extensionCount * sizeof(VkExtensionProperties));
-                    _vkEnumerateDeviceExtensionProperties(physicalDevice, null, ref extensionCount, _extensionProperties).CheckError();
 
                     if (!SupportsRequiredExtensions()) continue;
 
@@ -315,10 +306,10 @@ namespace Engine.Graphics
                     {
                         string[] requiredExtensions = new string[]
                         {
-                            Vk.SwapchainExtensionName
+                            .SwapchainExtensionName
                         };
 
-                        using (TextPool textPool = new TextPool(requiredExtensions.Length, Vk.SwapchainExtensionName.Length))
+                        using (TextPool textPool = new TextPool(requiredExtensions.Length, .SwapchainExtensionName.Length))
                         {
                             for (int j = 0; j < extensionCount; ++j)
                             {
@@ -337,28 +328,28 @@ namespace Engine.Graphics
                 }
 
                 uint familyCount = 0;
-                _vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, ref familyCount, null);
-                _queueFamilyProperties = (VkQueueFamilyProperties*)Marshal.AllocHGlobal((int)familyCount * sizeof(VkQueueFamilyProperties));
-                _vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, ref familyCount, _queueFamilyProperties);
+                _GetPhysicalDeviceQueueFamilyProperties(physicalDevice, ref familyCount, null);
+                _queueFamilyProperties = (QueueFamilyProperties*)Marshal.AllocHGlobal((int)familyCount * sizeof(QueueFamilyProperties));
+                _GetPhysicalDeviceQueueFamilyProperties(physicalDevice, ref familyCount, _queueFamilyProperties);
 
-                _vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, _surface, out _surfaceCapabilities).CheckError();
+                _GetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, _surface, out _surfaceCapabilities).CheckError();
 
                 count = 0;
-                _vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, _surface, ref count, null).CheckError();
-                _surfaceFormats = (VkSurfaceFormat*)Marshal.AllocHGlobal((int)count * sizeof(VkSurfaceFormat));
-                _vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, _surface, ref count, _surfaceFormats).CheckError();
+                _GetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, _surface, ref count, null).CheckError();
+                _surfaceFormats = (SurfaceFormat*)Marshal.AllocHGlobal((int)count * sizeof(SurfaceFormat));
+                _GetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, _surface, ref count, _surfaceFormats).CheckError();
 
                 // GetPhysicalDeviceSurfaceCapabilities
                 count = 0;
-                _vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, _surface, ref count, null).CheckError();
-                _presentModes = (VkPresentMode*)Marshal.AllocHGlobal((int)count * sizeof(VkPresentMode));
-                _vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, _surface, ref count, _presentModes).CheckError();
+                _GetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, _surface, ref count, null).CheckError();
+                _presentModes = (PresentMode*)Marshal.AllocHGlobal((int)count * sizeof(PresentMode));
+                _GetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, _surface, ref count, _presentModes).CheckError();
 
                 // GetPhysicalDeviceSurfaceCapabilities
-                _vkGetPhysicalDeviceMemoryProperties(physicalDevice, out _deviceMemoryProperties);
+                _GetPhysicalDeviceMemoryProperties(physicalDevice, out _deviceMemoryProperties);
 
                 // GetPhysicalDeviceSurfaceCapabilities
-                _vkGetPhysicalDeviceProperties(_physicalDevice, out _deviceProperties);
+                _GetPhysicalDeviceProperties(_physicalDevice, out _deviceProperties);
             }
         }
 
@@ -370,10 +361,10 @@ namespace Engine.Graphics
         private static void CreateDeviceAndQueues()
         {
             // Finding queues with present support.
-            VkBool32[] queueSupportsPresent = new VkBool32[queueFamilyCount];
+            Bool32[] queueSupportsPresent = new Bool32[queueFamilyCount];
             for (uint i = 0; i < queueFamilyCount; ++i)
             {
-                _vkGetPhysicalDeviceSurfaceSupportKHR(_physicalDevice, i, _surface, out queueSupportsPresent[i]);
+                _GetPhysicalDeviceSurfaceSupportKHR(_physicalDevice, i, _surface, out queueSupportsPresent[i]);
             }
 
             // Finding queue with graphics and present support.
@@ -381,7 +372,7 @@ namespace Engine.Graphics
 
             for (uint i = 0; i < queueFamilyCount; ++i)
             {
-                if ((queueFamilyProperties[i].QueueFlags & VkQueueFlags.Graphics) != 0 && queueSupportsPresent[i])
+                if ((queueFamilyProperties[i].QueueFlags & QueueFlags.Graphics) != 0 && queueSupportsPresent[i])
                 {
                     foundGraphicsQueue = true;
                     _graphicsQueueFamily = i;
@@ -398,9 +389,9 @@ namespace Engine.Graphics
             Memory.Free(queueFamilyProperties);
 
             // Getting Vulkan physical device features.
-            _vkGetPhysicalDeviceFeatures(_physicalDevice, out _physicalDeviceFeatures);
+            _GetPhysicalDeviceFeatures(_physicalDevice, out _physicalDeviceFeatures);
 
-            VkPhysicalDeviceFeatures physicalDeviceFeatures = new VkPhysicalDeviceFeatures
+            PhysicalDeviceFeatures physicalDeviceFeatures = new PhysicalDeviceFeatures
             {
                 ShaderStorageImageExtendedFormats = _physicalDeviceFeatures.ShaderStorageImageExtendedFormats,
                 SamplerAnisotropy = _physicalDeviceFeatures.SamplerAnisotropy
@@ -408,17 +399,17 @@ namespace Engine.Graphics
 
             // Creating Vulkan device.
             float queuePriority = 0f;
-            VkDeviceQueueCreateInfo deviceQueueCreateInfo = new VkDeviceQueueCreateInfo(
+            DeviceQueueCreateInfo deviceQueueCreateInfo = new DeviceQueueCreateInfo(
                 _graphicsQueueFamily,
                 1,
                 &queuePriority
             );
 
             byte** deviceExtensions = (byte**)Memory.AllocatePointers(2);
-            deviceExtensions[0] = Utf8.AllocateFromAsciiString(Vk.SwapchainExtensionName);
-            deviceExtensions[1] = Utf8.AllocateFromAsciiString(Vk.DebugMarkerExtensionName);
+            deviceExtensions[0] = Utf8.AllocateFromAsciiString(.SwapchainExtensionName);
+            deviceExtensions[1] = Utf8.AllocateFromAsciiString(.DebugMarkerExtensionName);
 
-            VkDeviceCreateInfo deviceCreateInfo = new VkDeviceCreateInfo(
+            DeviceCreateInfo deviceCreateInfo = new DeviceCreateInfo(
                 deviceQueueCreateInfo,
                 1,
                 deviceExtensions,
@@ -430,79 +421,79 @@ namespace Engine.Graphics
                 deviceCreateInfo.EnabledExtensionCount = 2;
             }
 #endif
-            _vkCreateDevice(_physicalDevice, ref deviceCreateInfo, null, out _device).CheckError();
+            _CreateDevice(_physicalDevice, ref deviceCreateInfo, null, out _device).CheckError();
 
             Memory.Free(deviceExtensions);
 
             // Get graphics queue
-            _vkGetDeviceQueue(_device, _graphicsQueueFamily, 0, out _graphicsQueue);
+            _GetDeviceQueue(_device, _graphicsQueueFamily, 0, out _graphicsQueue);
 
             // Find color buffer format
-            VkFormatProperties formatProperties;
-            _colorFormat = VkFormat.R8G8B8A8UNorm;
+            FormatProperties formatProperties;
+            _colorFormat = Format.R8G8B8A8UNorm;
 
             if (_physicalDeviceFeatures.ShaderStorageImageExtendedFormats)
             {
-                _vkGetPhysicalDeviceFormatProperties(_physicalDevice, VkFormat.A2B10G10R10UNormPack32, out formatProperties);
+                _GetPhysicalDeviceFormatProperties(_physicalDevice, Format.A2B10G10R10UNormPack32, out formatProperties);
                 bool a2b10g10r10Support = (formatProperties.OptimalTilingFeatures & RequiredColorBufferFeatures) == RequiredColorBufferFeatures;
 
                 if (a2b10g10r10Support)
                 {
-                    _colorFormat = VkFormat.A2B10G10R10UNormPack32;
+                    _colorFormat = Format.A2B10G10R10UNormPack32;
                 }
             }
 
             // Find depth buffer format
-            _vkGetPhysicalDeviceFormatProperties(_physicalDevice, VkFormat.X8D24UNormPack32, out formatProperties);
-            bool x8d24Support = (formatProperties.OptimalTilingFeatures & VkFormatFeatureFlags.DepthStencilAttachment) != 0;
-            _vkGetPhysicalDeviceFormatProperties(_physicalDevice, VkFormat.D32SFloat, out formatProperties);
-            bool d32Support = (formatProperties.OptimalTilingFeatures & VkFormatFeatureFlags.DepthStencilAttachment) != 0;
+            _GetPhysicalDeviceFormatProperties(_physicalDevice, Format.X8D24UNormPack32, out formatProperties);
+            bool x8d24Support = (formatProperties.OptimalTilingFeatures & FormatFeatureFlags.DepthStencilAttachment) != 0;
+            _GetPhysicalDeviceFormatProperties(_physicalDevice, Format.D32SFloat, out formatProperties);
+            bool d32Support = (formatProperties.OptimalTilingFeatures & FormatFeatureFlags.DepthStencilAttachment) != 0;
 
-            _depthFormat = VkFormat.D16UNorm;
+            _depthFormat = Format.D16UNorm;
             if (x8d24Support)
             {
-                _depthFormat = VkFormat.X8D24UNormPack32;
+                _depthFormat = Format.X8D24UNormPack32;
             }
             else if (d32Support)
             {
-                _depthFormat = VkFormat.D32SFloat;
+                _depthFormat = Format.D32SFloat;
             }
         }
 
         private static void InitCommandBuffers()
         {
             // Create Vulkan command pool
-            VkCommandPoolCreateInfo commandPoolCreateInfo = new VkCommandPoolCreateInfo(
-                VkCommandPoolCreateFlags.ResetCommandBuffer,
+            CommandPoolCreateInfo commandPoolCreateInfo = new CommandPoolCreateInfo(
+                CommandPoolCreateFlags.ResetCommandBuffer,
                 _graphicsQueueFamily
             );
 
-            _vkCreateCommandPool(_device, ref commandPoolCreateInfo, null, out _commandPool).CheckError();
+            _CreateCommandPool(_device, ref commandPoolCreateInfo, null, out _commandPool).CheckError();
 
-            commandPoolCreateInfo.Flags = VkCommandPoolCreateFlags.Transient;
-            _vkCreateCommandPool(_device, ref commandPoolCreateInfo, null, out _transientCommandPool).CheckError();
+            commandPoolCreateInfo.Flags = CommandPoolCreateFlags.Transient;
+            _CreateCommandPool(_device, ref commandPoolCreateInfo, null, out _transientCommandPool).CheckError();
 
             // Create Vulkan command buffers
-            VkCommandBufferAllocateInfo commandBufferAllocateInfo = new VkCommandBufferAllocateInfo(_commandPool, CommandBufferCount);
-            _commandBuffers = (VkCommandBuffer*)Marshal.AllocHGlobal(CommandBufferCount * sizeof(VkCommandBuffer));
-            _vkAllocateCommandBuffers(_device, ref commandBufferAllocateInfo, _commandBuffers).CheckError();
+            CommandBufferAllocateInfo commandBufferAllocateInfo = new CommandBufferAllocateInfo(_commandPool, CommandBufferCount);
+            _commandBuffers = (CommandBuffer*)Marshal.AllocHGlobal(CommandBufferCount * sizeof(CommandBuffer));
+            _AllocateCommandBuffers(_device, ref commandBufferAllocateInfo, _commandBuffers).CheckError();
 
             // Create Vulkan command buffer fences and semaphores
-            VkFenceCreateInfo fenceCreateInfo = new VkFenceCreateInfo(VkFenceCreateFlags.None);
+            FenceCreateInfo fenceCreateInfo = new FenceCreateInfo(FenceCreateFlags.None);
 
             for (int i = 0; i < CommandBufferCount; ++i)
             {
-                _vkCreateFence(_device, ref fenceCreateInfo, null, out _commandBufferFences[i]).CheckError();
+                _CreateFence(_device, ref fenceCreateInfo, null, out _commandBufferFences[i]).CheckError();
 
-                VkSemaphoreCreateInfo semaphoreCreateInfo = new VkSemaphoreCreateInfo(VkSemaphoreCreateFlags.None);
+                SemaphoreCreateInfo semaphoreCreateInfo = new SemaphoreCreateInfo(SemaphoreCreateFlags.None);
 
-                _vkCreateSemaphore(_device, ref semaphoreCreateInfo, null, out _drawCompleteSemaphores[i]).CheckError();
+                _CreateSemaphore(_device, ref semaphoreCreateInfo, null, out _drawCompleteSemaphores[i]).CheckError();
             }
         }
 
         private static void CreateSwapchain()
         {
-            VkPresentMode presentMode = VkPresentMode.Fifo;
+            PresentMode presentMode = PresentMode.Fifo;
             // Without VSync, prefer immediate to triple buffering
             if (!EnableVSync)
             {
@@ -510,11 +501,11 @@ namespace Engine.Graphics
                 bool foundMailbox = false;
                 for (int i = 0; i < presentModeCount; ++i)
                 {
-                    if (presentModes[i] == VkPresentMode.Immediate) foundImmediate = true;
-                    if (presentModes[i] == VkPresentMode.Mailbox) foundMailbox = true;
+                    if (presentModes[i] == PresentMode.Immediate) foundImmediate = true;
+                    if (presentModes[i] == PresentMode.Mailbox) foundMailbox = true;
                 }
-                if (foundMailbox) presentMode = VkPresentMode.Mailbox;
-                if (foundImmediate) presentMode = VkPresentMode.Immediate;
+                if (foundMailbox) presentMode = PresentMode.Mailbox;
+                if (foundImmediate) presentMode = PresentMode.Immediate;
             }
 
             Memory.Free(presentModes);
@@ -522,103 +513,103 @@ namespace Engine.Graphics
             Log.Info("Using present mode " + presentMode);
 
             // Create the sawpchain
-            VkSwapchainCreateInfo swapchainCreateInfo = new VkSwapchainCreateInfo
+            SwapchainCreateInfo swapchainCreateInfo = new SwapchainCreateInfo
             {
-                Type = VkStructureType.SwapchainCreateInfo,
+                Type = StructureType.SwapchainCreateInfo,
                 Next = null,
                 Surface = _surface,
                 MinImageCount = 2,
                 ImageFormat = surfaceFormats[0].Format,
                 ImageColorSpace = surfaceFormats[0].ColorSpace,
-                ImageExtent = new VkExtent2D(DisplayWidth, DisplayHeight),
-                ImageUsage = VkImageUsageFlags.ColorAttachment | VkImageUsageFlags.TransferSrc,
-                PreTransform = VkSurfaceTransformFlags.Identity,
+                ImageExtent = new Extent2D(DisplayWidth, DisplayHeight),
+                ImageUsage = ImageUsageFlags.ColorAttachment | ImageUsageFlags.TransferSrc,
+                PreTransform = SurfaceTransformFlags.Identity,
                 ImageArrayLayers = 1,
-                ImageSharingMode = VkSharingMode.Exclusive,
+                ImageSharingMode = SharingMode.Exclusive,
                 QueueFamilyIndexCount = 0,
                 QueueFamilyIndices = null,
                 PresentMode = presentMode,
                 Clipped = true,
-                CompositeAlpha = VkCompositeAlphaFlags.Opaque,
+                CompositeAlpha = CompositeAlphaFlags.Opaque,
             };
             // Not all devices support opaque alpha
-            if ((_surfaceCapabilities.SupportedCompositeAlpha & VkCompositeAlphaFlags.Opaque) == 0)
+            if ((_surfaceCapabilities.SupportedCompositeAlpha & CompositeAlphaFlags.Opaque) == 0)
             {
-                swapchainCreateInfo.CompositeAlpha = VkCompositeAlphaFlags.Inherit;
+                swapchainCreateInfo.CompositeAlpha = CompositeAlphaFlags.Inherit;
             }
 
             _swapchainFormat = surfaceFormats[0].Format;
             Memory.Free(surfaceFormats);
 
-            _vkCreateSwapchainKHR(_device, ref swapchainCreateInfo, null, out _swapchain).CheckError();
+            _CreateSwapchainKHR(_device, ref swapchainCreateInfo, null, out _swapchain).CheckError();
 
             // Create the swapchain images
-            _vkGetSwapchainImagesKHR(_device, _swapchain, ref _swapchainImageCount, null).CheckError();
+            _GetSwapchainImagesKHR(_device, _swapchain, ref _swapchainImageCount, null).CheckError();
 
-            _swapchainImages = (VkImage*)Marshal.AllocHGlobal((int)_swapchainImageCount * sizeof(VkImage));
-            _vkGetSwapchainImagesKHR(_device, _swapchain, ref _swapchainImageCount, _swapchainImages).CheckError();
+            _swapchainImages = (Image*)Marshal.AllocHGlobal((int)_swapchainImageCount * sizeof(Image));
+            _GetSwapchainImagesKHR(_device, _swapchain, ref _swapchainImageCount, _swapchainImages).CheckError();
 
-            VkImageViewCreateInfo imageViewCreateInfo = new VkImageViewCreateInfo
+            ImageViewCreateInfo imageViewCreateInfo = new ImageViewCreateInfo
             {
-                Type = VkStructureType.ImageViewCreateInfo,
+                Type = StructureType.ImageViewCreateInfo,
                 Next = null,
                 Format = _swapchainFormat,
-                Components = new VkComponentMapping(VkComponentSwizzle.R, VkComponentSwizzle.G, VkComponentSwizzle.B, VkComponentSwizzle.A),
-                SubresourceRange = new VkImageSubresourceRange(VkImageAspectFlags.Color, 0, 1, 0, 1),
-                ViewType = VkImageViewType.Type2D,
-                Flags = VkImageViewCreateFlags.None,
+                Components = new ComponentMapping(ComponentSwizzle.R, ComponentSwizzle.G, ComponentSwizzle.B, ComponentSwizzle.A),
+                SubresourceRange = new ImageSubresourceRange(ImageAspectFlags.Color, 0, 1, 0, 1),
+                ViewType = ImageViewType.Type2D,
+                Flags = ImageViewCreateFlags.None,
             };
 
-            VkSemaphoreCreateInfo semaphoreCreateInfo = new VkSemaphoreCreateInfo(VkSemaphoreCreateFlags.None);
+            SemaphoreCreateInfo semaphoreCreateInfo = new SemaphoreCreateInfo(SemaphoreCreateFlags.None);
 
             for (int i = 0; i < _swapchainImageCount; ++i)
             {
 #if DEBUG
-                SetObjectName(_swapchainImages[i], VkDebugReportObjectType.Image, "Swapchain");
+                SetObjectName(_swapchainImages[i], DebugReportObjectType.Image, "Swapchain");
 #endif
                 imageViewCreateInfo.Image = _swapchainImages[i];
-                _vkCreateImageView(_device, ref imageViewCreateInfo, null, out _swapchainImageViews[i]).CheckError();
+                _CreateImageView(_device, ref imageViewCreateInfo, null, out _swapchainImageViews[i]).CheckError();
 #if DEBUG
-                SetObjectName(_swapchainImageViews[i], VkDebugReportObjectType.ImageView, "Swapchain View");
+                SetObjectName(_swapchainImageViews[i], DebugReportObjectType.ImageView, "Swapchain View");
 #endif
-                _vkCreateSemaphore(_device, ref semaphoreCreateInfo, null, out _imageAcquiredSemaphores[i]).CheckError();
+                _CreateSemaphore(_device, ref semaphoreCreateInfo, null, out _imageAcquiredSemaphores[i]).CheckError();
             }
         }
 
         private static void CreateColorBuffer()
         {
-            VkImageCreateInfo imageCreateInfo = new VkImageCreateInfo
+            ImageCreateInfo imageCreateInfo = new ImageCreateInfo
             {
-                Type = VkStructureType.ImageCreateInfo,
+                Type = StructureType.ImageCreateInfo,
                 Next = null,
-                ImageType = VkImageType.Image2D,
+                ImageType = ImageType.Image2D,
                 Format = _colorFormat,
-                Extent = new VkExtent3D(DisplayWidth, DisplayHeight, 1),
+                Extent = new Extent3D(DisplayWidth, DisplayHeight, 1),
                 MipLevels = 1,
                 ArrayLayers = 1,
-                Samples = VkSampleCountFlags.Sample1,
-                Tiling = VkImageTiling.Optimal,
-                Usage = VkImageUsageFlags.ColorAttachment | VkImageUsageFlags.InputAttachment | VkImageUsageFlags.Sampled | VkImageUsageFlags.Storage
+                Samples = SampleCountFlags.Sample1,
+                Tiling = ImageTiling.Optimal,
+                Usage = ImageUsageFlags.ColorAttachment | ImageUsageFlags.InputAttachment | ImageUsageFlags.Sampled | ImageUsageFlags.Storage
             };
 
             for (int i = 0; i < ColorBufferCount; ++i)
             {
-                _vkCreateImage(_device, ref imageCreateInfo, null, out _colorBuffers[i]).CheckError();
+                _CreateImage(_device, ref imageCreateInfo, null, out _colorBuffers[i]).CheckError();
 #if DEBUG
-                SetObjectName(_colorBuffers[i], VkDebugReportObjectType.Image, "Color Buffer " + i);
+                SetObjectName(_colorBuffers[i], DebugReportObjectType.Image, "Color Buffer " + i);
 #endif
-                _vkGetImageMemoryRequirements(_device, _colorBuffers[i], out VkMemoryRequirements memoryRequirements);
+                _GetImageMemoryRequirements(_device, _colorBuffers[i], out MemoryRequirements memoryRequirements);
 
-                VkMemoryDedicatedAllocateInfo dedicatedAllocationInfo = new VkMemoryDedicatedAllocateInfo
+                MemoryDedicatedAllocateInfo dedicatedAllocationInfo = new MemoryDedicatedAllocateInfo
                 {
-                    Type = VkStructureType.MemoryDedicatedAllocateInfo,
+                    Type = StructureType.MemoryDedicatedAllocateInfo,
                     Next = null,
                     Image = _colorBuffers[i]
                 };
 
-                VkMemoryAllocateInfo memoryAllocateInfo = new VkMemoryAllocateInfo
+                MemoryAllocateInfo memoryAllocateInfo = new MemoryAllocateInfo
                 {
-                    Type = VkStructureType.MemoryAllocateInfo,
+                    Type = StructureType.MemoryAllocateInfo,
                     Next = null,
                     AllocationSize = memoryRequirements.Size,
                     MemoryTypeIndex = memoryRequirements.MemoryTypeBits
@@ -693,9 +684,9 @@ namespace Engine.Graphics
         */
         private static void LoadGetInstanceProcAddrFunction()
         {
-            IntPtr funcPtr = SDL.VulkanGetVkGetInstanceProcAddr();
+            IntPtr funcPtr = SDL.VulkanGetGetInstanceProcAddr();
             funcPtr.CheckError();
-            _vkGetInstanceProcAddr = Marshal.GetDelegateForFunctionPointer<VkGetInstanceProcAddr>(funcPtr);
+            _GetInstanceProcAddr = Marshal.GetDelegateForFunctionPointer<GetInstanceProcAddr>(funcPtr);
         }
 
         /*
@@ -706,13 +697,13 @@ namespace Engine.Graphics
         private static void LoadGlobalFunctions()
         {
             IntPtr funcPtr;
-            using (Text name = new Text("vkCreateInstance"))
+            using (Text name = new Text("CreateInstance"))
             {
-                funcPtr = _vkGetInstanceProcAddr(IntPtr.Zero, name.Buffer);
+                funcPtr = _GetInstanceProcAddr(IntPtr.Zero, name.Buffer);
             }
-            Assert.IsFalse(funcPtr == IntPtr.Zero, "Could not load Vulkan function vkCreateInstance");
+            Assert.IsFalse(funcPtr == IntPtr.Zero, "Could not load Vulkan function CreateInstance");
 
-            _vkCreateInstance = Marshal.GetDelegateForFunctionPointer<VkCreateInstance>(funcPtr);
+            _CreateInstance = Marshal.GetDelegateForFunctionPointer<CreateInstance>(funcPtr);
         }
 
         /*
@@ -722,65 +713,65 @@ namespace Engine.Graphics
         */
         private static void LoadInstanceFunctions()
         {
-            Assert.IsFalse(_instance == VkInstance.Null, "Vulkan instance must not be null when calling " + nameof(LoadInstanceFunctions));
+            Assert.IsFalse(_instance == Instance.Null, "Vulkan instance must not be null when calling " + nameof(LoadInstanceFunctions));
 
             string[] names = new string[]
             {
-                "vkCreateDevice",
-                "vkDestroyInstance",
-                "vkGetDeviceProcAddr",
-                "vkEnumeratePhysicalDevices",
-                "vkGetPhysicalDeviceFeatures",
-                "vkGetPhysicalDeviceProperties",
-                "vkGetPhysicalDeviceFormatProperties",
-                "vkGetPhysicalDeviceMemoryProperties",
-                "vkEnumerateDeviceExtensionProperties",
-                "vkGetPhysicalDeviceQueueFamilyProperties",
+                "CreateDevice",
+                "DestroyInstance",
+                "GetDeviceProcAddr",
+                "EnumeratePhysicalDevices",
+                "GetPhysicalDeviceFeatures",
+                "GetPhysicalDeviceProperties",
+                "GetPhysicalDeviceFormatProperties",
+                "GetPhysicalDeviceMemoryProperties",
+                "EnumerateDeviceExtensionProperties",
+                "GetPhysicalDeviceQueueFamilyProperties",
 
-                "vkGetPhysicalDeviceSurfaceFormatsKHR",
-                "vkGetPhysicalDeviceSurfaceSupportKHR",
-                "vkGetPhysicalDeviceSurfaceCapabilitiesKHR",
-                "vkGetPhysicalDeviceSurfacePresentModesKHR",
+                "GetPhysicalDeviceSurfaceFormatsKHR",
+                "GetPhysicalDeviceSurfaceSupportKHR",
+                "GetPhysicalDeviceSurfaceCapabilitiesKHR",
+                "GetPhysicalDeviceSurfacePresentModesKHR",
 
-                "vkCreateDebugReportCallbackEXT",
-                "vkDestroyDebugReportCallbackEXT",
+                "CreateDebugReportCallbackEXT",
+                "DestroyDebugReportCallbackEXT",
             };
 
             int funcCount = EnableValidation ? names.Length : names.Length - 2;
 
             IntPtr[] funcPtrs = new IntPtr[funcCount];
-            using (TextPool textPool = new TextPool(funcCount, "vkGetPhysicalDeviceSurfacePresentModesKHR".Length))
+            using (TextPool textPool = new TextPool(funcCount, "GetPhysicalDeviceSurfacePresentModesKHR".Length))
             {
                 for (int i = 0; i < funcCount; ++i)
                 {
                     byte* funcName = textPool.Get(names[i]);
-                    funcPtrs[i] = _vkGetInstanceProcAddr(_instance, funcName);
+                    funcPtrs[i] = _GetInstanceProcAddr(_instance, funcName);
 
                     Assert.IsFalse(funcPtrs[i] == IntPtr.Zero, "Could not load Vulkan function " + Utf8.ToString(funcName));
                 }
             }
 
             int index = 0;
-            _vkCreateDevice = Marshal.GetDelegateForFunctionPointer<VkCreateDevice>(funcPtrs[index++]);
-            _vkDestroyInstance = Marshal.GetDelegateForFunctionPointer<VkDestroyInstance>(funcPtrs[index++]);
-            _vkGetDeviceProcAddr = Marshal.GetDelegateForFunctionPointer<VkGetDeviceProcAddr>(funcPtrs[index++]);
-            _vkEnumeratePhysicalDevices = Marshal.GetDelegateForFunctionPointer<VkEnumeratePhysicalDevices>(funcPtrs[index++]);
-            _vkGetPhysicalDeviceFeatures = Marshal.GetDelegateForFunctionPointer<VkGetPhysicalDeviceFeatures>(funcPtrs[index++]);
-            _vkGetPhysicalDeviceProperties = Marshal.GetDelegateForFunctionPointer<VkGetPhysicalDeviceProperties>(funcPtrs[index++]);
-            _vkGetPhysicalDeviceFormatProperties = Marshal.GetDelegateForFunctionPointer<VkGetPhysicalDeviceFormatProperties>(funcPtrs[index++]);
-            _vkGetPhysicalDeviceMemoryProperties = Marshal.GetDelegateForFunctionPointer<VkGetPhysicalDeviceMemoryProperties>(funcPtrs[index++]);
-            _vkEnumerateDeviceExtensionProperties = Marshal.GetDelegateForFunctionPointer<VkEnumerateDeviceExtensionProperties>(funcPtrs[index++]);
-            _vkGetPhysicalDeviceQueueFamilyProperties = Marshal.GetDelegateForFunctionPointer<VkGetPhysicalDeviceQueueFamilyProperties>(funcPtrs[index++]);
+            _CreateDevice = Marshal.GetDelegateForFunctionPointer<CreateDevice>(funcPtrs[index++]);
+            _DestroyInstance = Marshal.GetDelegateForFunctionPointer<DestroyInstance>(funcPtrs[index++]);
+            _GetDeviceProcAddr = Marshal.GetDelegateForFunctionPointer<GetDeviceProcAddr>(funcPtrs[index++]);
+            _EnumeratePhysicalDevices = Marshal.GetDelegateForFunctionPointer<EnumeratePhysicalDevices>(funcPtrs[index++]);
+            _GetPhysicalDeviceFeatures = Marshal.GetDelegateForFunctionPointer<GetPhysicalDeviceFeatures>(funcPtrs[index++]);
+            _GetPhysicalDeviceProperties = Marshal.GetDelegateForFunctionPointer<GetPhysicalDeviceProperties>(funcPtrs[index++]);
+            _GetPhysicalDeviceFormatProperties = Marshal.GetDelegateForFunctionPointer<GetPhysicalDeviceFormatProperties>(funcPtrs[index++]);
+            _GetPhysicalDeviceMemoryProperties = Marshal.GetDelegateForFunctionPointer<GetPhysicalDeviceMemoryProperties>(funcPtrs[index++]);
+            _EnumerateDeviceExtensionProperties = Marshal.GetDelegateForFunctionPointer<EnumerateDeviceExtensionProperties>(funcPtrs[index++]);
+            _GetPhysicalDeviceQueueFamilyProperties = Marshal.GetDelegateForFunctionPointer<GetPhysicalDeviceQueueFamilyProperties>(funcPtrs[index++]);
 
-            _vkGetPhysicalDeviceSurfaceFormatsKHR = Marshal.GetDelegateForFunctionPointer<VkGetPhysicalDeviceSurfaceFormatsKHR>(funcPtrs[index++]);
-            _vkGetPhysicalDeviceSurfaceSupportKHR = Marshal.GetDelegateForFunctionPointer<VkGetPhysicalDeviceSurfaceSupportKHR>(funcPtrs[index++]);
-            _vkGetPhysicalDeviceSurfaceCapabilitiesKHR = Marshal.GetDelegateForFunctionPointer<VkGetPhysicalDeviceSurfaceCapabilitiesKHR>(funcPtrs[index++]);
-            _vkGetPhysicalDeviceSurfacePresentModesKHR = Marshal.GetDelegateForFunctionPointer<VkGetPhysicalDeviceSurfacePresentModesKHR>(funcPtrs[index++]);
+            _GetPhysicalDeviceSurfaceFormatsKHR = Marshal.GetDelegateForFunctionPointer<GetPhysicalDeviceSurfaceFormatsKHR>(funcPtrs[index++]);
+            _GetPhysicalDeviceSurfaceSupportKHR = Marshal.GetDelegateForFunctionPointer<GetPhysicalDeviceSurfaceSupportKHR>(funcPtrs[index++]);
+            _GetPhysicalDeviceSurfaceCapabilitiesKHR = Marshal.GetDelegateForFunctionPointer<GetPhysicalDeviceSurfaceCapabilitiesKHR>(funcPtrs[index++]);
+            _GetPhysicalDeviceSurfacePresentModesKHR = Marshal.GetDelegateForFunctionPointer<GetPhysicalDeviceSurfacePresentModesKHR>(funcPtrs[index++]);
 
             if (EnableValidation)
             {
-                _vkCreateDebugReportCallbackEXT = Marshal.GetDelegateForFunctionPointer<VkCreateDebugReportCallbackEXT>(funcPtrs[index++]);
-                _vkDestroyDebugReportCallbackEXT = Marshal.GetDelegateForFunctionPointer<VkDestroyDebugReportCallbackEXT>(funcPtrs[index++]);
+                _CreateDebugReportCallbackEXT = Marshal.GetDelegateForFunctionPointer<CreateDebugReportCallbackEXT>(funcPtrs[index++]);
+                _DestroyDebugReportCallbackEXT = Marshal.GetDelegateForFunctionPointer<DestroyDebugReportCallbackEXT>(funcPtrs[index++]);
             }
         }
 
@@ -791,57 +782,57 @@ namespace Engine.Graphics
         */
         private static void LoadDeviceFunctions()
         {
-            Assert.IsFalse(_device == VkDevice.Null, "Vulkan device must not be null when calling " + nameof(LoadDeviceFunctions));
+            Assert.IsFalse(_device == Device.Null, "Vulkan device must not be null when calling " + nameof(LoadDeviceFunctions));
 
             string[] names = new string[]
             {
-                "vkCreateFence",
-                "vkGetDeviceQueue",
-                "vkCreateImageView",
-                "vkCreateSemaphore",
-                "vkCreateCommandPool",
-                "vkAllocateCommandBuffers",
+                "CreateFence",
+                "GetDeviceQueue",
+                "CreateImageView",
+                "CreateSemaphore",
+                "CreateCommandPool",
+                "AllocateCommandBuffers",
 
-                "vkQueuePresentKHR",
-                "vkCreateSwapchainKHR",
-                "vkAcquireNextImageKHR",
-                "vkDestroySwapchainKHR",
-                "vkGetSwapchainImagesKHR",
+                "QueuePresentKHR",
+                "CreateSwapchainKHR",
+                "AcquireNextImageKHR",
+                "DestroySwapchainKHR",
+                "GetSwapchainImagesKHR",
 
-                "vkDebugMarkerSetObjectNameEXT",
+                "DebugMarkerSetObjectNameEXT",
             };
 
             int funcCount = _hasDebugMarker ? names.Length : names.Length - 1;
 
             IntPtr[] funcPtrs = new IntPtr[funcCount];
-            using (TextPool textPool = new TextPool(funcCount, "vkDebugMarkerSetObjectNameEXT".Length))
+            using (TextPool textPool = new TextPool(funcCount, "DebugMarkerSetObjectNameEXT".Length))
             {
                 for (int i = 0; i < funcCount; ++i)
                 {
                     byte* funcName = textPool.Get(names[i]);
-                    funcPtrs[i] = _vkGetDeviceProcAddr(_device, funcName);
+                    funcPtrs[i] = _GetDeviceProcAddr(_device, funcName);
 
                     Assert.IsFalse(funcPtrs[i] == IntPtr.Zero, "Could not load Vulkan function " + Utf8.ToString(funcName));
                 }
             }
 
             int index = 0;
-            _vkCreateFence = Marshal.GetDelegateForFunctionPointer<VkCreateFence>(funcPtrs[index++]);
-            _vkGetDeviceQueue = Marshal.GetDelegateForFunctionPointer<VkGetDeviceQueue>(funcPtrs[index++]);
-            _vkCreateImageView = Marshal.GetDelegateForFunctionPointer<VkCreateImageView>(funcPtrs[index++]);
-            _vkCreateSemaphore = Marshal.GetDelegateForFunctionPointer<VkCreateSemaphore>(funcPtrs[index++]);
-            _vkCreateCommandPool = Marshal.GetDelegateForFunctionPointer<VkCreateCommandPool>(funcPtrs[index++]);
-            _vkAllocateCommandBuffers = Marshal.GetDelegateForFunctionPointer<VkAllocateCommandBuffers>(funcPtrs[index++]);
+            _CreateFence = Marshal.GetDelegateForFunctionPointer<CreateFence>(funcPtrs[index++]);
+            _GetDeviceQueue = Marshal.GetDelegateForFunctionPointer<GetDeviceQueue>(funcPtrs[index++]);
+            _CreateImageView = Marshal.GetDelegateForFunctionPointer<CreateImageView>(funcPtrs[index++]);
+            _CreateSemaphore = Marshal.GetDelegateForFunctionPointer<CreateSemaphore>(funcPtrs[index++]);
+            _CreateCommandPool = Marshal.GetDelegateForFunctionPointer<CreateCommandPool>(funcPtrs[index++]);
+            _AllocateCommandBuffers = Marshal.GetDelegateForFunctionPointer<AllocateCommandBuffers>(funcPtrs[index++]);
 
-            _vkQueuePresentKHR = Marshal.GetDelegateForFunctionPointer<VkQueuePresentKHR>(funcPtrs[index++]);
-            _vkCreateSwapchainKHR = Marshal.GetDelegateForFunctionPointer<VkCreateSwapchainKHR>(funcPtrs[index++]);
-            _vkAcquireNextImageKHR = Marshal.GetDelegateForFunctionPointer<VkAcquireNextImageKHR>(funcPtrs[index++]);
-            _vkDestroySwapchainKHR = Marshal.GetDelegateForFunctionPointer<VkDestroySwapchainKHR>(funcPtrs[index++]);
-            _vkGetSwapchainImagesKHR = Marshal.GetDelegateForFunctionPointer<VkGetSwapchainImagesKHR>(funcPtrs[index++]);
+            _QueuePresentKHR = Marshal.GetDelegateForFunctionPointer<QueuePresentKHR>(funcPtrs[index++]);
+            _CreateSwapchainKHR = Marshal.GetDelegateForFunctionPointer<CreateSwapchainKHR>(funcPtrs[index++]);
+            _AcquireNextImageKHR = Marshal.GetDelegateForFunctionPointer<AcquireNextImageKHR>(funcPtrs[index++]);
+            _DestroySwapchainKHR = Marshal.GetDelegateForFunctionPointer<DestroySwapchainKHR>(funcPtrs[index++]);
+            _GetSwapchainImagesKHR = Marshal.GetDelegateForFunctionPointer<GetSwapchainImagesKHR>(funcPtrs[index++]);
 
             if (_hasDebugMarker)
             {
-                _vkDebugMarkerSetObjectNameEXT = Marshal.GetDelegateForFunctionPointer<VkDebugMarkerSetObjectNameEXT>(funcPtrs[index++]);
+                _DebugMarkerSetObjectNameEXT = Marshal.GetDelegateForFunctionPointer<DebugMarkerSetObjectNameEXT>(funcPtrs[index++]);
             }
         }
 
@@ -850,21 +841,21 @@ namespace Engine.Graphics
         SetObjectName
         =============
         */
-        private static void SetObjectName(ulong obj, VkDebugReportObjectType objectType, string name)
+        private static void SetObjectName(ulong obj, DebugReportObjectType objectType, string name)
         {
-            if (_vkDebugMarkerSetObjectNameEXT != null && name != null)
+            if (_DebugMarkerSetObjectNameEXT != null && name != null)
             {
                 using (Text namePtr = new Text(name))
                 {
-                    VkDebugMarkerObjectNameInfo nameInfo = new VkDebugMarkerObjectNameInfo
+                    DebugMarkerObjectNameInfo nameInfo = new DebugMarkerObjectNameInfo
                     {
-                        Type = VkStructureType.DebugMarkerObjectNameInfo,
+                        Type = StructureType.DebugMarkerObjectNameInfo,
                         Next = null,
                         ObjectType = objectType,
                         Object = obj,
                         ObjectName = namePtr.Buffer
                     };
-                    _vkDebugMarkerSetObjectNameEXT(_device, ref nameInfo).CheckError();
+                    _DebugMarkerSetObjectNameEXT(_device, ref nameInfo).CheckError();
                 }
             }
         }
@@ -874,9 +865,9 @@ namespace Engine.Graphics
         DebugMessageCallback
         =============
         */
-        private static VkBool32 DebugMessageCallback(VkDebugReportFlags flags, VkDebugReportObjectType objectType, ulong @object, Size location, int messageCode, byte* layerPrefix, byte* message, IntPtr userData)
+        private static Bool32 DebugMessageCallback(DebugReportFlags flags, DebugReportObjectType objectType, ulong @object, Size location, int messageCode, byte* layerPrefix, byte* message, IntPtr userData)
         {
-            if (objectType == VkDebugReportObjectType.DebugReportCallback && messageCode == 1)
+            if (objectType == DebugReportObjectType.DebugReportCallback && messageCode == 1)
             {
                 return false;
             }
@@ -885,11 +876,11 @@ namespace Engine.Graphics
 
             switch (flags)
             {
-                case VkDebugReportFlags.Information: Log.Info(output); return false;
-                case VkDebugReportFlags.Warning: Log.Warning(output); return false;
-                case VkDebugReportFlags.PerformanceWarning: Log.Performance(output); return false;
-                case VkDebugReportFlags.Error: Log.Error(output); return true;
-                case VkDebugReportFlags.Debug: Log.Info(output); return false;
+                case DebugReportFlags.Information: Log.Info(output); return false;
+                case DebugReportFlags.Warning: Log.Warning(output); return false;
+                case DebugReportFlags.PerformanceWarning: Log.Performance(output); return false;
+                case DebugReportFlags.Error: Log.Error(output); return true;
+                case DebugReportFlags.Debug: Log.Info(output); return false;
                 default: return false;
             }
         }
@@ -901,12 +892,12 @@ namespace Engine.Graphics
         */
         private static void CreateDebugReportCallback()
         {
-            VkDebugReportCallbackCreateInfo debugReportCallbackCreateInfo = new VkDebugReportCallbackCreateInfo(
-                VkDebugReportFlags.Error | VkDebugReportFlags.Warning | VkDebugReportFlags.PerformanceWarning | VkDebugReportFlags.Debug,
+            DebugReportCallbackCreateInfo debugReportCallbackCreateInfo = new DebugReportCallbackCreateInfo(
+                DebugReportFlags.Error | DebugReportFlags.Warning | DebugReportFlags.PerformanceWarning | DebugReportFlags.Debug,
                 DebugMessageCallback
             );
 
-            _vkCreateDebugReportCallbackEXT(_instance, ref debugReportCallbackCreateInfo, null, out _debugReportCallback).CheckError();
+            _CreateDebugReportCallbackEXT(_instance, ref debugReportCallbackCreateInfo, null, out _debugReportCallback).CheckError();
         }
 
         /*
@@ -916,7 +907,7 @@ namespace Engine.Graphics
         */
         private static void DestroyDebugReportCallback()
         {
-            _vkDestroyDebugReportCallbackEXT(_instance, _debugReportCallback, null);
+            _DestroyDebugReportCallbackEXT(_instance, _debugReportCallback, null);
         }
     }
 }

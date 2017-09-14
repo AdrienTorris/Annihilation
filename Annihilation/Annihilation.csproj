@@ -36,7 +36,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Engine\Collections\**" />
+    <EmbeddedResource Remove="Engine\Collections\**" />
+    <None Remove="Engine\Collections\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Engine\Core\Text.cs" />
+    <Compile Include="Engine\Graphics\DisplayMode.cs" />
     <Compile Include="Engine\Graphics\GpuInfo.cs" />
+    <Compile Include="Engine\Graphics\PhysicalDevice.cs" />
   </ItemGroup>
 
   <ItemGroup>

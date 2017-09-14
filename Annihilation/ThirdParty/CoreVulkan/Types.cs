@@ -30,9 +30,4 @@ namespace Vulkan
 
         public override string ToString() => $"{Major}.{Minor}.{Patch}";
     }
-
-    public struct Function
-    {
-        
-    }
 }

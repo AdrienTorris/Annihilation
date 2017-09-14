@@ -1,5 +1,197 @@
-﻿namespace Vulkan
+﻿using System;
+using System.Runtime.InteropServices;
+using SDL2;
+
+namespace Vulkan
 {
+    public unsafe struct FunctionName
+    {
+        private const int MaxFunctionNameLength = 64;
+
+        public fixed byte Name[MaxFunctionNameLength];
+
+        private static byte* FromString(string str)
+        {
+            FunctionName name = new FunctionName();
+            for (int i = 0; i < str.Length; ++i)
+            {
+                name.Name[i] = (byte)str[i];
+            }
+            name.Name[str.Length] = 0;
+            return name.Name;
+        }
+
+        public static byte* CreateInstance => FromString("vkCreateInstance");
+        public static byte* DestroyInstance => FromString("vkDestroyInstance");
+        public static byte* EnumeratePhysicalDevices => FromString("vkEnumeratePhysicalDevices");
+        public static byte* GetPhysicalDeviceFeatures => FromString("vkGetPhysicalDeviceFeatures");
+        public static byte* GetPhysicalDeviceFormatProperties => FromString("vkGetPhysicalDeviceFormatProperties");
+        public static byte* GetPhysicalDeviceImageFormatProperties => FromString("vkGetPhysicalDeviceImageFormatProperties");
+        public static byte* GetPhysicalDeviceProperties => FromString("vkGetPhysicalDeviceProperties");
+        public static byte* GetPhysicalDeviceQueueFamilyProperties => FromString("vkGetPhysicalDeviceQueueFamilyProperties");
+        public static byte* GetPhysicalDeviceMemoryProperties => FromString("vkGetPhysicalDeviceMemoryProperties");
+        public static byte* GetInstanceProcAddr => FromString("vkGetInstanceProcAddr");
+        public static byte* GetDeviceProcAddr => FromString("vkGetDeviceProcAddr");
+        public static byte* CreateDevice => FromString("vkCreateDevice");
+        public static byte* DestroyDevice => FromString("vkDestroyDevice");
+        public static byte* EnumerateInstanceExtensionProperties => FromString("vkEnumerateInstanceExtensionProperties");
+        public static byte* EnumerateDeviceExtensionProperties => FromString("vkEnumerateDeviceExtensionProperties");
+        public static byte* EnumerateInstanceLayerProperties => FromString("vkEnumerateInstanceLayerProperties");
+        public static byte* EnumerateDeviceLayerProperties => FromString("vkEnumerateDeviceLayerProperties");
+        public static byte* GetDeviceQueue => FromString("vkGetDeviceQueue");
+        public static byte* QueueSubmit => FromString("vkQueueSubmit");
+        public static byte* QueueWaitIdle => FromString("vkQueueWaitIdle");
+        public static byte* DeviceWaitIdle => FromString("vkDeviceWaitIdle");
+        public static byte* AllocateMemory => FromString("vkAllocateMemory");
+        public static byte* FreeMemory => FromString("vkFreeMemory");
+        public static byte* MapMemory => FromString("vkMapMemory");
+        public static byte* UnmapMemory => FromString("vkUnmapMemory");
+        public static byte* FlushMappedMemoryRanges => FromString("vkFlushMappedMemoryRanges");
+        public static byte* InvalidateMappedMemoryRanges => FromString("vkInvalidateMappedMemoryRanges");
+        public static byte* GetDeviceMemoryCommitment => FromString("vkGetDeviceMemoryCommitment");
+        public static byte* BindBufferMemory => FromString("vkBindBufferMemory");
+        public static byte* BindImageMemory => FromString("vkBindImageMemory");
+        public static byte* GetBufferMemoryRequirements => FromString("vkGetBufferMemoryRequirements");
+        public static byte* GetImageMemoryRequirements => FromString("vkGetImageMemoryRequirements");
+        public static byte* GetImageSparseMemoryRequirements => FromString("vkGetImageSparseMemoryRequirements");
+        public static byte* GetPhysicalDeviceSparseImageFormatProperties => FromString("vkGetPhysicalDeviceSparseImageFormatProperties");
+        public static byte* QueueBindSparse => FromString("vkQueueBindSparse");
+        public static byte* CreateFence => FromString("vkCreateFence");
+        public static byte* DestroyFence => FromString("vkDestroyFence");
+        public static byte* ResetFences => FromString("vkResetFences");
+        public static byte* GetFenceStatus => FromString("vkGetFenceStatus");
+        public static byte* WaitForFences => FromString("vkWaitForFences");
+        public static byte* CreateSemaphore => FromString("vkCreateSemaphore");
+        public static byte* DestroySemaphore => FromString("vkDestroySemaphore");
+        public static byte* CreateEvent => FromString("vkCreateEvent");
+        public static byte* DestroyEvent => FromString("vkDestroyEvent");
+        public static byte* GetEventStatus => FromString("vkGetEventStatus");
+        public static byte* SetEvent => FromString("vkSetEvent");
+        public static byte* ResetEvent => FromString("vkResetEvent");
+        public static byte* CreateQueryPool => FromString("vkCreateQueryPool");
+        public static byte* DestroyQueryPool => FromString("vkDestroyQueryPool");
+        public static byte* GetQueryPoolResults => FromString("vkGetQueryPoolResults");
+        public static byte* CreateBuffer => FromString("vkCreateBuffer");
+        public static byte* DestroyBuffer => FromString("vkDestroyBuffer");
+        public static byte* CreateBufferView => FromString("vkCreateBufferView");
+        public static byte* DestroyBufferView => FromString("vkDestroyBufferView");
+        public static byte* CreateImage => FromString("vkCreateImage");
+        public static byte* DestroyImage => FromString("vkDestroyImage");
+        public static byte* GetImageSubresourceLayout => FromString("vkGetImageSubresourceLayout");
+        public static byte* CreateImageView => FromString("vkCreateImageView");
+        public static byte* DestroyImageView => FromString("vkDestroyImageView");
+        public static byte* CreateShaderModule => FromString("vkCreateShaderModule");
+        public static byte* DestroyShaderModule => FromString("vkDestroyShaderModule");
+        public static byte* CreatePipelineCache => FromString("vkCreatePipelineCache");
+        public static byte* DestroyPipelineCache => FromString("vkDestroyPipelineCache");
+        public static byte* GetPipelineCacheData => FromString("vkGetPipelineCacheData");
+        public static byte* MergePipelineCaches => FromString("vkMergePipelineCaches");
+        public static byte* CreateGraphicsPipelines => FromString("vkCreateGraphicsPipelines");
+        public static byte* CreateComputePipelines => FromString("vkCreateComputePipelines");
+        public static byte* DestroyPipeline => FromString("vkDestroyPipeline");
+        public static byte* CreatePipelineLayout => FromString("vkCreatePipelineLayout");
+        public static byte* DestroyPipelineLayout => FromString("vkDestroyPipelineLayout");
+        public static byte* CreateSampler => FromString("vkCreateSampler");
+        public static byte* DestroySampler => FromString("vkDestroySampler");
+        public static byte* CreateDescriptorSetLayout => FromString("vkCreateDescriptorSetLayout");
+        public static byte* DestroyDescriptorSetLayout => FromString("vkDestroyDescriptorSetLayout");
+        public static byte* CreateDescriptorPool => FromString("vkCreateDescriptorPool");
+        public static byte* DestroyDescriptorPool => FromString("vkDestroyDescriptorPool");
+        public static byte* ResetDescriptorPool => FromString("vkResetDescriptorPool");
+        public static byte* AllocateDescriptorSets => FromString("vkAllocateDescriptorSets");
+        public static byte* FreeDescriptorSets => FromString("vkFreeDescriptorSets");
+        public static byte* UpdateDescriptorSets => FromString("vkUpdateDescriptorSets");
+        public static byte* CreateFramebuffer => FromString("vkCreateFramebuffer");
+        public static byte* DestroyFramebuffer => FromString("vkDestroyFramebuffer");
+        public static byte* CreateRenderPass => FromString("vkCreateRenderPass");
+        public static byte* DestroyRenderPass => FromString("vkDestroyRenderPass");
+        public static byte* GetRenderAreaGranularity => FromString("vkGetRenderAreaGranularity");
+        public static byte* CreateCommandPool => FromString("vkCreateCommandPool");
+        public static byte* DestroyCommandPool => FromString("vkDestroyCommandPool");
+        public static byte* ResetCommandPool => FromString("vkResetCommandPool");
+        public static byte* AllocateCommandBuffers => FromString("vkAllocateCommandBuffers");
+        public static byte* FreeCommandBuffers => FromString("vkFreeCommandBuffers");
+        public static byte* BeginCommandBuffer => FromString("vkBeginCommandBuffer");
+        public static byte* EndCommandBuffer => FromString("vkEndCommandBuffer");
+        public static byte* ResetCommandBuffer => FromString("vkResetCommandBuffer");
+        public static byte* CmdBindPipeline => FromString("vkCmdBindPipeline");
+        public static byte* CmdSetViewport => FromString("vkCmdSetViewport");
+        public static byte* CmdSetScissor => FromString("vkCmdSetScissor");
+        public static byte* CmdSetLineWidth => FromString("vkCmdSetLineWidth");
+        public static byte* CmdSetDepthBias => FromString("vkCmdSetDepthBias");
+        public static byte* CmdSetBlendConstants => FromString("vkCmdSetBlendConstants");
+        public static byte* CmdSetDepthBounds => FromString("vkCmdSetDepthBounds");
+        public static byte* CmdSetStencilCompareMask => FromString("vkCmdSetStencilCompareMask");
+        public static byte* CmdSetStencilWriteMask => FromString("vkCmdSetStencilWriteMask");
+        public static byte* CmdSetStencilReference => FromString("vkCmdSetStencilReference");
+        public static byte* CmdBindDescriptorSets => FromString("vkCmdBindDescriptorSets");
+        public static byte* CmdBindIndexBuffer => FromString("vkCmdBindIndexBuffer");
+        public static byte* CmdBindVertexBuffers => FromString("vkCmdBindVertexBuffers");
+        public static byte* CmdDraw => FromString("vkCmdDraw");
+        public static byte* CmdDrawIndexed => FromString("vkCmdDrawIndexed");
+        public static byte* CmdDrawIndirect => FromString("vkCmdDrawIndirect");
+        public static byte* CmdDrawIndexedIndirect => FromString("vkCmdDrawIndexedIndirect");
+        public static byte* CmdDispatch => FromString("vkCmdDispatch");
+        public static byte* CmdDispatchIndirect => FromString("vkCmdDispatchIndirect");
+        public static byte* CmdCopyBuffer => FromString("vkCmdCopyBuffer");
+        public static byte* CmdCopyImage => FromString("vkCmdCopyImage");
+        public static byte* CmdBlitImage => FromString("vkCmdBlitImage");
+        public static byte* CmdCopyBufferToImage => FromString("vkCmdCopyBufferToImage");
+        public static byte* CmdCopyImageToBuffer => FromString("vkCmdCopyImageToBuffer");
+        public static byte* CmdUpdateBuffer => FromString("vkCmdUpdateBuffer");
+        public static byte* CmdFillBuffer => FromString("vkCmdFillBuffer");
+        public static byte* CmdClearColorImage => FromString("vkCmdClearColorImage");
+        public static byte* CmdClearDepthStencilImage => FromString("vkCmdClearDepthStencilImage");
+        public static byte* CmdClearAttachments => FromString("vkCmdClearAttachments");
+        public static byte* CmdResolveImage => FromString("vkCmdResolveImage");
+        public static byte* CmdSetEvent => FromString("vkCmdSetEvent");
+        public static byte* CmdResetEvent => FromString("vkCmdResetEvent");
+        public static byte* CmdWaitEvents => FromString("vkCmdWaitEvents");
+        public static byte* CmdPipelineBarrier => FromString("vkCmdPipelineBarrier");
+        public static byte* CmdBeginQuery => FromString("vkCmdBeginQuery");
+        public static byte* CmdEndQuery => FromString("vkCmdEndQuery");
+        public static byte* CmdResetQueryPool => FromString("vkCmdResetQueryPool");
+        public static byte* CmdWriteTimestamp => FromString("vkCmdWriteTimestamp");
+        public static byte* CmdCopyQueryPoolResults => FromString("vkCmdCopyQueryPoolResults");
+        public static byte* CmdPushConstants => FromString("vkCmdPushConstants");
+        public static byte* CmdBeginRenderPass => FromString("vkCmdBeginRenderPass");
+        public static byte* CmdNextSubpass => FromString("vkCmdNextSubpass");
+        public static byte* CmdEndRenderPass => FromString("vkCmdEndRenderPass");
+        public static byte* CmdExecuteCommands => FromString("vkCmdExecuteCommands");
+
+        public static byte* DestroySurfaceKHR => FromString("vkDrestroySurface");
+        public static byte* GetPhysicalDeviceSurfaceSupportKHR => FromString("vkGetPhysicalDeviceSurfaceSupportKHR");
+        public static byte* GetPhysicalDeviceSurfaceCapabilitiesKHR => FromString("vkGetPhysicalDeviceSurfaceCapabilitiesKHR");
+        public static byte* GetPhysicalDeviceSurfaceFormatsKHR => FromString("vkGetPhysicalDeviceSurfaceFormatsKHR");
+        public static byte* GetPhysicalDeviceSurfacePresentModesKHR => FromString("vkGetPhysicalDeviceSurfacePresentModesKHR");
+
+        public static byte* CreateSwapchainKHR => FromString("vkCreateSwapchainKHR");
+        public static byte* DestroySwapchainKHR => FromString("vkDestroySwapchainKHR");
+        public static byte* GetSwapchainImagesKHR => FromString("vkGetSwapchainImagesKHR");
+        public static byte* AcquireNextImageKHR => FromString("vkAcquireNextImageKHR");
+        public static byte* QueuePresentKHR => FromString("vkQueuePresentKHR");
+
+        public static byte* GetPhysicalDeviceDisplayPropertiesKHR => FromString("vkGetPhysicalDeviceDisplayPropertiesKHR");
+        public static byte* GetPhysicalDeviceDisplayPlanePropertiesKHR => FromString("vkGetPhysicalDeviceDisplayPlanePropertiesKHR");
+        public static byte* GetDisplayPlaneSupportedDisplaysKHR => FromString("vkGetDisplayPlaneSupportedDisplaysKHR");
+        public static byte* GetDisplayModePropertiesKHR => FromString("vkGetDisplayModePropertiesKHR");
+        public static byte* CreateDisplayModeKHR => FromString("vkCreateDisplayModeKHR");
+        public static byte* GetDisplayPlaneCapabilitiesKHR => FromString("vkGetDisplayPlaneCapabilitiesKHR");
+        public static byte* CreateDisplayPlaneSurfaceKHR => FromString("vkCreateDisplayPlaneSurfaceKHR");
+
+        public static byte* CreateSharedSwapchainsKHR => FromString("vkCreateSharedSwapchainsKHR");
+
+        public static byte* CreateDebugReportCallbackEXT => FromString("vkCreateDebugReportCallbackEXT");
+        public static byte* DestroyDebugReportCallbackEXT => FromString("vkDestroyDebugReportCallbackEXT");
+        public static byte* DebugReportMessageEXT => FromString("vkDebugReportMessageEXT");
+
+        public static byte* DebugMarkerSetObjectTagEXT => FromString("vkDebugMarkerSetObjectTagEXT");
+        public static byte* DebugMarkerSetObjectNameEXT => FromString("vkDebugMarkerSetObjectNameEXT");
+        public static byte* CmdDebugMarkerBeginEXT => FromString("vkCmdDebugMarkerBeginEXT");
+        public static byte* CmdDebugMarkerEndEXT => FromString("vkCmdDebugMarkerEndEXT");
+        public static byte* CmdDebugMarkerInsertEXT => FromString("vkCmdDebugMarkerInsertEXT");
+    }
+
     public static unsafe class Vk
     {
         // Constants
@@ -20,11 +212,39 @@
         public const int LUIDSize = 8;
         public const int MaxDeviceGroupSize = 32;
 
+        public static readonly GetInstanceProcAddrDelegate GetInstanceProcAddr;
+        public static readonly GetDeviceProcAddrDelegate GetDeviceProcAddr;
+
+        static Vk()
+        {
+            SDL.VulkanLoadLibrary(null);
+
+            IntPtr func = SDL.VulkanGetVkGetInstanceProcAddr();
+            if (func == IntPtr.Zero) throw new Exception(Utf8.ToString(SDL.GetError()));
+            GetInstanceProcAddr = Marshal.GetDelegateForFunctionPointer<GetInstanceProcAddrDelegate>(func);
+        }
+
+        public static T LoadGlobalFunction<T>(byte* name) => LoadInstanceFunction<T>(Instance.Null, name);
+
+        public static T LoadInstanceFunction<T>(Instance instance, byte* name)
+        {
+            IntPtr func = GetInstanceProcAddr(instance, name);
+            if (func == IntPtr.Zero) throw new Exception("Could not load Vulkan function " + Utf8.ToString(name));
+            return Marshal.GetDelegateForFunctionPointer<T>(func);
+        }
+
+        public static T LoadDeviceFunction<T>(Device device, byte* name)
+        {
+            IntPtr func = GetDeviceProcAddr(device, name);
+            if (func == IntPtr.Zero) throw new Exception("Could not load Vulkan function " + Utf8.ToString(name));
+            return Marshal.GetDelegateForFunctionPointer<T>(func);
+        }
+
         private const int ExtensionCount = 90;
         private const int TotalExtensionCharCount = 1955;
         private const int MaxExtensionCharCount = 34;
         private const int AvgExtensionCharCount = 22;
-        
+
         public const string SurfaceExtensionName = "VK_KHR_surface";
         public const string SwapchainExtensionName = "VK_KHR_swapchain";
         public const string DisplayExtensionName = "VK_KHR_display";
