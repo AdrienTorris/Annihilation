@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
-using Vulkan;
+using CoreVulkan;
 using Engine.Graphics;
 
 namespace Engine

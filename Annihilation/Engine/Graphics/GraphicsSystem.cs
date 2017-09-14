@@ -2,10 +2,10 @@
 using System.Runtime.InteropServices;
 using Engine.Config;
 using Engine.Collections;
-using Vulkan;
+using CoreVulkan;
 using SDL2;
 
-using Version = Vulkan.Version;
+using Version = CoreVulkan.Version;
 
 namespace Engine.Graphics
 {
@@ -43,13 +43,13 @@ namespace Engine.Graphics
         public static IntVar DisplayMode = new IntVar("DisplayMode", (int)Graphics.DisplayMode.FullscreenBorderless, 0, (int)Graphics.DisplayMode.Count);
         public static IntVar Monitor = new IntVar("Monitor", 0);
 
-        private static Instance _instance;
-        private static Surface _surface;
+        private static InstanceHandle _instance;
+        private static SurfaceHandle _surface;
 #if DEBUG
-        private static DebugReportCallback _debugReportCallback;
+        private static DebugReportCallbackHandle _debugReportCallback;
 #endif
 
-        private static PhysicalDevice _physicalDevice;
+        private static PhysicalDeviceHandle _physicalDevice;
         private static PhysicalDeviceProperties _physicalDeviceProperties;
         private static PhysicalDeviceMemoryProperties _physicalDeviceMemoryProperties;
         private static PhysicalDeviceFeatures _physicalDeviceFeatures;
@@ -60,30 +60,30 @@ namespace Engine.Graphics
         private static ExtensionProperties* _extensionProperties;
 
         private static Format _swapchainFormat;
-        private static Swapchain _swapchain;
+        private static SwapchainHandle _swapchain;
         private static uint _swapchainImageCount;
-        private static Image* _swapchainImages;
-        private static ImageView[] _swapchainImageViews = new ImageView[MaxSwapchainImages];
-        private static Semaphore[] _imageAcquiredSemaphores = new Semaphore[MaxSwapchainImages];
+        private static ImageHandle* _swapchainImages;
+        private static ImageViewHandle[] _swapchainImageViews = new ImageViewHandle[MaxSwapchainImages];
+        private static SemaphoreHandle[] _imageAcquiredSemaphores = new SemaphoreHandle[MaxSwapchainImages];
 
-        private static CommandPool _commandPool;
-        private static CommandPool _transientCommandPool;
-        private static CommandBuffer* _commandBuffers;
-        private static Fence[] _commandBufferFences = new Fence[CommandBufferCount];
-        private static Semaphore[] _drawCompleteSemaphores = new Semaphore[CommandBufferCount];
+        private static CommandPoolHandle _commandPool;
+        private static CommandPoolHandle _transientCommandPool;
+        private static CommandBufferHandle* _commandBuffers;
+        private static FenceHandle[] _commandBufferFences = new FenceHandle[CommandBufferCount];
+        private static SemaphoreHandle[] _drawCompleteSemaphores = new SemaphoreHandle[CommandBufferCount];
 
-        private static Image[] _colorBuffers = new Image[ColorBufferCount];
+        private static ImageHandle[] _colorBuffers = new ImageHandle[ColorBufferCount];
 
         private static bool[] _isCommandBufferSubmitted = new bool[CommandBufferCount];
         private static uint _currentSwapchainBuffer;
-        private static Device _device;
+        private static DeviceHandle _device;
         private static uint _graphicsQueueFamily;
         private static uint _computeQueueFamily;
         private static uint _transferQueueFamily;
-        private static Queue _graphicsQueue;
-        private static Queue _computeQueue;
-        private static Queue _transferQueue;
-        private static CommandBuffer _commandBuffer;
+        private static QueueHandle _graphicsQueue;
+        private static QueueHandle _computeQueue;
+        private static QueueHandle _transferQueue;
+        private static CommandBufferHandle _commandBuffer;
         private static PhysicalDeviceProperties _deviceProperties;
         private static PhysicalDeviceMemoryProperties _deviceMemoryProperties;
         private static Format _colorFormat;
@@ -146,7 +146,7 @@ namespace Engine.Graphics
         */
         public static void Initialize(ref byte* title, ref SDL.Window window)
         {
-            Assert.IsTrue(_swapchain == Swapchain.Null, "Graphics system has already been initialized.");
+            Assert.IsTrue(_swapchain == SwapchainHandle.Null, "Graphics system has already been initialized.");
 
             LoadGetInstanceProcAddrFunction();
             LoadGlobalFunctions();
@@ -276,7 +276,7 @@ namespace Engine.Graphics
         private static void CreateSurface(ref SDL.Window window)
         {
             SDL.VulkanCreateSurface(window, _instance, out ulong surfaceHandle).CheckError();
-            _surface = new Surface { Handle = surfaceHandle };
+            _surface = new SurfaceHandle { Handle = surfaceHandle };
         }
 
 
@@ -290,12 +290,12 @@ namespace Engine.Graphics
         {
             uint physicalDeviceCount = 0;
             _EnumeratePhysicalDevices(_instance, ref physicalDeviceCount, null).CheckError();
-            PhysicalDevice* physicalDevices = (PhysicalDevice*)Marshal.AllocHGlobal((int)physicalDeviceCount * sizeof(PhysicalDevice));
+            PhysicalDeviceHandle* physicalDevices = (PhysicalDeviceHandle*)Marshal.AllocHGlobal((int)physicalDeviceCount * sizeof(PhysicalDeviceHandle));
             _EnumeratePhysicalDevices(_instance, ref physicalDeviceCount, physicalDevices).CheckError();
 
             for (int i = 0; i < physicalDeviceCount; ++i)
             {
-                PhysicalDevice physicalDevice = physicalDevices[i];
+                PhysicalDeviceHandle physicalDevice = physicalDevices[i];
 
                 // Check for extension support
                 {
@@ -475,7 +475,7 @@ namespace Engine.Graphics
 
             // Create Vulkan command buffers
             CommandBufferAllocateInfo commandBufferAllocateInfo = new CommandBufferAllocateInfo(_commandPool, CommandBufferCount);
-            _commandBuffers = (CommandBuffer*)Marshal.AllocHGlobal(CommandBufferCount * sizeof(CommandBuffer));
+            _commandBuffers = (CommandBufferHandle*)Marshal.AllocHGlobal(CommandBufferCount * sizeof(CommandBufferHandle));
             _AllocateCommandBuffers(_device, ref commandBufferAllocateInfo, _commandBuffers).CheckError();
 
             // Create Vulkan command buffer fences and semaphores
@@ -546,7 +546,7 @@ namespace Engine.Graphics
             // Create the swapchain images
             _GetSwapchainImagesKHR(_device, _swapchain, ref _swapchainImageCount, null).CheckError();
 
-            _swapchainImages = (Image*)Marshal.AllocHGlobal((int)_swapchainImageCount * sizeof(Image));
+            _swapchainImages = (ImageHandle*)Marshal.AllocHGlobal((int)_swapchainImageCount * sizeof(ImageHandle));
             _GetSwapchainImagesKHR(_device, _swapchain, ref _swapchainImageCount, _swapchainImages).CheckError();
 
             ImageViewCreateInfo imageViewCreateInfo = new ImageViewCreateInfo
@@ -713,7 +713,7 @@ namespace Engine.Graphics
         */
         private static void LoadInstanceFunctions()
         {
-            Assert.IsFalse(_instance == Instance.Null, "Vulkan instance must not be null when calling " + nameof(LoadInstanceFunctions));
+            Assert.IsFalse(_instance == InstanceHandle.Null, "Vulkan instance must not be null when calling " + nameof(LoadInstanceFunctions));
 
             string[] names = new string[]
             {
@@ -782,7 +782,7 @@ namespace Engine.Graphics
         */
         private static void LoadDeviceFunctions()
         {
-            Assert.IsFalse(_device == Device.Null, "Vulkan device must not be null when calling " + nameof(LoadDeviceFunctions));
+            Assert.IsFalse(_device == DeviceHandle.Null, "Vulkan device must not be null when calling " + nameof(LoadDeviceFunctions));
 
             string[] names = new string[]
             {
