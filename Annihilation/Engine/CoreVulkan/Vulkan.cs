@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using SDL2;
 
-namespace CoreVulkan
+namespace Engine.CoreVulkan
 {
     #region Vulkan
     public static unsafe class Vulkan
@@ -2713,7 +2713,11 @@ namespace CoreVulkan
     #region Structs
     public struct Size
     {
+#pragma warning disable 649
         private ulong _value;
+#pragma warning restore 649
+
+        public static implicit operator ulong(Size size) => size._value;
     }
 
     public struct Version : IEquatable<Version>, IComparable<Version>
@@ -5855,7 +5859,7 @@ namespace CoreVulkan
     public unsafe delegate void GetDeviceMemoryCommitmentDelegate(DeviceHandle device, DeviceMemoryHandle memory, out DeviceSize committedMemoryInBytes);
     public unsafe delegate Result BindBufferMemoryDelegate(DeviceHandle device, BufferHandle buffer, DeviceMemoryHandle memory, DeviceSize memoryOffset);
     public unsafe delegate Result BindImageMemoryDelegate(DeviceHandle device, ImageHandle image, DeviceMemoryHandle memory, DeviceSize memoryOffset);
-    public unsafe delegate void GetBufferMemoryRequirementsDelegate(DeviceHandle device, BufferHandle buffer, out ImageMemoryRequirementsInfo2 memoryRequirements);
+    public unsafe delegate void GetBufferMemoryRequirementsDelegate(DeviceHandle device, BufferHandle buffer, out MemoryRequirements memoryRequirements);
     public unsafe delegate void GetImageMemoryRequirementsDelegate(DeviceHandle device, ImageHandle image, out MemoryRequirements memoryRequirements);
     public unsafe delegate void GetImageSparseMemoryRequirementsDelegate(DeviceHandle device, ImageHandle image, out uint sparseMemoryRequirementCount, SparseImageMemoryRequirements* sparseMemoryRequirements);
     public unsafe delegate void GetPhysicalDeviceSparseImageFormatPropertiesDelegate(PhysicalDeviceHandle physicalDevice, Format format, ImageType type, SampleCountFlags samples, ImageUsageFlags usage, ImageTiling tiling, ref uint propertyCount, SparseImageFormatProperties* properties);

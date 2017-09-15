@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace CoreVulkan
+namespace Engine.CoreVulkan
 {
     public unsafe struct PhysicalDevice
     {

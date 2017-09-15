@@ -1,7 +1,7 @@
 ﻿using System;
-using Engine.Input;
 using Engine.Config;
 using Engine.Graphics;
+using Engine.Input;
 using Engine.Profiling;
 using SDL2;
 
@@ -14,6 +14,12 @@ namespace Engine
         public abstract string Title { get; }
         public abstract string Organization { get; }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         protected abstract void Startup();
         protected abstract void Dispose(bool disposing);
 
@@ -23,13 +29,14 @@ namespace Engine
         protected abstract void RenderUI(GraphicsContext graphicsContext);
 
         /// <summary>
-        /// Returns true when the game should exit. By default, returns true when <see cref="SDL2.SDL.KeyCode.Escape"/> is pressed.
+        ///     Returns true when the game should exit. By default, returns true when <see cref="SDL2.SDL.KeyCode.Escape" /> is
+        ///     pressed.
         /// </summary>
         public virtual bool IsDone()
         {
             return InputSystem.WasPressed(Button.Escape);
         }
-        
+
         //
         // Disposable pattern
         //
@@ -38,21 +45,15 @@ namespace Engine
             Dispose(false);
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
         //
         // Static methods
         //
         public static void Run<T>(T game) where T : Game
         {
-            byte* title = Utf8.AllocateFromString(game.Title);
+            var title = Utf8.AllocateFromString(game.Title);
 
             CreateWindow(ref title, game);
-            
+
             Initialize(ref title, game);
 
             Utf8.Free(title);
@@ -64,7 +65,6 @@ namespace Engine
             do
             {
                 if (SDL.PollEvent(out evt) == 1)
-                {
                     switch (evt.Type)
                     {
                         case SDL.EventType.Quit:
@@ -77,9 +77,7 @@ namespace Engine
                             break;
                         }
                     }
-                }
-            }
-            while (Update(game, evt));
+            } while (Update(game, evt));
 
             terminate:
             Terminate(game);
@@ -88,10 +86,10 @@ namespace Engine
         private static void CreateWindow<T>(ref byte* title, T game) where T : Game
         {
             SDL.InitSubSystem(SDL.InitFlags.Video);
-            
+
             SDL.VulkanLoadLibrary(null).CheckError();
 
-            SDL.Window window = SDL.CreateWindow(
+            var window = SDL.CreateWindow(
                 title,
                 SDL.WindowPositionCentered,
                 SDL.WindowPositionCentered,
@@ -127,7 +125,7 @@ namespace Engine
             TimeSystem.Update();
             ProfilingSystem.Update();
 
-            float deltaTime = TimeSystem.DeltaTime;
+            var deltaTime = TimeSystem.DeltaTime;
 
             InputSystem.Update(deltaTime, evt);
             ConfigSystem.HandleInput(deltaTime);
@@ -138,7 +136,7 @@ namespace Engine
             PostEffectSystem.Render();
 
             // TODO: Setup ui context
-            GraphicsContext uiContext = new GraphicsContext();
+            var uiContext = new GraphicsContext();
             game.RenderUI(uiContext);
 
             uiContext.Finish();

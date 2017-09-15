@@ -37,20 +37,15 @@
 
   <ItemGroup>
     <Compile Remove="Engine\Collections\**" />
-    <Compile Remove="ThirdParty\CoreVulkan\NewFolder\**" />
     <EmbeddedResource Remove="Engine\Collections\**" />
-    <EmbeddedResource Remove="ThirdParty\CoreVulkan\NewFolder\**" />
     <None Remove="Engine\Collections\**" />
-    <None Remove="ThirdParty\CoreVulkan\NewFolder\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Engine\CoreVulkan\Queue.cs" />
     <Compile Include="Engine\Core\Text.cs" />
     <Compile Include="Engine\Graphics\DisplayMode.cs" />
     <Compile Include="Engine\Graphics\GpuInfo.cs" />
-    <Compile Include="Engine\Graphics\PhysicalDevice.cs" />
-    <Compile Include="ThirdParty\CoreVulkan\Device.cs" />
-    <Compile Include="ThirdParty\CoreVulkan\Display.cs" />
   </ItemGroup>
 
   <ItemGroup>
