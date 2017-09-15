@@ -291,6 +291,56 @@ namespace CoreVulkan
         public static byte* CreateAndroidSurfaceKHR => FromString("vkCreateAndroidSurfaceKHR");
         public static byte* CreateWin32SurfaceKHR => FromString("vkCreateWin32SurfaceKHR");
         public static byte* GetPhysicalDeviceWin32PresentationSupportKHR => FromString("vkGetPhysicalDeviceWin32PresentationSupportKHR");
+
+        public static byte* GetPhysicalDeviceFeatures2KHR => FromString("vkGetPhysicalDeviceFeatures2KHR");
+        public static byte* GetPhysicalDeviceProperties2KHR => FromString("vkGetPhysicalDeviceProperties2KHR");
+        public static byte* GetPhysicalDeviceFormatProperties2KHR => FromString("vkGetPhysicalDeviceFormatProperties2KHR");
+        public static byte* GetPhysicalDeviceImageFormatProperties2KHR => FromString("vkGetPhysicalDeviceImageFormatProperties2KHR");
+        public static byte* GetPhysicalDeviceQueueFamilyProperties2KHR => FromString("vkGetPhysicalDeviceQueueFamilyProperties2KHR");
+        public static byte* GetPhysicalDeviceMemoryProperties2KHR => FromString("vkGetPhysicalDeviceMemoryProperties2KHR");
+        public static byte* GetPhysicalDeviceSparseImageFormatProperties2KHR => FromString("vkGetPhysicalDeviceSparseImageFormatProperties2KHR");
+
+        public static byte* TrimCommandPoolKHR => FromString("vkTrimCommandPoolKHR");
+
+        public static byte* GetPhysicalDeviceExternalBufferPropertiesKHR => FromString("vkGetPhysicalDeviceExternalBufferPropertiesKHR");
+
+        public static byte* GetMemoryWin32HandleKHR => FromString("vkGetMemoryWin32HandleKHR");
+        public static byte* GetMemoryWin32HandlePropertiesKHR => FromString("vkGetMemoryWin32HandlePropertiesKHR");
+
+        public static byte* GetMemoryFdKHR => FromString("vkGetMemoryFdKHR");
+        public static byte* GetMemoryFdPropertiesKHR => FromString("vkGetMemoryFdPropertiesKHR");
+
+        public static byte* GetPhysicalDeviceExternalSemaphorePropertiesKHR => FromString("vkGetPhysicalDeviceExternalSemaphorePropertiesKHR");
+
+        public static byte* ImportSemaphoreWin32HandleKHR => FromString("vkImportSemaphoreWin32HandleKHR");
+        public static byte* GetSemaphoreWin32HandleKHR => FromString("vkGetSemaphoreWin32HandleKHR");
+
+        public static byte* ImportSemaphoreFdKHR => FromString("vkImportSemaphoreFdKHR");
+        public static byte* GetSemaphoreFdKHR => FromString("vkGetSemaphoreFdKHR");
+
+        public static byte* CmdPushDescriptorSetKHR => FromString("vkCmdPushDescriptorSetKHR");
+
+        public static byte* CreateDescriptorUpdateTemplateKHR => FromString("vkCreateDescriptorUpdateTemplateKHR");
+        public static byte* DestroyDescriptorUpdateTemplateKHR => FromString("vkDestroyDescriptorUpdateTemplateKHR");
+        public static byte* UpdateDescriptorSetWithTemplateKHR => FromString("vkUpdateDescriptorSetWithTemplateKHR");
+        public static byte* CmdPushDescriptorSetWithTemplateKHR => FromString("vkCmdPushDescriptorSetWithTemplateKHR");
+
+        public static byte* GetSwapchainStatusKHR => FromString("vkGetSwapchainStatusKHR");
+
+        public static byte* GetPhysicalDeviceExternalFencePropertiesKHR => FromString("vkGetPhysicalDeviceExternalFencePropertiesKHR");
+
+        public static byte* ImportFenceWin32HandleKHR => FromString("vkImportFenceWin32HandleKHR");
+        public static byte* GetFenceWin32HandleKHR => FromString("vkGetFenceWin32HandleKHR");
+
+        public static byte* ImportFenceFdKHR => FromString("vkImportFenceFdKHR");
+        public static byte* GetFenceFdKHR => FromString("vkGetFenceFdKHR");
+
+        public static byte* GetPhysicalDeviceSurfaceCapabilities2KHR => FromString("vkGetPhysicalDeviceSurfaceCapabilities2KHR");
+        public static byte* GetPhysicalDeviceSurfaceFormats2KHR => FromString("vkGetPhysicalDeviceSurfaceFormats2KHR");
+
+        public static byte* GetImageMemoryRequirements2KHR => FromString("vkGetImageMemoryRequirements2KHR");
+        public static byte* GetBufferMemoryRequirements2KHR => FromString("vkGetBufferMemoryRequirements2KHR");
+        public static byte* GetImageSparseMemoryRequirements2KHR => FromString("vkGetImageSparseMemoryRequirements2KHR");
         
         public static byte* CreateDebugReportCallbackEXT => FromString("vkCreateDebugReportCallbackEXT");
         public static byte* DestroyDebugReportCallbackEXT => FromString("vkDestroyDebugReportCallbackEXT");
@@ -302,9 +352,57 @@ namespace CoreVulkan
         public static byte* CmdDebugMarkerEndEXT => FromString("vkCmdDebugMarkerEndEXT");
         public static byte* CmdDebugMarkerInsertEXT => FromString("vkCmdDebugMarkerInsertEXT");
 
-        public static byte* EnumeratePhysicalDeviceGroupsKHX => FromString("vkEnumeratePhysicalDeviceGroupsKHX");
+        public static byte* CmdDrawIndirectCountAMD => FromString("vkCmdDrawIndirectCountAMD");
+        public static byte* CmdDrawIndexedIndirectCountAMD => FromString("vkCmdDrawIndexedIndirectCountAMD");
+
+        public static byte* GetPhysicalDeviceExternalImageFormatPropertiesNV => FromString("vkGetPhysicalDeviceExternalImageFormatPropertiesNV");
+
+        public static byte* GetMemoryWin32HandleNV => FromString("vkGetMemoryWin32HandleNV");
+
+        public static byte* GetDeviceGroupPeerMemoryFeaturesKHX => FromString("vkGetDeviceGroupPeerMemoryFeaturesKHX");
+        public static byte* BindBufferMemory2KHX => FromString("vkBindBufferMemory2KHX");
+        public static byte* BindImageMemory2KHX => FromString("vkBindImageMemory2KHX");
+        public static byte* CmdSetDeviceMaskKHX => FromString("vkCmdSetDeviceMaskKHX");
+        public static byte* GetDeviceGroupPresentCapabilitiesKHX => FromString("vkGetDeviceGroupPresentCapabilitiesKHX");
+        public static byte* GetDeviceGroupSurfacePresentModesKHX => FromString("vkGetDeviceGroupSurfacePresentModesKHX");
+        public static byte* AcquireNextImage2KHX => FromString("vkAcquireNextImage2KHX");
+        public static byte* CmdDispatchBaseKHX => FromString("vkCmdDispatchBaseKHX");
+        public static byte* GetPhysicalDevicePresentRectanglesKHX => FromString("vkGetPhysicalDevicePresentRectanglesKHX");
 
         public static byte* CreateViSurfaceNN => FromString("vkCreateViSurfaceNN");
+
+        public static byte* EnumeratePhysicalDeviceGroupsKHX => FromString("vkEnumeratePhysicalDeviceGroupsKHX");
+
+        public static byte* CmdProcessCommandsNVX => FromString("vkCmdProcessCommandsNVX");
+        public static byte* CmdReserveSpaceForCommandsNVX => FromString("vkCmdReserveSpaceForCommandsNVX");
+        public static byte* CreateIndirectCommandsLayoutNVX => FromString("vkCreateIndirectCommandsLayoutNVX");
+        public static byte* DestroyIndirectCommandsLayoutNVX => FromString("vkDestroyIndirectCommandsLayoutNVX");
+        public static byte* CreateObjectTableNVX => FromString("vkCreateObjectTableNVX");
+        public static byte* DestroyObjectTableNVX => FromString("vkDestroyObjectTableNVX");
+        public static byte* RegisterObjectsNVX => FromString("vkRegisterObjectsNVX");
+        public static byte* UnregisterObjectsNVX => FromString("vkUnregisterObjectsNVX");
+        public static byte* GetPhysicalDeviceGeneratedCommandsPropertiesNVX => FromString("vkGetPhysicalDeviceGeneratedCommandsPropertiesNVX");
+
+        public static byte* CmdSetViewportWScalingNV => FromString("vkCmdSetViewportWScalingNV");
+
+        public static byte* ReleaseDisplayEXT => FromString("vkReleaseDisplayEXT");
+
+        public static byte* AcquireXlibDisplayEXT => FromString("vkAcquireXlibDisplayEXT");
+        public static byte* GetRandROutputDisplayEXT => FromString("vkGetRandROutputDisplayEXT");
+
+        public static byte* GetPhysicalDeviceSurfaceCapabilities2EXT => FromString("vkGetPhysicalDeviceSurfaceCapabilities2EXT");
+
+        public static byte* DisplayPowerControlEXT => FromString("vkDisplayPowerControlEXT");
+        public static byte* RegisterDeviceEventEXT => FromString("vkRegisterDeviceEventEXT");
+        public static byte* RegisterDisplayEventEXT => FromString("vkRegisterDisplayEventEXT");
+        public static byte* GetSwapchainCounterEXT => FromString("vkGetSwapchainCounterEXT");
+
+        public static byte* GetRefreshCycleDurationGOOGLE => FromString("vkGetRefreshCycleDurationGOOGLE");
+        public static byte* GetPastPresentationTimingGOOGLE => FromString("vkGetPastPresentationTimingGOOGLE");
+
+        public static byte* CmdSetDiscardRectangleEXT => FromString("vkCmdSetDiscardRectangleEXT");
+
+        public static byte* SetHdrMetadataEXT => FromString("vkSetHdrMetadataEXT");
 
         public static byte* CreateIOSSurfaceMVK => FromString("vkCreateIOSSurfaceMVK");
         public static byte* CreateMacOSSurfaceMVK => FromString("vkCreateMacOSSurfaceMVK");
@@ -5899,18 +5997,18 @@ namespace CoreVulkan
     public unsafe delegate void GetPhysicalDeviceProperties2KHRDelegate(PhysicalDeviceHandle physicalDevice, out PhysicalDeviceProperties2 properties);
     public unsafe delegate void GetPhysicalDeviceFormatProperties2KHRDelegate(PhysicalDeviceHandle physicalDevice, Format format, out FormatProperties2 formatProperties);
     public unsafe delegate Result GetPhysicalDeviceImageFormatProperties2KHRDelegate(PhysicalDeviceHandle physicalDevice, ref PhysicalDeviceImageFormatInfo2 imageFormatInfo, out ImageFormatProperties2 imageFormatProperties);
-    public unsafe delegate void GetPhysicalDeviceQueueFamilyProperties2KHRDelegate(PhysicalDeviceHandle physicalDevice, out uint queueFamilyPropertyCount, QueueFamilyProperties2* queueFamilyProperties);
+    public unsafe delegate void GetPhysicalDeviceQueueFamilyProperties2KHRDelegate(PhysicalDeviceHandle physicalDevice, ref uint queueFamilyPropertyCount, QueueFamilyProperties2* queueFamilyProperties);
     public unsafe delegate void GetPhysicalDeviceMemoryProperties2KHRDelegate(PhysicalDeviceHandle physicalDevice, out PhysicalDeviceMemoryProperties2 memoryProperties);
-    public unsafe delegate void GetPhysicalDeviceSparseImageFormatProperties2KHRDelegate(PhysicalDeviceHandle physicalDevice, ref PhysicalDeviceSparseImageFormatInfo2 formatInfo, out uint propertyCount, SparseImageFormatProperties2* properties);
+    public unsafe delegate void GetPhysicalDeviceSparseImageFormatProperties2KHRDelegate(PhysicalDeviceHandle physicalDevice, ref PhysicalDeviceSparseImageFormatInfo2 formatInfo, ref uint propertyCount, SparseImageFormatProperties2* properties);
     public unsafe delegate void TrimCommandPoolKHRDelegate(DeviceHandle device, CommandPoolHandle commandPool, CommandPoolTrimFlags flags);
     public unsafe delegate void GetPhysicalDeviceExternalBufferPropertiesKHRDelegate(PhysicalDeviceHandle physicalDevice, ref PhysicalDeviceExternalBufferInfo externalBufferInfo, out ExternalBufferProperties externalBufferProperties);
-    public unsafe delegate Result GetMemoryWin32HandleKHRDelegate(DeviceHandle device, ref MemoryGetWin32HandleInfo getWin32HandleInfo, IntPtr handle);
+    public unsafe delegate Result GetMemoryWin32HandleKHRDelegate(DeviceHandle device, ref MemoryGetWin32HandleInfo getWin32HandleInfo, out IntPtr handle);
     public unsafe delegate Result GetMemoryWin32HandlePropertiesKHRDelegate(DeviceHandle device, ExternalMemoryHandleTypeFlags handleType, IntPtr handle, out MemoryWin32HandleProperties memoryWin32HandleProperties);
     public unsafe delegate Result GetMemoryFdKHRDelegate(DeviceHandle device, ref MemoryGetFdInfo getFdInfo, out int fd);
     public unsafe delegate Result GetMemoryFdPropertiesKHRDelegate(DeviceHandle device, ExternalMemoryHandleTypeFlags handleType, int fd, out MemoryFdProperties pMemoryFdProperties);
     public unsafe delegate void GetPhysicalDeviceExternalSemaphorePropertiesKHRDelegate(PhysicalDeviceHandle physicalDevice, ref PhysicalDeviceExternalSemaphoreInfo externalSemaphoreInfo, out ExternalSemaphoreProperties externalSemaphoreProperties);
     public unsafe delegate Result ImportSemaphoreWin32HandleKHRDelegate(DeviceHandle device, ref ImportSemaphoreWin32HandleInfo importSemaphoreWin32HandleInfo);
-    public unsafe delegate Result GetSemaphoreWin32HandleKHRDelegate(DeviceHandle device, ref SemaphoreGetWin32HandleInfo getWin32HandleInfo, IntPtr handle);
+    public unsafe delegate Result GetSemaphoreWin32HandleKHRDelegate(DeviceHandle device, ref SemaphoreGetWin32HandleInfo getWin32HandleInfo, out IntPtr handle);
     public unsafe delegate Result ImportSemaphoreFdKHRDelegate(DeviceHandle device, ref ImportSemaphoreFdInfo importSemaphoreFdInfo);
     public unsafe delegate Result GetSemaphoreFdKHRDelegate(DeviceHandle device, ref SemaphoreGetFdInfo getFdInfo, out int fd);
     public unsafe delegate void CmdPushDescriptorSetKHRDelegate(CommandBufferHandle commandBuffer, PipelineBindPoint pipelineBindPoint, PipelineLayoutHandle layout, uint set, uint descriptorWriteCount, WriteDescriptorSet* descriptorWrites);
@@ -5921,14 +6019,14 @@ namespace CoreVulkan
     public unsafe delegate Result GetSwapchainStatusKHRDelegate(DeviceHandle device, SwapchainHandle swapchain);
     public unsafe delegate void GetPhysicalDeviceExternalFencePropertiesKHRDelegate(PhysicalDeviceHandle physicalDevice, ref PhysicalDeviceExternalFenceInfo externalFenceInfo, out ExternalFenceProperties externalFenceProperties);
     public unsafe delegate Result ImportFenceWin32HandleKHRDelegate(DeviceHandle device, ref ImportFenceWin32HandleInfo importFenceWin32HandleInfo);
-    public unsafe delegate Result GetFenceWin32HandleKHRDelegate(DeviceHandle device, ref FenceGetWin32HandleInfo getWin32HandleInfo, IntPtr pHandle);
+    public unsafe delegate Result GetFenceWin32HandleKHRDelegate(DeviceHandle device, ref FenceGetWin32HandleInfo getWin32HandleInfo, out IntPtr pHandle);
     public unsafe delegate Result ImportFenceFdKHRDelegate(DeviceHandle device, ref ImportFenceFdInfo importFenceFdInfo);
     public unsafe delegate Result GetFenceFdKHRDelegate(DeviceHandle device, ref FenceGetFdInfo getFdInfo, out int fd);
     public unsafe delegate Result GetPhysicalDeviceSurfaceCapabilities2KHRDelegate(PhysicalDeviceHandle physicalDevice, ref PhysicalDeviceSurfaceInfo2 surfaceInfo, out SurfaceCapabilities2 surfaceCapabilities);
-    public unsafe delegate Result GetPhysicalDeviceSurfaceFormats2KHRDelegate(PhysicalDeviceHandle physicalDevice, ref PhysicalDeviceSurfaceInfo2 surfaceInfo, out uint surfaceFormatCount, SurfaceFormat2* surfaceFormats);
+    public unsafe delegate Result GetPhysicalDeviceSurfaceFormats2KHRDelegate(PhysicalDeviceHandle physicalDevice, ref PhysicalDeviceSurfaceInfo2 surfaceInfo, ref uint surfaceFormatCount, SurfaceFormat2* surfaceFormats);
     public unsafe delegate void GetImageMemoryRequirements2KHRDelegate(DeviceHandle device, ref ImageMemoryRequirementsInfo2 info, out MemoryRequirements2 memoryRequirements);
     public unsafe delegate void GetBufferMemoryRequirements2KHRDelegate(DeviceHandle device, ref BufferMemoryRequirementsInfo2 info, out MemoryRequirements2 memoryRequirements);
-    public unsafe delegate void GetImageSparseMemoryRequirements2KHRDelegate(DeviceHandle device, ref ImageSparseMemoryRequirementsInfo2 info, out uint sparseMemoryRequirementCount, SparseImageMemoryRequirements2* sparseMemoryRequirements);
+    public unsafe delegate void GetImageSparseMemoryRequirements2KHRDelegate(DeviceHandle device, ref ImageSparseMemoryRequirementsInfo2 info, ref uint sparseMemoryRequirementCount, SparseImageMemoryRequirements2* sparseMemoryRequirements);
 
     // Khronos X
     public unsafe delegate void GetDeviceGroupPeerMemoryFeaturesKHXDelegate(DeviceHandle device, uint heapIndex, uint localDeviceIndex, uint remoteDeviceIndex, out PeerMemoryFeatureFlags peerMemoryFeatures);
@@ -5969,7 +6067,7 @@ namespace CoreVulkan
 
     // Nvidia
     public unsafe delegate Result GetPhysicalDeviceExternalImageFormatPropertiesNVDelegate(PhysicalDeviceHandle physicalDevice, Format format, ImageType type, ImageTiling tiling, ImageUsageFlags usage, ImageCreateFlags flags, ExternalMemoryHandleTypeFlagsNV ExternalHandleType, out ExternalImageFormatPropertiesNV externalImageFormatProperties);
-    public unsafe delegate Result GetMemoryWin32HandleNVDelegate(DeviceHandle device, DeviceMemoryHandle memory, ExternalMemoryHandleTypeFlagsNV handleType, IntPtr handle);
+    public unsafe delegate Result GetMemoryWin32HandleNVDelegate(DeviceHandle device, DeviceMemoryHandle memory, ExternalMemoryHandleTypeFlagsNV handleType, out IntPtr handle);
     public unsafe delegate void CmdSetViewportWScalingNVDelegate(CommandBufferHandle commandBuffer, uint firstViewport, uint viewportCount, ViewportWScaling* viewportWScalings);
 
     // Nvidia X

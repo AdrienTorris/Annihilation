@@ -50,6 +50,7 @@
     <Compile Include="Engine\Graphics\GpuInfo.cs" />
     <Compile Include="Engine\Graphics\PhysicalDevice.cs" />
     <Compile Include="ThirdParty\CoreVulkan\Device.cs" />
+    <Compile Include="ThirdParty\CoreVulkan\Display.cs" />
   </ItemGroup>
 
   <ItemGroup>
