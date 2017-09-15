@@ -135,7 +135,7 @@ namespace CoreVulkan
 
         public T GetDeviceProcAddr<T>(byte* functionName)
         {
-            _getDeviceProcAddr = _getDeviceProcAddr ?? Vulkan.LoadGlobalFunction<GetDeviceProcAddrDelegate>(FunctionName.GetDeviceProcAddr);
+            _getDeviceProcAddr = _getDeviceProcAddr ?? PhysicalDevice.Instance.GetProcAddr<GetDeviceProcAddrDelegate>(FunctionName.GetDeviceProcAddr);
 
             IntPtr func = _getDeviceProcAddr(Handle, functionName);
             if (func == IntPtr.Zero) throw new Exception("Could not load Vulkan function " + Utf8.ToString(functionName));
@@ -144,160 +144,180 @@ namespace CoreVulkan
 
         public void Destroy()
         {
+            _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice);
 
+            _destroyDevice(Handle, null);
         }
 
         public void GetQueue()
         {
+            _getDeviceQueue = _getDeviceQueue ?? GetDeviceProcAddr<GetDeviceQueueDelegate>(FunctionName.GetDeviceQueue);
+
 
         }
 
         public void WaitIdle()
         {
+            _deviceWaitIdle = _deviceWaitIdle ?? GetDeviceProcAddr<DeviceWaitIdleDelegate>(FunctionName.DeviceWaitIdle);
+
 
         }
 
         public void AllocateMemory()
         {
+            _allocateMemory = _allocateMemory ?? GetDeviceProcAddr<AllocateMemoryDelegate>(FunctionName.AllocateMemory);
+
 
         }
 
         public void FreeMemory()
         {
+            _freeMemory = _freeMemory ?? GetDeviceProcAddr<FreeMemoryDelegate>(FunctionName.FreeMemory);
+
 
         }
 
         public void MapMemory()
         {
+            _mapMemory = _mapMemory ?? GetDeviceProcAddr<MapMemoryDelegate>(FunctionName.MapMemory);
+
 
         }
 
         public void UnmapMemory()
         {
+            _unmapMemory = _unmapMemory ?? GetDeviceProcAddr<UnmapMemoryDelegate>(FunctionName.UnmapMemory);
+
 
         }
 
         public void FlushMappedMemoryRanges()
         {
+            _flushMappedMemoryRanges = _flushMappedMemoryRanges ?? GetDeviceProcAddr<FlushMappedMemoryRangesDelegate>(FunctionName.FlushMappedMemoryRanges);
+
 
         }
 
         public void InvalidateMappedMemoryRanges()
         {
+            _invalidateMappedMemoryRanges = _invalidateMappedMemoryRanges ?? GetDeviceProcAddr<InvalidateMappedMemoryRangesDelegate>(FunctionName.InvalidateMappedMemoryRanges);
+
 
         }
 
         public void GetMemoryCommitment()
         {
+            _getDeviceMemoryCommitment = _getDeviceMemoryCommitment ?? GetDeviceProcAddr<GetDeviceMemoryCommitmentDelegate>(FunctionName.GetDeviceMemoryCommitment);
+
 
         }
-
-        public void GetBufferMemoryRequirements() { }
-        public void BindBufferMemory() { }
-        public void GetImageMemoryRequirements() { }
-        public void BindImageMemory() { }
-        public void GetImageSparseMemoryRequirements() { }
-        public void CreateFence() { }
-        public void DestroyFence() { }
-        public void ResetFences() { }
-        public void GetFenceStatus() { }
-        public void WaitForFences() { }
-        public void CreateSemaphore() { }
-        public void DestroySemaphore() { }
-        public void CreateEvent() { }
-        public void DestroyEvent() { }
-        public void GetEventStatus() { }
-        public void SetEvent() { }
-        public void ResetEvent() { }
-        public void CreateQueryPool() { }
-        public void DestroyQueryPool() { }
-        public void GetQueryPoolResults() { }
-        public void CreateBuffer() { }
-        public void DestroyBuffer() { }
-        public void CreateBufferView() { }
-        public void DestroyBufferView() { }
-        public void CreateImage() { }
-        public void DestroyImage() { }
-        public void GetImageSubresourceLayout() { }
-        public void CreateImageView() { }
-        public void DestroyImageView() { }
-        public void CreateShaderModule() { }
-        public void DestroyShaderModule() { }
-        public void CreatePipelineCache() { }
-        public void DestroyPipelineCache() { }
-        public void GetPipelineCacheData() { }
-        public void MergePipelineCaches() { }
-        public void CreateGraphicsPipelines() { }
-        public void CreateComputePipelines() { }
-        public void DestroyPipeline() { }
-        public void CreatePipelineLayout() { }
-        public void DestroyPipelineLayout() { }
-        public void CreateSampler() { }
-        public void DestroySampler() { }
-        public void CreateDescriptorSetLayout() { }
-        public void DestroyDescriptorSetLayout() { }
-        public void CreateDescriptorPool() { }
-        public void DestroyDescriptorPool() { }
-        public void ResetDescriptorPool() { }
-        public void AllocateDescriptorSets() { }
-        public void FreeDescriptorSets() { }
-        public void UpdateDescriptorSets() { }
-        public void CreateFramebuffer() { }
-        public void DestroyFramebuffer() { }
-        public void CreateRenderPass() { }
-        public void DestroyRenderPass() { }
-        public void GetRenderAreaGranularity() { }
-        public void CreateCommandPool() { }
-        public void DestroyCommandPool() { }
-        public void ResetCommandPool() { }
-        public void AllocateCommandBuffers() { }
-        public void FreeCommandBuffers() { }
-        public void CreateSharedSwapchainsKHR() { }
-        public void CreateSwapchainKHR() { }
-        public void DestroySwapchainKHR() { }
-        public void GetSwapchainImagesKHR() { }
-        public void AcquireNextImageKHR() { }
-        public void DebugMarkerSetObjectNameEXT() { }
-        public void DebugMarkerSetObjectTagEXT() { }
-        public void GetMemoryWin32HandleNV() { }
-        public void CreateIndirectCommandsLayoutNVX() { }
-        public void DestroyIndirectCommandsLayoutNVX() { }
-        public void CreateObjectTableNVX() { }
-        public void DestroyObjectTableNVX() { }
-        public void RegisterObjectsNVX() { }
-        public void UnregisterObjectsNVX() { }
-        public void TrimCommandPoolKHR() { }
-        public void GetMemoryWin32HandleKHR() { }
-        public void GetMemoryWin32HandlePropertiesKHR() { }
-        public void GetMemoryFdKHR() { }
-        public void GetMemoryFdPropertiesKHR() { }
-        public void GetSemaphoreWin32HandleKHR() { }
-        public void ImportSemaphoreWin32HandleKHR() { }
-        public void GetSemaphoreFdKHR() { }
-        public void ImportSemaphoreFdKHR() { }
-        public void GetFenceWin32HandleKHR() { }
-        public void ImportFenceWin32HandleKHR() { }
-        public void GetFenceFdKHR() { }
-        public void ImportFenceFdKHR() { }
-        public void DisplayPowerControlEXT() { }
-        public void RegisterEventEXT() { }
-        public void RegisterDisplayEventEXT() { }
-        public void GetSwapchainCounterEXT() { }
-        public void GetGroupPeerMemoryFeaturesKHX() { }
-        public void BindBufferMemory2KHX() { }
-        public void BindImageMemory2KHX() { }
-        public void GetGroupPresentCapabilitiesKHX() { }
-        public void GetGroupSurfacePresentModesKHX() { }
-        public void AcquireNextImage2KHX() { }
-        public void CreateDescriptorUpdateTemplateKHR() { }
-        public void DestroyDescriptorUpdateTemplateKHR() { }
-        public void UpdateDescriptorSetWithTemplateKHR() { }
-        public void SetHdrMetadataEXT() { }
-        public void GetSwapchainStatusKHR() { }
-        public void GetRefreshCycleDurationGOOGLE() { }
-        public void GetPastPresentationTimingGOOGLE() { }
-        public void GetBufferMemoryRequirements2KHR() { }
-        public void GetImageMemoryRequirements2KHR() { }
-        public void GetImageSparseMemoryRequirements2KHR() { }
+        
+        public void GetBufferMemoryRequirements() { _getBufferMemoryRequirements = _getBufferMemoryRequirements ?? GetDeviceProcAddr<GetBufferMemoryRequirementsDelegate>(FunctionName.GetBufferMemoryRequirements); }
+        public void BindBufferMemory() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetImageMemoryRequirements() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void BindImageMemory() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetImageSparseMemoryRequirements() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void CreateFence() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void DestroyFence() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void ResetFences() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetFenceStatus() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void WaitForFences() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void CreateSemaphore() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void DestroySemaphore() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void CreateEvent() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void DestroyEvent() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetEventStatus() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void SetEvent() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void ResetEvent() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void CreateQueryPool() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void DestroyQueryPool() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetQueryPoolResults() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void CreateBuffer() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void DestroyBuffer() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void CreateBufferView() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void DestroyBufferView() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void CreateImage() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void DestroyImage() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetImageSubresourceLayout() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void CreateImageView() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void DestroyImageView() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void CreateShaderModule() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void DestroyShaderModule() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void CreatePipelineCache() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void DestroyPipelineCache() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetPipelineCacheData() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void MergePipelineCaches() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void CreateGraphicsPipelines() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void CreateComputePipelines() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void DestroyPipeline() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void CreatePipelineLayout() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void DestroyPipelineLayout() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void CreateSampler() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void DestroySampler() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void CreateDescriptorSetLayout() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void DestroyDescriptorSetLayout() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void CreateDescriptorPool() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void DestroyDescriptorPool() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void ResetDescriptorPool() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void AllocateDescriptorSets() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void FreeDescriptorSets() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void UpdateDescriptorSets() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void CreateFramebuffer() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void DestroyFramebuffer() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void CreateRenderPass() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void DestroyRenderPass() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetRenderAreaGranularity() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void CreateCommandPool() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void DestroyCommandPool() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void ResetCommandPool() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void AllocateCommandBuffers() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void FreeCommandBuffers() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void CreateSharedSwapchainsKHR() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void CreateSwapchainKHR() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void DestroySwapchainKHR() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetSwapchainImagesKHR() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void AcquireNextImageKHR() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void DebugMarkerSetObjectNameEXT() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void DebugMarkerSetObjectTagEXT() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetMemoryWin32HandleNV() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void CreateIndirectCommandsLayoutNVX() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void DestroyIndirectCommandsLayoutNVX() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void CreateObjectTableNVX() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void DestroyObjectTableNVX() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void RegisterObjectsNVX() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void UnregisterObjectsNVX() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void TrimCommandPoolKHR() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetMemoryWin32HandleKHR() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetMemoryWin32HandlePropertiesKHR() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetMemoryFdKHR() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetMemoryFdPropertiesKHR() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetSemaphoreWin32HandleKHR() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void ImportSemaphoreWin32HandleKHR() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetSemaphoreFdKHR() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void ImportSemaphoreFdKHR() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetFenceWin32HandleKHR() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void ImportFenceWin32HandleKHR() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetFenceFdKHR() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void ImportFenceFdKHR() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void DisplayPowerControlEXT() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void RegisterEventEXT() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void RegisterDisplayEventEXT() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetSwapchainCounterEXT() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetGroupPeerMemoryFeaturesKHX() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void BindBufferMemory2KHX() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void BindImageMemory2KHX() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetGroupPresentCapabilitiesKHX() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetGroupSurfacePresentModesKHX() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void AcquireNextImage2KHX() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void CreateDescriptorUpdateTemplateKHR() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void DestroyDescriptorUpdateTemplateKHR() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void UpdateDescriptorSetWithTemplateKHR() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void SetHdrMetadataEXT() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetSwapchainStatusKHR() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetRefreshCycleDurationGOOGLE() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetPastPresentationTimingGOOGLE() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetBufferMemoryRequirements2KHR() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetImageMemoryRequirements2KHR() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
+        public void GetImageSparseMemoryRequirements2KHR() { _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice); }
     }
 }
