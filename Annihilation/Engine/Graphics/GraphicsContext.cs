@@ -1,5 +1,5 @@
 ﻿using System;
-using Engine.CoreVulkan;
+using Engine.Vk;
 
 namespace Engine.Graphics
 {

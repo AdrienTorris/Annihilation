@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Engine.CoreVulkan
+namespace Engine.Vk
 {
     public unsafe struct Device
     {
@@ -228,7 +228,7 @@ namespace Engine.CoreVulkan
             _bindBufferMemory = _bindBufferMemory ??
                                 GetDeviceProcAddr<BindBufferMemoryDelegate>(FunctionName.BindBufferMemory);
 
-            _bindBufferMemory(Handle, )
+            //_bindBufferMemory(Handle, )
         }
 
         public void GetImageMemoryRequirements()

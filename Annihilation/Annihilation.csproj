@@ -42,10 +42,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Engine\CoreVulkan\Queue.cs" />
+    <Compile Include="Engine\Vk\Queue.cs" />
     <Compile Include="Engine\Core\Text.cs" />
     <Compile Include="Engine\Graphics\DisplayMode.cs" />
     <Compile Include="Engine\Graphics\GpuInfo.cs" />
+    <Compile Include="Engine\Vk\DebugReportCallback.cs" />
+    <Compile Include="Engine\Vk\Device.cs" />
+    <Compile Include="Engine\Vk\Display.cs" />
+    <Compile Include="Engine\Vk\Instance.cs" />
+    <Compile Include="Engine\Vk\PhysicalDevice.cs" />
+    <Compile Include="Engine\Vk\Surface.cs" />
+    <Compile Include="Engine\Vk\Vulkan.cs" />
   </ItemGroup>
 
   <ItemGroup>

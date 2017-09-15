@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Engine.CoreVulkan
+namespace Engine.Vk
 {
     public unsafe struct Display
     {

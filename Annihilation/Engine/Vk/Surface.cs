@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace Engine.CoreVulkan
+namespace Engine.Vk
 {
     public unsafe struct Surface
     {

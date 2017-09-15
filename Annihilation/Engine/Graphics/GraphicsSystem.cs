@@ -2,10 +2,10 @@
 using System.Runtime.InteropServices;
 using Engine.Config;
 using Engine.Collections;
-using Engine.CoreVulkan;
+using Engine.Vk;
 using SDL2;
 
-using Version = Engine.CoreVulkan.Version;
+using Version = Engine.Vk.Version;
 
 namespace Engine.Graphics
 {
