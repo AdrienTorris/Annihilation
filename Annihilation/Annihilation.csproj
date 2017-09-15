@@ -37,8 +37,11 @@
 
   <ItemGroup>
     <Compile Remove="Engine\Collections\**" />
+    <Compile Remove="ThirdParty\CoreVulkan\NewFolder\**" />
     <EmbeddedResource Remove="Engine\Collections\**" />
+    <EmbeddedResource Remove="ThirdParty\CoreVulkan\NewFolder\**" />
     <None Remove="Engine\Collections\**" />
+    <None Remove="ThirdParty\CoreVulkan\NewFolder\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,6 +49,7 @@
     <Compile Include="Engine\Graphics\DisplayMode.cs" />
     <Compile Include="Engine\Graphics\GpuInfo.cs" />
     <Compile Include="Engine\Graphics\PhysicalDevice.cs" />
+    <Compile Include="ThirdParty\CoreVulkan\Device.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -54,10 +58,6 @@
 
   <ItemGroup>
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.4.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ThirdParty\CoreVulkan\NewFolder\" />
   </ItemGroup>
 
 </Project>

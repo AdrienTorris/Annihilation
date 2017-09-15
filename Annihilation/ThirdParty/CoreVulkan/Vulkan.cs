@@ -26,30 +26,76 @@ namespace CoreVulkan
         public const int LUIDSize = 8;
         public const int MaxDeviceGroupSize = 32;
 
-        public static readonly GetInstanceProcAddrDelegate GetInstanceProcAddr;
-        public static readonly GetDeviceProcAddrDelegate GetDeviceProcAddr;
+        public static GetInstanceProcAddrDelegate GetInstanceProcAddr;
+        
+        private static CreateInstanceDelegate _createInstance;
+        private static EnumerateInstanceExtensionPropertiesDelegate _enumerateInstanceExtensionProperties;
+        private static EnumerateInstanceLayerPropertiesDelegate _enumerateInstanceLayerProperties;
 
         static Vulkan()
         {
             SDL.VulkanLoadLibrary(null);
 
+            GetInstanceProcAddr = LoadGetInstanceProcAddrFunction();
+        }
+
+        public static void CreateInstance(ref InstanceCreateInfo createInfo, out Instance instance)
+        {
+            _createInstance = _createInstance ?? LoadGlobalFunction<CreateInstanceDelegate>(FunctionName.CreateInstance);
+
+            _createInstance(ref createInfo, null, out InstanceHandle handle).CheckError();
+
+            instance = new Instance(handle);
+        }
+
+        public static void EnumerateInstanceExtensionProperties(byte* layerName, out ExtensionProperties[] extensionProperties)
+        {
+            _enumerateInstanceExtensionProperties = _enumerateInstanceExtensionProperties ?? LoadGlobalFunction<EnumerateInstanceExtensionPropertiesDelegate>(FunctionName.EnumerateInstanceExtensionProperties);
+
+            uint count = 0;
+            _enumerateInstanceExtensionProperties(layerName, ref count, null).CheckError();
+            ExtensionProperties* properties = (ExtensionProperties*)Marshal.AllocHGlobal((int)count * sizeof(ExtensionProperties));
+            _enumerateInstanceExtensionProperties(layerName, ref count, properties).CheckError();
+
+            extensionProperties = new ExtensionProperties[count];
+            for (int i = 0; i < count; ++i)
+            {
+                extensionProperties[i] = properties[i];
+            }
+
+            Marshal.FreeHGlobal(new IntPtr(properties));
+        }
+
+        public static void EnumerateInstanceLayerProperties(out LayerProperties[] layerProperties)
+        {
+            _enumerateInstanceLayerProperties = _enumerateInstanceLayerProperties ?? LoadGlobalFunction<EnumerateInstanceLayerPropertiesDelegate>(FunctionName.EnumerateInstanceLayerProperties);
+
+            uint count = 0;
+            _enumerateInstanceLayerProperties(ref count, null).CheckError();
+            LayerProperties* properties = (LayerProperties*)Marshal.AllocHGlobal((int)count * sizeof(LayerProperties));
+            _enumerateInstanceLayerProperties(ref count, properties).CheckError();
+
+            layerProperties = new LayerProperties[count];
+            for (int i = 0; i < count; ++i)
+            {
+                layerProperties[i] = properties[i];
+            }
+
+            Marshal.FreeHGlobal(new IntPtr(properties));
+        }
+
+        public static GetInstanceProcAddrDelegate LoadGetInstanceProcAddrFunction()
+        {
             IntPtr func = SDL.VulkanGetVkGetInstanceProcAddr();
             if (func == IntPtr.Zero) throw new Exception(Utf8.ToString(SDL.GetError()));
-            GetInstanceProcAddr = Marshal.GetDelegateForFunctionPointer<GetInstanceProcAddrDelegate>(func);
+            return Marshal.GetDelegateForFunctionPointer<GetInstanceProcAddrDelegate>(func);
         }
 
         public static T LoadGlobalFunction<T>(byte* name) => LoadInstanceFunction<T>(InstanceHandle.Null, name);
 
-        public static T LoadInstanceFunction<T>(InstanceHandle instance, byte* name)
+        public static T LoadInstanceFunction<T>(InstanceHandle instanceHandle, byte* name)
         {
-            IntPtr func = GetInstanceProcAddr(instance, name);
-            if (func == IntPtr.Zero) throw new Exception("Could not load Vulkan function " + Utf8.ToString(name));
-            return Marshal.GetDelegateForFunctionPointer<T>(func);
-        }
-
-        public static T LoadDeviceFunction<T>(DeviceHandle device, byte* name)
-        {
-            IntPtr func = GetDeviceProcAddr(device, name);
+            IntPtr func = GetInstanceProcAddr(instanceHandle, name);
             if (func == IntPtr.Zero) throw new Exception("Could not load Vulkan function " + Utf8.ToString(name));
             return Marshal.GetDelegateForFunctionPointer<T>(func);
         }
@@ -5714,7 +5760,7 @@ namespace CoreVulkan
     public unsafe delegate void GetBufferMemoryRequirementsDelegate(DeviceHandle device, BufferHandle buffer, out ImageMemoryRequirementsInfo2 memoryRequirements);
     public unsafe delegate void GetImageMemoryRequirementsDelegate(DeviceHandle device, ImageHandle image, out MemoryRequirements memoryRequirements);
     public unsafe delegate void GetImageSparseMemoryRequirementsDelegate(DeviceHandle device, ImageHandle image, out uint sparseMemoryRequirementCount, SparseImageMemoryRequirements* sparseMemoryRequirements);
-    public unsafe delegate void GetPhysicalDeviceSparseImageFormatPropertiesDelegate(PhysicalDeviceHandle physicalDevice, Format format, ImageType type, SampleCountFlags samples, ImageUsageFlags usage, ImageTiling tiling, out uint propertyCount, SparseImageFormatProperties* properties);
+    public unsafe delegate void GetPhysicalDeviceSparseImageFormatPropertiesDelegate(PhysicalDeviceHandle physicalDevice, Format format, ImageType type, SampleCountFlags samples, ImageUsageFlags usage, ImageTiling tiling, ref uint propertyCount, SparseImageFormatProperties* properties);
     public unsafe delegate Result QueueBindSparseDelegate(QueueHandle queue, uint bindInfoCount, ref BindSparseInfo bindInfo, FenceHandle fence);
     public unsafe delegate Result CreateFenceDelegate(DeviceHandle device, ref FenceCreateInfo createInfo, AllocationCallbacks* Allocator, out FenceHandle fence);
     public unsafe delegate void DestroyFenceDelegate(DeviceHandle device, FenceHandle fence, AllocationCallbacks* Allocator);

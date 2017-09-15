@@ -25,6 +25,16 @@ namespace CoreVulkan
         private static CreateIOSSurfaceMVKDelegate _createIOSSurfaceMVK;
         private static CreateMacOSSurfaceMVKDelegate _createMacOSSurfaceMVK;
 
+        public Instance(InstanceHandle handle)
+        {
+            Handle = handle;
+        }
+
+        public Instance(ref InstanceCreateInfo createInfo)
+        {
+            Vulkan.CreateInstance(ref createInfo, out this);
+        }
+
         public void Destroy()
         {
             _destroyInstance = _destroyInstance ?? GetProcAddr<DestroyInstanceDelegate>(FunctionName.DestroyInstance);
