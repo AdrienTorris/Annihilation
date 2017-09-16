@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 namespace SDL2
 {
     [SuppressUnmanagedCodeSecurity]
-    public static unsafe partial class SDL
+    public static unsafe class SDL
     {
 #if PLATFORM_WINDOWS
         private const string LibraryName = "SDL2.dll";
@@ -3042,7 +3042,7 @@ namespace SDL2
             InputGrabbed = 1 << 8,
             InputFocus = 1 << 9,
             MouseFocus = 1 << 10,
-            FullscreenDeskTop = (Fullscreen | 1 << 12),
+            FullscreenDesktop = (Fullscreen | 1 << 12),
             Foreign = 1 << 11,
             AllowHighDPI = 1 << 13,
             MouseCapture = 1 << 14,

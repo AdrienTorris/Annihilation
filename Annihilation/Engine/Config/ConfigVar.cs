@@ -26,18 +26,22 @@ namespace Engine.Config
     
     public struct BoolVar
     {
-        private bool _value;
+        public bool Value;
+
+        private Hash _hash;
 
         public BoolVar(string name, bool value)
         {
-            _value = value;
+            Value = value;
 
-            ConfigSystem.RegisterBool(name, this);
+            _hash = new Hash(name);
+
+            ConfigSystem.RegisterBool(_hash, this);
         }
         
         public override string ToString()
         {
-            return _value ? "true" : "false";
+            return Value ? "true" : "false";
         }
 
         public void DisplayValue(TextContext textContext)
@@ -52,34 +56,101 @@ namespace Engine.Config
 
         public void SetValue(bool value)
         {
-            _value = value;
+            Value = value;
         }
 
-        public static implicit operator bool(BoolVar var) => var._value;
+        public static implicit operator bool(BoolVar var) => var.Value;
     }
 
-    public class IntVar
+    public struct IntVar
     {
-        private int _value;
-        private int _minValue;
-        private int _maxValue;
+        public int Value;
+        public int MinValue;
+        public int MaxValue;
+
+        private Hash _hash;
 
         public IntVar(string name, int value, int min, int max)
         {
-            _value = value;
-            _minValue = min;
-            _maxValue = max;
+            Value = value;
+            MinValue = min;
+            MaxValue = max;
 
-            ConfigSystem.RegisterInt(name, this);
+            _hash = new Hash(name);
+
+            ConfigSystem.RegisterInt(_hash, this);
         }
 
         public IntVar(string name, int value) : this(name, value, 0, int.MaxValue) { }
 
         public override string ToString()
         {
-            return _value.ToString();
+            return Value.ToString();
         }
 
-        public static implicit operator int(IntVar var) => var._value;
+        public static implicit operator int(IntVar var) => var.Value;
+    }
+
+    public struct FloatVar
+    {
+        public float Value;
+        public float MinValue;
+        public float MaxValue;
+
+        private Hash _hash;
+
+        public FloatVar(string name, float value, float min, float max)
+        {
+            Value = value;
+            MinValue = min;
+            MaxValue = max;
+
+            _hash = new Hash(name);
+
+            ConfigSystem.RegisterFloat(_hash, this);
+        }
+
+        public FloatVar(string name, float value) : this(name, value, 0, float.MaxValue) { }
+
+        public override string ToString()
+        {
+            return Value.ToString();
+        }
+
+        public static implicit operator float(FloatVar var) => var.Value;
+    }
+
+    public struct StringVar
+    {
+        public Hash Value;
+
+        private Hash _hash;
+
+        public StringVar(string name, string value)
+        {
+            Value = new Hash(value);
+
+            _hash = new Hash(name);
+
+            ConfigSystem.RegisterString(_hash, this);
+        }
+    }
+
+    public struct EnumVar<T> where T : struct, IComparable, IFormattable, IConvertible
+    {
+        public T Value;
+
+        private Hash _hash;
+
+        public EnumVar(string name, T value)
+        {
+            Value = value;
+
+            _hash = new Hash(name);
+            
+
+        }
+
+        public static implicit operator T(EnumVar<T> var) => var.Value;
     }
 }

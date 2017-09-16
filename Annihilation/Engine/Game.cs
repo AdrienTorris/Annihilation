@@ -46,6 +46,10 @@ namespace Engine
 
                 Initialize(title, game);
             }
+
+            SDL.ShowWindow(game._window);
+
+            SDL.SetRelativeMouseMode(true).CheckError();
             
             SDL.Event evt;
             do
@@ -73,31 +77,50 @@ namespace Engine
         {
             SDL.InitSubSystem(SDL.InitFlags.Video);
 
+            SDL.GetCurrentDisplayMode(0, out SDL.DisplayMode displayMode).CheckError();
+
+            SDL.WindowFlags flags = SDL.WindowFlags.Resizable | SDL.WindowFlags.Hidden | SDL.WindowFlags.Vulkan;
+            if (GraphicsSystem.WindowMode == WindowMode.Fullscreen)
+            {
+                flags |= SDL.WindowFlags.Fullscreen;
+            }
+            else if (GraphicsSystem.WindowMode == WindowMode.FullscreenDesktop)
+            {
+                GraphicsSystem.DisplayWidth.Value = displayMode.Width;
+                GraphicsSystem.DisplayHeight.Value = displayMode.Height;
+
+                flags |= SDL.WindowFlags.FullscreenDesktop;
+            }
+            else if (GraphicsSystem.WindowMode == WindowMode.BorderlessWindow)
+            {
+                GraphicsSystem.DisplayWidth.Value = displayMode.Width;
+                GraphicsSystem.DisplayHeight.Value = displayMode.Height;
+
+                flags |= SDL.WindowFlags.Borderless | SDL.WindowFlags.Maximized;
+            }
+
             SDL.VulkanLoadLibrary(null).CheckError();
 
-            var window = SDL.CreateWindow(
+            SDL.Window window = SDL.CreateWindow(
                 title,
                 SDL.WindowPositionCentered,
                 SDL.WindowPositionCentered,
                 GraphicsSystem.DisplayWidth,
                 GraphicsSystem.DisplayHeight,
-                SDL.WindowFlags.Hidden | SDL.WindowFlags.Vulkan
+                flags
             );
             window.CheckError();
-
             game._window = window;
         }
 
         private static void Initialize<T>(Text title, T game) where T : Game
         {
-            GraphicsSystem.Initialize(title, ref game._window);
+            GraphicsSystem.Initialize(title, game._window);
             TimeSystem.Initialize();
             InputSystem.Initialize();
             ConfigSystem.Initialize();
 
             game.Startup();
-
-            SDL.ShowWindow(game._window);
         }
 
         private static void Terminate<T>(T game) where T : Game
@@ -122,8 +145,8 @@ namespace Engine
             game.RenderScene();
 
             PostEffectSystem.Render();
-            
-            var uiContext = new GraphicsContext();
+
+            GraphicsContext uiContext = new GraphicsContext();
             game.RenderUI(uiContext);
 
             uiContext.Finish();

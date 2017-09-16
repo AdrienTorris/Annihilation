@@ -32,9 +32,11 @@ namespace Engine.Graphics
 
         /*
         =============
-        Fields
+        Config variables
         =============
         */
+        public static EnumVar<WindowMode> WindowMode = new EnumVar<WindowMode>("WindowMode", Config.WindowMode.Windowed);
+        public static FloatVar TargetFramerate = new FloatVar("TargetFramerate", 144f);
         public static IntVar DisplayWidth = new IntVar("DisplayWidth", 1280);
         public static IntVar DisplayHeight = new IntVar("DisplayHeight", 720);
         public static BoolVar EnableVSync = new BoolVar("VSync", false);
@@ -144,7 +146,7 @@ namespace Engine.Graphics
         Initialize
         =============
         */
-        public static void Initialize(Text title, ref SDL.Window window)
+        public static void Initialize(Text title, SDL.Window window)
         {
             Assert.IsTrue(_swapchain == SwapchainHandle.Null, "Graphics system has already been initialized.");
 

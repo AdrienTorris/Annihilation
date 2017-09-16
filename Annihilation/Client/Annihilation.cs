@@ -12,6 +12,7 @@ namespace Client
 
         protected override void Startup()
         {
+            
         }
 
         protected override void Update(float deltaTime)
