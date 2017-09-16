@@ -35,7 +35,7 @@ namespace Engine
             Buffer[str.Length] = 0;
         }
         
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (Buffer == null) return;
 

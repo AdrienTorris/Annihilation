@@ -5,7 +5,7 @@ namespace Engine.Graphics
 {
     public class GraphicsContext : IDisposable
     {
-        public VkInstance _instance;
+        public Instance _instance;
 
         public void Finish()
         {
@@ -14,10 +14,12 @@ namespace Engine.Graphics
 
         private void Dispose(bool disposing)
         {
-            if (_instance.Handle == IntPtr.Zero)
-                return;
+            if (_instance.IsNull) return;
 
-            _instance = IntPtr.Zero;
+            if (disposing)
+            {
+                _instance.Destroy();
+            }
         }
         
         ~GraphicsContext()

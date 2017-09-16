@@ -79,5 +79,7 @@ namespace Engine.Config
         {
             return _value.ToString();
         }
+
+        public static implicit operator int(IntVar var) => var._value;
     }
 }

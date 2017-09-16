@@ -27,40 +27,26 @@ namespace Engine
 
         protected abstract void RenderScene();
         protected abstract void RenderUI(GraphicsContext graphicsContext);
-
-        /// <summary>
-        ///     Returns true when the game should exit. By default, returns true when <see cref="SDL2.SDL.KeyCode.Escape" /> is
-        ///     pressed.
-        /// </summary>
+        
         public virtual bool IsDone()
         {
             return InputSystem.WasPressed(Button.Escape);
         }
-
-        //
-        // Disposable pattern
-        //
+        
         ~Game()
         {
             Dispose(false);
         }
-
-        //
-        // Static methods
-        //
+        
         public static void Run<T>(T game) where T : Game
         {
-            var title = Utf8.AllocateFromString(game.Title);
+            using (Text title = new Text(game.Title))
+            {
+                CreateWindow(title, game);
 
-            CreateWindow(ref title, game);
-
-            Initialize(ref title, game);
-
-            Utf8.Free(title);
-
-            SDL.ShowWindow(game._window);
-
-            // Poll and handle OS events, then update systems and game
+                Initialize(title, game);
+            }
+            
             SDL.Event evt;
             do
             {
@@ -83,7 +69,7 @@ namespace Engine
             Terminate(game);
         }
 
-        private static void CreateWindow<T>(ref byte* title, T game) where T : Game
+        private static void CreateWindow<T>(Text title, T game) where T : Game
         {
             SDL.InitSubSystem(SDL.InitFlags.Video);
 
@@ -102,14 +88,16 @@ namespace Engine
             game._window = window;
         }
 
-        private static void Initialize<T>(ref byte* title, T game) where T : Game
+        private static void Initialize<T>(Text title, T game) where T : Game
         {
-            GraphicsSystem.Initialize(ref title, ref game._window);
+            GraphicsSystem.Initialize(title, ref game._window);
             TimeSystem.Initialize();
             InputSystem.Initialize();
             ConfigSystem.Initialize();
 
             game.Startup();
+
+            SDL.ShowWindow(game._window);
         }
 
         private static void Terminate<T>(T game) where T : Game
@@ -125,7 +113,7 @@ namespace Engine
             TimeSystem.Update();
             ProfilingSystem.Update();
 
-            var deltaTime = TimeSystem.DeltaTime;
+            float deltaTime = TimeSystem.DeltaTime;
 
             InputSystem.Update(deltaTime, evt);
             ConfigSystem.HandleInput(deltaTime);
@@ -134,8 +122,7 @@ namespace Engine
             game.RenderScene();
 
             PostEffectSystem.Render();
-
-            // TODO: Setup ui context
+            
             var uiContext = new GraphicsContext();
             game.RenderUI(uiContext);
 

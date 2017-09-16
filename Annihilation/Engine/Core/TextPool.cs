@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Engine.Collections
+namespace Engine.Core
 {
     public unsafe class TextPool : IDisposable
     {

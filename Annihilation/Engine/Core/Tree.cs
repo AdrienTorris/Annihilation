@@ -43,7 +43,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-namespace Engine.Collections
+namespace Engine.Core
 {
     public class Tree<T> : TreeNode where T : TreeNode
     {

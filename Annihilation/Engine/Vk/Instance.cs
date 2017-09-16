@@ -5,8 +5,6 @@ namespace Engine.Vk
 {
     public unsafe struct Instance
     {
-        public InstanceHandle Handle;
-
         private static DestroyInstanceDelegate _destroyInstance;
         private static EnumeratePhysicalDevicesDelegate _enumeratePhysicalDevices;
         private static GetInstanceProcAddrDelegate _getInstanceProcAddr;
@@ -25,6 +23,10 @@ namespace Engine.Vk
         private static CreateIOSSurfaceMVKDelegate _createIOSSurfaceMVK;
         private static CreateMacOSSurfaceMVKDelegate _createMacOSSurfaceMVK;
 
+        public InstanceHandle Handle;
+
+        public bool IsNull => Handle.Handle == IntPtr.Zero;
+
         public Instance(InstanceHandle handle)
         {
             Handle = handle;
@@ -40,6 +42,7 @@ namespace Engine.Vk
             _destroyInstance = _destroyInstance ?? GetProcAddr<DestroyInstanceDelegate>(FunctionName.DestroyInstance);
 
             _destroyInstance(Handle, null);
+            Handle = InstanceHandle.Null;
         }
 
         public void EnumeratePhysicalDevices(out PhysicalDevice[] physicalDevices)
