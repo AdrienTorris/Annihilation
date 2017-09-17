@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Engine.Components
 {
@@ -12,6 +10,14 @@ namespace Engine.Components
 
     public struct CameraComponent
     {
+        private static readonly Hash _componentType;
+        public static Hash ComponentType => _componentType == Hash.Null ? new Hash("Camera") : _componentType;
+
+        public CameraProjectionMode ProjectionType;
+        public float VerticalFOV;
+        public float NearPlane;
+        public float FarPlane;
+
         public const float DefaultAspectRatio = 16.0f / 9.0f;
         public const float DefaultOrthographicSize = 10.0f;
         public const float DefaultVerticalFieldOfView = 45.0f;

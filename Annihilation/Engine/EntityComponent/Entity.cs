@@ -6,13 +6,13 @@ namespace Engine
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
     public struct Entity : IEquatable<Entity>
     {
-        public readonly uint Index;
-        public readonly uint Generation;
-
         public const uint InvalidIndex = uint.MaxValue;
         public const uint InvalidGeneration = uint.MaxValue;
 
         public static readonly Entity Invalid = new Entity(InvalidIndex, InvalidGeneration);
+
+        public readonly uint Index;
+        public readonly uint Generation;
 
         public Entity(uint index, uint generation)
         {

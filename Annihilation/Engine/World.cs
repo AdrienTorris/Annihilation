@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Numerics;
 using System.Collections.Generic;
+using Engine.Core;
 
 namespace Engine
 {
@@ -35,7 +36,7 @@ namespace Engine
     public class World
     {
         private WorldFlags _worldFlags;
-        private Entity[] _entities;
+        private Array<Entity> _entities;
         private Dictionary<Entity, int> _indexMap;
         private List<ComponentManager> _componentManagers = new List<ComponentManager>();
         
@@ -52,15 +53,20 @@ namespace Engine
             _worldFlags = flags;
             _componentManagers = new List<ComponentManager>(8);
             NumEntities = 0;
-            _entities = new Entity[entityCapacity];
+            _entities = new Array<Entity>(entityCapacity);
             _indexMap = new Dictionary<Entity, int>(entityCapacity);
+        }
+
+        public void AddEntity(Entity entity)
+        {
+            _entities.Add(entity);
         }
 
         public void Destroy()
         {
             foreach (var entity in _entities)
             {
-                EntityManager.Destroy(entity);
+                EntitySystem.Destroy(entity);
             }
         }
         

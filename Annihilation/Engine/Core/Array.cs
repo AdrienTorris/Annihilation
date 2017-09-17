@@ -21,6 +21,22 @@ namespace Engine.Core
             {
                 return Unsafe.Read<T>(_data + index * ElementSizeInBytes);
             }
+            set
+            {
+                Unsafe.Write(_data + index * ElementSizeInBytes, value);
+            }
+        }
+
+        public T this[uint index]
+        {
+            get
+            {
+                return Unsafe.Read<T>(_data + index * ElementSizeInBytes);
+            }
+            set
+            {
+                Unsafe.Write(_data + index * ElementSizeInBytes, value);
+            }
         }
 
         public Array(int capacity)
@@ -33,6 +49,16 @@ namespace Engine.Core
         }
 
         public Array(uint capacity) : this((int)capacity) { }
+
+        public ref T Get(int index)
+        {
+            return ref Unsafe.AsRef<T>(_data + index * ElementSizeInBytes);
+        }
+
+        public ref T Get(uint index)
+        {
+            return ref Unsafe.AsRef<T>(_data + index * ElementSizeInBytes);
+        }
 
         public int Add(T element)
         {

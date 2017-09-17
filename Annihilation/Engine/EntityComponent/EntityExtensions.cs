@@ -4,12 +4,12 @@
     {
         public static bool IsAlive (this Entity entity)
         {
-            return EntityManager.IsAlive (entity);
+            return EntitySystem.IsAlive (entity);
         }
         
         public static void Destroy (this Entity entity)
         {
-            EntityManager.Destroy (entity);
+            EntitySystem.Destroy (entity);
         }
     }
 }
