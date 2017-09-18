@@ -6,8 +6,7 @@ namespace Engine
 {
     public static class EntitySystem
     {
-        public delegate void DestroyDelegate(Entity entity);
-
+        public const int MaxEntities = 10240;
         private const int MinFreeIndices = 1024;
 
         private static Array<uint> _generations = new Array<uint>(MinFreeIndices);

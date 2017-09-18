@@ -1,46 +1,34 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
 namespace Engine.EntityComponent
 {
-    public struct TransformIndex : IEquatable<TransformIndex>
+    public struct Transform
     {
-        private int _value;
-
-        public static readonly TransformIndex Invalid = -1;
-
-        public bool Equals(TransformIndex other) => _value == other._value;
-        public override bool Equals(object obj) => obj is TransformIndex && this == (TransformIndex)obj;
-        public override int GetHashCode() => _value.GetHashCode();
-        public override string ToString() => _value.ToString();
-
-        public static bool operator ==(TransformIndex left, TransformIndex right) => left.Equals(right);
-        public static bool operator !=(TransformIndex left, TransformIndex right) => !left.Equals(right);
-
-        public static implicit operator int(TransformIndex transform) => transform._value;
-        public static implicit operator TransformIndex(int value) => new TransformIndex { _value = value };
-    }
-
-    public unsafe struct Transforms
-    {
-        public static readonly Transforms Null = default(Transforms);
-
-        public int Count;
-        public int Capacity;
-        public byte* Buffer;
-
-        public Entity* Entity;
-        public Matrix4x4* LocalMatrix;
-        public Matrix4x4* WorldMatrix;
+        public Vector3 Position;
+        public Vector3 Orientation;
+        public Vector3 Scale;
     }
 
     public unsafe class TransformManager
     {
-        private Transforms _transforms = Transforms.Null;
-        private Dictionary<Entity, TransformIndex> _map;
+        public unsafe struct Data
+        {
+            public static readonly Data Null = default(Data);
+
+            public int Count;
+            public int Capacity;
+            public byte* Buffer;
+
+            public Entity* Entity;
+            public Matrix4x4* LocalMatrix;
+            public Matrix4x4* WorldMatrix;
+        }
+
+        private Data _transforms = Data.Null;
+        private Dictionary<Entity, Index<Transform>> _map;
         
         public void Allocate(int capacity)
         {
@@ -50,7 +38,7 @@ namespace Engine.EntityComponent
                             capacity * Unsafe.SizeOf<Matrix4x4>() +
                             capacity + Unsafe.SizeOf<Matrix4x4>();
 
-            Transforms newTransforms = new Transforms
+            Data newTransforms = new Data
             {
                 Count = _transforms.Count,
                 Capacity = capacity,
@@ -69,10 +57,10 @@ namespace Engine.EntityComponent
 
             _transforms = newTransforms;
 
-            _map = new Dictionary<Entity, TransformIndex>(capacity);
+            _map = new Dictionary<Entity, Index<Transform>>(capacity);
         }
 
-        public TransformIndex Add(Entity entity, Vector3 position, Quaternion rotation, Vector3 scale)
+        public Index<Transform> Add(Entity entity, Vector3 position, Quaternion rotation, Vector3 scale)
         {
             Matrix4x4 matrix = Matrix4x4.Identity;
             matrix *= Matrix4x4.CreateTranslation(position);
@@ -82,7 +70,7 @@ namespace Engine.EntityComponent
             return Add(entity, matrix);
         }
 
-        public TransformIndex Add(Entity entity, Matrix4x4 matrix)
+        public Index<Transform> Add(Entity entity, Matrix4x4 matrix)
         {
             Assert.IsFalse(_map.ContainsKey(entity), $"Entity {entity} already has a transform.");
             
@@ -104,7 +92,7 @@ namespace Engine.EntityComponent
             return last;
         }
 
-        public void Remove(TransformIndex index)
+        public void Remove(Index<Transform> index)
         {
             Assert.IsTrue(index < _transforms.Count);
 
@@ -127,13 +115,13 @@ namespace Engine.EntityComponent
             return _map.ContainsKey(entity);
         }
 
-        public void SetLocalPosition(TransformIndex index, Vector3 position)
+        public void SetLocalPosition(Index<Transform> index, Vector3 position)
         {
             Assert.IsTrue(index < _transforms.Count);
             _transforms.LocalMatrix[index].Translation = position;
         }
 
-        public void SetLocalRotation(TransformIndex index, Quaternion rotation)
+        public void SetLocalRotation(Index<Transform> index, Quaternion rotation)
         {
             Assert.IsTrue(index < _transforms.Count);
             _transforms.LocalMatrix[index] = Matrix4x4.Transform(_transforms.LocalMatrix[index], rotation);
