@@ -28,13 +28,13 @@ namespace Engine.Config
     {
         public bool Value;
 
-        private Hash _hash;
+        private Name _hash;
 
         public BoolVar(string name, bool value)
         {
             Value = value;
 
-            _hash = new Hash(name);
+            _hash = new Name(name);
 
             ConfigSystem.RegisterBool(_hash, this);
         }
@@ -68,7 +68,7 @@ namespace Engine.Config
         public int MinValue;
         public int MaxValue;
 
-        private Hash _hash;
+        private Name _hash;
 
         public IntVar(string name, int value, int min, int max)
         {
@@ -76,7 +76,7 @@ namespace Engine.Config
             MinValue = min;
             MaxValue = max;
 
-            _hash = new Hash(name);
+            _hash = new Name(name);
 
             ConfigSystem.RegisterInt(_hash, this);
         }
@@ -97,7 +97,7 @@ namespace Engine.Config
         public float MinValue;
         public float MaxValue;
 
-        private Hash _hash;
+        private Name _hash;
 
         public FloatVar(string name, float value, float min, float max)
         {
@@ -105,7 +105,7 @@ namespace Engine.Config
             MinValue = min;
             MaxValue = max;
 
-            _hash = new Hash(name);
+            _hash = new Name(name);
 
             ConfigSystem.RegisterFloat(_hash, this);
         }
@@ -122,15 +122,15 @@ namespace Engine.Config
 
     public struct StringVar
     {
-        public Hash Value;
+        public Name Value;
 
-        private Hash _hash;
+        private Name _hash;
 
         public StringVar(string name, string value)
         {
-            Value = new Hash(value);
+            Value = new Name(value);
 
-            _hash = new Hash(name);
+            _hash = new Name(name);
 
             ConfigSystem.RegisterString(_hash, this);
         }
@@ -140,13 +140,13 @@ namespace Engine.Config
     {
         public T Value;
 
-        private Hash _hash;
+        private Name _hash;
 
         public EnumVar(string name, T value)
         {
             Value = value;
 
-            _hash = new Hash(name);
+            _hash = new Name(name);
             
 
         }

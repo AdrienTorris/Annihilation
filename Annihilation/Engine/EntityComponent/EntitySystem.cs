@@ -48,7 +48,7 @@ namespace Engine
         /// <summary>
         /// Spawns a new entity and its components from a resource.
         /// </summary>
-        public static Entity Spawn(Hash name, World world)
+        public static Entity Spawn(Name name, World world)
         {
             Entity entity = Create();
 

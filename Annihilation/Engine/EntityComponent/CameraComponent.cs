@@ -10,8 +10,8 @@ namespace Engine.Components
 
     public struct CameraComponent
     {
-        private static readonly Hash _componentType;
-        public static Hash ComponentType => _componentType == Hash.Null ? new Hash("Camera") : _componentType;
+        private static readonly Name _componentType;
+        public static Name ComponentType => _componentType == Name.Null ? new Name("Camera") : _componentType;
 
         public CameraProjectionMode ProjectionType;
         public float VerticalFOV;

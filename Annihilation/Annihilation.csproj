@@ -36,6 +36,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Engine\Config\Settings.cs" />
+    <Compile Include="Engine\Config\WindowMode.cs" />
+    <Compile Include="Engine\Core\HashMap.cs" />
+    <Compile Include="Engine\EntityComponent\ComponentType.cs" />
+    <Compile Include="Engine\EntityComponent\Mover.cs" />
+    <Compile Include="Engine\Resources\EntityResource.cs" />
+    <Compile Include="Engine\Resources\ResourceType.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="SDL2.dll" />
   </ItemGroup>
 

@@ -29,38 +29,38 @@ namespace Engine.Config
         {
         }
 
-        internal static void RegisterBool(Hash name, BoolVar var)
+        internal static void RegisterBool(Name name, BoolVar var)
         {
         }
 
-        internal static void RegisterInt(Hash name, IntVar var)
+        internal static void RegisterInt(Name name, IntVar var)
         {
         }
 
-        internal static void RegisterFloat(Hash name, FloatVar var)
+        internal static void RegisterFloat(Name name, FloatVar var)
         {
         }
 
-        internal static void RegisterString(Hash name, StringVar var)
+        internal static void RegisterString(Name name, StringVar var)
         {
         }
 
-        public static void SetBool(Hash name, bool value)
-        {
-
-        }
-
-        public static void SetInt(Hash name, int value)
+        public static void SetBool(Name name, bool value)
         {
 
         }
 
-        public static void SetFloat(Hash name, float value)
+        public static void SetInt(Name name, int value)
         {
 
         }
 
-        public static void SetString(Hash name, string value)
+        public static void SetFloat(Name name, float value)
+        {
+
+        }
+
+        public static void SetString(Name name, string value)
         {
 
         }
