@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Annihilation.Vk
+namespace Annihilation.Vulkan
 {
     public unsafe struct Device
     {
@@ -223,117 +223,168 @@ namespace Annihilation.Vk
             _getBufferMemoryRequirements(Handle, buffer, out memoryRequirements);
         }
 
-        public void BindBufferMemory()
+        public void BindBufferMemory(BufferHandle buffer, DeviceMemoryHandle memory, DeviceSize memoryOffset)
         {
             _bindBufferMemory = _bindBufferMemory ??
                                 GetDeviceProcAddr<BindBufferMemoryDelegate>(FunctionName.BindBufferMemory);
 
-            //_bindBufferMemory(Handle, )
+            _bindBufferMemory(Handle, buffer, memory, memoryOffset).CheckError();
         }
 
-        public void GetImageMemoryRequirements()
+        public void GetImageMemoryRequirements(ImageHandle image, out MemoryRequirements memoryRequirements)
         {
             _getImageMemoryRequirements = _getImageMemoryRequirements ??
                                           GetDeviceProcAddr<GetImageMemoryRequirementsDelegate>(FunctionName
                                               .GetImageMemoryRequirements);
+
+            _getImageMemoryRequirements(Handle, image, out memoryRequirements);
         }
 
-        public void BindImageMemory()
+        public void BindImageMemory(ImageHandle image, DeviceMemoryHandle memory, DeviceSize memoryOffset)
         {
             _bindImageMemory = _bindImageMemory ??
                                GetDeviceProcAddr<BindImageMemoryDelegate>(FunctionName.BindImageMemory);
+
+            _bindImageMemory(Handle, image, memory, memoryOffset).CheckError();
         }
 
-        public void GetImageSparseMemoryRequirements()
+        public void GetImageSparseMemoryRequirements(ImageHandle image, out SparseImageMemoryRequirements[] sparseMemoryRequirements)
         {
             _getImageSparseMemoryRequirements = _getImageSparseMemoryRequirements ??
                                                 GetDeviceProcAddr<GetImageSparseMemoryRequirementsDelegate>(FunctionName
                                                     .GetImageSparseMemoryRequirements);
+
+            uint count = 0;
+            _getImageSparseMemoryRequirements(Handle, image, ref count, null);
+            SparseImageMemoryRequirements* requirements =
+                (SparseImageMemoryRequirements*)Marshal.AllocHGlobal(
+                    (int)count * sizeof(SparseImageMemoryRequirements));
+            _getImageSparseMemoryRequirements(Handle, image, ref count, requirements);
+
+            sparseMemoryRequirements = new SparseImageMemoryRequirements[count];
+            for (int i = 0; i < count; ++i)
+            {
+                sparseMemoryRequirements[i] = requirements[i];
+            }
+
+            Marshal.FreeHGlobal(new IntPtr(requirements));
         }
 
-        public void CreateFence()
+        public void CreateFence(ref FenceCreateInfo createInfo, out FenceHandle fence)
         {
             _createFence = _createFence ?? GetDeviceProcAddr<CreateFenceDelegate>(FunctionName.CreateFence);
+
+            _createFence(Handle, ref createInfo, null, out fence).CheckError();
         }
 
-        public void DestroyFence()
+        public void DestroyFence(FenceHandle fence)
         {
             _destroyFence = _destroyFence ?? GetDeviceProcAddr<DestroyFenceDelegate>(FunctionName.DestroyFence);
+
+            _destroyFence(Handle, fence, null);
         }
 
-        public void ResetFences()
+        public void ResetFences(uint fenceCount, FenceHandle* fences)
         {
             _resetFences = _resetFences ?? GetDeviceProcAddr<ResetFencesDelegate>(FunctionName.ResetFences);
+
+            _resetFences(Handle, fenceCount, fences).CheckError();
         }
 
-        public void GetFenceStatus()
+        public void GetFenceStatus(FenceHandle fence)
         {
             _getFenceStatus = _getFenceStatus ?? GetDeviceProcAddr<GetFenceStatusDelegate>(FunctionName.GetFenceStatus);
+
+            _getFenceStatus(Handle, fence).CheckError();
         }
 
-        public void WaitForFences()
+        public void WaitForFences(uint fenceCount, FenceHandle* fences, Bool32 waitAll, ulong timeout)
         {
             _waitForFences = _waitForFences ?? GetDeviceProcAddr<WaitForFencesDelegate>(FunctionName.WaitForFences);
+
+            _waitForFences(Handle, fenceCount, fences, waitAll, timeout).CheckError();
         }
 
-        public void CreateSemaphore()
+        public void CreateSemaphore(ref SemaphoreCreateInfo createInfo, out SemaphoreHandle semaphore)
         {
             _createSemaphore = _createSemaphore ??
                                GetDeviceProcAddr<CreateSemaphoreDelegate>(FunctionName.CreateSemaphore);
+
+            _createSemaphore(Handle, ref createInfo, null, out semaphore).CheckError();
         }
 
-        public void DestroySemaphore()
+        public void DestroySemaphore(SemaphoreHandle semaphore)
         {
             _destroySemaphore = _destroySemaphore ??
                                 GetDeviceProcAddr<DestroySemaphoreDelegate>(FunctionName.DestroySemaphore);
+
+            _destroySemaphore(Handle, semaphore, null);
         }
 
-        public void CreateEvent()
+        public void CreateEvent(ref EventCreateInfo createInfo, out EventHandle evt)
         {
             _createEvent = _createEvent ?? GetDeviceProcAddr<CreateEventDelegate>(FunctionName.CreateEvent);
+
+            _createEvent(Handle, ref createInfo, null, out evt).CheckError();
         }
 
-        public void DestroyEvent()
+        public void DestroyEvent(EventHandle evt)
         {
             _destroyEvent = _destroyEvent ?? GetDeviceProcAddr<DestroyEventDelegate>(FunctionName.DestroyEvent);
+
+            _destroyEvent(Handle, evt, null);
         }
 
-        public void GetEventStatus()
+        public void GetEventStatus(EventHandle evt)
         {
             _getEventStatus = _getEventStatus ?? GetDeviceProcAddr<GetEventStatusDelegate>(FunctionName.GetEventStatus);
+
+            _getEventStatus(Handle, evt).CheckError();
         }
 
-        public void SetEvent()
+        public void SetEvent(EventHandle evt)
         {
             _setEvent = _setEvent ?? GetDeviceProcAddr<SetEventDelegate>(FunctionName.SetEvent);
+
+            _setEvent(Handle, evt).CheckError();
         }
 
-        public void ResetEvent()
+        public void ResetEvent(EventHandle evt)
         {
             _resetEvent = _resetEvent ?? GetDeviceProcAddr<ResetEventDelegate>(FunctionName.ResetEvent);
+
+            _resetEvent(Handle, evt).CheckError();
         }
 
-        public void CreateQueryPool()
+        public void CreateQueryPool(ref QueryPoolCreateInfo createInfo, out QueryPoolHandle queryPool)
         {
             _createQueryPool = _createQueryPool ??
                                GetDeviceProcAddr<CreateQueryPoolDelegate>(FunctionName.CreateQueryPool);
+
+            _createQueryPool(Handle, ref createInfo, null, out queryPool).CheckError();
         }
 
-        public void DestroyQueryPool()
+        public void DestroyQueryPool(QueryPoolHandle queryPool)
         {
             _destroyQueryPool = _destroyQueryPool ??
                                 GetDeviceProcAddr<DestroyQueryPoolDelegate>(FunctionName.DestroyQueryPool);
+
+            _destroyQueryPool(Handle, queryPool, null);
         }
 
-        public void GetQueryPoolResults()
+        public void GetQueryPoolResults(QueryPoolHandle queryPool, uint firstQuery, uint queryCount, Size dataSize, void* data, DeviceSize stride, QueryResultFlags flags)
         {
             _getQueryPoolResults = _getQueryPoolResults ??
                                    GetDeviceProcAddr<GetQueryPoolResultsDelegate>(FunctionName.GetQueryPoolResults);
+
+            _getQueryPoolResults(Handle, queryPool, firstQuery, queryCount, dataSize, data, stride, flags).CheckError();
         }
 
-        public void CreateBuffer()
+        public void CreateBuffer(ref BufferCreateInfo createInfo, out BufferHandle buffer)
         {
             _createBuffer = _createBuffer ?? GetDeviceProcAddr<CreateBufferDelegate>(FunctionName.CreateBuffer);
+
+            _createBuffer(Handle, ref createInfo, null, out buffer).CheckError();
         }
 
         public void DestroyBuffer()

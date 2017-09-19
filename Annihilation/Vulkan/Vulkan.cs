@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using SDL2;
 
-namespace Annihilation.Vk
+namespace Annihilation.Vulkan
 {
     #region Vulkan
     public static unsafe class Vulkan
@@ -5861,7 +5861,7 @@ namespace Annihilation.Vk
     public unsafe delegate Result BindImageMemoryDelegate(DeviceHandle device, ImageHandle image, DeviceMemoryHandle memory, DeviceSize memoryOffset);
     public unsafe delegate void GetBufferMemoryRequirementsDelegate(DeviceHandle device, BufferHandle buffer, out MemoryRequirements memoryRequirements);
     public unsafe delegate void GetImageMemoryRequirementsDelegate(DeviceHandle device, ImageHandle image, out MemoryRequirements memoryRequirements);
-    public unsafe delegate void GetImageSparseMemoryRequirementsDelegate(DeviceHandle device, ImageHandle image, out uint sparseMemoryRequirementCount, SparseImageMemoryRequirements* sparseMemoryRequirements);
+    public unsafe delegate void GetImageSparseMemoryRequirementsDelegate(DeviceHandle device, ImageHandle image, ref uint sparseMemoryRequirementCount, SparseImageMemoryRequirements* sparseMemoryRequirements);
     public unsafe delegate void GetPhysicalDeviceSparseImageFormatPropertiesDelegate(PhysicalDeviceHandle physicalDevice, Format format, ImageType type, SampleCountFlags samples, ImageUsageFlags usage, ImageTiling tiling, ref uint propertyCount, SparseImageFormatProperties* properties);
     public unsafe delegate Result QueueBindSparseDelegate(QueueHandle queue, uint bindInfoCount, ref BindSparseInfo bindInfo, FenceHandle fence);
     public unsafe delegate Result CreateFenceDelegate(DeviceHandle device, ref FenceCreateInfo createInfo, AllocationCallbacks* Allocator, out FenceHandle fence);

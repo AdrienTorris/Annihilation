@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Annihilation.Vk
+namespace Annihilation.Vulkan
 {
     public unsafe struct Instance
     {
@@ -68,7 +68,7 @@ namespace Annihilation.Vk
             _getInstanceProcAddr = _getInstanceProcAddr ?? Vulkan.LoadGlobalFunction<GetInstanceProcAddrDelegate>(FunctionName.GetInstanceProcAddr);
 
             IntPtr func = _getInstanceProcAddr(Handle, functionName);
-            if (func == IntPtr.Zero) throw new Exception("Could not load Vulkan function " + Utf8.ToString(functionName));
+            if (func == IntPtr.Zero) throw new Exception("Could not load Vulkan function " + Annihilation.Utf8.ToString(functionName));
             return Marshal.GetDelegateForFunctionPointer<T>(func);
         }
 

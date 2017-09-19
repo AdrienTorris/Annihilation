@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace Annihilation.Vk
+namespace Annihilation.Vulkan
 {
     public unsafe struct Surface
     {

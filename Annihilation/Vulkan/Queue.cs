@@ -1,4 +1,4 @@
-﻿namespace Annihilation.Vk
+﻿namespace Annihilation.Vulkan
 {
     public unsafe struct Queue
     {

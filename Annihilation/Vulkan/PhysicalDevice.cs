@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Annihilation.Vk
+namespace Annihilation.Vulkan
 {
     public unsafe struct PhysicalDevice
     {

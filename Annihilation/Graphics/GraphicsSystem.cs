@@ -3,10 +3,10 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Annihilation.Config;
 using Annihilation.Core;
-using Annihilation.Vk;
+using Annihilation.Vulkan;
 using SDL2;
 
-using Version = Annihilation.Vk.Version;
+using Version = Annihilation.Vulkan.Version;
 
 namespace Annihilation.Graphics
 {
