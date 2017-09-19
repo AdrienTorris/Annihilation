@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Engine.Graphics
+namespace Annihilation.Graphics
 {
     public class TextContext
     {

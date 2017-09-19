@@ -1,6 +1,6 @@
 ﻿using static SDL2.SDL;
 
-namespace Engine.Input
+namespace Annihilation.Input
 {
     public static unsafe class InputSystem
     {

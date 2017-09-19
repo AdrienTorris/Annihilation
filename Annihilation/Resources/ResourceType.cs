@@ -1,4 +1,4 @@
-﻿namespace Engine.Resources
+﻿namespace Annihilation.Resources
 {
     public enum ResourceType : byte
     {

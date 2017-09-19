@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Engine.Vk
+namespace Annihilation.Vk
 {
     public unsafe struct Device
     {

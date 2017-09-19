@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Engine.Graphics
+namespace Annihilation.Graphics
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct GpuVendor

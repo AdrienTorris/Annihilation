@@ -2,7 +2,7 @@
 using System.Security;
 using System.Runtime.InteropServices;
 
-namespace Engine.Wwise
+namespace Annihilation.Wwise
 {
     public enum Result
     {

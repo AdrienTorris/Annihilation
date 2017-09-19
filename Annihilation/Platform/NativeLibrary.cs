@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Engine.Platform
+namespace Annihilation.Platform
 {
     /// <summary>
     /// Represents a native shared library opened by the operating system.

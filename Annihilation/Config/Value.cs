@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Engine
+namespace Annihilation
 {
     public enum ValueType : byte
     {

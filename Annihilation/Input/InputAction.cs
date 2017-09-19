@@ -1,4 +1,4 @@
-﻿namespace Engine.Input
+﻿namespace Annihilation.Input
 {
     public struct InputAction
     {

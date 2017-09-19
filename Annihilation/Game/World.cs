@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Numerics;
 using System.Collections.Generic;
-using Engine.Core;
+using Annihilation.Core;
 
-namespace Engine
+namespace Annihilation
 {
     [Flags]
     public enum WorldFlags
@@ -64,9 +64,9 @@ namespace Engine
 
         public void Destroy()
         {
-            foreach (var entity in _entities)
+            for (int i = _entities.Count - 1; i >= 0; --i)
             {
-                EntitySystem.Destroy(entity);
+                EntitySystem.Destroy(_entities[i]);
             }
         }
         

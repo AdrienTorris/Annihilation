@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace Engine.Core
+namespace Annihilation.Core
 {
     public sealed class MapElement<TKey, TValue>
     {

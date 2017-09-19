@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Engine.Input
+namespace Annihilation.Input
 {
     [Flags]
     public enum GamepadButton : ushort

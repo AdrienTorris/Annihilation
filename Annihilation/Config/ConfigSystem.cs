@@ -1,6 +1,6 @@
-﻿using Engine.Graphics;
+﻿using Annihilation.Graphics;
 
-namespace Engine.Config
+namespace Annihilation.Config
 {
     public static class ConfigSystem
     {

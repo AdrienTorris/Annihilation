@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Engine.Config;
-using Engine.Core;
-using Engine.Vk;
+using Annihilation.Config;
+using Annihilation.Core;
+using Annihilation.Vk;
 using SDL2;
 
-using Version = Engine.Vk.Version;
+using Version = Annihilation.Vk.Version;
 
-namespace Engine.Graphics
+namespace Annihilation.Graphics
 {
     /*
     ===========================================================================
@@ -148,7 +149,7 @@ namespace Engine.Graphics
         */
         public static void Initialize(Text title, SDL.Window window)
         {
-            Assert.IsTrue(_swapchain == SwapchainHandle.Null, "Graphics system has already been initialized.");
+            Debug.Assert(_swapchain == SwapchainHandle.Null, "Graphics system has already been initialized.");
 
             //LoadGetInstanceProcAddrFunction();
             //LoadGlobalFunctions();
@@ -727,11 +728,11 @@ namespace Engine.Graphics
 
             switch (flags)
             {
-                case DebugReportFlags.Information: Log.Info(output); return false;
-                case DebugReportFlags.Warning: Log.Warning(output); return false;
-                case DebugReportFlags.PerformanceWarning: Log.Performance(output); return false;
-                case DebugReportFlags.Error: Log.Error(output); return true;
-                case DebugReportFlags.Debug: Log.Info(output); return false;
+                case DebugReportFlags.Information: Trace.TraceInformation(output); return false;
+                case DebugReportFlags.Warning: Trace.TraceWarning(output); return false;
+                case DebugReportFlags.PerformanceWarning: Trace.TraceWarning(output); return false;
+                case DebugReportFlags.Error: Trace.TraceError(output); return true;
+                case DebugReportFlags.Debug: Trace.TraceInformation(output); return false;
                 default: return false;
             }
         }

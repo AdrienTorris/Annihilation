@@ -1,7 +1,7 @@
-﻿using Engine.Core;
-using Engine.Vk;
+﻿using Annihilation.Core;
+using Annihilation.Vk;
 
-namespace Engine.Graphics
+namespace Annihilation.Graphics
 {
     public struct GpuInfo
     {

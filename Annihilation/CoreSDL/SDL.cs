@@ -16,7 +16,7 @@ namespace SDL2
         private const string LibraryName = "libdylib";
 #else
         private const string LibraryName = " ";
-#error Unknown Platform
+#error Unsupported platform
 #endif
 
         public static class Hints

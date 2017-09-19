@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace Engine.Mathematics
+namespace Annihilation.Mathematics
 {
     /// <summary>
     /// A class containing extension methods for processing colors.

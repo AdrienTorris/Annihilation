@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Engine.Mathematics;
+using Annihilation.Mathematics;
 
-namespace Engine
+namespace Annihilation
 {
     /// <summary>
     /// Represents a hashed string.

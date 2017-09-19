@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace Engine.Core
+namespace Annihilation.Core
 {
     public unsafe class TextPool : IDisposable
     {
@@ -12,8 +13,8 @@ namespace Engine.Core
 
         public TextPool(int capacity, int itemSize)
         {
-            Assert.IsTrue(capacity > 0);
-            Assert.IsTrue(itemSize > 0);
+            Debug.Assert(capacity > 0);
+            Debug.Assert(itemSize > 0);
 
             _capacity = capacity;
             _itemSize = itemSize + 1;
@@ -24,15 +25,15 @@ namespace Engine.Core
         
         public byte* GetEmpty()
         {
-            Assert.IsTrue(_count < _capacity, "Pool is full.");
+            Debug.Assert(_count < _capacity, "Pool is full.");
 
             return _buffer + _count * _itemSize;
         }
 
         public byte* Get(string str)
         {
-            Assert.IsTrue(!string.IsNullOrEmpty(str));
-            Assert.IsTrue(_count < _capacity, "Pool is full.");
+            Debug.Assert(!string.IsNullOrEmpty(str));
+            Debug.Assert(_count < _capacity, "Pool is full.");
 
             for (int i = 0; i < str.Length; ++i)
             {

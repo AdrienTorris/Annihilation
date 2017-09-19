@@ -1,11 +1,11 @@
 ﻿using System;
-using Engine.Config;
-using Engine.Graphics;
-using Engine.Input;
-using Engine.Profiling;
+using Annihilation.Config;
+using Annihilation.Graphics;
+using Annihilation.Input;
+using Annihilation.Profiling;
 using SDL2;
 
-namespace Engine
+namespace Annihilation
 {
     public abstract unsafe class Game : IDisposable
     {

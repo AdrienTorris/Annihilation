@@ -1,4 +1,4 @@
-﻿namespace Engine
+﻿namespace Annihilation
 {
     public static class StringUtility
     {

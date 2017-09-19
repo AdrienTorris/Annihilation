@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Engine
+namespace Annihilation
 {
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
     public struct Entity : IEquatable<Entity>

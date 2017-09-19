@@ -2,7 +2,7 @@
 using System.Numerics;
 using System.Runtime.InteropServices;
 
-namespace Engine.Input
+namespace Annihilation.Input
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct GamepadState : IEquatable<GamepadState>

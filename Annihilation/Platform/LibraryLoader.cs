@@ -2,7 +2,7 @@
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace Engine.Platform
+namespace Annihilation.Platform
 {
     /// <summary>
     /// Exposes functionality for loading native libraries and function pointers.

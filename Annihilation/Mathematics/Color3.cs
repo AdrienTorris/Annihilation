@@ -2,7 +2,7 @@
 using System.Numerics;
 using System.Runtime.InteropServices;
 
-namespace Engine.Mathematics
+namespace Annihilation.Mathematics
 {
     public struct Color3
     {

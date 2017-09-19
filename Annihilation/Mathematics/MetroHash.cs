@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Engine.Mathematics
+namespace Annihilation.Mathematics
 {
     public static unsafe class MetroHash
     {

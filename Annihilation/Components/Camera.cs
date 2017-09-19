@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Numerics;
 
-namespace Engine.Components
+namespace Annihilation.Components
 {
     class Camera
     {

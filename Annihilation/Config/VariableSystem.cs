@@ -336,7 +336,7 @@
 //        {
 //            if (_vars.TryGetValue(name, out Value value))
 //            {
-//                Assert.IsTrue(value.Type == ValueType.Uint8, "Trying to get an byte value for var of type " + value.Type);
+//                Debug.Assert(value.Type == ValueType.Uint8, "Trying to get an byte value for var of type " + value.Type);
 //                return value.Uint8;
 //            }
 //            return defaultValue;
@@ -346,7 +346,7 @@
 //        {
 //            if (_vars.TryGetValue(name, out Value value))
 //            {
-//                Assert.IsTrue(value.Type == ValueType.Uint16, "Trying to get an ushort value for var of type " + value.Type);
+//                Debug.Assert(value.Type == ValueType.Uint16, "Trying to get an ushort value for var of type " + value.Type);
 //                return value.Uint16;
 //            }
 //            return defaultValue;
@@ -356,7 +356,7 @@
 //        {
 //            if (_vars.TryGetValue(name, out Value value))
 //            {
-//                Assert.IsTrue(value.Type == ValueType.Uint32, "Trying to get an uint value for var of type " + value.Type);
+//                Debug.Assert(value.Type == ValueType.Uint32, "Trying to get an uint value for var of type " + value.Type);
 //                return value.Uint32;
 //            }
 //            return defaultValue;
@@ -366,7 +366,7 @@
 //        {
 //            if (_vars.TryGetValue(name, out Value value))
 //            {
-//                Assert.IsTrue(value.Type == ValueType.Uint64, "Trying to get an ulong value for var of type " + value.Type);
+//                Debug.Assert(value.Type == ValueType.Uint64, "Trying to get an ulong value for var of type " + value.Type);
 //                return value.Uint64;
 //            }
 //            return defaultValue;
@@ -376,7 +376,7 @@
 //        {
 //            if (_vars.TryGetValue(name, out Value value))
 //            {
-//                Assert.IsTrue(value.Type == ValueType.Int8, "Trying to get an sbyte value for var of type " + value.Type);
+//                Debug.Assert(value.Type == ValueType.Int8, "Trying to get an sbyte value for var of type " + value.Type);
 //                return value.Int8;
 //            }
 //            return defaultValue;
@@ -386,7 +386,7 @@
 //        {
 //            if (_vars.TryGetValue(name, out Value value))
 //            {
-//                Assert.IsTrue(value.Type == ValueType.Int16, "Trying to get a short value for var of type " + value.Type);
+//                Debug.Assert(value.Type == ValueType.Int16, "Trying to get a short value for var of type " + value.Type);
 //                return value.Int16;
 //            }
 //            return defaultValue;
@@ -396,7 +396,7 @@
 //        {
 //            if (_vars.TryGetValue(name, out Value value))
 //            {
-//                Assert.IsTrue(value.Type == ValueType.Int32, "Trying to get an int value for var of type " + value.Type);
+//                Debug.Assert(value.Type == ValueType.Int32, "Trying to get an int value for var of type " + value.Type);
 //                return value.Int32;
 //            }
 //            return defaultValue;
@@ -406,7 +406,7 @@
 //        {
 //            if (_vars.TryGetValue(name, out Value value))
 //            {
-//                Assert.IsTrue(value.Type == ValueType.Int64, "Trying to get a long value for var of type " + value.Type);
+//                Debug.Assert(value.Type == ValueType.Int64, "Trying to get a long value for var of type " + value.Type);
 //                return value.Int64;
 //            }
 //            return defaultValue;
@@ -416,7 +416,7 @@
 //        {
 //            if (_vars.TryGetValue(name, out Value value))
 //            {
-//                Assert.IsTrue(value.Type == ValueType.Float, "Trying to get a float value for var of type " + value.Type);
+//                Debug.Assert(value.Type == ValueType.Float, "Trying to get a float value for var of type " + value.Type);
 //                return value.Float;
 //            }
 //            return defaultValue;
@@ -426,7 +426,7 @@
 //        {
 //            if (_vars.TryGetValue(name, out Value value))
 //            {
-//                Assert.IsTrue(value.Type == ValueType.Double, "Trying to get a double value for var of type " + value.Type);
+//                Debug.Assert(value.Type == ValueType.Double, "Trying to get a double value for var of type " + value.Type);
 //                return value.Double;
 //            }
 //            return defaultValue;
@@ -436,7 +436,7 @@
 //        {
 //            if (_vars.TryGetValue(name, out Value value))
 //            {
-//                Assert.IsTrue(value.Type == ValueType.Bool, "Trying to get a bool value for var of type " + value.Type);
+//                Debug.Assert(value.Type == ValueType.Bool, "Trying to get a bool value for var of type " + value.Type);
 //                return value.Bool;
 //            }
 //            return defaultValue;
@@ -446,7 +446,7 @@
 //        {
 //            if (_vars.TryGetValue(name, out Value value))
 //            {
-//                Assert.IsTrue(value.Type == ValueType.String, "Trying to get a string value for var of type " + value.Type);
+//                Debug.Assert(value.Type == ValueType.String, "Trying to get a string value for var of type " + value.Type);
 //                return new string(value.String);
 //            }
 //            return defaultValue;

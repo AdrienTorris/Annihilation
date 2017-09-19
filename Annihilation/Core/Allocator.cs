@@ -1,4 +1,4 @@
-﻿namespace Engine.Core
+﻿namespace Annihilation.Core
 {
     /// <summary>
     /// Base interface for memory allocators.

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Engine.Vk
+namespace Annihilation.Vk
 {
     public unsafe struct DebugReportCallback
     {

@@ -1,4 +1,4 @@
-﻿namespace Engine.Graphics
+﻿namespace Annihilation.Graphics
 {
     public enum DisplayMode
     {

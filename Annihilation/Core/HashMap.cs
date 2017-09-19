@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Engine.Core
+namespace Annihilation.Core
 {
     class HashMap
     {

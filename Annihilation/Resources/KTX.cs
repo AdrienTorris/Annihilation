@@ -1,10 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
-using Engine.Vk;
-using Engine.Graphics;
+using Annihilation.Vk;
+using Annihilation.Graphics;
 
-namespace Engine
+namespace Annihilation
 {
     public static class KTX
     {

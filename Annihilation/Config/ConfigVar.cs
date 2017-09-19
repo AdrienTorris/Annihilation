@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.InteropServices;
-using Engine.Graphics;
+using Annihilation.Graphics;
 
-namespace Engine.Config
+namespace Annihilation.Config
 {
     /*
     ===============================================================================

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using Engine.Core;
+using Annihilation.Core;
 
-namespace Engine
+namespace Annihilation
 {
     public static class EntitySystem
     {

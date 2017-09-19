@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace Engine
+namespace Annihilation
 {
     public unsafe class Text : IDisposable
     {
@@ -25,7 +26,7 @@ namespace Engine
 
         public Text(string str)
         {
-            Assert.IsTrue(str != null);
+            Debug.Assert(str != null);
 
             Buffer = (byte*)Marshal.AllocHGlobal(str.Length + 1);
             for (int i = 0; i < str.Length; ++i)

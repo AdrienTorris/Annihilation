@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Engine.Input
+namespace Annihilation.Input
 {
     public enum ButtonState : byte
     {

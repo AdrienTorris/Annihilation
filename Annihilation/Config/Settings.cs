@@ -1,4 +1,4 @@
-﻿namespace Engine.Config
+﻿namespace Annihilation.Config
 {
     public struct Settings
     {

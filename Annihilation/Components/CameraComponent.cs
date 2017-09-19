@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Engine.Components
+namespace Annihilation.Components
 {
     public enum CameraProjectionMode : byte
     {

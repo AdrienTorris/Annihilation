@@ -1,7 +1,7 @@
 ﻿using System;
-using Engine.Vk;
+using Annihilation.Vk;
 
-namespace Engine.Graphics
+namespace Annihilation.Graphics
 {
     public class GraphicsContext : IDisposable
     {

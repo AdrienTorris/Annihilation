@@ -1,6 +1,6 @@
 ﻿using SDL2;
 
-namespace Engine.Input
+namespace Annihilation.Input
 {
     public struct KeyEvent
     {

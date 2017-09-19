@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Engine.EntityComponent
+namespace Annihilation.Components
 {
     public struct Index<T> : IEquatable<Index<T>>
     {

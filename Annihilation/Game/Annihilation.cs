@@ -1,7 +1,8 @@
-﻿using Engine;
-using Engine.Core;
-using Engine.Input;
-using Engine.Graphics;
+﻿using System.Diagnostics;
+using Annihilation;
+using Annihilation.Core;
+using Annihilation.Input;
+using Annihilation.Graphics;
 
 namespace Client
 {
@@ -20,8 +21,8 @@ namespace Client
             for(int i = 0; i < (int)Button.Count; ++i)
             {
                 Button button = (Button)i;
-                if (InputSystem.WasPressed(button)) Log.Info("Pressed " + button);
-                if (InputSystem.WasReleased(button)) Log.Info("Released " + button);
+                if (InputSystem.WasPressed(button)) Trace.TraceInformation("Pressed " + button);
+                if (InputSystem.WasReleased(button)) Trace.TraceInformation("Released " + button);
             }
         }
 

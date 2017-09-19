@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Numerics;
 
-namespace Engine.Mathematics
+namespace Annihilation.Mathematics
 {
     public static class MathUtility
     {

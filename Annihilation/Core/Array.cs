@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
-namespace Engine.Core
+namespace Annihilation.Core
 {
     public unsafe struct Array<T> 
         where T : struct
@@ -74,8 +75,8 @@ namespace Engine.Core
 
         public void Remove(int index)
         {
-            Assert.IsTrue(Count > 0);
-            Assert.IsTrue(index < Count);
+            Debug.Assert(Count > 0);
+            Debug.Assert(index < Count);
 
             T last = Unsafe.Read<T>(_data + (Count - 1) * ElementSizeInBytes);
             Unsafe.Write(_data + index * ElementSizeInBytes, last);
@@ -85,7 +86,7 @@ namespace Engine.Core
         
         public void RemoveLast()
         {
-            Assert.IsTrue(Count > 0);
+            Debug.Assert(Count > 0);
 
             --Count;
         }

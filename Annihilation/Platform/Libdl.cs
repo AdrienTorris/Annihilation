@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Engine.Platform
+namespace Annihilation.Platform
 {
     public static class Libdl
     {

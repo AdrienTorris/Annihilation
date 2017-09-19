@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using SDL2;
 
-namespace Engine.Vk
+namespace Annihilation.Vk
 {
     #region Vulkan
     public static unsafe class Vulkan

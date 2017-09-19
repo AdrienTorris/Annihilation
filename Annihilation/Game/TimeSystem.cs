@@ -1,6 +1,6 @@
 ﻿using SDL2;
 
-namespace Engine
+namespace Annihilation
 {
     public static class TimeSystem
     {

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Engine.Wwise
+namespace Annihilation.Wwise
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct InitSettings

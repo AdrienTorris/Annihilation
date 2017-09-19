@@ -3,7 +3,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
-namespace Engine
+namespace Annihilation
 {
     public static unsafe class Utf8
     {

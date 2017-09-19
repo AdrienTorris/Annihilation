@@ -1,6 +1,6 @@
-﻿using Engine.EntityComponent;
+﻿using Annihilation.Components;
 
-namespace Engine.Resources
+namespace Annihilation.Resources
 {
     public struct EntityResource
     {
