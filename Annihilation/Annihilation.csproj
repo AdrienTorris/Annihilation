@@ -3,47 +3,22 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <ApplicationIcon />
-    <StartupObject />
     <Platforms>x64</Platforms>
     <RootNamespace></RootNamespace>
     <Configurations>Debug;Release;Profile</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <PlatformTarget>x64</PlatformTarget>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <BaseIntermediateOutputPath>..\Temp\</BaseIntermediateOutputPath>
-    <BaseOutputPath>..\Build\</BaseOutputPath>
-    <DocumentationFile></DocumentationFile>
-    <DefineConstants>TRACE;DEBUG;NETCOREAPP2_0;PLATFORM_WINDOWS;ENABLE_VALIDATION</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
-    <PlatformTarget>x64</PlatformTarget>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <BaseIntermediateOutputPath>..\Temp\</BaseIntermediateOutputPath>
-    <BaseOutputPath>..\Build\</BaseOutputPath>
-    <DefineConstants>PROFILE;NETCOREAPP2_0;PLATFORM_WINDOWS</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <PlatformTarget>x64</PlatformTarget>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <BaseIntermediateOutputPath>..\Temp\</BaseIntermediateOutputPath>
-    <BaseOutputPath>..\Build\</BaseOutputPath>
-    <DefineConstants>RELEASE;NETCOREAPP2_0;PLATFORM_WINDOWS</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="Engine\Config\Settings.cs" />
-    <Compile Include="Engine\Config\WindowMode.cs" />
-    <Compile Include="Engine\Core\HashMap.cs" />
-    <Compile Include="Engine\EntityComponent\ComponentType.cs" />
-    <Compile Include="Engine\EntityComponent\Mover.cs" />
-    <Compile Include="Engine\Resources\EntityResource.cs" />
-    <Compile Include="Engine\Resources\ResourceType.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Include="SDL2.dll" />
