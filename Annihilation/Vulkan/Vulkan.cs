@@ -9,7 +9,7 @@ namespace Annihilation.Vulkan
     #region Vulkan
     public static unsafe class Vulkan
     {
-        public const uint HeaderVersion = 57;
+        public const uint HeaderVersion = 61;
         public const float LodClampNone = 1000f;
         public const uint RemainingMipLevels = ~0U;
         public const uint RemainingArrayLayers = ~0U;
@@ -26,8 +26,8 @@ namespace Annihilation.Vulkan
         public const int LUIDSize = 8;
         public const int MaxDeviceGroupSize = 32;
 
-        public static GetInstanceProcAddrDelegate GetInstanceProcAddr;
-        
+        public static readonly GetInstanceProcAddrDelegate GetInstanceProcAddr;
+
         private static CreateInstanceDelegate _createInstance;
         private static EnumerateInstanceExtensionPropertiesDelegate _enumerateInstanceExtensionProperties;
         private static EnumerateInstanceLayerPropertiesDelegate _enumerateInstanceLayerProperties;
@@ -36,26 +36,26 @@ namespace Annihilation.Vulkan
         {
             SDL.VulkanLoadLibrary(null);
 
-            GetInstanceProcAddr = LoadGetInstanceProcAddrFunction();
+            IntPtr getInstanceProcAddrPtr = SDL.VulkanGetVkGetInstanceProcAddr();
+            if (getInstanceProcAddrPtr == IntPtr.Zero) throw new Exception(Utf8.ToString(SDL.GetError()));
+            GetInstanceProcAddr = Marshal.GetDelegateForFunctionPointer<GetInstanceProcAddrDelegate>(getInstanceProcAddrPtr);
         }
 
-        public static void CreateInstance(ref InstanceCreateInfo createInfo, out Instance instance)
+        public static void CreateInstance(ref InstanceCreateInfo createInfo, out InstanceHandle handle)
         {
             _createInstance = _createInstance ?? LoadGlobalFunction<CreateInstanceDelegate>(FunctionName.CreateInstance);
 
-            _createInstance(ref createInfo, null, out InstanceHandle handle).CheckError();
-
-            instance = new Instance(handle);
+            _createInstance(ref createInfo, null, out handle).CheckError();
         }
 
-        public static void EnumerateInstanceExtensionProperties(byte* layerName, out ExtensionProperties[] extensionProperties)
+        public static void EnumerateInstanceExtensionProperties(out ExtensionProperties[] extensionProperties)
         {
             _enumerateInstanceExtensionProperties = _enumerateInstanceExtensionProperties ?? LoadGlobalFunction<EnumerateInstanceExtensionPropertiesDelegate>(FunctionName.EnumerateInstanceExtensionProperties);
 
             uint count = 0;
-            _enumerateInstanceExtensionProperties(layerName, ref count, null).CheckError();
+            _enumerateInstanceExtensionProperties(null, ref count, null).CheckError();
             ExtensionProperties* properties = (ExtensionProperties*)Marshal.AllocHGlobal((int)count * sizeof(ExtensionProperties));
-            _enumerateInstanceExtensionProperties(layerName, ref count, properties).CheckError();
+            _enumerateInstanceExtensionProperties(null, ref count, properties).CheckError();
 
             extensionProperties = new ExtensionProperties[count];
             for (int i = 0; i < count; ++i)
@@ -83,19 +83,10 @@ namespace Annihilation.Vulkan
 
             Marshal.FreeHGlobal(new IntPtr(properties));
         }
-
-        public static GetInstanceProcAddrDelegate LoadGetInstanceProcAddrFunction()
+        
+        private static T LoadGlobalFunction<T>(byte* name)
         {
-            IntPtr func = SDL.VulkanGetVkGetInstanceProcAddr();
-            if (func == IntPtr.Zero) throw new Exception(Utf8.ToString(SDL.GetError()));
-            return Marshal.GetDelegateForFunctionPointer<GetInstanceProcAddrDelegate>(func);
-        }
-
-        public static T LoadGlobalFunction<T>(byte* name) => LoadInstanceFunction<T>(InstanceHandle.Null, name);
-
-        public static T LoadInstanceFunction<T>(InstanceHandle instanceHandle, byte* name)
-        {
-            IntPtr func = GetInstanceProcAddr(instanceHandle, name);
+            IntPtr func = GetInstanceProcAddr(InstanceHandle.Null, name);
             if (func == IntPtr.Zero) throw new Exception("Could not load Vulkan function " + Utf8.ToString(name));
             return Marshal.GetDelegateForFunctionPointer<T>(func);
         }

@@ -2,6 +2,7 @@
 using System.Security;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+using Annihilation.Core;
 
 namespace SDL2
 {

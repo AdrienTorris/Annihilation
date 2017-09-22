@@ -2,9 +2,12 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace Annihilation
+namespace Annihilation.Core
 {
-    public unsafe class Text : IDisposable
+    /// <summary>
+    /// Reprensents an UTF-8 encoded Ascii string.
+    /// </summary>
+    public unsafe struct Text
     {
         public byte* Buffer;
 
@@ -18,12 +21,7 @@ namespace Annihilation
                 }
             }
         }
-
-        public Text()
-        {
-            Buffer = null;
-        }
-
+        
         public Text(string str)
         {
             Debug.Assert(str != null);
@@ -36,24 +34,13 @@ namespace Annihilation
             Buffer[str.Length] = 0;
         }
         
-        private void Dispose(bool disposing)
+        public void Free()
         {
             if (Buffer == null) return;
 
             Marshal.FreeHGlobal(new IntPtr(Buffer));
         }
         
-        ~Text()
-        {
-            Dispose(false);
-        }
-        
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
         public static implicit operator byte*(Text text) => text.Buffer;
     }
 }

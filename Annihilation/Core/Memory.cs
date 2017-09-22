@@ -156,6 +156,12 @@ namespace Annihilation
             return (void*)Marshal.AllocHGlobal(length * sizeof(void*));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static byte** AllocatePointers(uint length)
+        {
+            return (byte**)Marshal.AllocHGlobal((int)length * sizeof(byte*));
+        }
+
         public static IntPtr AllocateAligned(int sizeInBytes, int align = 16)
         {
             int mask = align - 1;

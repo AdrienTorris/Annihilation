@@ -3,11 +3,10 @@ using System.Runtime.InteropServices;
 
 namespace Annihilation.Vulkan
 {
-    public unsafe struct Instance
+    public unsafe class Instance : IDisposable
     {
         private static DestroyInstanceDelegate _destroyInstance;
         private static EnumeratePhysicalDevicesDelegate _enumeratePhysicalDevices;
-        private static GetInstanceProcAddrDelegate _getInstanceProcAddr;
         private static CreateAndroidSurfaceKHRDelegate _createAndroidSurfaceKHR;
         private static CreateDisplayPlaneSurfaceKHRDelegate _createDisplayPlaneSurfaceKHR;
         private static CreateMirSurfaceKHRDelegate _createMirSurfaceKHR;
@@ -34,7 +33,7 @@ namespace Annihilation.Vulkan
 
         public Instance(ref InstanceCreateInfo createInfo)
         {
-            Vulkan.CreateInstance(ref createInfo, out this);
+            Vulkan.CreateInstance(ref createInfo, out Handle);
         }
 
         public void Destroy()
@@ -65,9 +64,7 @@ namespace Annihilation.Vulkan
 
         public T GetProcAddr<T>(byte* functionName)
         {
-            _getInstanceProcAddr = _getInstanceProcAddr ?? Vulkan.LoadGlobalFunction<GetInstanceProcAddrDelegate>(FunctionName.GetInstanceProcAddr);
-
-            IntPtr func = _getInstanceProcAddr(Handle, functionName);
+            IntPtr func = Vulkan.GetInstanceProcAddr(Handle, functionName);
             if (func == IntPtr.Zero) throw new Exception("Could not load Vulkan function " + Annihilation.Utf8.ToString(functionName));
             return Marshal.GetDelegateForFunctionPointer<T>(func);
         }
@@ -202,5 +199,25 @@ namespace Annihilation.Vulkan
 
             surface = new Surface(handle, this);
         }
+
+        #region IDisposable Support
+        protected virtual void Dispose(bool disposing)
+        {
+            if (IsNull) return;
+            
+            Destroy();
+        }
+        
+        ~Instance()
+        {
+            Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }
