@@ -2557,7 +2557,7 @@ namespace Annihilation.Vulkan
         public ulong Handle;
 
         public static readonly SurfaceHandle Null;
-
+        
         public bool Equals(SurfaceHandle other) => Handle == other.Handle;
         public override bool Equals(object obj) => obj is SurfaceHandle && this == (SurfaceHandle)obj;
         public override int GetHashCode() => Handle.GetHashCode();

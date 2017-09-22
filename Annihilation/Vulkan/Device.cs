@@ -3,10 +3,12 @@ using System.Runtime.InteropServices;
 
 namespace Annihilation.Vulkan
 {
-    public unsafe struct Device
+    public unsafe class Device
     {
-        public DeviceHandle Handle { get; private set; }
-        public PhysicalDevice PhysicalDevice { get; private set; }
+        private DeviceHandle _handle;
+        private PhysicalDevice _physicalDevice;
+
+        public DeviceHandle Handle => _handle;
 
         private static GetDeviceProcAddrDelegate _getDeviceProcAddr;
         private static DestroyDeviceDelegate _destroyDevice;
@@ -129,15 +131,21 @@ namespace Annihilation.Vulkan
 
         public Device(DeviceHandle handle, PhysicalDevice physicalDevice)
         {
-            Handle = handle;
-            PhysicalDevice = physicalDevice;
+            _handle = handle;
+            _physicalDevice = physicalDevice;
+        }
+
+        public Device(PhysicalDevice physicalDevice, ref DeviceCreateInfo createInfo)
+        {
+            _physicalDevice = physicalDevice;
+            _physicalDevice.CreateDevice(ref createInfo, out _handle);
         }
 
         public T GetDeviceProcAddr<T>(byte* functionName)
         {
-            _getDeviceProcAddr = _getDeviceProcAddr ?? PhysicalDevice.Instance.GetProcAddr<GetDeviceProcAddrDelegate>(FunctionName.GetDeviceProcAddr);
+            _getDeviceProcAddr = _getDeviceProcAddr ?? _physicalDevice.Instance.GetProcAddr<GetDeviceProcAddrDelegate>(FunctionName.GetDeviceProcAddr);
 
-            IntPtr func = _getDeviceProcAddr(Handle, functionName);
+            IntPtr func = _getDeviceProcAddr(_handle, functionName);
             if (func == IntPtr.Zero) throw new Exception("Could not load Vulkan function " + Utf8.ToString(functionName));
             return Marshal.GetDelegateForFunctionPointer<T>(func);
         }
@@ -146,14 +154,14 @@ namespace Annihilation.Vulkan
         {
             _destroyDevice = _destroyDevice ?? GetDeviceProcAddr<DestroyDeviceDelegate>(FunctionName.DestroyDevice);
 
-            _destroyDevice(Handle, null);
+            _destroyDevice(_handle, null);
         }
 
         public void GetQueue(uint queueFamilyIndex, uint queueIndex, out Queue queue)
         {
             _getDeviceQueue = _getDeviceQueue ?? GetDeviceProcAddr<GetDeviceQueueDelegate>(FunctionName.GetDeviceQueue);
 
-            _getDeviceQueue(Handle, queueFamilyIndex, queueIndex, out QueueHandle handle);
+            _getDeviceQueue(_handle, queueFamilyIndex, queueIndex, out QueueHandle handle);
 
             queue = new Queue(handle, this);
         }
@@ -162,56 +170,56 @@ namespace Annihilation.Vulkan
         {
             _deviceWaitIdle = _deviceWaitIdle ?? GetDeviceProcAddr<DeviceWaitIdleDelegate>(FunctionName.DeviceWaitIdle);
 
-            _deviceWaitIdle(Handle).CheckError();
+            _deviceWaitIdle(_handle).CheckError();
         }
 
         public void AllocateMemory(ref MemoryAllocateInfo memoryAllocateInfo, out DeviceMemoryHandle deviceMemoryHandle)
         {
             _allocateMemory = _allocateMemory ?? GetDeviceProcAddr<AllocateMemoryDelegate>(FunctionName.AllocateMemory);
 
-            _allocateMemory(Handle, ref memoryAllocateInfo, null, out deviceMemoryHandle).CheckError();
+            _allocateMemory(_handle, ref memoryAllocateInfo, null, out deviceMemoryHandle).CheckError();
         }
 
         public void FreeMemory(DeviceMemoryHandle deviceMemoryHandle)
         {
             _freeMemory = _freeMemory ?? GetDeviceProcAddr<FreeMemoryDelegate>(FunctionName.FreeMemory);
 
-            _freeMemory(Handle, deviceMemoryHandle, null);
+            _freeMemory(_handle, deviceMemoryHandle, null);
         }
 
         public void MapMemory(DeviceMemoryHandle memory, DeviceSize offset, DeviceSize size, MemoryMapFlags flags, void** data)
         {
             _mapMemory = _mapMemory ?? GetDeviceProcAddr<MapMemoryDelegate>(FunctionName.MapMemory);
 
-            _mapMemory(Handle, memory, offset, size, flags, data).CheckError();
+            _mapMemory(_handle, memory, offset, size, flags, data).CheckError();
         }
 
         public void UnmapMemory(DeviceMemoryHandle memory)
         {
             _unmapMemory = _unmapMemory ?? GetDeviceProcAddr<UnmapMemoryDelegate>(FunctionName.UnmapMemory);
 
-            _unmapMemory(Handle, memory);
+            _unmapMemory(_handle, memory);
         }
 
         public void FlushMappedMemoryRanges(uint memoryRangeCount, MappedMemoryRange* memoryRanges)
         {
             _flushMappedMemoryRanges = _flushMappedMemoryRanges ?? GetDeviceProcAddr<FlushMappedMemoryRangesDelegate>(FunctionName.FlushMappedMemoryRanges);
 
-            _flushMappedMemoryRanges(Handle, memoryRangeCount, memoryRanges).CheckError();
+            _flushMappedMemoryRanges(_handle, memoryRangeCount, memoryRanges).CheckError();
         }
 
         public void InvalidateMappedMemoryRanges(uint memoryRangeCount, MappedMemoryRange* memoryRanges)
         {
             _invalidateMappedMemoryRanges = _invalidateMappedMemoryRanges ?? GetDeviceProcAddr<InvalidateMappedMemoryRangesDelegate>(FunctionName.InvalidateMappedMemoryRanges);
 
-            _invalidateMappedMemoryRanges(Handle, memoryRangeCount, memoryRanges).CheckError();
+            _invalidateMappedMemoryRanges(_handle, memoryRangeCount, memoryRanges).CheckError();
         }
 
         public void GetMemoryCommitment(DeviceMemoryHandle memory, out DeviceSize committedMemoryInBytes)
         {
             _getDeviceMemoryCommitment = _getDeviceMemoryCommitment ?? GetDeviceProcAddr<GetDeviceMemoryCommitmentDelegate>(FunctionName.GetDeviceMemoryCommitment);
 
-            _getDeviceMemoryCommitment(Handle, memory, out committedMemoryInBytes);
+            _getDeviceMemoryCommitment(_handle, memory, out committedMemoryInBytes);
         }
 
         public void GetBufferMemoryRequirements(BufferHandle buffer, out MemoryRequirements memoryRequirements)
@@ -220,7 +228,7 @@ namespace Annihilation.Vulkan
                                            GetDeviceProcAddr<GetBufferMemoryRequirementsDelegate>(FunctionName
                                                .GetBufferMemoryRequirements);
 
-            _getBufferMemoryRequirements(Handle, buffer, out memoryRequirements);
+            _getBufferMemoryRequirements(_handle, buffer, out memoryRequirements);
         }
 
         public void BindBufferMemory(BufferHandle buffer, DeviceMemoryHandle memory, DeviceSize memoryOffset)
@@ -228,7 +236,7 @@ namespace Annihilation.Vulkan
             _bindBufferMemory = _bindBufferMemory ??
                                 GetDeviceProcAddr<BindBufferMemoryDelegate>(FunctionName.BindBufferMemory);
 
-            _bindBufferMemory(Handle, buffer, memory, memoryOffset).CheckError();
+            _bindBufferMemory(_handle, buffer, memory, memoryOffset).CheckError();
         }
 
         public void GetImageMemoryRequirements(ImageHandle image, out MemoryRequirements memoryRequirements)
@@ -237,7 +245,7 @@ namespace Annihilation.Vulkan
                                           GetDeviceProcAddr<GetImageMemoryRequirementsDelegate>(FunctionName
                                               .GetImageMemoryRequirements);
 
-            _getImageMemoryRequirements(Handle, image, out memoryRequirements);
+            _getImageMemoryRequirements(_handle, image, out memoryRequirements);
         }
 
         public void BindImageMemory(ImageHandle image, DeviceMemoryHandle memory, DeviceSize memoryOffset)
@@ -245,7 +253,7 @@ namespace Annihilation.Vulkan
             _bindImageMemory = _bindImageMemory ??
                                GetDeviceProcAddr<BindImageMemoryDelegate>(FunctionName.BindImageMemory);
 
-            _bindImageMemory(Handle, image, memory, memoryOffset).CheckError();
+            _bindImageMemory(_handle, image, memory, memoryOffset).CheckError();
         }
 
         public void GetImageSparseMemoryRequirements(ImageHandle image, out SparseImageMemoryRequirements[] sparseMemoryRequirements)
@@ -255,11 +263,11 @@ namespace Annihilation.Vulkan
                                                     .GetImageSparseMemoryRequirements);
 
             uint count = 0;
-            _getImageSparseMemoryRequirements(Handle, image, ref count, null);
+            _getImageSparseMemoryRequirements(_handle, image, ref count, null);
             SparseImageMemoryRequirements* requirements =
                 (SparseImageMemoryRequirements*)Marshal.AllocHGlobal(
                     (int)count * sizeof(SparseImageMemoryRequirements));
-            _getImageSparseMemoryRequirements(Handle, image, ref count, requirements);
+            _getImageSparseMemoryRequirements(_handle, image, ref count, requirements);
 
             sparseMemoryRequirements = new SparseImageMemoryRequirements[count];
             for (int i = 0; i < count; ++i)
@@ -274,35 +282,35 @@ namespace Annihilation.Vulkan
         {
             _createFence = _createFence ?? GetDeviceProcAddr<CreateFenceDelegate>(FunctionName.CreateFence);
 
-            _createFence(Handle, ref createInfo, null, out fence).CheckError();
+            _createFence(_handle, ref createInfo, null, out fence).CheckError();
         }
 
         public void DestroyFence(FenceHandle fence)
         {
             _destroyFence = _destroyFence ?? GetDeviceProcAddr<DestroyFenceDelegate>(FunctionName.DestroyFence);
 
-            _destroyFence(Handle, fence, null);
+            _destroyFence(_handle, fence, null);
         }
 
         public void ResetFences(uint fenceCount, FenceHandle* fences)
         {
             _resetFences = _resetFences ?? GetDeviceProcAddr<ResetFencesDelegate>(FunctionName.ResetFences);
 
-            _resetFences(Handle, fenceCount, fences).CheckError();
+            _resetFences(_handle, fenceCount, fences).CheckError();
         }
 
         public void GetFenceStatus(FenceHandle fence)
         {
             _getFenceStatus = _getFenceStatus ?? GetDeviceProcAddr<GetFenceStatusDelegate>(FunctionName.GetFenceStatus);
 
-            _getFenceStatus(Handle, fence).CheckError();
+            _getFenceStatus(_handle, fence).CheckError();
         }
 
         public void WaitForFences(uint fenceCount, FenceHandle* fences, Bool32 waitAll, ulong timeout)
         {
             _waitForFences = _waitForFences ?? GetDeviceProcAddr<WaitForFencesDelegate>(FunctionName.WaitForFences);
 
-            _waitForFences(Handle, fenceCount, fences, waitAll, timeout).CheckError();
+            _waitForFences(_handle, fenceCount, fences, waitAll, timeout).CheckError();
         }
 
         public void CreateSemaphore(ref SemaphoreCreateInfo createInfo, out SemaphoreHandle semaphore)
@@ -310,7 +318,7 @@ namespace Annihilation.Vulkan
             _createSemaphore = _createSemaphore ??
                                GetDeviceProcAddr<CreateSemaphoreDelegate>(FunctionName.CreateSemaphore);
 
-            _createSemaphore(Handle, ref createInfo, null, out semaphore).CheckError();
+            _createSemaphore(_handle, ref createInfo, null, out semaphore).CheckError();
         }
 
         public void DestroySemaphore(SemaphoreHandle semaphore)
@@ -318,42 +326,42 @@ namespace Annihilation.Vulkan
             _destroySemaphore = _destroySemaphore ??
                                 GetDeviceProcAddr<DestroySemaphoreDelegate>(FunctionName.DestroySemaphore);
 
-            _destroySemaphore(Handle, semaphore, null);
+            _destroySemaphore(_handle, semaphore, null);
         }
 
         public void CreateEvent(ref EventCreateInfo createInfo, out EventHandle evt)
         {
             _createEvent = _createEvent ?? GetDeviceProcAddr<CreateEventDelegate>(FunctionName.CreateEvent);
 
-            _createEvent(Handle, ref createInfo, null, out evt).CheckError();
+            _createEvent(_handle, ref createInfo, null, out evt).CheckError();
         }
 
         public void DestroyEvent(EventHandle evt)
         {
             _destroyEvent = _destroyEvent ?? GetDeviceProcAddr<DestroyEventDelegate>(FunctionName.DestroyEvent);
 
-            _destroyEvent(Handle, evt, null);
+            _destroyEvent(_handle, evt, null);
         }
 
         public void GetEventStatus(EventHandle evt)
         {
             _getEventStatus = _getEventStatus ?? GetDeviceProcAddr<GetEventStatusDelegate>(FunctionName.GetEventStatus);
 
-            _getEventStatus(Handle, evt).CheckError();
+            _getEventStatus(_handle, evt).CheckError();
         }
 
         public void SetEvent(EventHandle evt)
         {
             _setEvent = _setEvent ?? GetDeviceProcAddr<SetEventDelegate>(FunctionName.SetEvent);
 
-            _setEvent(Handle, evt).CheckError();
+            _setEvent(_handle, evt).CheckError();
         }
 
         public void ResetEvent(EventHandle evt)
         {
             _resetEvent = _resetEvent ?? GetDeviceProcAddr<ResetEventDelegate>(FunctionName.ResetEvent);
 
-            _resetEvent(Handle, evt).CheckError();
+            _resetEvent(_handle, evt).CheckError();
         }
 
         public void CreateQueryPool(ref QueryPoolCreateInfo createInfo, out QueryPoolHandle queryPool)
@@ -361,7 +369,7 @@ namespace Annihilation.Vulkan
             _createQueryPool = _createQueryPool ??
                                GetDeviceProcAddr<CreateQueryPoolDelegate>(FunctionName.CreateQueryPool);
 
-            _createQueryPool(Handle, ref createInfo, null, out queryPool).CheckError();
+            _createQueryPool(_handle, ref createInfo, null, out queryPool).CheckError();
         }
 
         public void DestroyQueryPool(QueryPoolHandle queryPool)
@@ -369,7 +377,7 @@ namespace Annihilation.Vulkan
             _destroyQueryPool = _destroyQueryPool ??
                                 GetDeviceProcAddr<DestroyQueryPoolDelegate>(FunctionName.DestroyQueryPool);
 
-            _destroyQueryPool(Handle, queryPool, null);
+            _destroyQueryPool(_handle, queryPool, null);
         }
 
         public void GetQueryPoolResults(QueryPoolHandle queryPool, uint firstQuery, uint queryCount, Size dataSize, void* data, DeviceSize stride, QueryResultFlags flags)
@@ -377,14 +385,14 @@ namespace Annihilation.Vulkan
             _getQueryPoolResults = _getQueryPoolResults ??
                                    GetDeviceProcAddr<GetQueryPoolResultsDelegate>(FunctionName.GetQueryPoolResults);
 
-            _getQueryPoolResults(Handle, queryPool, firstQuery, queryCount, dataSize, data, stride, flags).CheckError();
+            _getQueryPoolResults(_handle, queryPool, firstQuery, queryCount, dataSize, data, stride, flags).CheckError();
         }
 
         public void CreateBuffer(ref BufferCreateInfo createInfo, out BufferHandle buffer)
         {
             _createBuffer = _createBuffer ?? GetDeviceProcAddr<CreateBufferDelegate>(FunctionName.CreateBuffer);
 
-            _createBuffer(Handle, ref createInfo, null, out buffer).CheckError();
+            _createBuffer(_handle, ref createInfo, null, out buffer).CheckError();
         }
 
         public void DestroyBuffer()

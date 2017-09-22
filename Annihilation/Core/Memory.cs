@@ -162,6 +162,11 @@ namespace Annihilation
             return (byte**)Marshal.AllocHGlobal((int)length * sizeof(byte*));
         }
 
+        public static void* Allocate<T>(uint length) where T : struct
+        {
+            return (void*)Marshal.AllocHGlobal((int)length * Unsafe.SizeOf<T>());
+        }
+
         public static IntPtr AllocateAligned(int sizeInBytes, int align = 16)
         {
             int mask = align - 1;

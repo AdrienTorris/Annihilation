@@ -25,11 +25,12 @@ namespace Annihilation.Graphics
         private const int CommandBufferCount = 2;
         private const int ColorBufferCount = 2;
         private const int MaxSwapchainImages = 8;
-        private const FormatFeatureFlags RequiredColorBufferFeatures = FormatFeatureFlags.ColorAttachment |
-                                                                         FormatFeatureFlags.ColorAttachmentBlend |
-                                                                         FormatFeatureFlags.SampledImage |
-                                                                         FormatFeatureFlags.StorageImage |
-                                                                         FormatFeatureFlags.SampledImageFilterLinear;
+        private const FormatFeatureFlags RequiredColorBufferFeatures =
+            FormatFeatureFlags.ColorAttachment |
+            FormatFeatureFlags.ColorAttachmentBlend |
+            FormatFeatureFlags.SampledImage |
+            FormatFeatureFlags.StorageImage |
+            FormatFeatureFlags.SampledImageFilterLinear;
 
         /*
         =============
@@ -41,61 +42,9 @@ namespace Annihilation.Graphics
         public static IntVar DisplayWidth = new IntVar("DisplayWidth", 1280);
         public static IntVar DisplayHeight = new IntVar("DisplayHeight", 720);
         public static BoolVar EnableVSync = new BoolVar("VSync", false);
-        public static BoolVar EnableValidation = new BoolVar("Validation", true);
         public static IntVar DisplayAdapter = new IntVar("DisplayAdapter", 0);
         public static IntVar DisplayMode = new IntVar("DisplayMode", (int)Graphics.DisplayMode.FullscreenBorderless, 0, (int)Graphics.DisplayMode.Count);
         public static IntVar Monitor = new IntVar("Monitor", 0);
-
-        private static InstanceHandle _instance;
-        private static SurfaceHandle _surface;
-#if DEBUG
-        private static DebugReportCallbackHandle _debugReportCallback;
-#endif
-
-        private static PhysicalDeviceHandle _physicalDevice;
-        private static PhysicalDeviceProperties _physicalDeviceProperties;
-        private static PhysicalDeviceMemoryProperties _physicalDeviceMemoryProperties;
-        private static PhysicalDeviceFeatures _physicalDeviceFeatures;
-        private static SurfaceCapabilities _surfaceCapabilities;
-        private static SurfaceFormat* _surfaceFormats;
-        private static PresentMode* _presentModes;
-        private static QueueFamilyProperties* _queueFamilyProperties;
-        private static ExtensionProperties* _extensionProperties;
-
-        private static Format _swapchainFormat;
-        private static SwapchainHandle _swapchain;
-        private static uint _swapchainImageCount;
-        private static ImageHandle* _swapchainImages;
-        private static ImageViewHandle[] _swapchainImageViews = new ImageViewHandle[MaxSwapchainImages];
-        private static SemaphoreHandle[] _imageAcquiredSemaphores = new SemaphoreHandle[MaxSwapchainImages];
-
-        private static CommandPoolHandle _commandPool;
-        private static CommandPoolHandle _transientCommandPool;
-        private static CommandBufferHandle* _commandBuffers;
-        private static FenceHandle[] _commandBufferFences = new FenceHandle[CommandBufferCount];
-        private static SemaphoreHandle[] _drawCompleteSemaphores = new SemaphoreHandle[CommandBufferCount];
-
-        private static ImageHandle[] _colorBuffers = new ImageHandle[ColorBufferCount];
-
-        private static bool[] _isCommandBufferSubmitted = new bool[CommandBufferCount];
-        private static uint _currentSwapchainBuffer;
-        private static DeviceHandle _device;
-        private static uint _graphicsQueueFamily;
-        private static uint _computeQueueFamily;
-        private static uint _transferQueueFamily;
-        private static QueueHandle _graphicsQueue;
-        private static QueueHandle _computeQueue;
-        private static QueueHandle _transferQueue;
-        private static CommandBufferHandle _commandBuffer;
-        private static PhysicalDeviceProperties _deviceProperties;
-        private static PhysicalDeviceMemoryProperties _deviceMemoryProperties;
-        private static Format _colorFormat;
-        private static Format _depthFormat;
-        private static SampleCountFlags _sampleCount;
-        private static bool _supersampling;
-
-        private static bool _hasDedicatedAllocation;
-        private static bool _hasDebugMarker;
 
         /*
         =============
@@ -111,82 +60,227 @@ namespace Annihilation.Graphics
         */
         public static void Initialize(Text title, SDL.Window window)
         {
-            Debug.Assert(_swapchain == SwapchainHandle.Null, "Graphics system has already been initialized.");
+            // Find instance extensions
+            uint requiredExtensionCount = 0;
+            SDL.VulkanGetInstanceExtensions(window, ref requiredExtensionCount, null).CheckError();
 
-            FindInstanceExtensions(out uint instanceExtensionCount, out byte** instanceExtensions);
-
-            CreateInstance(out Instance instance);
-
-            void FindInstanceExtensions(out uint extensionCount, out byte** extensionNames)
+            byte*[] additionalExtensions = null;
+#if DEBUG
+            additionalExtensions = new byte*[]
             {
-                // Get count of required extensions
-                uint requiredExtensionCount = 0;
-                SDL.VulkanGetInstanceExtensions(window, ref requiredExtensionCount, null).CheckError();
+                ExtensionName.ExtDebugReport
+            };
+#endif
+            uint additionalExtensionCount = additionalExtensions != null ? (uint)additionalExtensions.Length : 0;
+            uint extensionCount = requiredExtensionCount + additionalExtensionCount;
 
-                // Declare additional extensions
-                byte*[] additionalExtensions = null;
-                if (EnableValidation)
+            byte** extensionNames = Memory.AllocatePointers(extensionCount);
+
+            SDL.VulkanGetInstanceExtensions(window, ref requiredExtensionCount, extensionNames).CheckError();
+
+            for (int i = 0; i < additionalExtensionCount; ++i)
+            {
+                extensionNames[i + requiredExtensionCount] = additionalExtensions[i];
+            }
+
+            // Create instance
+            ApplicationInfo applicationInfo = new ApplicationInfo
+            {
+                Type = StructureType.ApplicationInfo,
+                ApplicationName = title,
+                ApplicationVersion = Version.One,
+                EngineName = title,
+                EngineVersion = Version.One,
+                ApiVersion = new Version(1, 0, Vulkan.Vulkan.HeaderVersion)
+            };
+
+            InstanceCreateInfo instanceCreateInfo = new InstanceCreateInfo
+            {
+                Type = StructureType.InstanceCreateInfo,
+                ApplicationInfo = &applicationInfo,
+                EnabledExtensionCount = extensionCount,
+                EnabledExtensionNames = extensionNames,
+            };
+            
+#if DEBUG
+            Text layerName = new Text("VK_LAYER_LUNARG_standard_validation");
+            instanceCreateInfo.EnabledLayerCount = 1;
+            instanceCreateInfo.EnabledLayerNames = layerName.BufferPtr;
+#endif
+
+            Instance instance = new Instance(ref instanceCreateInfo);
+
+            Memory.Free(extensionNames);
+
+#if DEBUG
+            // Create debug report callback
+            DebugReportCallbackCreateInfo debugReportCallbackCreateInfo = new DebugReportCallbackCreateInfo(
+                DebugReportFlags.Error | DebugReportFlags.PerformanceWarning | DebugReportFlags.Warning,
+                DebugMessageCallback
+            );
+
+            DebugReportCallback debugReportCallback = new DebugReportCallback(instance, ref debugReportCallbackCreateInfo);
+
+            layerName.Free();
+#endif
+
+            // Create surface
+            SDL.VulkanCreateSurface(window, instance.Handle, out ulong surfaceHandle).CheckError();
+            Surface surface = new Surface(surfaceHandle, instance);
+
+            // Select physical device
+            instance.EnumeratePhysicalDevices(out PhysicalDevice[] physicalDevices);
+
+            PhysicalDevice physicalDevice = physicalDevices[0];
+
+            // Get queue families
+            physicalDevice.GetQueueFamilyProperties(out QueueFamilyProperties[] queueFamilyProperties);
+
+            // Find a queue family that supports both graphics and present
+            uint queueCreateInfoCount = 0;
+
+            uint graphicsPresentQueueFamily = uint.MaxValue;
+            for (uint i = 0; i < queueFamilyProperties.Length; ++i)
+            {
+                if (!physicalDevice.GetSurfaceSupportKHR(i, surface.Handle))
                 {
-                    additionalExtensions = new byte*[]
-                    {
-                        ExtensionName.ExtDebugReport
-                    };
+                    continue;
                 }
-                uint additionalExtensionCount = additionalExtensions != null ? (uint)additionalExtensions.Length : 0;
 
-                // Get count of required + additional extensions
-                extensionCount = requiredExtensionCount + additionalExtensionCount;
-
-                // Allocate extension names
-                extensionNames = Memory.AllocatePointers(extensionCount);
-
-                // Get names of required extensions
-                SDL.VulkanGetInstanceExtensions(window, ref requiredExtensionCount, extensionNames).CheckError();
-
-                // Copy additional extensions after required extensions
-                for (int i = 0; i < additionalExtensionCount; ++i)
+                if ((queueFamilyProperties[i].QueueFlags & QueueFlags.Graphics) == 0)
                 {
-                    extensionNames[i + requiredExtensionCount] = additionalExtensions[i];
+                    continue;
+                }
+
+                graphicsPresentQueueFamily = i;
+                queueCreateInfoCount++;
+                break;
+            }
+
+            if (graphicsPresentQueueFamily == uint.MaxValue)
+            {
+                throw new Exception("Could not find a queue family with graphics and present support.");
+            }
+
+            // If possible, find a different queue family for compute
+            uint computeQueueFamily = graphicsPresentQueueFamily;
+            for (uint i = 0; i < queueFamilyProperties.Length; ++i)
+            {
+                if (i == graphicsPresentQueueFamily)
+                {
+                    continue;
+                }
+
+                if (!physicalDevice.GetSurfaceSupportKHR(i, surface.Handle))
+                {
+                    continue;
+                }
+
+                if ((queueFamilyProperties[i].QueueFlags & QueueFlags.Compute) == 0)
+                {
+                    continue;
+                }
+
+                computeQueueFamily = i;
+                queueCreateInfoCount++;
+                break;
+            }
+
+            DeviceQueueCreateInfo* queueCreateInfos = (DeviceQueueCreateInfo*)Memory.Allocate<DeviceQueueCreateInfo>(queueCreateInfoCount);
+            queueCreateInfos[0] = new DeviceQueueCreateInfo
+            {
+                Type = StructureType.DeviceQueueCreateInfo,
+                QueueFamilyIndex = graphicsPresentQueueFamily,
+                QueueCount = 1,
+                QueuePriorities = null
+            };
+
+            if (computeQueueFamily != graphicsPresentQueueFamily)
+            {
+                queueCreateInfos[1] = new DeviceQueueCreateInfo
+                {
+                    Type = StructureType.DeviceQueueCreateInfo,
+                    QueueFamilyIndex = computeQueueFamily,
+                    QueueCount = 1,
+                    QueuePriorities = null
+                };
+            }
+
+            // Get the device features
+            physicalDevice.GetFeatures(out PhysicalDeviceFeatures physicalDeviceFeatures);
+
+            PhysicalDeviceFeatures features = new PhysicalDeviceFeatures
+            {
+                GeometryShader = physicalDeviceFeatures.GeometryShader,
+                TessellationShader = physicalDeviceFeatures.TessellationShader,
+                MultiDrawIndirect = physicalDeviceFeatures.MultiDrawIndirect,
+                ShaderStorageImageExtendedFormats = physicalDeviceFeatures.ShaderStorageImageExtendedFormats,
+                SamplerAnisotropy = physicalDeviceFeatures.SamplerAnisotropy
+            };
+
+            // Allocate extension names
+            uint deviceExtensionCount = 1;
+#if DEBUG
+            deviceExtensionCount = 2;
+#endif 
+            byte** deviceExtensions = Memory.AllocatePointers(deviceExtensionCount);
+            deviceExtensions[0] = ExtensionName.Swapchain;
+#if DEBUG
+            deviceExtensions[1] = ExtensionName.DebugMarker;
+#endif
+
+            DeviceCreateInfo deviceCreateInfo = new DeviceCreateInfo
+            {
+                Type = StructureType.DeviceCreateInfo,
+                QueueCreateInfoCount = queueCreateInfoCount,
+                QueueCreateInfos = queueCreateInfos,
+                EnabledLayerCount = 0,
+                EnabledLayerNames = null,
+                EnabledExtensionCount = deviceExtensionCount,
+                EnabledExtensionNames = deviceExtensions,
+                EnabledFeatures = &features
+            };
+
+            Device device = new Device(physicalDevice, ref deviceCreateInfo);
+
+            Memory.Free(queueCreateInfos);
+            Memory.Free(deviceExtensions);
+
+            // Get graphics and present queue
+            device.GetQueue(graphicsPresentQueueFamily, 0, out Queue graphicsPresentQueue);
+
+            // Get compute queue
+            device.GetQueue(computeQueueFamily, 0, out Queue computeQueue);
+
+            // Find color buffer format
+            FormatProperties formatProperties;
+            Format colorFormat = Format.R8G8B8A8UNorm;
+
+            if (physicalDeviceFeatures.ShaderStorageImageExtendedFormats)
+            {
+                physicalDevice.GetFormatProperties(Format.A2B10G10R10UNormPack32, out formatProperties);
+                bool a2b10g10r10Support = (formatProperties.OptimalTilingFeatures & RequiredColorBufferFeatures) == RequiredColorBufferFeatures;
+
+                if (a2b10g10r10Support)
+                {
+                    colorFormat = Format.A2B10G10R10UNormPack32;
                 }
             }
 
-            void CreateInstance(out Instance instance)
+            // Find depth buffer format
+            physicalDevice.GetFormatProperties(Format.X8D24UNormPack32, out formatProperties);
+            bool x8d24Support = (formatProperties.OptimalTilingFeatures & FormatFeatureFlags.DepthStencilAttachment) != 0;
+            physicalDevice.GetFormatProperties(Format.D32SFloat, out formatProperties);
+            bool d32Support = (formatProperties.OptimalTilingFeatures & FormatFeatureFlags.DepthStencilAttachment) != 0;
+
+            Format depthFormat = Format.D16UNorm;
+            if (x8d24Support)
             {
-                ApplicationInfo applicationInfo = new ApplicationInfo
-                {
-                    Type = StructureType.ApplicationInfo,
-                    ApplicationName = title,
-                    ApplicationVersion = Version.One,
-                    EngineName = title,
-                    EngineVersion = Version.One,
-                    ApiVersion = new Version(1, 0, Vulkan.Vulkan.HeaderVersion)
-                };
-
-                InstanceCreateInfo instanceCreateInfo = new InstanceCreateInfo
-                {
-                    Type = StructureType.InstanceCreateInfo,
-                    ApplicationInfo = &applicationInfo,
-                    EnabledExtensionCount = instanceExtensionCount,
-                    EnabledExtensionNames = instanceExtensions,
-                };
-
-                Text layerName = new Text();
-                if (EnableValidation)
-                {
-                    layerName = new Text("VK_LAYER_LUNARG_standard_validation");
-                    instanceCreateInfo.EnabledLayerCount = 1;
-                    instanceCreateInfo.EnabledLayerNames = layerName.BufferPtr;
-                }
-
-                instance = new Instance(ref instanceCreateInfo);
-
-                Memory.Free(extensionNames);
-                layerName.Free();
-
-                if (EnableValidation)
-                {
-                    instance.CreateDebugReportCallback();
-                }
+                depthFormat = Format.X8D24UNormPack32;
+            }
+            else if (d32Support)
+            {
+                depthFormat = Format.D32SFloat;
             }
         }
 
@@ -222,276 +316,11 @@ namespace Annihilation.Graphics
 
         /*
         =============
-        FindInstanceExtensions
-        =============
-        */
-        private static void FindInstanceExtensions(ref SDL.Window window, out uint extensionCount, out byte** extensionNames)
-        {
-            // Get count of required extensions
-            uint requiredExtensionCount = 0;
-            SDL.VulkanGetInstanceExtensions(window, ref requiredExtensionCount, null).CheckError();
-
-            // Declare additional extensions
-            byte*[] additionalExtensions = null;
-            if (EnableValidation)
-            {
-                additionalExtensions = new byte*[]
-                {
-                    ExtensionName.ExtDebugReport
-                };
-            }
-            uint additionalExtensionCount = additionalExtensions != null ? (uint)additionalExtensions.Length : 0;
-
-            // Get count of required + additional extensions
-            extensionCount = requiredExtensionCount + additionalExtensionCount;
-
-            // Allocate extension names
-            extensionNames = Memory.AllocatePointers(extensionCount);
-
-            // Get names of required extensions
-            SDL.VulkanGetInstanceExtensions(window, ref requiredExtensionCount, extensionNames).CheckError();
-
-            // Copy additional extensions after required extensions
-            for (int i = 0; i < additionalExtensionCount; ++i)
-            {
-                extensionNames[i + requiredExtensionCount] = additionalExtensions[i];
-            }
-        }
-
-        /*
-        =============
-        CreateInstance
-        =============
-        */
-        private static void CreateInstance(ref byte* title, ref SDL.Window window)
-        {
-            ApplicationInfo applicationInfo = new ApplicationInfo
-            {
-                Type = StructureType.ApplicationInfo,
-                ApplicationName = title,
-                ApplicationVersion = Version.One,
-                EngineName = title,
-                EngineVersion = Version.One,
-                ApiVersion = new Version(1, 0, Vulkan.Vulkan.HeaderVersion)
-            };
-
-            FindInstanceExtensions(ref window, out uint extensionCount, out byte** extensionNames);
-
-            InstanceCreateInfo instanceCreateInfo = new InstanceCreateInfo
-            {
-                Type = StructureType.InstanceCreateInfo,
-                ApplicationInfo = &applicationInfo,
-                EnabledExtensionCount = extensionCount,
-                EnabledExtensionNames = extensionNames,
-            };
-
-            Text layerName = new Text();
-            if (EnableValidation)
-            {
-                layerName = new Text("VK_LAYER_LUNARG_standard_validation");
-                instanceCreateInfo.EnabledLayerCount = 1;
-                instanceCreateInfo.EnabledLayerNames = layerName.BufferPtr;
-            }
-
-            Instance instance = new Instance(ref instanceCreateInfo);
-
-            Memory.Free(extensionNames);
-            layerName.Free();
-
-            if (EnableValidation)
-            {
-                instance.CreateDebugReportCallback();
-            }
-        }
-
-        /*
-        =============
-        CreateSurface
-        =============
-        */
-        private static void CreateSurface(ref SDL.Window window)
-        {
-            SDL.VulkanCreateSurface(window, _instance, out ulong surfaceHandle).CheckError();
-            _surface = new SurfaceHandle { Handle = surfaceHandle };
-        }
-
-        /*
-        =============
-        SelectPhysicalDevice
-        =============
-        */
-        private static void SelectPhysicalDevice()
-        {
-            uint physicalDeviceCount = 0;
-            _EnumeratePhysicalDevices(_instance, ref physicalDeviceCount, null).CheckError();
-            PhysicalDeviceHandle* physicalDevices = (PhysicalDeviceHandle*)Marshal.AllocHGlobal((int)physicalDeviceCount * sizeof(PhysicalDeviceHandle));
-            _EnumeratePhysicalDevices(_instance, ref physicalDeviceCount, physicalDevices).CheckError();
-
-            for (int i = 0; i < physicalDeviceCount; ++i)
-            {
-                PhysicalDeviceHandle physicalDevice = physicalDevices[i];
-
-                // Check for extension support
-                {
-
-                    if (!SupportsRequiredExtensions()) continue;
-
-                    bool SupportsRequiredExtensions()
-                    {
-                        string[] requiredExtensions = new string[]
-                        {
-                            .SwapchainExtensionName
-                        };
-
-                        using (TextPool textPool = new TextPool(requiredExtensions.Length, .SwapchainExtensionName.Length))
-                        {
-                            for (int j = 0; j < extensionCount; ++j)
-                            {
-                                for (int k = 0; k < requiredExtensions.Length; ++k)
-                                {
-                                    byte* requiredExtension = textPool.Get(requiredExtensions[k]);
-                                    if (!Utf8.Compare(_extensionProperties[j].ExtensionName, requiredExtension))
-                                    {
-                                        return false;
-                                    }
-                                }
-                            }
-                        }
-                        return true;
-                    }
-                }
-
-                uint familyCount = 0;
-                _GetPhysicalDeviceQueueFamilyProperties(physicalDevice, ref familyCount, null);
-                _queueFamilyProperties = (QueueFamilyProperties*)Marshal.AllocHGlobal((int)familyCount * sizeof(QueueFamilyProperties));
-                _GetPhysicalDeviceQueueFamilyProperties(physicalDevice, ref familyCount, _queueFamilyProperties);
-
-                _GetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, _surface, out _surfaceCapabilities).CheckError();
-
-                count = 0;
-                _GetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, _surface, ref count, null).CheckError();
-                _surfaceFormats = (SurfaceFormat*)Marshal.AllocHGlobal((int)count * sizeof(SurfaceFormat));
-                _GetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, _surface, ref count, _surfaceFormats).CheckError();
-
-                // GetPhysicalDeviceSurfaceCapabilities
-                count = 0;
-                _GetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, _surface, ref count, null).CheckError();
-                _presentModes = (PresentMode*)Marshal.AllocHGlobal((int)count * sizeof(PresentMode));
-                _GetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, _surface, ref count, _presentModes).CheckError();
-
-                // GetPhysicalDeviceSurfaceCapabilities
-                _GetPhysicalDeviceMemoryProperties(physicalDevice, out _deviceMemoryProperties);
-
-                // GetPhysicalDeviceSurfaceCapabilities
-                _GetPhysicalDeviceProperties(_physicalDevice, out _deviceProperties);
-            }
-        }
-
-        /*
-        =============
         CreateDeviceAndQueues
         =============
         */
         private static void CreateDeviceAndQueues()
         {
-            // Finding queues with present support.
-            Bool32[] queueSupportsPresent = new Bool32[queueFamilyCount];
-            for (uint i = 0; i < queueFamilyCount; ++i)
-            {
-                _GetPhysicalDeviceSurfaceSupportKHR(_physicalDevice, i, _surface, out queueSupportsPresent[i]);
-            }
-
-            // Finding queue with graphics and present support.
-            bool foundGraphicsQueue = false;
-
-            for (uint i = 0; i < queueFamilyCount; ++i)
-            {
-                if ((queueFamilyProperties[i].QueueFlags & QueueFlags.Graphics) != 0 && queueSupportsPresent[i])
-                {
-                    foundGraphicsQueue = true;
-                    _graphicsQueueFamily = i;
-                }
-            }
-
-            if (!foundGraphicsQueue)
-            {
-                Log.Error("No graphics+present queue found.");
-            }
-
-            // TODO: Find exclusive compute and transfer queues
-
-            Memory.Free(queueFamilyProperties);
-
-            // Getting Vulkan physical device features.
-            _GetPhysicalDeviceFeatures(_physicalDevice, out _physicalDeviceFeatures);
-
-            PhysicalDeviceFeatures physicalDeviceFeatures = new PhysicalDeviceFeatures
-            {
-                ShaderStorageImageExtendedFormats = _physicalDeviceFeatures.ShaderStorageImageExtendedFormats,
-                SamplerAnisotropy = _physicalDeviceFeatures.SamplerAnisotropy
-            };
-
-            // Creating Vulkan device.
-            float queuePriority = 0f;
-            DeviceQueueCreateInfo deviceQueueCreateInfo = new DeviceQueueCreateInfo(
-                _graphicsQueueFamily,
-                1,
-                &queuePriority
-            );
-
-            byte** deviceExtensions = (byte**)Memory.AllocatePointers(2);
-            deviceExtensions[0] = Utf8.AllocateFromAsciiString(.SwapchainExtensionName);
-            deviceExtensions[1] = Utf8.AllocateFromAsciiString(.DebugMarkerExtensionName);
-
-            DeviceCreateInfo deviceCreateInfo = new DeviceCreateInfo(
-                deviceQueueCreateInfo,
-                1,
-                deviceExtensions,
-                physicalDeviceFeatures
-            );
-#if DEBUG
-            if (_hasDebugMarker)
-            {
-                deviceCreateInfo.EnabledExtensionCount = 2;
-            }
-#endif
-            _CreateDevice(_physicalDevice, ref deviceCreateInfo, null, out _device).CheckError();
-
-            Memory.Free(deviceExtensions);
-
-            // Get graphics queue
-            _GetDeviceQueue(_device, _graphicsQueueFamily, 0, out _graphicsQueue);
-
-            // Find color buffer format
-            FormatProperties formatProperties;
-            _colorFormat = Format.R8G8B8A8UNorm;
-
-            if (_physicalDeviceFeatures.ShaderStorageImageExtendedFormats)
-            {
-                _GetPhysicalDeviceFormatProperties(_physicalDevice, Format.A2B10G10R10UNormPack32, out formatProperties);
-                bool a2b10g10r10Support = (formatProperties.OptimalTilingFeatures & RequiredColorBufferFeatures) == RequiredColorBufferFeatures;
-
-                if (a2b10g10r10Support)
-                {
-                    _colorFormat = Format.A2B10G10R10UNormPack32;
-                }
-            }
-
-            // Find depth buffer format
-            _GetPhysicalDeviceFormatProperties(_physicalDevice, Format.X8D24UNormPack32, out formatProperties);
-            bool x8d24Support = (formatProperties.OptimalTilingFeatures & FormatFeatureFlags.DepthStencilAttachment) != 0;
-            _GetPhysicalDeviceFormatProperties(_physicalDevice, Format.D32SFloat, out formatProperties);
-            bool d32Support = (formatProperties.OptimalTilingFeatures & FormatFeatureFlags.DepthStencilAttachment) != 0;
-
-            _depthFormat = Format.D16UNorm;
-            if (x8d24Support)
-            {
-                _depthFormat = Format.X8D24UNormPack32;
-            }
-            else if (d32Support)
-            {
-                _depthFormat = Format.D32SFloat;
-            }
         }
 
         /*

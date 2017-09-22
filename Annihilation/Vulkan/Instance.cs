@@ -22,26 +22,27 @@ namespace Annihilation.Vulkan
         private static CreateIOSSurfaceMVKDelegate _createIOSSurfaceMVK;
         private static CreateMacOSSurfaceMVKDelegate _createMacOSSurfaceMVK;
 
-        public InstanceHandle Handle;
+        private InstanceHandle _handle;
 
-        public bool IsNull => Handle.Handle == IntPtr.Zero;
+        public InstanceHandle Handle => _handle;
+        public bool IsNull => _handle.Handle == IntPtr.Zero;
 
         public Instance(InstanceHandle handle)
         {
-            Handle = handle;
+            _handle = handle;
         }
 
         public Instance(ref InstanceCreateInfo createInfo)
         {
-            Vulkan.CreateInstance(ref createInfo, out Handle);
+            Vulkan.CreateInstance(ref createInfo, out _handle);
         }
 
         public void Destroy()
         {
             _destroyInstance = _destroyInstance ?? GetProcAddr<DestroyInstanceDelegate>(FunctionName.DestroyInstance);
 
-            _destroyInstance(Handle, null);
-            Handle = InstanceHandle.Null;
+            _destroyInstance(_handle, null);
+            _handle = InstanceHandle.Null;
         }
 
         public void EnumeratePhysicalDevices(out PhysicalDevice[] physicalDevices)
@@ -49,9 +50,9 @@ namespace Annihilation.Vulkan
             _enumeratePhysicalDevices = _enumeratePhysicalDevices ?? GetProcAddr<EnumeratePhysicalDevicesDelegate>(FunctionName.EnumeratePhysicalDevices);
 
             uint count = 0;
-            _enumeratePhysicalDevices(Handle, ref count, null).CheckError();
+            _enumeratePhysicalDevices(_handle, ref count, null).CheckError();
             PhysicalDeviceHandle* handles = (PhysicalDeviceHandle*)Marshal.AllocHGlobal((int)count * sizeof(PhysicalDeviceHandle));
-            _enumeratePhysicalDevices(Handle, ref count, handles).CheckError();
+            _enumeratePhysicalDevices(_handle, ref count, handles).CheckError();
 
             physicalDevices = new PhysicalDevice[count];
             for (int i = 0; i < count; ++i)
@@ -64,7 +65,7 @@ namespace Annihilation.Vulkan
 
         public T GetProcAddr<T>(byte* functionName)
         {
-            IntPtr func = Vulkan.GetInstanceProcAddr(Handle, functionName);
+            IntPtr func = Vulkan.GetInstanceProcAddr(_handle, functionName);
             if (func == IntPtr.Zero) throw new Exception("Could not load Vulkan function " + Annihilation.Utf8.ToString(functionName));
             return Marshal.GetDelegateForFunctionPointer<T>(func);
         }
@@ -73,7 +74,7 @@ namespace Annihilation.Vulkan
         {
             _createAndroidSurfaceKHR = _createAndroidSurfaceKHR ?? GetProcAddr<CreateAndroidSurfaceKHRDelegate>(FunctionName.CreateAndroidSurfaceKHR);
 
-            _createAndroidSurfaceKHR(Handle, ref createInfo, null, out SurfaceHandle handle).CheckError();
+            _createAndroidSurfaceKHR(_handle, ref createInfo, null, out SurfaceHandle handle).CheckError();
 
             surface = new Surface(handle, this);
         }
@@ -82,7 +83,7 @@ namespace Annihilation.Vulkan
         {
             _createDisplayPlaneSurfaceKHR = _createDisplayPlaneSurfaceKHR ?? GetProcAddr<CreateDisplayPlaneSurfaceKHRDelegate>(FunctionName.CreateDisplayPlaneSurfaceKHR);
 
-            _createDisplayPlaneSurfaceKHR(Handle, ref createInfo, null, out SurfaceHandle handle).CheckError();
+            _createDisplayPlaneSurfaceKHR(_handle, ref createInfo, null, out SurfaceHandle handle).CheckError();
 
             surface = new Surface(handle, this);
         }
@@ -91,7 +92,7 @@ namespace Annihilation.Vulkan
         {
             _createMirSurfaceKHR = _createMirSurfaceKHR ?? GetProcAddr<CreateMirSurfaceKHRDelegate>(FunctionName.CreateMirSurfaceKHR);
 
-            _createMirSurfaceKHR(Handle, ref createInfo, null, out SurfaceHandle handle).CheckError();
+            _createMirSurfaceKHR(_handle, ref createInfo, null, out SurfaceHandle handle).CheckError();
 
             surface = new Surface(handle, this);
         }
@@ -100,14 +101,14 @@ namespace Annihilation.Vulkan
         {
             _destroySurfaceKHR = _destroySurfaceKHR ?? GetProcAddr<DestroySurfaceKHRDelegate>(FunctionName.DestroySurfaceKHR);
 
-            _destroySurfaceKHR(Handle, surfaceHandle, null);
+            _destroySurfaceKHR(_handle, surfaceHandle, null);
         }
 
         public void CreateViSurface(ref ViSurfaceCreateInfo createInfo, out Surface surface)
         {
             _createViSurfaceNN = _createViSurfaceNN ?? GetProcAddr<CreateViSurfaceNNDelegate>(FunctionName.CreateViSurfaceNN);
 
-            _createViSurfaceNN(Handle, ref createInfo, null, out SurfaceHandle handle).CheckError();
+            _createViSurfaceNN(_handle, ref createInfo, null, out SurfaceHandle handle).CheckError();
 
             surface = new Surface(handle, this);
         }
@@ -116,7 +117,7 @@ namespace Annihilation.Vulkan
         {
             _createWaylandSurfaceKHR = _createWaylandSurfaceKHR ?? GetProcAddr<CreateWaylandSurfaceKHRDelegate>(FunctionName.CreateWaylandSurfaceKHR);
 
-            _createWaylandSurfaceKHR(Handle, ref createInfo, null, out SurfaceHandle handle).CheckError();
+            _createWaylandSurfaceKHR(_handle, ref createInfo, null, out SurfaceHandle handle).CheckError();
 
             surface = new Surface(handle, this);
         }
@@ -125,7 +126,7 @@ namespace Annihilation.Vulkan
         {
             _createWin32SurfaceKHR = _createWin32SurfaceKHR ?? GetProcAddr<CreateWin32SurfaceKHRDelegate>(FunctionName.CreateWin32SurfaceKHR);
 
-            _createWin32SurfaceKHR(Handle, ref createInfo, null, out SurfaceHandle handle).CheckError();
+            _createWin32SurfaceKHR(_handle, ref createInfo, null, out SurfaceHandle handle).CheckError();
 
             surface = new Surface(handle, this);
         }
@@ -134,7 +135,7 @@ namespace Annihilation.Vulkan
         {
             _createXlibSurfaceKHR = _createXlibSurfaceKHR ?? GetProcAddr<CreateXlibSurfaceKHRDelegate>(FunctionName.CreateXlibSurfaceKHR);
 
-            _createXlibSurfaceKHR(Handle, ref createInfo, null, out SurfaceHandle handle).CheckError();
+            _createXlibSurfaceKHR(_handle, ref createInfo, null, out SurfaceHandle handle).CheckError();
 
             surface = new Surface(handle, this);
         }
@@ -143,25 +144,23 @@ namespace Annihilation.Vulkan
         {
             _createXcbSurfaceKHR = _createXcbSurfaceKHR ?? GetProcAddr<CreateXcbSurfaceKHRDelegate>(FunctionName.CreateXcbSurfaceKHR);
 
-            _createXcbSurfaceKHR(Handle, ref createInfo, null, out SurfaceHandle handle).CheckError();
+            _createXcbSurfaceKHR(_handle, ref createInfo, null, out SurfaceHandle handle).CheckError();
 
             surface = new Surface(handle, this);
         }
 
-        public void CreateDebugReportCallback(ref DebugReportCallbackCreateInfo createInfo, out DebugReportCallback debugReportCallback)
+        public void CreateDebugReportCallback(ref DebugReportCallbackCreateInfo createInfo, out DebugReportCallbackHandle debugReportCallback)
         {
             _createDebugReportCallbackEXT = _createDebugReportCallbackEXT ?? GetProcAddr<CreateDebugReportCallbackEXTDelegate>(FunctionName.CreateDebugReportCallbackEXT);
 
-            _createDebugReportCallbackEXT(Handle, ref createInfo, null, out DebugReportCallbackHandle handle).CheckError();
-
-            debugReportCallback = new DebugReportCallback(handle, this);
+            _createDebugReportCallbackEXT(_handle, ref createInfo, null, out debugReportCallback).CheckError();
         }
 
         public void DestroyDebugReportCallback(DebugReportCallbackHandle handle)
         {
             _destroyDebugReportCallbackEXT = _destroyDebugReportCallbackEXT ?? GetProcAddr<DestroyDebugReportCallbackEXTDelegate>(FunctionName.DestroyDebugReportCallbackEXT);
 
-            _destroyDebugReportCallbackEXT(Handle, handle, null);
+            _destroyDebugReportCallbackEXT(_handle, handle, null);
         }
 
         public void EnumeratePhysicalDeviceGroups(PhysicalDeviceGroupProperties[] groupProperties)
@@ -169,9 +168,9 @@ namespace Annihilation.Vulkan
             _enumeratePhysicalDeviceGroupsKHX = _enumeratePhysicalDeviceGroupsKHX ?? GetProcAddr<EnumeratePhysicalDeviceGroupsKHXDelegate>(FunctionName.EnumeratePhysicalDeviceGroupsKHX);
 
             uint count = 0;
-            _enumeratePhysicalDeviceGroupsKHX(Handle, ref count, null).CheckError();
+            _enumeratePhysicalDeviceGroupsKHX(_handle, ref count, null).CheckError();
             PhysicalDeviceGroupProperties* properties = (PhysicalDeviceGroupProperties*)Marshal.AllocHGlobal((int)count * sizeof(PhysicalDeviceGroupProperties));
-            _enumeratePhysicalDeviceGroupsKHX(Handle, ref count, properties).CheckError();
+            _enumeratePhysicalDeviceGroupsKHX(_handle, ref count, properties).CheckError();
 
             groupProperties = new PhysicalDeviceGroupProperties[count];
             for (int i = 0; i < count; ++i)
@@ -186,7 +185,7 @@ namespace Annihilation.Vulkan
         {
             _createIOSSurfaceMVK = _createIOSSurfaceMVK ?? GetProcAddr<CreateIOSSurfaceMVKDelegate>(FunctionName.CreateIOSSurfaceMVK);
 
-            _createIOSSurfaceMVK(Handle, ref createInfo, null, out SurfaceHandle handle).CheckError();
+            _createIOSSurfaceMVK(_handle, ref createInfo, null, out SurfaceHandle handle).CheckError();
 
             surface = new Surface(handle, this);
         }
@@ -195,7 +194,7 @@ namespace Annihilation.Vulkan
         {
             _createMacOSSurfaceMVK = _createMacOSSurfaceMVK ?? GetProcAddr<CreateMacOSSurfaceMVKDelegate>(FunctionName.CreateMacOSSurfaceMVK);
 
-            _createMacOSSurfaceMVK(Handle, ref createInfo, null, out SurfaceHandle handle).CheckError();
+            _createMacOSSurfaceMVK(_handle, ref createInfo, null, out SurfaceHandle handle).CheckError();
 
             surface = new Surface(handle, this);
         }

@@ -111,13 +111,11 @@ namespace Annihilation.Vulkan
             _getPhysicalDeviceImageFormatProperties(Handle, format, type, tiling, usage, flags, out imageFormatProperties).CheckError();
         }
 
-        public void CreateDevice(ref DeviceCreateInfo createInfo, out Device device)
+        public void CreateDevice(ref DeviceCreateInfo createInfo, out DeviceHandle device)
         {
             _createDevice = _createDevice ?? Instance.GetProcAddr<CreateDeviceDelegate>(FunctionName.CreateDevice);
 
-            _createDevice(Handle, ref createInfo, null, out DeviceHandle handle).CheckError();
-
-            device = new Device(handle, this);
+            _createDevice(Handle, ref createInfo, null, out device).CheckError();
         }
 
         public void EnumerateDeviceExtensionProperties(out ExtensionProperties[] extensionProperties)
